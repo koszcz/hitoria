@@ -26,6 +26,13 @@ describe('diagnostics', () => {
     expect(d.events.some((e) => e.includes('Resolved'))).toBe(true);
   });
 
+  test('flags a site that has no road to the HQ', () => {
+    const { g, d, run } = watched();
+    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
+    run(LIMITS.buildingWaiting + 15);
+    expect(d.issues.get(`b${b.id}`)?.text).toContain('Needs a road to your HQ');
+  });
+
   test('reports nothing stuck in a healthy game', () => {
     const { g, d, run } = watched();
     const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);

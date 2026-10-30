@@ -125,6 +125,30 @@ function iconTexture(icon: string) {
   return t;
 }
 
+// A road sign with a red bar through it, shown over buildings that have no road to the HQ.
+function noRoadTexture() {
+  const cv = Object.assign(document.createElement('canvas'), { width: 64, height: 64 });
+  const cx = cv.getContext('2d')!;
+  cx.beginPath();
+  cx.arc(32, 32, 29, 0, Math.PI * 2);
+  cx.fillStyle = 'rgba(255, 250, 235, 0.95)';
+  cx.fill();
+  cx.lineWidth = 5;
+  cx.strokeStyle = '#d23a2a';
+  cx.stroke();
+  cx.font = '30px system-ui, "Apple Color Emoji", sans-serif';
+  cx.textAlign = 'center';
+  cx.textBaseline = 'middle';
+  cx.fillText('🛤️', 32, 34);
+  cx.beginPath();
+  cx.moveTo(13, 51);
+  cx.lineTo(51, 13);
+  cx.stroke();
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 // Paints a whole geometry one colour (as a vertex colour) so pieces can be merged into one mesh.
 function paint(g: THREE.BufferGeometry, color: string, jitter = 0) {
   const geo = g.index ? g.toNonIndexed() : g;
@@ -183,6 +207,7 @@ interface Model {
   icon?: THREE.Sprite;
   smoke?: THREE.Sprite[];
   cloth?: THREE.Object3D;
+  noRoad?: THREE.Sprite;
 }
 
 interface Person {
@@ -209,6 +234,7 @@ export class Renderer {
   private grain = grainTexture();
   private dot = softDot();
   private icons = new Map<BType, THREE.Texture>();
+  private noRoadTex = noRoadTexture();
 
   private world: World | null = null;
   private corners = new Float32Array((W + 1) * (H + 1));
@@ -753,6 +779,13 @@ export class Renderer {
     return model;
   }
 
+  private noRoadSign() {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.noRoadTex, depthTest: false, transparent: true }));
+    s.scale.setScalar(0.4);
+    s.renderOrder = 13;
+    return s;
+  }
+
   private icon(type: BType) {
     let t = this.icons.get(type);
     if (!t) this.icons.set(type, (t = iconTexture(BDEFS[type].icon)));
@@ -779,9 +812,14 @@ export class Renderer {
       if (!m || m.key !== key) {
         if (m) this.scene.remove(m.g);
         m = this.makeBuilding(b.type, b.built);
+        if (b.type !== 'hq') m.g.add((m.noRoad = this.noRoadSign()));
         m.g.position.set(b.x + 0.5, this.heightAt(b.x + 0.5, b.y + 0.5), b.y + 0.5);
         this.models.set(b.id, m);
         this.scene.add(m.g);
+      }
+      if (m.noRoad) {
+        m.noRoad.visible = !game.linked(b);
+        m.noRoad.position.y = (b.built ? (b.type === 'lookout' ? 2.6 : 1.72) : 1.4) + Math.sin(now * 4) * 0.04;
       }
       this.animateBuilding(b, m, now);
     }

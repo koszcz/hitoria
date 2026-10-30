@@ -12,7 +12,7 @@ const SLOW_FRAME = 50; // ms
 // How long something may stay the same before it counts as a long wait, in game seconds.
 export const LIMITS = {
   settlerStill: 20, // a settler with a walk planned who hasn't moved
-  buildingWaiting: 180, // a building whose "Waiting…" or "Unreachable…" status hasn't changed
+  buildingWaiting: 180, // a building whose "Waiting…", "Unreachable…" or "Needs a road…" status hasn't changed
   flagFull: 60, // a flag holding as many goods as it can
   itemUnrouted: 60, // a good on a flag that no building wants
 };
@@ -113,7 +113,7 @@ export class Diagnostics {
       else if (prev.status !== b.status) this.event(`${name}: ${prev.status} → ${b.status}`);
       const since = prev && prev.status === b.status && prev.built === b.built ? prev.since : now;
       this.status.set(b.id, { status: b.status, built: b.built, since });
-      if (b.type !== 'hq' && /^(Waiting|Unreachable)/.test(b.status))
+      if (b.type !== 'hq' && /^(Waiting|Unreachable|Needs a road)/.test(b.status))
         flag(`b${b.id}`, since, LIMITS.buildingWaiting, `${name} has said "${b.status}" for ${Math.round(now - since)} s`);
     }
     for (const id of this.status.keys())
