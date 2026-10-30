@@ -10,3 +10,9 @@
      The port may not be 5173, because `preview_start` moves to a free port when 5173 is busy.
   3. Navigate to that address. Do not use the plain `http://localhost:<port>` address. It only
      lists the running copies.
+- Every change needs a changelog entry, in the same commit or the last commit of the branch.
+  Follow [changelog/README.md](changelog/README.md):
+  1. Add a file to `changelog/entries/`.
+  2. If the change shows in the game, run `bun run changelog:shots <entry>` before you commit.
+     Look at the screenshots and fix the steps until they show the change.
+  3. Run `bun run changelog` to rebuild `changelog.html`.
