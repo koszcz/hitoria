@@ -1,4 +1,6 @@
-import { crashed, watch } from './crash';
+import { crashed, watch, reportProblem } from './report';
+import { diag } from './diag';
+import { DebugPanel } from './debug';
 import { Game, BUILDABLE, BType, SaveData } from './game';
 import { Renderer } from './render';
 import { UI } from './ui';
@@ -27,6 +29,8 @@ const canvas = document.getElementById('game') as HTMLCanvasElement;
 const renderer = new Renderer(canvas);
 const ui = new UI(game);
 watch(() => game);
+diag.attach(game);
+const debug = new DebugPanel();
 renderer.centerOn(game.hq.x, game.hq.y);
 ui.toast(saved
   ? 'Welcome back! Your settlers are heading back to work.'
@@ -37,6 +41,7 @@ function save(quiet = false) {
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(game.save()));
     if (!quiet) ui.toast('Game saved');
+    diag.event(quiet ? 'Autosaved' : 'Saved');
   } catch (err) {
     console.warn('Could not save', err);
     ui.toast('Could not save the game. The browser storage may be full or blocked.');
@@ -49,12 +54,14 @@ function play(g: Game) {
   ui.setPlacing(null);
   ui.select(0);
   renderer.centerOn(g.hq.x, g.hq.y);
+  diag.attach(g);
   Object.assign(window, { game });
 }
 
 for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
   btn.onclick = () => {
     const what = btn.dataset.file;
+    if (what === 'report') return reportProblem();
     if (what === 'save') return save();
     if (what === 'load') {
       const g = readSave();
@@ -114,6 +121,10 @@ addEventListener('keydown', (e) => {
   }
   keys.add(e.key.toLowerCase());
   if (e.key === 'Escape') cancel();
+  if (e.key === 'F3') {
+    e.preventDefault();
+    debug.toggle();
+  }
   if (e.key === 'r' || e.key === 'R') ui.setPlacing(ui.placing === 'road' ? null : 'road');
   if (e.key === 'x' || e.key === 'X') ui.setPlacing(ui.placing === 'remove' ? null : 'remove');
   const n = Number(e.key);
@@ -136,17 +147,20 @@ function cancel() {
 function click(t: P, keep: boolean) {
   if (ui.placing === 'road') {
     const res = ui.roadFrom ? game.buildRoad(ui.roadFrom, t) : game.startFlag(t);
+    diag.event(`Road ${ui.roadFrom ? `from flag #${ui.roadFrom}` : 'start'} at ${t.x},${t.y}: ${typeof res === 'string' ? `refused (${res})` : `ok, flag #${res.id}`}`);
     if (typeof res === 'string') return ui.toast(res);
     ui.roadFrom = res.id;
     return;
   }
   if (ui.placing === 'remove') {
     const why = game.removeAt(t);
+    diag.event(`Remove at ${t.x},${t.y}: ${why ? `refused (${why})` : 'ok'}`);
     if (why) ui.toast(why);
     return;
   }
   if (ui.placing) {
     const why = game.canPlace(ui.placing, t.x, t.y);
+    diag.event(`Place ${ui.placing} at ${t.x},${t.y}: ${why ? `refused (${why})` : 'ok'}`);
     if (why) return ui.toast(why);
     game.place(ui.placing, t.x, t.y);
     if (!keep) ui.setPlacing(null);
@@ -173,6 +187,7 @@ function frame(now: number) {
   if (keys.has('w') || keys.has('arrowup')) renderer.cam.y -= pan;
   if (keys.has('s') || keys.has('arrowdown')) renderer.cam.y += pan;
 
+  const t0 = performance.now();
   if (!ui.paused) {
     acc += dt * ui.speed;
     let n = 0;
@@ -180,8 +195,13 @@ function frame(now: number) {
       game.update(STEP);
       acc -= STEP;
     }
-    if (n >= 40) acc = 0;
+    if (n >= 40) {
+      acc = 0;
+      diag.event('Game could not keep up, skipped ahead');
+    }
+    diag.tick();
   }
+  const t1 = performance.now();
 
   const tool = ui.placing === 'road' || ui.placing === 'remove' ? ui.placing : null;
   const placing = tool ? null : (ui.placing as BType | null);
@@ -192,11 +212,13 @@ function frame(now: number) {
     preview = tool === 'road' && ui.roadFrom && hover ? game.planRoad(ui.roadFrom, hover) : null;
   }
   renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, selected: ui.selected }, now / 1000);
+  diag.frame(dt * 1000, t1 - t0, performance.now() - t1);
 
   uiT -= dt;
   if (uiT <= 0) {
     uiT = 0.2;
     ui.refresh();
+    debug.refresh();
   }
   saveT -= dt;
   if (saveT <= 0) {
@@ -207,4 +229,4 @@ function frame(now: number) {
 }
 requestAnimationFrame(frame);
 
-Object.assign(window, { game }); // handy for poking at state from the console
+Object.assign(window, { game, diag }); // handy for poking at state from the console

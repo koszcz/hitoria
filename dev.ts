@@ -1,4 +1,4 @@
-// Dev server: serves the game and saves crash reports from the browser to crashes/.
+// Dev server: serves the game and saves crash and problem reports from the browser to reports/.
 import index from './index.html';
 
 const server = Bun.serve({
@@ -6,12 +6,13 @@ const server = Bun.serve({
   development: true,
   routes: {
     '/': index,
-    '/crash': {
+    '/report/:kind': {
       async POST(req) {
-        const name = `crashes/${new Date().toISOString().replace(/[:.]/g, '-')}.md`;
+        const kind = req.params.kind === 'crash' ? 'crash' : 'problem';
+        const name = `reports/${new Date().toISOString().replace(/[:.]/g, '-')}-${kind}.md`;
         await Bun.write(name, await req.text());
-        console.error(`💥 The game crashed. Report saved to ${name}`);
-        return new Response('saved');
+        console.error(`${kind === 'crash' ? '💥 The game crashed' : '🐞 Problem reported'}. Report saved to ${name}`);
+        return new Response(name);
       },
     },
   },

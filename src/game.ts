@@ -583,7 +583,7 @@ export class Game {
     }
     if (b.progress >= cap) {
       builder.anim = '';
-      b.status = 'Waiting for materials';
+      b.status = this.linked(b) ? 'Waiting for materials' : 'Needs a road to your HQ';
       return;
     }
     builder.anim = 'hammer';

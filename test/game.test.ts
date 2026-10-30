@@ -162,7 +162,7 @@ describe('construction', () => {
     run(g, 60);
     expect(b.built).toBe(false);
     expect(b.stock).toEqual({ log: 0, plank: 0, stone: 0 });
-    expect(b.status).toBe('Waiting for materials');
+    expect(b.status).toBe('Needs a road to your HQ');
   });
 
   test('no goods or settlers appear or vanish while building', () => {

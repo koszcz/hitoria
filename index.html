@@ -15,6 +15,7 @@
         <button data-file="save" title="Save the game (Ctrl+S). The game also saves itself every minute.">💾 Save</button>
         <button data-file="load" title="Go back to the last save">📂 Load</button>
         <button data-file="new" title="Start a new island">🏝️ New</button>
+        <button data-file="report" title="Something looks wrong? Make a report for Claude. Press F3 for live diagnostics.">🐞 Report</button>
       </div>
       <div id="speed">
         <button data-speed="pause" title="Pause (space)">⏸</button>
@@ -26,7 +27,7 @@
     <aside id="info" hidden></aside>
     <div id="toasts"></div>
     <nav id="buildbar"></nav>
-    <div id="help">Drag to pan · Scroll to zoom · 1–5 to build · R road · X remove · Right-click to cancel · Ctrl+S save</div>
+    <div id="help">Drag to pan · Scroll to zoom · 1–5 to build · R road · X remove · Right-click to cancel · Ctrl+S save · F3 diagnostics</div>
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>

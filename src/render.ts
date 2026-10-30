@@ -957,7 +957,8 @@ export class Renderer {
       if (path) g.setFromPoints(path.map((p) => new THREE.Vector3(p.x + 0.5, this.heightAt(p.x + 0.5, p.y + 0.5) + 0.08, p.y + 0.5)));
       this.preview.geometry.dispose();
       this.preview.geometry = g;
-      this.preview.computeLineDistances();
+      // A geometry without points has no position attribute, which computeLineDistances needs.
+      if (path) this.preview.computeLineDistances();
     }
     this.preview.visible = !!path;
 
