@@ -113,6 +113,7 @@ export interface Settler {
   carrying: Good | null;
   item: Item | null; // what a road carrier holds
   ri: number; // a road carrier's index along its road
+  since: number; // game time a road carrier last had something to do
   home: number; // building, or road for carriers
   inside: boolean;
   atWork: boolean;
@@ -128,6 +129,7 @@ const ROAD_SPEED = 1.5; // multiplier on roads
 const PILE = 4; // max finished goods a hut keeps before its worker pauses
 const FLAG_CAP = 8;
 const FLAG_SPACING = 4; // new roads get a flag about this often
+const CARRIER_REST = 12; // seconds a carrier waits on an empty road before going home
 export const CROP_GROW = 60; // seconds for sown grain to ripen
 
 export const SAVE_VERSION = 2;
@@ -531,16 +533,16 @@ export class Game {
   }
 
   private dispatch() {
-    // Staff: a carrier for every road, a builder for every site, a worker for every hut.
+    // Staff: a carrier for every road with goods to move, a builder for every site, a worker for every hut.
     for (const r of this.roads.values()) {
-      if (r.carrier) continue;
+      if (r.carrier || !this.cargo(r, 0) && !this.cargo(r, 1)) continue;
       const s = this.takeSettler('carrier');
       if (!s) break;
       r.carrier = s.id;
       s.home = r.id;
       const mid = r.path.length >> 1;
       s.onAbort = () => { r.carrier = 0; this.despawn(s); };
-      s.tasks = [{ k: 'walk', ...r.path[mid] }, { k: 'do', f: () => { s.atWork = true; s.ri = mid; s.onAbort = null; } }];
+      s.tasks = [{ k: 'walk', ...r.path[mid] }, { k: 'do', f: () => { s.atWork = true; s.ri = mid; s.since = this.time; s.onAbort = null; } }];
     }
     for (const b of this.buildings.values()) {
       if (!b.built && !b.builder) {
@@ -698,7 +700,7 @@ export class Game {
     if (this.pool <= 0) return null;
     this.pool--;
     const s: Settler = {
-      id: this.nextId++, role, x: this.hq.x, y: this.hq.y, path: null, tasks: [], carrying: null, item: null, ri: 0,
+      id: this.nextId++, role, x: this.hq.x, y: this.hq.y, path: null, tasks: [], carrying: null, item: null, ri: 0, since: 0,
       home: 0, inside: false, atWork: false, returning: false, walking: false, anim: '', facing: 1, onAbort: null,
     };
     this.settlers.set(s.id, s);
@@ -902,19 +904,26 @@ export class Game {
     }
   }
 
+  // A good waiting at one end of road `r` (0 = flag a, 1 = flag b) that this road should take.
+  private cargo(r: Road, end: 0 | 1) {
+    const from = this.flags.get(end ? r.b : r.a)!, to = this.flags.get(end ? r.a : r.b)!;
+    return from.items.find((it) => {
+      const d = this.buildings.get(it.dest);
+      if (!d || d.flag === from.id) return false; // arrived; the dispatcher takes it inside
+      return this.nextRoad(from, d.flag) === r.id && (to.items.length < FLAG_CAP || d.flag === to.id);
+    });
+  }
+
   // A road carrier takes one good at a time from one end of their road to the other.
   private carry(s: Settler) {
     const r = this.roads.get(s.home);
     if (!r || !s.atWork) return;
     const last = r.path.length - 1;
-    for (const [i, j] of [[0, last], [last, 0]]) {
-      const from = this.flags.get(i ? r.b : r.a)!, to = this.flags.get(j ? r.b : r.a)!;
-      const item = from.items.find((it) => {
-        const d = this.buildings.get(it.dest);
-        if (!d || d.flag === from.id) return false; // arrived; the dispatcher takes it inside
-        return this.nextRoad(from, d.flag) === r.id && (to.items.length < FLAG_CAP || d.flag === to.id);
-      });
+    for (const end of [0, 1] as const) {
+      const item = this.cargo(r, end);
       if (!item) continue;
+      const from = this.flags.get(end ? r.b : r.a)!, to = this.flags.get(end ? r.a : r.b)!;
+      const i = end ? last : 0, j = end ? 0 : last;
       s.tasks = [
         { k: 'walk', ...r.path[i], via: this.along(r, s.ri, i) },
         { k: 'do', f: () => {
@@ -928,11 +937,21 @@ export class Game {
         { k: 'walk', ...r.path[j], via: this.along(r, i, j) },
         { k: 'do', f: () => {
           s.ri = j;
+          s.since = this.time;
           to.items.push(item);
           s.item = null;
           s.carrying = null;
         } },
       ];
+      return;
+    }
+    // Nothing to carry for a while: free the road and go home, so the settler can take other work.
+    if (this.time - s.since >= CARRIER_REST) {
+      r.carrier = 0;
+      s.home = 0;
+      s.atWork = false;
+      s.onAbort = () => this.despawn(s);
+      s.tasks = [{ k: 'walk', x: this.hq.x, y: this.hq.y }, { k: 'do', f: () => this.despawn(s) }];
       return;
     }
     const mid = r.path.length >> 1;
