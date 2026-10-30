@@ -4,8 +4,22 @@
     {
       "name": "hitoria",
       "runtimeExecutable": "bun",
-      "runtimeArgs": ["dev.ts"],
+      "runtimeArgs": [
+        "dev.ts"
+      ],
       "port": 5173
+    },
+    {
+      "name": "changelog",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5180",
+        "--directory",
+        "dist"
+      ],
+      "port": 5180
     }
   ]
 }
