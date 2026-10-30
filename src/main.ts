@@ -1,3 +1,4 @@
+import { crashed, watch } from './crash';
 import { Game, BUILDABLE, BType, SaveData } from './game';
 import { Renderer } from './render';
 import { UI } from './ui';
@@ -25,12 +26,14 @@ let game = saved ?? new Game(seed || Math.floor(Math.random() * 1e9));
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const renderer = new Renderer(canvas);
 const ui = new UI(game);
+watch(() => game);
 renderer.centerOn(game.hq.x, game.hq.y);
 ui.toast(saved
   ? 'Welcome back! Your settlers are heading back to work.'
   : 'Welcome! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
 
 function save(quiet = false) {
+  if (crashed()) return; // Never write a broken game over the last good save.
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(game.save()));
     if (!quiet) ui.toast('Game saved');
@@ -160,6 +163,7 @@ let uiT = 0;
 let saveT = AUTOSAVE;
 
 function frame(now: number) {
+  if (crashed()) return;
   const dt = Math.min(0.25, (now - last) / 1000);
   last = now;
 

@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "\"$npm_execpath\" --port 5173 ./index.html",
+    "dev": "bun dev.ts",
     "build": "\"$npm_execpath\" build ./index.html --outdir dist --minify",
     "test": "bun test"
   },
