@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { Game, Building, Settler, BDEFS, BType, Good, Role } from './game';
+import { Game, Building, Settler, BDEFS, BType, Good, GOODS, Role, bag } from './game';
 import { World, Tile, W, H } from './world';
 import { TW, toIso, fromIso } from './iso';
 import type { P } from './path';
@@ -12,9 +12,14 @@ import type { P } from './path';
 const ROLE_COLOR: Record<Role, string> = {
   carrier: '#c9b27c', builder: '#e08a2c', woodcutter: '#3f7d3a', forester: '#8bc34a',
   stonecutter: '#8d8d8d', sawyer: '#8a5a2b', scout: '#4a7bd0',
+  fisher: '#3f6f8a', farmer: '#c9a43a', miller: '#e8e2d0', baker: '#d07a3a', miner: '#5a4a3a',
 };
-const GOOD_COLOR: Record<Good, string> = { log: '#7a4a24', plank: '#d9b27a', stone: '#9c9c96' };
-const GOOD_LIST: Good[] = ['log', 'plank', 'stone'];
+const GOOD_COLOR: Record<Good, string> = {
+  log: '#7a4a24', plank: '#d9b27a', stone: '#9c9c96', fish: '#7fa8bf', grain: '#d8b84a', flour: '#f1ece0', bread: '#b8732e',
+};
+const GOOD_LIST = GOODS;
+// How high a building's sign floats.
+const iconY = (type: BType) => (type === 'lookout' ? 2.15 : type === 'mill' ? 1.95 : 1.3);
 
 export interface View {
   hover: P | null;
@@ -207,6 +212,7 @@ interface Model {
   icon?: THREE.Sprite;
   smoke?: THREE.Sprite[];
   cloth?: THREE.Object3D;
+  sails?: THREE.Object3D;
   noRoad?: THREE.Sprite;
 }
 
@@ -246,7 +252,9 @@ export class Renderer {
   private trees: THREE.InstancedMesh[];
   private rocks: THREE.InstancedMesh;
   private goods: Record<Good, THREE.InstancedMesh>;
-  private goodN: Record<Good, number> = { log: 0, plank: 0, stone: 0 };
+  private goodN = bag();
+  private crops: THREE.InstancedMesh;
+  private fields: THREE.InstancedMesh;
 
   private roads = new THREE.Group();
   private roadNet = -1;
@@ -307,7 +315,27 @@ export class Renderer {
       log: new THREE.CylinderGeometry(0.035, 0.035, 0.2, 7).rotateZ(Math.PI / 2),
       plank: new THREE.BoxGeometry(0.2, 0.03, 0.08),
       stone: new THREE.DodecahedronGeometry(0.055, 0),
+      fish: new THREE.SphereGeometry(0.05, 8, 6).scale(1.9, 0.55, 0.8),
+      grain: new THREE.CylinderGeometry(0.045, 0.055, 0.13, 7).translate(0, 0.03, 0),
+      flour: new THREE.SphereGeometry(0.065, 8, 6).scale(1, 0.85, 1).translate(0, 0.02, 0),
+      bread: new THREE.SphereGeometry(0.06, 8, 6).scale(1.5, 0.6, 0.9),
     };
+
+    // Grain fields: a patch of tilled soil under a tuft of stalks that grows and turns gold.
+    const stalks: THREE.BufferGeometry[] = [];
+    for (let i = 0; i < 16; i++) {
+      const sx = ((i % 4) - 1.5) * 0.2 + (hash(i, 3) - 0.5) * 0.08, sz = (Math.floor(i / 4) - 1.5) * 0.2 + (hash(3, i) - 0.5) * 0.08;
+      stalks.push(new THREE.BoxGeometry(0.025, 0.3, 0.025).translate(sx, 0.15, sz), new THREE.BoxGeometry(0.04, 0.07, 0.04).translate(sx, 0.31, sz));
+    }
+    this.crops = new THREE.InstancedMesh(mergeGeometries(stalks), new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), W * H);
+    this.crops.castShadow = this.crops.receiveShadow = true;
+    this.fields = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.92, 0.92).rotateX(-Math.PI / 2),
+      new THREE.MeshStandardMaterial({ color: '#6b4a2c', roughness: 1, polygonOffset: true, polygonOffsetFactor: -1 }), W * H);
+    this.fields.receiveShadow = true;
+    for (const m of [this.crops, this.fields]) {
+      m.frustumCulled = false;
+      scene.add(m);
+    }
     this.goods = {} as Record<Good, THREE.InstancedMesh>;
     for (const g of GOOD_LIST) {
       const m = new THREE.InstancedMesh(goodGeo[g], this.mat(GOOD_COLOR[g]), 4000);
@@ -398,7 +426,7 @@ export class Renderer {
       this.drawRoads(game);
     }
 
-    this.goodN = { log: 0, plank: 0, stone: 0 };
+    this.goodN = bag();
     this.scenery(now);
     this.buildings(game, now);
     this.flagsAndGoods(game, now);
@@ -606,7 +634,7 @@ export class Renderer {
   private scenery(now: number) {
     const world = this.world!;
     const [leafy, pine] = this.trees;
-    let nl = 0, np = 0, nr = 0;
+    let nl = 0, np = 0, nr = 0, nc = 0;
     for (let y = 0; y < H; y++)
       for (let x = 0; x < W; x++) {
         const t = world.at(x, y);
@@ -621,6 +649,17 @@ export class Renderer {
           mesh.setMatrixAt(n, this.m4);
           mesh.setColorAt(n, this.c.setHSL(0.25 + (hash(y, x * 5) - 0.5) * 0.08, 0.35, 0.75 + hash(x, y * 3) * 0.3));
         }
+        if (t.crop > 0) {
+          const px = x + 0.5, pz = y + 0.5, gy = this.heightAt(px, pz);
+          this.m4.compose(this.v.set(px, gy + 0.015, pz), this.q.identity(), this.s.setScalar(1));
+          this.fields.setMatrixAt(nc, this.m4);
+          const sway = Math.sin(now * 1.6 + x * 0.7 + y * 0.4) * 0.05 * t.crop;
+          this.e.set(sway, 0, sway * 0.5);
+          this.m4.compose(this.v.set(px, gy, pz), this.q.setFromEuler(this.e), this.s.set(1, 0.08 + 0.92 * t.crop, 1));
+          this.crops.setMatrixAt(nc, this.m4);
+          // Green while growing, gold when ripe.
+          this.crops.setColorAt(nc++, t.crop >= 1 ? this.c.set('#e0b84a') : this.c.setHSL(0.25 - 0.1 * t.crop, 0.55, 0.36 + 0.1 * t.crop));
+        }
         if (t.rock > 0) {
           const k = Math.min(3, Math.ceil(t.rock / 2));
           for (let i = 0; i < k; i++) {
@@ -633,7 +672,7 @@ export class Renderer {
           }
         }
       }
-    for (const [m, n] of [[leafy, nl], [pine, np], [this.rocks, nr]] as const) {
+    for (const [m, n] of [[leafy, nl], [pine, np], [this.rocks, nr], [this.crops, nc], [this.fields, nc]] as const) {
       m.count = n;
       m.instanceMatrix.needsUpdate = true;
       if (m.instanceColor) m.instanceColor.needsUpdate = true;
@@ -753,6 +792,34 @@ export class Renderer {
         this.add(g, new THREE.CylinderGeometry(0.07, 0.07, 0.17, 10), '#7a5230', 0.28, 0.085, 0.42);
         break;
       }
+      case 'mill': {
+        this.add(g, new THREE.CylinderGeometry(0.34, 0.36, 0.3, 12), '#8a8378', 0, -0.1, 0);
+        this.add(g, new THREE.CylinderGeometry(0.22, 0.3, 1.05, 10), def.wall, 0, 0.55, 0);
+        this.add(g, new THREE.ConeGeometry(0.27, 0.36, 10), def.roof, 0, 1.25, 0);
+        this.add(g, new THREE.BoxGeometry(0.13, 0.24, 0.02), '#3a2414', 0, 0.14, 0.27);
+        const sails = new THREE.Group();
+        sails.position.set(0, 1.05, 0.3);
+        for (let i = 0; i < 4; i++) {
+          const arm = new THREE.Group();
+          arm.rotation.z = (i * Math.PI) / 2;
+          this.add(arm, new THREE.BoxGeometry(0.03, 0.62, 0.02), '#5a3c22', 0, 0.31, 0);
+          this.add(arm, new THREE.BoxGeometry(0.13, 0.42, 0.01), '#efe6d2', 0.08, 0.38, 0.01);
+          sails.add(arm);
+        }
+        g.add(sails);
+        model.sails = sails;
+        break;
+      }
+      case 'mine': {
+        this.add(g, new THREE.BoxGeometry(0.9, 0.3, 0.9), '#7d776d', 0, -0.1, 0);
+        this.add(g, new THREE.DodecahedronGeometry(0.5, 0).scale(1, 0.75, 0.8), '#8c867b', 0, 0.2, -0.15, { flatShading: true });
+        this.add(g, new THREE.BoxGeometry(0.32, 0.36, 0.1), '#1c1814', 0, 0.18, 0.24);
+        for (const x of [-0.18, 0.18]) this.add(g, new THREE.BoxGeometry(0.05, 0.42, 0.06), '#5a3c22', x, 0.21, 0.29);
+        this.add(g, new THREE.BoxGeometry(0.44, 0.05, 0.07), '#5a3c22', 0, 0.44, 0.29);
+        this.add(g, new THREE.BoxGeometry(0.18, 0.1, 0.12), '#5d5248', 0.32, 0.08, 0.36);
+        for (const [x, z] of [[0.33, 0.33], [0.28, 0.38], [0.36, 0.38]]) this.add(g, new THREE.DodecahedronGeometry(0.04, 0), '#a3a19a', x, 0.15, z);
+        break;
+      }
       default: {
         this.house(g, 0.3, 0.42, 0.3, def.wall, def.roof, -0.04, -0.04);
         if (type === 'woodcutter') {
@@ -763,6 +830,17 @@ export class Renderer {
             this.add(g, new THREE.CylinderGeometry(0.01, 0.012, 0.1, 4), '#56381c', x, 0.05, z);
             this.add(g, new THREE.IcosahedronGeometry(0.06, 0), '#6aa848', x, 0.12, z, { flatShading: true });
           }
+        } else if (type === 'fisher') {
+          const boat = this.add(g, new THREE.BoxGeometry(0.34, 0.06, 0.13), '#7a5230', 0.3, 0.04, 0.32);
+          boat.rotation.y = 0.4;
+          this.add(g, new THREE.CylinderGeometry(0.008, 0.008, 0.4, 4), '#4a3220', 0.38, 0.2, -0.2);
+          this.add(g, new THREE.BoxGeometry(0.18, 0.14, 0.01), '#cfc7a8', 0.38, 0.22, -0.18, { transparent: true, opacity: 0.7 });
+        } else if (type === 'farm') {
+          this.add(g, new THREE.CylinderGeometry(0.09, 0.09, 0.12, 10).rotateZ(Math.PI / 2), '#d8b84a', 0.32, 0.09, 0.3);
+          this.add(g, new THREE.CylinderGeometry(0.09, 0.09, 0.12, 10).rotateZ(Math.PI / 2), '#cfae42', 0.36, 0.09, 0.08);
+        } else if (type === 'bakery') {
+          this.add(g, new THREE.BoxGeometry(0.1, 0.36, 0.1), '#8a5a3a', 0.12, 0.72, -0.12);
+          this.add(g, new THREE.SphereGeometry(0.13, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), '#b8a088', 0.33, 0, 0.28);
         } else if (type === 'quarry') {
           for (const [x, z, s] of [[0.33, 0.25, 0.09], [0.38, -0.05, 0.07], [0.26, -0.3, 0.08]])
             this.add(g, new THREE.BoxGeometry(s * 1.6, s, s * 1.2), '#a3a19a', x, s / 2, z);
@@ -773,7 +851,7 @@ export class Renderer {
     icon.scale.setScalar(0.34);
     icon.renderOrder = 12;
     if (type !== 'hq') {
-      icon.position.y = type === 'lookout' ? 2.15 : 1.3;
+      icon.position.y = iconY(type);
       g.add(icon);
       model.icon = icon;
     }
@@ -826,7 +904,7 @@ export class Renderer {
       }
       if (m.noRoad) {
         m.noRoad.visible = !game.linked(b);
-        m.noRoad.position.y = (b.built ? (b.type === 'lookout' ? 2.6 : 1.72) : 1.4) + Math.sin(now * 4) * 0.04;
+        m.noRoad.position.y = (b.built ? iconY(b.type) + 0.42 : 1.4) + Math.sin(now * 4) * 0.04;
       }
       this.animateBuilding(b, m, now);
     }
@@ -848,7 +926,8 @@ export class Renderer {
       return;
     }
     if (m.cloth) m.cloth.rotation.y = Math.sin(now * 3) * 0.35;
-    if (m.icon) m.icon.position.y = (b.type === 'lookout' ? 2.15 : 1.3) + Math.sin(now * 2 + b.id) * 0.03;
+    if (m.icon) m.icon.position.y = iconY(b.type) + Math.sin(now * 2 + b.id) * 0.03;
+    if (m.sails && b.busy) m.sails.rotation.z = -now * 1.6;
     m.smoke!.forEach((s, i) => {
       s.visible = b.busy;
       if (!b.busy) return;
@@ -920,7 +999,7 @@ export class Renderer {
     const tool = new THREE.Group();
     tool.position.set(0.07, 0.22, 0.02);
     this.add(tool, new THREE.BoxGeometry(0.015, 0.015, 0.16), '#6b4a28', 0, 0, 0.08);
-    this.add(tool, new THREE.BoxGeometry(0.04, 0.04, 0.03), role === 'forester' ? '#6abf4b' : '#c0c4c8', 0, 0, 0.16);
+    this.add(tool, new THREE.BoxGeometry(0.04, 0.04, 0.03), role === 'forester' || role === 'farmer' ? '#6abf4b' : '#c0c4c8', 0, 0, 0.16);
     tool.visible = false;
     body.add(tool);
     return { g, legs, tool, body, px: NaN, py: NaN, heading: 0 };
@@ -965,7 +1044,9 @@ export class Renderer {
     p.legs[0].rotation.x = swing;
     p.legs[1].rotation.x = -swing;
     p.tool.visible = !!s.anim;
-    if (s.anim) p.tool.rotation.x = s.anim === 'plant' ? 0.9 + Math.sin(now * 6) * 0.3 : -0.4 + Math.sin(now * 9) * 0.9;
+    if (s.anim) p.tool.rotation.x = s.anim === 'plant' ? 0.9 + Math.sin(now * 6) * 0.3
+      : s.anim === 'fish' ? -0.9 + Math.sin(now * 1.5) * 0.08
+      : -0.4 + Math.sin(now * (s.anim === 'reap' ? 6 : 9)) * 0.9;
     if (s.carrying) this.good(s.carrying, x, y + 0.42, z, p.heading + Math.PI / 2);
   }
 

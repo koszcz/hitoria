@@ -1,6 +1,8 @@
 import { Game, BDEFS, BUILDABLE, BType, GOODS, Good, Bag } from './game';
 
-const GOOD_NAME: Record<Good, string> = { log: 'Logs', plank: 'Planks', stone: 'Stone' };
+const GOOD_NAME: Record<Good, string> = {
+  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread',
+};
 const $ = (id: string) => document.getElementById(id)!;
 
 const costText = (cost: Partial<Bag>) =>
@@ -27,7 +29,7 @@ export class UI {
       const def = BDEFS[type];
       const btn = document.createElement('button');
       btn.className = 'build';
-      btn.title = `${def.desc} (key ${i + 1})`;
+      btn.title = i < 9 ? `${def.desc} (key ${i + 1})` : def.desc;
       btn.innerHTML = `<span class="icon">${def.icon}</span><span class="name">${def.name}</span><span class="cost">${costText(def.cost)}</span>`;
       btn.onclick = () => this.setPlacing(this.placing === type ? null : type);
       bar.appendChild(btn);

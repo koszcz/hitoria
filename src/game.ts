@@ -1,14 +1,16 @@
 import { World, W, Tile } from './world';
 import { findPath, P } from './path';
 
-export type Good = 'log' | 'plank' | 'stone';
-export const GOODS: Good[] = ['log', 'plank', 'stone'];
+export type Good = 'log' | 'plank' | 'stone' | 'fish' | 'grain' | 'flour' | 'bread';
+export const GOODS: Good[] = ['log', 'plank', 'stone', 'fish', 'grain', 'flour', 'bread'];
 export type Bag = Record<Good, number>;
-export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, ...p });
+export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, fish: 0, grain: 0, flour: 0, bread: 0, ...p });
 
-export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout';
-export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse';
-export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant';
+export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout'
+  | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner';
+export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse'
+  | 'fisher' | 'farm' | 'mill' | 'bakery' | 'mine';
+export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant' | 'fish' | 'reap';
 
 export interface BDef {
   name: string;
@@ -30,8 +32,29 @@ export const BDEFS: Record<BType, BDef> = {
   sawmill: { name: 'Sawmill', icon: '🪚', desc: 'Saws logs into planks.', cost: { plank: 2, stone: 2 }, buildTime: 9, worker: 'sawyer', radius: 0, wall: '#c49a6c', roof: '#8a4b2a' },
   lookout: { name: 'Lookout Tower', icon: '🔭', desc: 'Expands your land. No soldiers, just a view.', cost: { plank: 3, stone: 3 }, buildTime: 10, worker: 'scout', radius: 7, wall: '#d2c4a4', roof: '#3f5f8a' },
   storehouse: { name: 'Storehouse', icon: '📦', desc: 'Stores spare goods close to where they are made and needed.', cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0, wall: '#c8b48c', roof: '#7a5a3a' },
+  fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5, wall: '#c8b28a', roof: '#3f6f8a' },
+  farm: { name: 'Farm', icon: '🌾', desc: 'Sows grain on free grass nearby and harvests it when it is ripe.', cost: { plank: 3, stone: 1 }, buildTime: 8, worker: 'farmer', radius: 3, wall: '#e0c99a', roof: '#b5812f' },
+  mill: { name: 'Mill', icon: '⚙️', desc: 'Grinds grain into flour.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'miller', radius: 0, wall: '#e6dcc4', roof: '#7a4a2a' },
+  bakery: { name: 'Bakery', icon: '🍞', desc: 'Bakes flour into bread.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'baker', radius: 0, wall: '#d9b98c', roof: '#9a3f2a' },
+  mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2, wall: '#9a948a', roof: '#4f4a44' },
 };
-export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse'];
+export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine'];
+
+// Workshops turn goods into other goods inside the building. With several inputs, any one of them will do.
+interface Recipe {
+  from: Good[];
+  to: Good;
+  n: number; // goods made from one input
+  t: number; // seconds of work
+  doing: string;
+  waiting: string;
+}
+const RECIPES: Partial<Record<BType, Recipe>> = {
+  sawmill: { from: ['log'], to: 'plank', n: 1, t: 5, doing: 'Sawing planks', waiting: 'Waiting for logs' },
+  mill: { from: ['grain'], to: 'flour', n: 1, t: 5, doing: 'Grinding flour', waiting: 'Waiting for grain' },
+  bakery: { from: ['flour'], to: 'bread', n: 1, t: 6, doing: 'Baking bread', waiting: 'Waiting for flour' },
+  mine: { from: ['bread', 'fish'], to: 'stone', n: 2, t: 8, doing: 'Digging stone', waiting: 'Waiting for fish or bread' },
+};
 
 export interface Building {
   id: number;
@@ -47,6 +70,7 @@ export interface Building {
   worker: number;
   builder: number;
   busy: boolean;
+  using: Good | null; // the input a workshop is working on right now
   status: string;
 }
 
@@ -104,8 +128,9 @@ const ROAD_SPEED = 1.5; // multiplier on roads
 const PILE = 4; // max finished goods a hut keeps before its worker pauses
 const FLAG_CAP = 8;
 const FLAG_SPACING = 4; // new roads get a flag about this often
+const CROP_GROW = 60; // seconds for sown grain to ripen
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 // A saved game. The map is rebuilt from the seed; only what changes during play is stored.
 // Settlers are not stored: on load everyone is back in the HQ and the dispatcher sends them out again.
@@ -116,7 +141,7 @@ export interface SaveData {
   pool: number;
   nextId: number;
   hq: number;
-  tiles: [tree: number, conifer: number, rock: number, b: number, flag: number, road: number][];
+  tiles: [tree: number, conifer: number, rock: number, b: number, flag: number, road: number, crop?: number][];
   buildings: Building[];
   flags: Flag[];
   roads: Road[];
@@ -165,26 +190,35 @@ export class Game {
       const home = bs.get(s.home);
       if (!home) continue;
       if (s.carrying) home.out[s.carrying]++;
-      if (s.role === 'sawyer' && home.busy) home.stock.log++;
+      if (home.busy && home.using) home.stock[home.using]++;
     }
     for (const b of buildings) {
       b.worker = b.builder = 0;
       b.busy = false;
+      b.using = null;
       if (b.type !== 'hq') b.status = b.built ? this.builtStatus(b) : 'Waiting for a builder';
     }
     for (const r of roads) r.carrier = 0;
     return {
       v: SAVE_VERSION, seed: this.seed, time: this.time, pool: this.population, nextId: this.nextId, hq: this.hq.id,
-      tiles: this.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road]),
+      tiles: this.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop]),
       buildings, flags, roads,
     };
   }
 
   static load(d: SaveData): Game {
-    if (d.v !== SAVE_VERSION) throw new Error('This save is from a different version of Hitoria');
+    if (d.v !== 1 && d.v !== SAVE_VERSION) throw new Error('This save is from a different version of Hitoria');
     const g = new Game(d.seed);
-    d.tiles.forEach(([tree, conifer, rock, b, flag, road], i) =>
-      Object.assign(g.world.tiles[i], { tree, conifer: !!conifer, rock, b, flag, road }));
+    d.tiles.forEach(([tree, conifer, rock, b, flag, road, crop = 0], i) =>
+      Object.assign(g.world.tiles[i], { tree, conifer: !!conifer, rock, b, flag, road, crop }));
+    // Saves from version 1 have no food goods yet.
+    for (const b of d.buildings) {
+      b.stock = bag(b.stock);
+      b.out = bag(b.out);
+      b.incoming = bag(b.incoming);
+      b.using ??= null;
+    }
+    for (const f of d.flags) f.items = f.items.filter((it) => GOODS.includes(it.g));
     g.buildings = new Map(d.buildings.map((b) => [b.id, b]));
     g.flags = new Map(d.flags.map((f) => [f.id, f]));
     g.roads = new Map(d.roads.map((r) => [r.id, r]));
@@ -235,6 +269,8 @@ export class Game {
     if (t.t !== 'grass') return 'Needs flat grass';
     if (t.tree) return 'A tree is in the way';
     if (t.rock) return 'A boulder is in the way';
+    if (type === 'mine' && !this.near(x, y, BDEFS.mine.radius, (n) => n.t === 'mountain')) return 'Must be next to a mountain';
+    if (type === 'fisher' && !this.near(x, y, BDEFS.fisher.radius, (n) => n.t === 'water')) return 'Must be near water';
     const front = this.world.at(x, y + 1);
     const flagOk = front.flag ? !this.flags.get(front.flag)!.building : this.flaggable(x, y + 1);
     if (!flagOk) return 'No room for its flag in front';
@@ -246,6 +282,14 @@ export class Game {
     const b = this.addBuilding(type, x, y);
     b.status = 'Waiting for a builder';
     return b;
+  }
+
+  // Is there a tile within `r` of (x, y) that passes `ok`?
+  private near(x: number, y: number, r: number, ok: (t: Tile) => boolean) {
+    for (let dy = -r; dy <= r; dy++)
+      for (let dx = -r; dx <= r; dx++)
+        if (Math.hypot(dx, dy) <= r && this.world.inside(x + dx, y + dy) && ok(this.world.at(x + dx, y + dy))) return true;
+    return false;
   }
 
   // The HQ and every finished storehouse keep goods for the whole settlement.
@@ -278,8 +322,11 @@ export class Game {
     }
     this.growT -= dt;
     if (this.growT <= 0) {
-      this.growT = 1;
-      for (const t of this.world.tiles) if (t.tree > 0 && t.tree < 1) t.tree = Math.min(1, t.tree + 1 / 40);
+      this.growT += 1; // add, not reset, so float steps never stretch the second
+      for (const t of this.world.tiles) {
+        if (t.tree > 0 && t.tree < 1) t.tree = Math.min(1, t.tree + 1 / 40);
+        if (t.crop > 0 && t.crop < 1) t.crop = Math.min(1, t.crop + 1 / CROP_GROW);
+      }
     }
     for (const b of this.buildings.values()) if (!b.built) this.construct(b, dt);
     for (const s of this.settlers.values()) this.step(s, dt);
@@ -345,7 +392,7 @@ export class Game {
   private newFlag(x: number, y: number) {
     const f: Flag = { id: this.nextId++, x, y, items: [], roads: [], building: 0 };
     this.flags.set(f.id, f);
-    this.world.at(x, y).flag = f.id;
+    Object.assign(this.world.at(x, y), { flag: f.id, crop: 0 });
     this.net++;
     return f;
   }
@@ -359,7 +406,7 @@ export class Game {
 
   private createRoad(a: number, b: number, path: P[]) {
     const r: Road = { id: this.nextId++, a, b, path, carrier: 0 };
-    for (let i = 1; i < path.length - 1; i++) this.world.at(path[i].x, path[i].y).road = r.id;
+    for (let i = 1; i < path.length - 1; i++) Object.assign(this.world.at(path[i].x, path[i].y), { road: r.id, crop: 0 });
     this.flags.get(a)!.roads.push(r.id);
     this.flags.get(b)!.roads.push(r.id);
     this.roads.set(r.id, r);
@@ -471,8 +518,12 @@ export class Game {
 
   private want(b: Building, g: Good) {
     if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
-    if (b.type === 'sawmill' && g === 'log') return PILE;
-    return 0;
+    const rc = RECIPES[b.type];
+    if (!rc?.from.includes(g)) return 0;
+    // Several inputs share one pile, so a mine keeps PILE food of any kind.
+    let other = 0;
+    for (const o of rc.from) if (o !== g) other += b.stock[o] + b.incoming[o];
+    return Math.max(0, PILE - other);
   }
 
   private missing(b: Building, g: Good) {
@@ -585,10 +636,10 @@ export class Game {
     const b: Building = {
       id: this.nextId++, type, x, y, flag: 0, built: false, progress: 0,
       stock: bag(), out: bag(), incoming: bag(),
-      worker: 0, builder: 0, busy: false, status: '',
+      worker: 0, builder: 0, busy: false, using: null, status: '',
     };
     this.buildings.set(b.id, b);
-    this.world.at(x, y).b = b.id;
+    Object.assign(this.world.at(x, y), { b: b.id, crop: 0 });
     const f = this.ensureFlag(x, y + 1);
     f.building = b.id;
     b.flag = f.id;
@@ -764,8 +815,7 @@ export class Game {
         return;
       }
       case 'forester': {
-        const at = this.findTile(home, r, (t, x, y) => t.t === 'grass' && !t.tree && !t.rock && !t.b && !t.road && !t.flag
-          && !!this.world.territory[y * W + x] && !this.besideBuilding(x, y), true);
+        const at = this.findTile(home, r, this.plantable, true);
         if (!at) return rest(4, 'No free ground to plant on');
         home.status = 'Planting a tree';
         const i = this.claim(s, at);
@@ -775,7 +825,7 @@ export class Game {
           { k: 'work', t: 2.5, anim: 'plant' },
           { k: 'do', f: () => {
             this.claimed.delete(i);
-            if (!tile.tree && !tile.b && !tile.road && !tile.flag) {
+            if (!tile.tree && !tile.crop && !tile.b && !tile.road && !tile.flag) {
               tile.tree = 0.05;
               tile.conifer = Math.random() < 0.4;
             }
@@ -786,14 +836,64 @@ export class Game {
         ];
         return;
       }
-      case 'sawyer': {
-        if (home.out.plank >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
-        if (home.stock.log < 1) return rest(1, 'Waiting for logs');
-        home.status = 'Sawing planks';
+      case 'fisher': {
+        if (home.out.fish >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
+        const at = this.findTile(home, r, (t, x, y) => t.t !== 'water' && this.passable(x, y) && this.near(x, y, 1, (n) => n.t === 'water'));
+        if (!at) return rest(3, 'No shore in range');
+        home.status = 'Fishing';
+        const i = this.claim(s, at);
         s.tasks = [
-          { k: 'do', f: () => { home.stock.log--; home.busy = true; } },
-          { k: 'work', t: 5 },
-          { k: 'do', f: () => { home.out.plank++; home.busy = false; } },
+          { k: 'walk', ...at },
+          { k: 'work', t: 6, anim: 'fish' },
+          { k: 'do', f: () => { this.claimed.delete(i); s.carrying = 'fish'; } },
+          { k: 'walk', x: home.x, y: home.y },
+          { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; home.out.fish++; } },
+          { k: 'work', t: 2 },
+        ];
+        return;
+      }
+      case 'farmer': {
+        // Harvest ripe grain first, then sow new fields.
+        const ripe = home.out.grain < PILE ? this.findTile(home, r, (t) => t.crop >= 1) : null;
+        const at = ripe ?? this.findTile(home, r, this.plantable, true);
+        if (!at) return rest(3, home.out.grain >= PILE ? 'Flag is full, waiting for a carrier' : 'Waiting for the grain to ripen');
+        home.status = ripe ? 'Harvesting grain' : 'Sowing grain';
+        const i = this.claim(s, at);
+        const tile = this.world.at(at.x, at.y);
+        s.tasks = [
+          { k: 'walk', ...at },
+          { k: 'work', t: ripe ? 3 : 2.5, anim: ripe ? 'reap' : 'plant' },
+          { k: 'do', f: () => {
+            this.claimed.delete(i);
+            if (ripe && tile.crop >= 1) {
+              tile.crop = 0;
+              s.carrying = 'grain';
+            } else if (!ripe && !tile.crop && !tile.tree && !tile.b && !tile.road && !tile.flag) tile.crop = 0.02;
+          } },
+          { k: 'walk', x: home.x, y: home.y },
+          { k: 'do', f: () => {
+            if (s.carrying) home.out.grain++;
+            s.carrying = null;
+            s.onAbort = null;
+            s.inside = true;
+          } },
+          { k: 'work', t: 1.5 },
+        ];
+        return;
+      }
+      case 'sawyer':
+      case 'miller':
+      case 'baker':
+      case 'miner': {
+        const rc = RECIPES[home.type]!;
+        if (home.out[rc.to] >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
+        const g = rc.from.find((g) => home.stock[g] > 0);
+        if (!g) return rest(1, rc.waiting);
+        home.status = rc.doing;
+        s.tasks = [
+          { k: 'do', f: () => { home.stock[g]--; home.busy = true; home.using = g; } },
+          { k: 'work', t: rc.t },
+          { k: 'do', f: () => { home.out[rc.to] += rc.n; home.busy = false; home.using = null; } },
         ];
         return;
       }
@@ -855,6 +955,11 @@ export class Game {
     };
     return i;
   }
+
+  // Free grass in your land where a tree or grain can grow.
+  private plantable = (t: Tile, x: number, y: number) =>
+    t.t === 'grass' && !t.tree && !t.crop && !t.rock && !t.b && !t.road && !t.flag
+    && !!this.world.territory[y * W + x] && !this.besideBuilding(x, y);
 
   private besideBuilding(x: number, y: number) {
     for (let dy = -1; dy <= 1; dy++)

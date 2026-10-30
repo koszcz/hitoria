@@ -91,6 +91,10 @@ canvas {
 .good.log { background: #7a4a24; border-radius: 4px; }
 .good.plank { background: #d9b27a; }
 .good.stone { background: #9c9c96; border-radius: 50%; width: 10px; height: 10px; }
+.good.fish { background: #7fa8bf; border-radius: 50%; }
+.good.grain { background: #d8b84a; border-radius: 3px 3px 5px 5px; width: 9px; height: 11px; }
+.good.flour { background: #f1ece0; border-radius: 4px 4px 2px 2px; width: 10px; height: 10px; }
+.good.bread { background: #b8732e; border-radius: 6px; }
 
 #buildbar {
   position: fixed;

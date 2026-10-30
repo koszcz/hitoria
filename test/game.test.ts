@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { Game, BDEFS, SAVE_VERSION } from '../src/game';
+import { Game, BDEFS, SAVE_VERSION, bag } from '../src/game';
 import { W } from '../src/world';
 import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent } from './helpers';
 
@@ -21,7 +21,7 @@ describe('a new game', () => {
     expect(g.hq.built).toBe(true);
     const f = g.flags.get(g.hq.flag)!;
     expect(f).toMatchObject({ x: g.hq.x, y: g.hq.y + 1, building: g.hq.id });
-    expect(g.hq.stock).toEqual({ log: 6, plank: 24, stone: 14 });
+    expect(g.hq.stock).toEqual(bag({ log: 6, plank: 24, stone: 14 }));
     expect(g.population).toBe(18);
     expect(g.settlers.size).toBe(0);
   });
@@ -161,7 +161,7 @@ describe('construction', () => {
     const b = g.place('woodcutter', g.hq.x + 4, g.hq.y);
     run(g, 60);
     expect(b.built).toBe(false);
-    expect(b.stock).toEqual({ log: 0, plank: 0, stone: 0 });
+    expect(b.stock).toEqual(bag({ log: 0, plank: 0, stone: 0 }));
     expect(b.status).toBe('Needs a road to your HQ');
   });
 
@@ -378,7 +378,7 @@ describe('storehouses', () => {
   test('sites are supplied from the nearest store that has the goods', () => {
     const g = flatGame();
     const s = storehouse(g);
-    s.stock = { log: 0, plank: 5, stone: 5 };
+    s.stock = bag({ log: 0, plank: 5, stone: 5 });
     const hq = { ...g.hq.stock };
     const site = g.place('woodcutter', s.x + 3, s.y - 3);
     g.buildRoad(site.flag, g.flags.get(s.flag)!);
@@ -390,7 +390,7 @@ describe('storehouses', () => {
   test('when the nearest store runs out, a farther one sends the rest', () => {
     const g = flatGame();
     const s = storehouse(g);
-    s.stock = { log: 0, plank: 1, stone: 0 };
+    s.stock = bag({ log: 0, plank: 1, stone: 0 });
     const site = g.place('woodcutter', s.x + 3, s.y - 3);
     g.buildRoad(site.flag, g.flags.get(s.flag)!);
     runUntil(g, () => site.built, 300);
@@ -400,9 +400,9 @@ describe('storehouses', () => {
   test('the goods count adds up every store', () => {
     const g = flatGame();
     const s = storehouse(g);
-    s.stock = { log: 1, plank: 2, stone: 3 };
+    s.stock = bag({ log: 1, plank: 2, stone: 3 });
     const { log, plank, stone } = g.hq.stock;
-    expect(g.stored).toEqual({ log: log + 1, plank: plank + 2, stone: stone + 3 });
+    expect(g.stored).toEqual(bag({ log: log + 1, plank: plank + 2, stone: stone + 3 }));
   });
 
   test('an unfinished storehouse stores nothing', () => {
@@ -414,7 +414,7 @@ describe('storehouses', () => {
   test('save and load keep stored goods', () => {
     const g = flatGame();
     const s = storehouse(g);
-    s.stock = { log: 1, plank: 2, stone: 3 };
+    s.stock = bag({ log: 1, plank: 2, stone: 3 });
     const h = Game.load(JSON.parse(JSON.stringify(g.save())));
     expect(h.buildings.get(s.id)).toMatchObject({ stock: s.stock, status: 'Storing goods' });
   });
