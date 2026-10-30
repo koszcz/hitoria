@@ -16,12 +16,25 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 Needs [Bun](https://bun.sh) (no other dependencies):
 
 ```bash
-bun run dev      # http://localhost:5173  (add ?seed=123 for a fixed map)
+bun run dev      # http://localhost:5173  (add ?seed=123 to start a fixed map fresh)
 bun run build    # static build in dist/
 ```
 
 Controls: drag to pan, scroll to zoom, `1`–`5` to pick a building, `R` to draw roads, `X` to
-remove roads or flags, shift-click to place several, right-click or Esc to cancel, space to pause.
+remove roads or flags, shift-click to place several, right-click or Esc to cancel, space to pause,
+Ctrl+S (or Cmd+S) to save.
+
+## Saving
+
+The game has one save slot in your browser's local storage.
+
+- **Save** (or Ctrl+S) stores the game. It also saves by itself every minute and when you close the tab.
+- **Load** goes back to the last save. Opening the page also continues from it.
+- **New** starts a fresh island. Your next save replaces the old one.
+
+The save keeps the map, buildings, roads, flags and every good. It does not keep where settlers are.
+After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
+back to their building or flag, so nothing is lost.
 
 ## Code map
 
@@ -51,6 +64,6 @@ gets no materials.
 2. **Food chain.** Fisher, hunter, farm → mill → bakery, well. Miners and workers need food.
 3. **Mountains and mines.** Coal, iron and gold mines, smelter, toolmaker. Tools gate new workers.
 4. **Population.** Houses that grow your settler count over time.
-5. **Save and load** to localStorage, plus demolish and move buildings.
+5. **Demolish and move buildings.**
 6. **Goals instead of enemies.** Peaceful scenarios: build a monument, trade with a ship, survive winter.
 7. **Art pass.** Sprite sheets in place of the procedural shapes.

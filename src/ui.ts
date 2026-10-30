@@ -21,7 +21,7 @@ export class UI {
   paused = false;
   private buttons = new Map<Tool, HTMLButtonElement>();
 
-  constructor(private game: Game) {
+  constructor(public game: Game) {
     const bar = $('buildbar');
     BUILDABLE.forEach((type, i) => {
       const def = BDEFS[type];

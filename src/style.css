@@ -59,13 +59,20 @@ canvas {
 .pill { padding: 5px 10px; display: flex; align-items: center; gap: 6px; }
 .pill b { font-variant-numeric: tabular-nums; }
 
-#speed { margin-left: auto; display: flex; padding: 2px; }
-#speed button, .build {
+#speed, #file { display: flex; padding: 2px; }
+#file { margin-left: auto; }
+#file, #speed, #info, .build, .toast, #help {
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+#speed button, #file button, .build {
   font: inherit;
   color: inherit;
   cursor: pointer;
 }
-#speed button {
+#speed button, #file button {
   background: none;
   border: 0;
   padding: 4px 9px;

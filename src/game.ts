@@ -104,6 +104,23 @@ const PILE = 4; // max finished goods a hut keeps before its worker pauses
 const FLAG_CAP = 8;
 const FLAG_SPACING = 4; // new roads get a flag about this often
 
+export const SAVE_VERSION = 1;
+
+// A saved game. The map is rebuilt from the seed; only what changes during play is stored.
+// Settlers are not stored: on load everyone is back in the HQ and the dispatcher sends them out again.
+export interface SaveData {
+  v: number;
+  seed: number;
+  time: number;
+  pool: number;
+  nextId: number;
+  hq: number;
+  tiles: [tree: number, conifer: number, rock: number, b: number, flag: number, road: number][];
+  buildings: Building[];
+  flags: Flag[];
+  roads: Road[];
+}
+
 export class Game {
   world: World;
   buildings = new Map<number, Building>();
@@ -123,7 +140,7 @@ export class Game {
   private dispatchT = 0;
   private growT = 0;
 
-  constructor(seed: number) {
+  constructor(readonly seed: number) {
     this.world = new World(seed);
     const { x, y } = this.world.start;
     this.hq = this.addBuilding('hq', x, y);
@@ -131,6 +148,52 @@ export class Game {
     this.hq.progress = 1;
     this.hq.stock = bag({ log: 6, plank: 24, stone: 14 });
     this.computeTerritory();
+  }
+
+  save(): SaveData {
+    const buildings = structuredClone([...this.buildings.values()]);
+    const flags = structuredClone([...this.flags.values()]);
+    const roads = structuredClone([...this.roads.values()]);
+    const bs = new Map(buildings.map((b) => [b.id, b]));
+    const fs = new Map(flags.map((f) => [f.id, f]));
+    // Put back whatever settlers are holding, so no goods are lost when they all go home.
+    for (const s of this.settlers.values()) {
+      const r = this.roads.get(s.home);
+      if (s.item && r) fs.get(s.ri < r.path.length / 2 ? r.a : r.b)!.items.push({ ...s.item });
+      if (s.role === 'carrier') continue;
+      const home = bs.get(s.home);
+      if (!home) continue;
+      if (s.carrying) home.out[s.carrying]++;
+      if (s.role === 'sawyer' && home.busy) home.stock.log++;
+    }
+    for (const b of buildings) {
+      b.worker = b.builder = 0;
+      b.busy = false;
+      if (b.type !== 'hq') b.status = b.built ? 'Waiting for a worker' : 'Waiting for a builder';
+    }
+    for (const r of roads) r.carrier = 0;
+    return {
+      v: SAVE_VERSION, seed: this.seed, time: this.time, pool: this.population, nextId: this.nextId, hq: this.hq.id,
+      tiles: this.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road]),
+      buildings, flags, roads,
+    };
+  }
+
+  static load(d: SaveData): Game {
+    if (d.v !== SAVE_VERSION) throw new Error('This save is from a different version of Hitoria');
+    const g = new Game(d.seed);
+    d.tiles.forEach(([tree, conifer, rock, b, flag, road], i) =>
+      Object.assign(g.world.tiles[i], { tree, conifer: !!conifer, rock, b, flag, road }));
+    g.buildings = new Map(d.buildings.map((b) => [b.id, b]));
+    g.flags = new Map(d.flags.map((f) => [f.id, f]));
+    g.roads = new Map(d.roads.map((r) => [r.id, r]));
+    g.hq = g.buildings.get(d.hq)!;
+    g.pool = d.pool;
+    g.time = d.time;
+    g.nextId = d.nextId;
+    g.net++;
+    g.computeTerritory();
+    return g;
   }
 
   get population() {

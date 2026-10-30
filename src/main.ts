@@ -1,16 +1,70 @@
-import { Game, BUILDABLE, BType } from './game';
+import { Game, BUILDABLE, BType, SaveData } from './game';
 import { Renderer } from './render';
 import { UI } from './ui';
 import type { P } from './path';
 
+const SAVE_KEY = 'hitoria.save';
+const AUTOSAVE = 60; // seconds
+
+function readSave(): Game | null {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (!raw) return null;
+  try {
+    return Game.load(JSON.parse(raw) as SaveData);
+  } catch (err) {
+    console.warn('Could not load the save', err);
+    return null;
+  }
+}
+
+// A ?seed= link always starts that island fresh; otherwise carry on from the last save.
 const params = new URLSearchParams(location.search);
-const seed = Number(params.get('seed')) || Math.floor(Math.random() * 1e9);
-const game = new Game(seed);
+const seed = Number(params.get('seed'));
+const saved = seed ? null : readSave();
+let game = saved ?? new Game(seed || Math.floor(Math.random() * 1e9));
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const renderer = new Renderer(canvas);
 const ui = new UI(game);
 renderer.centerOn(game.hq.x, game.hq.y);
-ui.toast('Welcome! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
+ui.toast(saved
+  ? 'Welcome back! Your settlers are heading back to work.'
+  : 'Welcome! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
+
+function save(quiet = false) {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(game.save()));
+    if (!quiet) ui.toast('Game saved');
+  } catch (err) {
+    console.warn('Could not save', err);
+    ui.toast('Could not save the game. The browser storage may be full or blocked.');
+  }
+}
+
+function play(g: Game) {
+  game = g;
+  ui.game = g;
+  ui.setPlacing(null);
+  ui.select(0);
+  renderer.centerOn(g.hq.x, g.hq.y);
+  Object.assign(window, { game });
+}
+
+for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
+  btn.onclick = () => {
+    const what = btn.dataset.file;
+    if (what === 'save') return save();
+    if (what === 'load') {
+      const g = readSave();
+      if (!g) return ui.toast('There is no saved game yet');
+      play(g);
+      return ui.toast('Loaded your last save');
+    }
+    if (!confirm('Start a new island? Your next save will replace the current one.')) return;
+    play(new Game(Math.floor(Math.random() * 1e9)));
+    ui.toast('A new island! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
+  };
+}
+addEventListener('pagehide', () => save(true));
 
 let hover: P | null = null;
 let preview: P[] | null = null;
@@ -51,6 +105,10 @@ canvas.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    return save();
+  }
   keys.add(e.key.toLowerCase());
   if (e.key === 'Escape') cancel();
   if (e.key === 'r' || e.key === 'R') ui.setPlacing(ui.placing === 'road' ? null : 'road');
@@ -99,6 +157,7 @@ const STEP = 1 / 30;
 let last = performance.now();
 let acc = 0;
 let uiT = 0;
+let saveT = AUTOSAVE;
 
 function frame(now: number) {
   const dt = Math.min(0.25, (now - last) / 1000);
@@ -134,6 +193,11 @@ function frame(now: number) {
   if (uiT <= 0) {
     uiT = 0.2;
     ui.refresh();
+  }
+  saveT -= dt;
+  if (saveT <= 0) {
+    saveT = AUTOSAVE;
+    save(true);
   }
   requestAnimationFrame(frame);
 }
