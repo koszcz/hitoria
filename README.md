@@ -17,7 +17,7 @@ Needs [Bun](https://bun.sh). The only library is [Three.js](https://threejs.org)
 
 ```bash
 bun install      # first time only
-bun run dev      # http://localhost:5173  (add ?seed=123 to start a fixed map fresh)
+bun run dev      # http://main.localhost:5173  (add ?seed=123 to start a fixed map fresh)
 bun run build    # static build in dist/
 bun test         # game logic tests in test/
 ```
@@ -25,6 +25,29 @@ bun test         # game logic tests in test/
 Controls: drag to pan, scroll to zoom, `1`–`5` to pick a building, `R` to draw roads, `X` to
 remove roads or flags, shift-click to place several, right-click or Esc to cancel, space to pause,
 Ctrl+S (or Cmd+S) to save.
+
+## Running several copies
+
+You can work on several branches at once, each in its own git worktree. Each copy of the dev
+server gets its own address, named after its branch:
+
+| Branch | Address |
+| --- | --- |
+| `main` | http://main.localhost:5173 |
+| `claude/new-roads` | http://claude-new-roads.localhost:5173 |
+
+To use it:
+
+1. Run `bun run dev` in each worktree. It prints the address to open.
+2. Open http://localhost:5173 to see every copy that is running.
+
+Things to know:
+
+- Each address has its own save, because browsers keep local storage per address.
+- Crash and problem reports go to `reports/` in the worktree that served the page.
+- To pick a different name, set `DEV_NAME`, for example `DEV_NAME=try2 bun run dev`.
+- Port 5173 must be free for the first copy you start. If that copy stops, another running copy
+  takes over the port within a few seconds.
 
 ## Saving
 
