@@ -1,8 +1,6 @@
-import { Game, BDEFS, BUILDABLE, BType, GOODS, Good, Bag } from './game';
+import { Game, BDEFS, BUILDABLE, BType, GOODS, Bag } from './game';
+import { GOOD_NAME, buildFacts, buildNow } from './buildinfo';
 
-const GOOD_NAME: Record<Good, string> = {
-  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread',
-};
 const $ = (id: string) => document.getElementById(id)!;
 
 const costText = (cost: Partial<Bag>) =>
@@ -22,6 +20,7 @@ export class UI {
   speed = 1;
   paused = false;
   private buttons = new Map<Tool, HTMLButtonElement>();
+  private hover: BType | null = null;
 
   constructor(public game: Game) {
     const bar = $('buildbar');
@@ -29,9 +28,11 @@ export class UI {
       const def = BDEFS[type];
       const btn = document.createElement('button');
       btn.className = 'build';
-      btn.title = i < 9 ? `${def.desc} (key ${i + 1})` : def.desc;
+      btn.dataset.key = i < 9 ? String(i + 1) : '';
       btn.innerHTML = `<span class="icon">${def.icon}</span><span class="name">${def.name}</span><span class="cost">${costText(def.cost)}</span>`;
       btn.onclick = () => this.setPlacing(this.placing === type ? null : type);
+      btn.onmouseenter = btn.onfocus = () => this.showCard(type, btn);
+      btn.onmouseleave = btn.onblur = () => this.showCard(null, btn);
       bar.appendChild(btn);
       this.buttons.set(type, btn);
     });
@@ -55,6 +56,34 @@ export class UI {
         this.refresh();
       };
     }
+  }
+
+  // A card above the build bar that explains what a building is worth.
+  private showCard(type: BType | null, btn: HTMLButtonElement) {
+    this.hover = type;
+    const card = $('buildcard');
+    if (!type) {
+      card.hidden = true;
+      return;
+    }
+    const def = BDEFS[type];
+    const facts = buildFacts(type);
+    const now = buildNow(this.game, type);
+    const key = btn.dataset.key ? `<kbd>${btn.dataset.key}</kbd>` : '';
+    const items = (xs: string[]) => xs.map((x) => `<li>${x}</li>`).join('');
+    card.innerHTML =
+      `<h3><span class="icon">${def.icon}</span>${def.name}${key}</h3>` +
+      `<p class="makes">${facts.makes}</p>` +
+      (facts.worth.length ? `<h4>Why build it</h4><ul>${items(facts.worth)}</ul>` : '') +
+      `<h4>What it needs</h4><ul>${items(facts.needs)}</ul>` +
+      `<p class="costline">Costs ${costText(def.cost)}</p>` +
+      `<p class="have">${now.have}</p>` +
+      now.warn.map((w) => `<p class="warn">⚠ ${w}</p>`).join('');
+    card.hidden = false;
+    const r = btn.getBoundingClientRect();
+    const w = card.offsetWidth;
+    card.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2))}px`;
+    card.style.bottom = `${innerHeight - r.top + 8}px`;
   }
 
   setPlacing(type: Tool | null) {
@@ -89,6 +118,7 @@ export class UI {
       `<div class="pill">🧑‍🌾 <b>${g.pool}</b> idle / ${busy} busy</div>`;
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);
+    if (this.hover) this.showCard(this.hover, this.buttons.get(this.hover)!);
     for (const btn of document.querySelectorAll<HTMLButtonElement>('#speed button')) {
       const v = btn.dataset.speed;
       btn.classList.toggle('active', v === 'pause' ? this.paused : !this.paused && Number(v) === this.speed);

@@ -50,7 +50,7 @@ canvas {
 
 #res { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.pill, #speed, #info, .build, .toast, #help {
+.pill, #speed, #info, #buildcard, .build, .toast, #help {
   background: var(--panel);
   border: 1px solid var(--edge);
   border-radius: 8px;
@@ -61,7 +61,7 @@ canvas {
 
 #speed, #file { display: flex; padding: 2px; }
 #file { margin-left: auto; }
-#file, #speed, #info, .build, .toast, #help {
+#file, #speed, #info, #buildcard, .build, .toast, #help {
   background: var(--panel);
   border: 1px solid var(--edge);
   border-radius: 8px;
@@ -136,6 +136,25 @@ canvas {
 #info .status { margin: 0 0 8px; font-style: italic; }
 #info .warn { margin: 0 0 8px; color: #ffb36b; font-weight: 600; }
 .build.tool { margin-left: 4px; }
+
+#buildcard {
+  position: fixed;
+  width: 300px;
+  padding: 12px 14px;
+  pointer-events: none;
+  z-index: 5;
+}
+#buildcard h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font: 700 15px Georgia, serif; color: var(--gold); }
+#buildcard h3 .icon { font-size: 20px; }
+#buildcard kbd { margin-left: auto; padding: 1px 6px; border: 1px solid var(--edge); border-radius: 4px; font: 600 11px system-ui, sans-serif; color: var(--muted); }
+#buildcard h4 { margin: 8px 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+#buildcard ul { margin: 0; padding-left: 18px; }
+#buildcard li { margin: 1px 0; }
+#buildcard p { margin: 0; }
+#buildcard .makes { font-weight: 600; }
+#buildcard .costline { margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+#buildcard .have { margin-top: 6px; font-style: italic; color: var(--muted); }
+#buildcard .warn { margin-top: 4px; color: #ffb36b; font-weight: 600; }
 #info .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
 #info .bar i { display: block; height: 100%; background: var(--gold); }
 

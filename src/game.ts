@@ -41,7 +41,7 @@ export const BDEFS: Record<BType, BDef> = {
 export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine'];
 
 // Workshops turn goods into other goods inside the building. With several inputs, any one of them will do.
-interface Recipe {
+export interface Recipe {
   from: Good[];
   to: Good;
   n: number; // goods made from one input
@@ -49,7 +49,7 @@ interface Recipe {
   doing: string;
   waiting: string;
 }
-const RECIPES: Partial<Record<BType, Recipe>> = {
+export const RECIPES: Partial<Record<BType, Recipe>> = {
   sawmill: { from: ['log'], to: 'plank', n: 1, t: 5, doing: 'Sawing planks', waiting: 'Waiting for logs' },
   mill: { from: ['grain'], to: 'flour', n: 1, t: 5, doing: 'Grinding flour', waiting: 'Waiting for grain' },
   bakery: { from: ['flour'], to: 'bread', n: 1, t: 6, doing: 'Baking bread', waiting: 'Waiting for flour' },
@@ -128,7 +128,7 @@ const ROAD_SPEED = 1.5; // multiplier on roads
 const PILE = 4; // max finished goods a hut keeps before its worker pauses
 const FLAG_CAP = 8;
 const FLAG_SPACING = 4; // new roads get a flag about this often
-const CROP_GROW = 60; // seconds for sown grain to ripen
+export const CROP_GROW = 60; // seconds for sown grain to ripen
 
 export const SAVE_VERSION = 2;
 
