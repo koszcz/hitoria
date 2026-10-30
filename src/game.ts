@@ -37,20 +37,44 @@ export interface Building {
   type: BType;
   x: number;
   y: number;
+  flag: number; // the flag in front of the door, at (x, y + 1)
   built: boolean;
   progress: number; // construction 0..1
   stock: Bag; // construction materials or production inputs (the HQ's warehouse)
-  out: Bag; // finished goods waiting for a carrier
-  incoming: Bag; // goods a carrier is on the way with
-  reserved: Bag; // goods a carrier is on the way to fetch
+  out: Bag; // finished goods waiting for room on the flag
+  incoming: Bag; // goods already routed here
   worker: number;
   builder: number;
   busy: boolean;
   status: string;
 }
 
+// A good lying on a flag, on its way to building `dest` (0 = not decided yet).
+export interface Item {
+  g: Good;
+  dest: number;
+}
+
+export interface Flag {
+  id: number;
+  x: number;
+  y: number;
+  items: Item[];
+  roads: number[];
+  building: number;
+}
+
+// A road runs between two flags; `path` includes both flag tiles. One carrier works each road.
+export interface Road {
+  id: number;
+  a: number;
+  b: number;
+  path: P[];
+  carrier: number;
+}
+
 type Task =
-  | { k: 'walk'; x: number; y: number; adjacent?: boolean }
+  | { k: 'walk'; x: number; y: number; adjacent?: boolean; via?: P[] }
   | { k: 'work'; t: number; anim?: Anim }
   | { k: 'do'; f: () => boolean | void };
 
@@ -62,7 +86,9 @@ export interface Settler {
   path: P[] | null;
   tasks: Task[];
   carrying: Good | null;
-  home: number;
+  item: Item | null; // what a road carrier holds
+  ri: number; // a road carrier's index along its road
+  home: number; // building, or road for carriers
   inside: boolean;
   atWork: boolean;
   returning: boolean;
@@ -73,19 +99,27 @@ export interface Settler {
 }
 
 const SPEED = 1.7; // tiles per second
+const ROAD_SPEED = 1.5; // multiplier on roads
 const PILE = 4; // max finished goods a hut keeps before its worker pauses
+const FLAG_CAP = 8;
+const FLAG_SPACING = 4; // new roads get a flag about this often
 
 export class Game {
   world: World;
   buildings = new Map<number, Building>();
   settlers = new Map<number, Settler>();
+  flags = new Map<number, Flag>();
+  roads = new Map<number, Road>();
   hq: Building;
   pool = 18; // idle settlers inside the HQ
   time = 0;
+  net = 0; // bumped whenever the road network changes
   toasts: string[] = [];
   private nextId = 1;
   private claimed = new Set<number>(); // tiles a worker is heading to
   private snubbed = new Map<number, number>(); // unreachable tiles -> retry time
+  private dist = new Map<number, Map<number, number>>(); // per destination flag, cached for `distNet`
+  private distNet = -1;
   private dispatchT = 0;
   private growT = 0;
 
@@ -108,19 +142,38 @@ export class Game {
     return t.t !== 'water' && t.t !== 'mountain' && t.tree < 0.5 && t.rock === 0 && t.b === 0;
   };
 
-  canPlace(type: BType, x: number, y: number): string | null {
-    if (!this.world.inside(x, y)) return 'Outside the map';
+  private walkCost = (x: number, y: number) => {
     const t = this.world.at(x, y);
-    if (t.b) return 'Occupied';
+    return t.road || t.flag ? 1 / ROAD_SPEED : 1;
+  };
+
+  private roadable = (x: number, y: number) => {
+    if (!this.world.inside(x, y) || !this.world.territory[y * W + x]) return false;
+    const t = this.world.at(x, y);
+    return (t.t === 'grass' || t.t === 'sand') && !t.tree && !t.rock && !t.b && !t.road && !t.flag;
+  };
+
+  // A flag may go on free ground or on a road, but never right next to another flag.
+  private flaggable(x: number, y: number) {
+    if (!this.world.inside(x, y)) return false;
+    if (!this.world.at(x, y).road && !this.roadable(x, y)) return false;
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++)
+        if (this.world.inside(x + dx, y + dy) && this.world.at(x + dx, y + dy).flag) return false;
+    return true;
+  }
+
+  canPlace(type: BType, x: number, y: number): string | null {
+    if (!this.world.inside(x, y) || !this.world.inside(x, y + 1)) return 'Outside the map';
+    const t = this.world.at(x, y);
+    if (t.b || t.flag || t.road) return 'Occupied';
     if (!this.world.territory[y * W + x]) return 'Outside your land';
     if (t.t !== 'grass') return 'Needs flat grass';
     if (t.tree) return 'A tree is in the way';
     if (t.rock) return 'A boulder is in the way';
-    let access = false;
-    for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++)
-        if ((dx || dy) && this.world.inside(x + dx, y + dy) && this.passable(x + dx, y + dy)) access = true;
-    if (!access) return 'No free tile to reach it';
+    const front = this.world.at(x, y + 1);
+    const flagOk = front.flag ? !this.flags.get(front.flag)!.building : this.flaggable(x, y + 1);
+    if (!flagOk) return 'No room for its flag in front';
     if (!findPath(this.hq.x, this.hq.y, x, y, this.passable)) return 'Settlers cannot walk there';
     return BDEFS[type] ? null : 'Unknown building';
   }
@@ -129,6 +182,11 @@ export class Game {
     const b = this.addBuilding(type, x, y);
     b.status = 'Waiting for a builder';
     return b;
+  }
+
+  // Is the building joined to the HQ by roads?
+  linked(b: Building) {
+    return this.distTo(b.flag).has(this.hq.flag);
   }
 
   update(dt: number) {
@@ -147,6 +205,188 @@ export class Game {
     for (const s of this.settlers.values()) this.step(s, dt);
   }
 
+  // --- roads and flags -----------------------------------------------------
+
+  flagAt(t: P): Flag | null {
+    if (!this.world.inside(t.x, t.y)) return null;
+    const tile = this.world.at(t.x, t.y);
+    if (tile.flag) return this.flags.get(tile.flag)!;
+    if (tile.b) return this.flags.get(this.buildings.get(tile.b)!.flag)!;
+    return null;
+  }
+
+  // Where a road may start: an existing flag, a building's flag, or a new flag on free ground or a road.
+  startFlag(t: P): Flag | string {
+    const f = this.flagAt(t);
+    if (f) return f;
+    if (this.flaggable(t.x, t.y)) return this.ensureFlag(t.x, t.y);
+    return 'Roads start at a flag, a building, or free ground away from other flags';
+  }
+
+  // The tiles a road from `fromId` to `t` would use, both flag tiles included.
+  planRoad(fromId: number, t: P): P[] | null {
+    const from = this.flags.get(fromId);
+    if (!from || !this.world.inside(t.x, t.y)) return null;
+    const end = this.flagAt(t) ?? t;
+    if (end.x === from.x && end.y === from.y) return null;
+    if (!this.world.at(end.x, end.y).flag && !this.flaggable(end.x, end.y)) return null;
+    const p = findPath(from.x, from.y, end.x, end.y, this.roadable, 3000);
+    return p ? [{ x: from.x, y: from.y }, ...p] : null;
+  }
+
+  buildRoad(fromId: number, t: P): Flag | string {
+    const path = this.planRoad(fromId, t);
+    if (!path) return 'No room for a road there';
+    const last = path[path.length - 1];
+    const end = this.ensureFlag(last.x, last.y);
+    this.createRoad(fromId, end.id, path);
+    // Flags along long roads let several carriers share the work.
+    let since = 0;
+    for (let i = 1; i < path.length - 2; i++) {
+      if (++since < FLAG_SPACING || !this.flaggable(path[i].x, path[i].y)) continue;
+      this.ensureFlag(path[i].x, path[i].y);
+      since = 0;
+    }
+    return end;
+  }
+
+  removeAt(t: P): string | null {
+    if (!this.world.inside(t.x, t.y)) return 'Nothing to remove here';
+    const tile = this.world.at(t.x, t.y);
+    if (tile.flag) return this.removeFlag(tile.flag);
+    if (tile.road) {
+      this.removeRoad(tile.road);
+      return null;
+    }
+    if (tile.b) return 'Demolishing buildings is not in yet';
+    return 'Nothing to remove here';
+  }
+
+  private newFlag(x: number, y: number) {
+    const f: Flag = { id: this.nextId++, x, y, items: [], roads: [], building: 0 };
+    this.flags.set(f.id, f);
+    this.world.at(x, y).flag = f.id;
+    this.net++;
+    return f;
+  }
+
+  private ensureFlag(x: number, y: number): Flag {
+    const tile = this.world.at(x, y);
+    if (tile.flag) return this.flags.get(tile.flag)!;
+    if (tile.road) return this.splitRoad(tile.road, x, y);
+    return this.newFlag(x, y);
+  }
+
+  private createRoad(a: number, b: number, path: P[]) {
+    const r: Road = { id: this.nextId++, a, b, path, carrier: 0 };
+    for (let i = 1; i < path.length - 1; i++) this.world.at(path[i].x, path[i].y).road = r.id;
+    this.flags.get(a)!.roads.push(r.id);
+    this.flags.get(b)!.roads.push(r.id);
+    this.roads.set(r.id, r);
+    this.net++;
+    return r;
+  }
+
+  private splitRoad(rid: number, x: number, y: number) {
+    const r = this.roads.get(rid)!;
+    const i = r.path.findIndex((p) => p.x === x && p.y === y);
+    this.removeRoad(rid);
+    const f = this.newFlag(x, y);
+    this.createRoad(r.a, f.id, r.path.slice(0, i + 1));
+    this.createRoad(f.id, r.b, r.path.slice(i));
+    return f;
+  }
+
+  private removeRoad(rid: number) {
+    const r = this.roads.get(rid);
+    if (!r) return;
+    for (const p of r.path) {
+      const t = this.world.at(p.x, p.y);
+      if (t.road === rid) t.road = 0;
+    }
+    for (const fid of [r.a, r.b]) {
+      const f = this.flags.get(fid);
+      if (f) f.roads = f.roads.filter((id) => id !== rid);
+    }
+    this.roads.delete(rid);
+    this.net++;
+    const s = this.settlers.get(r.carrier);
+    if (!s) return;
+    if (s.item) {
+      const f = this.flags.get(s.ri < r.path.length / 2 ? r.a : r.b);
+      if (f) f.items.push(s.item);
+      else this.dropItem(s.item);
+    }
+    s.item = null;
+    s.carrying = null;
+    s.onAbort = null;
+    s.atWork = false;
+    s.home = 0;
+    s.path = null;
+    s.walking = false;
+    s.anim = '';
+    s.tasks = [{ k: 'walk', x: this.hq.x, y: this.hq.y }, { k: 'do', f: () => this.despawn(s) }];
+  }
+
+  private removeFlag(fid: number): string | null {
+    const f = this.flags.get(fid)!;
+    if (f.building) return "A building's own flag can't be removed";
+    for (const rid of [...f.roads]) this.removeRoad(rid);
+    for (const it of f.items) this.dropItem(it);
+    this.world.at(f.x, f.y).flag = 0;
+    this.flags.delete(fid);
+    this.net++;
+    return null;
+  }
+
+  // Goods stranded by a removed road or flag go back into the HQ's stock.
+  private dropItem(it: Item) {
+    const dest = this.buildings.get(it.dest);
+    if (dest) dest.incoming[it.g]--;
+    this.hq.stock[it.g]++;
+  }
+
+  // Road distance from every flag to flag `to` (only flags connected to it appear).
+  private distTo(to: number) {
+    if (this.distNet !== this.net) {
+      this.dist.clear();
+      this.distNet = this.net;
+    }
+    let d = this.dist.get(to);
+    if (d) return d;
+    d = new Map([[to, 0]]);
+    const open = [to];
+    while (open.length) {
+      let bi = 0;
+      for (let i = 1; i < open.length; i++) if (d.get(open[i])! < d.get(open[bi])!) bi = i;
+      const cur = open.splice(bi, 1)[0];
+      const cd = d.get(cur)!;
+      for (const rid of this.flags.get(cur)!.roads) {
+        const r = this.roads.get(rid)!;
+        const o = r.a === cur ? r.b : r.a;
+        const nd = cd + r.path.length - 1;
+        if (nd < (d.get(o) ?? Infinity)) {
+          if (!d.has(o)) open.push(o);
+          d.set(o, nd);
+        }
+      }
+    }
+    this.dist.set(to, d);
+    return d;
+  }
+
+  // The road a good on flag `f` should take next to reach flag `to`.
+  private nextRoad(f: Flag, to: number) {
+    const dist = this.distTo(to);
+    let best = 0, bd = Infinity;
+    for (const rid of f.roads) {
+      const r = this.roads.get(rid)!;
+      const d = r.path.length - 1 + (dist.get(r.a === f.id ? r.b : r.a) ?? Infinity);
+      if (d < bd) { bd = d; best = rid; }
+    }
+    return best;
+  }
+
   // --- logistics -----------------------------------------------------------
 
   private want(b: Building, g: Good) {
@@ -155,12 +395,22 @@ export class Game {
     return 0;
   }
 
-  private avail(b: Building, g: Good) {
-    return (b === this.hq ? b.stock[g] : b.built ? b.out[g] : 0) - b.reserved[g];
+  private missing(b: Building, g: Good) {
+    return this.want(b, g) - b.stock[g] - b.incoming[g];
   }
 
   private dispatch() {
-    // Builders and workers come out of the HQ for every site and hut that lacks one.
+    // Staff: a carrier for every road, a builder for every site, a worker for every hut.
+    for (const r of this.roads.values()) {
+      if (r.carrier) continue;
+      const s = this.takeSettler('carrier');
+      if (!s) break;
+      r.carrier = s.id;
+      s.home = r.id;
+      const mid = r.path.length >> 1;
+      s.onAbort = () => { r.carrier = 0; this.despawn(s); };
+      s.tasks = [{ k: 'walk', ...r.path[mid] }, { k: 'do', f: () => { s.atWork = true; s.ri = mid; s.onAbort = null; } }];
+    }
     for (const b of this.buildings.values()) {
       if (!b.built && !b.builder) {
         const s = this.takeSettler('builder');
@@ -180,97 +430,78 @@ export class Game {
         s.tasks = [{ k: 'walk', x: b.x, y: b.y }, { k: 'do', f: () => { s.inside = true; s.onAbort = null; } }];
       }
     }
-    // Deliver what buildings ask for, from the nearest source.
-    for (const b of this.buildings.values()) {
-      for (const g of GOODS) {
-        let missing = this.want(b, g) - b.stock[g] - b.incoming[g];
-        while (missing-- > 0) {
-          const src = this.nearest(b, (o) => o !== b && this.avail(o, g) > 0);
-          if (!src) break;
-          const c = this.findCarrier(src);
-          if (!c) return;
-          this.haul(c, src, b, g);
-        }
-      }
-    }
-    // Anything left in a hut goes home to the HQ.
+
+    // Finished goods go out onto the building's flag.
     for (const b of this.buildings.values()) {
       if (b === this.hq || !b.built) continue;
-      for (const g of GOODS) {
-        while (this.avail(b, g) > 0) {
-          const c = this.findCarrier(b);
-          if (!c) return;
-          this.haul(c, b, this.hq, g);
+      const f = this.flags.get(b.flag)!;
+      for (const g of GOODS)
+        while (b.out[g] > 0 && f.items.length < FLAG_CAP) {
+          b.out[g]--;
+          f.items.push({ g, dest: 0 });
         }
-      }
     }
-  }
 
-  private nearest(to: P, ok: (b: Building) => boolean) {
-    let best: Building | null = null, bd = Infinity;
+    // Every good on a flag gets somewhere to go; goods at their destination's flag go inside.
+    for (const f of this.flags.values()) {
+      f.items = f.items.filter((it) => {
+        let dest = this.buildings.get(it.dest);
+        if (dest && !this.distTo(dest.flag).has(f.id)) {
+          dest.incoming[it.g]--;
+          it.dest = 0;
+          dest = undefined;
+        }
+        if (!dest) {
+          dest = this.pickDest(f, it.g);
+          if (!dest) return true;
+          it.dest = dest.id;
+          dest.incoming[it.g]++;
+        }
+        if (dest.flag !== f.id) return true;
+        dest.incoming[it.g]--;
+        dest.stock[it.g]++;
+        return false;
+      });
+    }
+
+    // The HQ sends out what buildings still need.
+    const hf = this.flags.get(this.hq.flag)!;
     for (const b of this.buildings.values()) {
-      if (!ok(b)) continue;
-      const d = Math.hypot(b.x - to.x, b.y - to.y);
-      if (d < bd) { bd = d; best = b; }
+      if (b === this.hq || !this.linked(b)) continue;
+      for (const g of GOODS)
+        while (this.missing(b, g) > 0 && this.hq.stock[g] > 0 && hf.items.length < FLAG_CAP) {
+          this.hq.stock[g]--;
+          b.incoming[g]++;
+          hf.items.push({ g, dest: b.id });
+        }
     }
-    return best;
   }
 
-  private findCarrier(near: P) {
-    let best: Settler | null = null, bd = Infinity;
-    for (const s of this.settlers.values()) {
-      if (s.role !== 'carrier' || (s.tasks.length && !s.returning)) continue;
-      const d = Math.hypot(s.x - near.x, s.y - near.y);
-      if (d < bd) { bd = d; best = s; }
+  // Nearest building (by road) that wants this good, else the HQ.
+  private pickDest(f: Flag, g: Good) {
+    let best: Building | undefined, bd = Infinity;
+    for (const b of this.buildings.values()) {
+      if (b === this.hq || this.missing(b, g) <= 0) continue;
+      const d = this.distTo(b.flag).get(f.id);
+      if (d !== undefined && d < bd) { bd = d; best = b; }
     }
-    if (this.pool > 0 && Math.hypot(this.hq.x - near.x, this.hq.y - near.y) < bd) return this.takeSettler('carrier');
-    if (best) {
-      best.tasks = [];
-      best.path = null;
-      best.walking = false;
-      best.returning = false;
-    }
+    if (!best && this.distTo(this.hq.flag).has(f.id)) best = this.hq;
     return best;
-  }
-
-  private haul(c: Settler, src: Building, dst: Building, g: Good) {
-    src.reserved[g]++;
-    dst.incoming[g]++;
-    let picked = false;
-    c.onAbort = () => {
-      if (picked) this.hq.stock[g]++; // dropped goods find their way back to the HQ
-      else src.reserved[g]--;
-      dst.incoming[g]--;
-      c.carrying = null;
-    };
-    c.tasks = [
-      { k: 'walk', x: src.x, y: src.y },
-      { k: 'do', f: () => {
-        src.reserved[g]--;
-        if (src === this.hq) src.stock[g]--; else src.out[g]--;
-        picked = true;
-        c.carrying = g;
-      } },
-      { k: 'walk', x: dst.x, y: dst.y },
-      { k: 'do', f: () => {
-        dst.incoming[g]--;
-        dst.stock[g]++;
-        c.carrying = null;
-        c.onAbort = null;
-      } },
-    ];
   }
 
   // --- buildings -----------------------------------------------------------
 
   private addBuilding(type: BType, x: number, y: number) {
     const b: Building = {
-      id: this.nextId++, type, x, y, built: false, progress: 0,
-      stock: bag(), out: bag(), incoming: bag(), reserved: bag(),
+      id: this.nextId++, type, x, y, flag: 0, built: false, progress: 0,
+      stock: bag(), out: bag(), incoming: bag(),
       worker: 0, builder: 0, busy: false, status: '',
     };
     this.buildings.set(b.id, b);
     this.world.at(x, y).b = b.id;
+    const f = this.ensureFlag(x, y + 1);
+    f.building = b.id;
+    b.flag = f.id;
     return b;
   }
 
@@ -326,7 +557,7 @@ export class Game {
     if (this.pool <= 0) return null;
     this.pool--;
     const s: Settler = {
-      id: this.nextId++, role, x: this.hq.x, y: this.hq.y, path: null, tasks: [], carrying: null,
+      id: this.nextId++, role, x: this.hq.x, y: this.hq.y, path: null, tasks: [], carrying: null, item: null, ri: 0,
       home: 0, inside: false, atWork: false, returning: false, walking: false, anim: '', facing: 1, onAbort: null,
     };
     this.settlers.set(s.id, s);
@@ -373,7 +604,7 @@ export class Game {
       }
     } else {
       if (!s.path) {
-        const p = findPath(Math.round(s.x), Math.round(s.y), t.x, t.y, this.passable);
+        const p = t.via ? [...t.via] : findPath(Math.round(s.x), Math.round(s.y), t.x, t.y, this.passable, 6000, this.walkCost);
         if (!p) return this.abort(s);
         if (t.adjacent) p.pop();
         s.path = p;
@@ -381,7 +612,8 @@ export class Game {
       }
       s.walking = true;
       s.anim = '';
-      let left = SPEED * dt;
+      const here = this.world.at(Math.round(s.x), Math.round(s.y));
+      let left = SPEED * dt * (here.road || here.flag ? ROAD_SPEED : 1);
       while (left > 0 && s.path.length) {
         const n = s.path[0];
         const dx = n.x - s.x, dy = n.y - s.y;
@@ -407,12 +639,7 @@ export class Game {
   }
 
   private idle(s: Settler) {
-    if (s.role === 'carrier') {
-      if (s.returning) return;
-      s.returning = true;
-      s.tasks = [{ k: 'walk', x: this.hq.x, y: this.hq.y }, { k: 'do', f: () => this.despawn(s) }];
-      return;
-    }
+    if (s.role === 'carrier') return this.carry(s);
     const home = this.buildings.get(s.home);
     if (!home || s.role === 'builder') return;
     const rest = (t: number, status: string) => {
@@ -426,7 +653,7 @@ export class Game {
       case 'stonecutter': {
         const wood = s.role === 'woodcutter';
         const good: Good = wood ? 'log' : 'stone';
-        if (home.out[good] >= PILE) return rest(2, 'Waiting for a carrier');
+        if (home.out[good] >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
         const at = this.findTile(home, r, (t) => (wood ? t.tree >= 1 : t.rock > 0));
         if (!at) return rest(3, wood ? 'No grown trees in range' : 'No boulders in range');
         home.status = wood ? 'Felling a tree' : 'Breaking stone';
@@ -447,7 +674,7 @@ export class Game {
         return;
       }
       case 'forester': {
-        const at = this.findTile(home, r, (t, x, y) => t.t === 'grass' && !t.tree && !t.rock && !t.b
+        const at = this.findTile(home, r, (t, x, y) => t.t === 'grass' && !t.tree && !t.rock && !t.b && !t.road && !t.flag
           && !!this.world.territory[y * W + x] && !this.besideBuilding(x, y), true);
         if (!at) return rest(4, 'No free ground to plant on');
         home.status = 'Planting a tree';
@@ -458,7 +685,7 @@ export class Game {
           { k: 'work', t: 2.5, anim: 'plant' },
           { k: 'do', f: () => {
             this.claimed.delete(i);
-            if (!tile.tree && !tile.b) {
+            if (!tile.tree && !tile.b && !tile.road && !tile.flag) {
               tile.tree = 0.05;
               tile.conifer = Math.random() < 0.4;
             }
@@ -470,7 +697,7 @@ export class Game {
         return;
       }
       case 'sawyer': {
-        if (home.out.plank >= PILE) return rest(2, 'Waiting for a carrier');
+        if (home.out.plank >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
         if (home.stock.log < 1) return rest(1, 'Waiting for logs');
         home.status = 'Sawing planks';
         s.tasks = [
@@ -483,6 +710,49 @@ export class Game {
       case 'scout':
         return rest(5, 'Keeping watch over your land');
     }
+  }
+
+  // A road carrier takes one good at a time from one end of their road to the other.
+  private carry(s: Settler) {
+    const r = this.roads.get(s.home);
+    if (!r || !s.atWork) return;
+    const last = r.path.length - 1;
+    for (const [i, j] of [[0, last], [last, 0]]) {
+      const from = this.flags.get(i ? r.b : r.a)!, to = this.flags.get(j ? r.b : r.a)!;
+      const item = from.items.find((it) => {
+        const d = this.buildings.get(it.dest);
+        if (!d || d.flag === from.id) return false; // arrived; the dispatcher takes it inside
+        return this.nextRoad(from, d.flag) === r.id && (to.items.length < FLAG_CAP || d.flag === to.id);
+      });
+      if (!item) continue;
+      s.tasks = [
+        { k: 'walk', ...r.path[i], via: this.along(r, s.ri, i) },
+        { k: 'do', f: () => {
+          s.ri = i;
+          const k = from.items.indexOf(item);
+          if (k < 0 || !item.dest) return false;
+          from.items.splice(k, 1);
+          s.item = item;
+          s.carrying = item.g;
+        } },
+        { k: 'walk', ...r.path[j], via: this.along(r, i, j) },
+        { k: 'do', f: () => {
+          s.ri = j;
+          to.items.push(item);
+          s.item = null;
+          s.carrying = null;
+        } },
+      ];
+      return;
+    }
+    const mid = r.path.length >> 1;
+    s.tasks = s.ri === mid
+      ? [{ k: 'work', t: 0.3 }]
+      : [{ k: 'walk', ...r.path[mid], via: this.along(r, s.ri, mid) }, { k: 'do', f: () => { s.ri = mid; } }];
+  }
+
+  private along(r: Road, i: number, j: number) {
+    return i <= j ? r.path.slice(i + 1, j + 1) : r.path.slice(j, i).reverse();
   }
 
   private claim(s: Settler, at: P) {

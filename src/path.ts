@@ -5,11 +5,14 @@ export type P = { x: number; y: number };
 const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
 // 8-directional A*. The goal tile is always enterable (so settlers can walk into a building
-// or up to a tree); diagonal moves may not cut blocked corners.
+// or up to a tree); diagonal moves may not cut blocked corners. `cost` scales the price of
+// entering a tile and must stay within [minCost, 1].
 export function findPath(
   sx: number, sy: number, gx: number, gy: number,
   passable: (x: number, y: number) => boolean,
   maxNodes = 6000,
+  cost?: (x: number, y: number) => number,
+  minCost = 0.6,
 ): P[] | null {
   if (sx === gx && sy === gy) return [];
   const N = W * H;
@@ -24,7 +27,7 @@ export function findPath(
     x >= 0 && y >= 0 && x < W && y < H && ((x === gx && y === gy) || passable(x, y));
   const est = (x: number, y: number) => {
     const dx = Math.abs(x - gx), dy = Math.abs(y - gy);
-    return Math.max(dx, dy) + 0.414 * Math.min(dx, dy);
+    return (Math.max(dx, dy) + 0.414 * Math.min(dx, dy)) * (cost ? minCost : 1);
   };
   const push = (n: number) => {
     heap.push(n);
@@ -78,7 +81,7 @@ export function findPath(
       const diag = dx !== 0 && dy !== 0;
       if (diag && (!ok(cx + dx, cy) || !ok(cx, cy + dy))) continue;
       const n = ny * W + nx;
-      const ng = g[cur] + (diag ? 1.414 : 1);
+      const ng = g[cur] + (diag ? 1.414 : 1) * (cost ? cost(nx, ny) : 1);
       if (ng < g[n]) {
         g[n] = ng;
         from[n] = cur;

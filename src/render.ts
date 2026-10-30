@@ -1,4 +1,4 @@
-import { Game, Building, Settler, BDEFS, BType, Good, Role } from './game';
+import { Game, Building, Settler, Flag, BDEFS, BType, Good, Role } from './game';
 import { W, H } from './world';
 import { TW, TH, toIso, fromIso } from './iso';
 import type { P } from './path';
@@ -13,6 +13,9 @@ export interface View {
   hover: P | null;
   placing: BType | null;
   placeOk: boolean;
+  tool: 'road' | 'remove' | null;
+  roadFrom: number; // flag a road is being drawn from
+  preview: P[] | null; // planned road under the cursor
   selected: number;
 }
 
@@ -132,6 +135,31 @@ export class Renderer {
     ctx.stroke();
     ctx.setLineDash([]);
 
+    // Roads.
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (const r of game.roads.values()) {
+      this.trace(r.path);
+      ctx.strokeStyle = '#8c7350';
+      ctx.lineWidth = 11;
+      ctx.stroke();
+      ctx.strokeStyle = '#cdb184';
+      ctx.lineWidth = 7;
+      ctx.stroke();
+    }
+    if (view.tool === 'road' && view.roadFrom) {
+      const from = game.flags.get(view.roadFrom);
+      if (from) this.ring(from.x, from.y, '#ffe27a');
+      if (view.preview) {
+        this.trace(view.preview);
+        ctx.setLineDash([6, 5]);
+        ctx.strokeStyle = 'rgba(255, 245, 200, 0.95)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
     // Selection, hover, and placement ghost.
     const sel = game.buildings.get(view.selected);
     if (sel) {
@@ -153,7 +181,14 @@ export class Renderer {
             this.building({ type: ghost, x, y, built: true, busy: false, out: { log: 0, plank: 0, stone: 0 } } as Building, now);
             ctx.globalAlpha = 1;
           } });
+          objects.push({ d: x + y + 2, f: () => {
+            ctx.globalAlpha = 0.6;
+            this.flag({ x, y: y + 1, items: [] } as unknown as Flag, now);
+            ctx.globalAlpha = 1;
+          } });
         }
+      } else if (view.tool === 'remove') {
+        this.ring(x, y, '#ff6a5a');
       } else {
         this.ring(x, y, 'rgba(255,255,255,0.6)');
       }
@@ -161,6 +196,9 @@ export class Renderer {
 
     for (const b of game.buildings.values()) {
       if (visible(b.x, b.y)) objects.push({ d: b.x + b.y + 1, f: () => this.building(b, now) });
+    }
+    for (const f of game.flags.values()) {
+      if (visible(f.x, f.y)) objects.push({ d: f.x + f.y + 1, f: () => this.flag(f, now) });
     }
     for (const s of game.settlers.values()) {
       if (s.inside || !visible(Math.round(s.x), Math.round(s.y))) continue;
@@ -182,6 +220,16 @@ export class Renderer {
     ctx.lineTo(t.x, t.y + TH);
     ctx.lineTo(t.x - TW / 2, t.y + TH / 2);
     ctx.closePath();
+  }
+
+  private trace(path: P[]) {
+    const { ctx } = this;
+    ctx.beginPath();
+    path.forEach((p, i) => {
+      const c = toIso(p.x + 0.5, p.y + 0.5);
+      if (i) ctx.lineTo(c.x, c.y);
+      else ctx.moveTo(c.x, c.y);
+    });
   }
 
   private ring(x: number, y: number, color: string) {
@@ -417,6 +465,30 @@ export class Renderer {
       ctx.textBaseline = 'middle';
       ctx.fillText(def.icon, ix, iy + bob + 1);
     }
+  }
+
+  private flag(f: Flag, now: number) {
+    const { ctx } = this;
+    const c = toIso(f.x + 0.5, f.y + 0.5);
+    // Goods waiting here, in a ring around the pole.
+    f.items.forEach((it, k) => {
+      const a = (k / 8) * Math.PI * 2 + 0.4;
+      const ox = Math.cos(a) * 10, oy = Math.sin(a) * 5;
+      ctx.fillStyle = GOOD_COLOR[it.g];
+      ctx.fillRect(c.x + ox - 3.5, c.y + oy - 3, 7, 4);
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 0.6;
+      ctx.strokeRect(c.x + ox - 3.5, c.y + oy - 3, 7, 4);
+    });
+    this.shadow(c.x + 2, c.y, 4, 1.8);
+    ctx.strokeStyle = '#4a3420';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(c.x, c.y);
+    ctx.lineTo(c.x, c.y - 20);
+    ctx.stroke();
+    const wave = Math.sin(now * 5 + f.x) * 1.5;
+    this.poly([[c.x, c.y - 20], [c.x + 10, c.y - 17 + wave], [c.x + 1, c.y - 13]], '#e9c440');
   }
 
   // --- settlers ------------------------------------------------------------

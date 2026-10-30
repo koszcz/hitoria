@@ -7,6 +7,8 @@ export interface Tile {
   conifer: boolean;
   rock: number; // stone left in the boulder, 0 = none
   b: number; // id of the building on this tile, 0 = none
+  flag: number; // id of the flag on this tile, 0 = none
+  road: number; // id of the road crossing this tile (between its flags), 0 = none
   col: string; // precomputed ground colour
 }
 
@@ -57,7 +59,7 @@ export class World {
         const near = Math.hypot(x - sx, y - sy);
         if (near < 8) h = h * (near / 8) + 0.5 * (1 - near / 8);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
-        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, b: 0, col: '' });
+        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, b: 0, flag: 0, road: 0, col: '' });
       }
     }
 

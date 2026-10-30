@@ -1,4 +1,4 @@
-import { Game, BUILDABLE } from './game';
+import { Game, BUILDABLE, BType } from './game';
 import { Renderer } from './render';
 import { UI } from './ui';
 import type { P } from './path';
@@ -10,9 +10,11 @@ const canvas = document.getElementById('game') as HTMLCanvasElement;
 const renderer = new Renderer(canvas);
 const ui = new UI(game);
 renderer.centerOn(game.hq.x, game.hq.y);
-ui.toast('Welcome! Build a woodcutter, then a sawmill to keep planks flowing.');
+ui.toast('Welcome! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
 
 let hover: P | null = null;
+let preview: P[] | null = null;
+let previewKey = '';
 let drag: { x: number; y: number; cx: number; cy: number; moved: boolean; button: number } | null = null;
 const keys = new Set<string>();
 
@@ -33,7 +35,7 @@ canvas.addEventListener('pointermove', (e) => {
 canvas.addEventListener('pointerup', (e) => {
   if (drag && !drag.moved) {
     const t = renderer.screenToTile(e.clientX, e.clientY);
-    if (drag.button === 2) ui.placing ? ui.setPlacing(null) : ui.select(0);
+    if (drag.button === 2) cancel();
     else if (drag.button === 0) click(t, e.shiftKey);
   }
   drag = null;
@@ -50,7 +52,9 @@ canvas.addEventListener('wheel', (e) => {
 
 addEventListener('keydown', (e) => {
   keys.add(e.key.toLowerCase());
-  if (e.key === 'Escape') ui.placing ? ui.setPlacing(null) : ui.select(0);
+  if (e.key === 'Escape') cancel();
+  if (e.key === 'r' || e.key === 'R') ui.setPlacing(ui.placing === 'road' ? null : 'road');
+  if (e.key === 'x' || e.key === 'X') ui.setPlacing(ui.placing === 'remove' ? null : 'remove');
   const n = Number(e.key);
   if (n >= 1 && n <= BUILDABLE.length) ui.setPlacing(BUILDABLE[n - 1]);
   if (e.key === ' ') {
@@ -61,7 +65,25 @@ addEventListener('keydown', (e) => {
 addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
 addEventListener('blur', () => keys.clear());
 
+// Step back one level: drop the road being drawn, then the tool, then the selection.
+function cancel() {
+  if (ui.placing === 'road' && ui.roadFrom) ui.roadFrom = 0;
+  else if (ui.placing) ui.setPlacing(null);
+  else ui.select(0);
+}
+
 function click(t: P, keep: boolean) {
+  if (ui.placing === 'road') {
+    const res = ui.roadFrom ? game.buildRoad(ui.roadFrom, t) : game.startFlag(t);
+    if (typeof res === 'string') return ui.toast(res);
+    ui.roadFrom = res.id;
+    return;
+  }
+  if (ui.placing === 'remove') {
+    const why = game.removeAt(t);
+    if (why) ui.toast(why);
+    return;
+  }
   if (ui.placing) {
     const why = game.canPlace(ui.placing, t.x, t.y);
     if (why) return ui.toast(why);
@@ -98,8 +120,15 @@ function frame(now: number) {
     if (n >= 40) acc = 0;
   }
 
-  const placeOk = !!ui.placing && !!hover && !game.canPlace(ui.placing, hover.x, hover.y);
-  renderer.draw(game, { hover, placing: ui.placing, placeOk, selected: ui.selected }, now / 1000);
+  const tool = ui.placing === 'road' || ui.placing === 'remove' ? ui.placing : null;
+  const placing = tool ? null : (ui.placing as BType | null);
+  const placeOk = !!placing && !!hover && !game.canPlace(placing, hover.x, hover.y);
+  const key = `${ui.roadFrom}:${hover?.x},${hover?.y}:${game.net}`;
+  if (key !== previewKey) {
+    previewKey = key;
+    preview = tool === 'road' && ui.roadFrom && hover ? game.planRoad(ui.roadFrom, hover) : null;
+  }
+  renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, selected: ui.selected }, now / 1000);
 
   uiT -= dt;
   if (uiT <= 0) {

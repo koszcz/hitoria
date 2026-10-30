@@ -122,6 +122,8 @@ canvas {
 #info h3 { margin: 0 0 4px; font: 700 15px Georgia, serif; color: var(--gold); }
 #info .desc { margin: 0 0 8px; color: var(--muted); }
 #info .status { margin: 0 0 8px; font-style: italic; }
+#info .warn { margin: 0 0 8px; color: #ffb36b; font-weight: 600; }
+.build.tool { margin-left: 4px; }
 #info .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
 #info .bar i { display: block; height: 100%; background: var(--gold); }
 
