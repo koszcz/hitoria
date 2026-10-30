@@ -57,6 +57,7 @@ Needs [Bun](https://bun.sh). The only library is [Three.js](https://threejs.org)
 ```bash
 bun install      # first time only
 bun run dev      # http://main.localhost:5173  (add ?seed=123 to start a fixed map fresh)
+bun run play     # http://play.localhost:5174  (a copy to play on, see below)
 bun run build    # static build in dist/
 bun test         # game logic tests in test/
 ```
@@ -83,6 +84,20 @@ Things to know:
 - To pick a different name, set `DEV_NAME`, for example `DEV_NAME=try2 bun run dev`.
 - Port 5173 must be free for the first copy you start. If that copy stops, another running copy
   takes over the port within a few seconds.
+
+## Playing while other branches change
+
+Use `bun run play` when you want to play without interruptions. Other sessions can merge into
+`main` or stop their servers, and your game keeps running.
+
+The command:
+
+1. Makes a worktree next to this folder, named `hitoria-play`, the first time you run it.
+2. Moves that worktree to the newest commit on `main`.
+3. Starts it at http://play.localhost:5174, on its own port.
+
+To get new features, stop the command and run it again. Your saves stay, because the address
+stays the same. Saves from other addresses, such as http://main.localhost:5173, do not appear here.
 
 ## Saving
 
