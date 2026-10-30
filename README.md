@@ -51,11 +51,16 @@ Things to know:
 
 ## Saving
 
-The game has one save slot in your browser's local storage.
+Saves live in your browser's local storage. You can keep as many as the storage holds.
 
-- **Save** (or Ctrl+S) stores the game. It also saves by itself every minute and when you close the tab.
-- **Load** goes back to the last save. Opening the page also continues from it.
-- **New** starts a fresh island. Your next save replaces the old one.
+- **Save** (or Ctrl+S) stores the game you are playing. The first time, it makes a new save named
+  after the island. After that, it writes over that same save.
+- **Saves** opens a list of every save. From there you can load a save, save as a new one, write
+  over a save, delete one, or change how often the game autosaves.
+- **Autosave** runs every minute by default, and when you close the tab. You can also set it to
+  every 5 minutes, or turn it off. The game keeps the 3 newest autosaves and writes over the oldest.
+- **New** starts a fresh island. It makes an autosave of the old island first.
+- Opening the page continues from your newest save.
 
 The save keeps the map, buildings, roads, flags and every good. It does not keep where settlers are.
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
@@ -92,3 +97,7 @@ gets no materials.
 5. **Demolish and move buildings.**
 6. **Goals instead of enemies.** Peaceful scenarios: build a monument, trade with a ship, survive winter.
 7. **Art pass.** Swap the built-in 3D shapes for detailed models (for example, free CC0 packs from Kenney or Quaternius).
+
+## Ideas
+
+Ideas for the game, and what we build next, live in [ideas/](ideas/README.md).

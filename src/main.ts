@@ -1,30 +1,34 @@
 import { crashed, watch, reportProblem } from './report';
 import { diag } from './diag';
 import { DebugPanel } from './debug';
-import { Game, BUILDABLE, BType, SaveData } from './game';
+import { Game, BUILDABLE, BType } from './game';
 import { Renderer } from './render';
 import { UI } from './ui';
+import { Saves, type Slot } from './saves';
+import { openSaveMenu } from './savemenu';
 import type { P } from './path';
 
-const SAVE_KEY = 'hitoria.save';
-const AUTOSAVE = 60; // seconds
+const saves = new Saves();
 
-function readSave(): Game | null {
-  const raw = localStorage.getItem(SAVE_KEY);
-  if (!raw) return null;
+function readSave(slot: Slot | null): Game | null {
+  if (!slot) return null;
   try {
-    return Game.load(JSON.parse(raw) as SaveData);
+    const d = saves.read(slot.id);
+    return d ? Game.load(d) : null;
   } catch (err) {
-    console.warn('Could not load the save', err);
+    console.warn(`Could not load the save "${slot.name}"`, err);
     return null;
   }
 }
 
-// A ?seed= link always starts that island fresh; otherwise carry on from the last save.
+// A ?seed= link always starts that island fresh; otherwise carry on from the newest save.
 const params = new URLSearchParams(location.search);
 const seed = Number(params.get('seed'));
-const saved = seed ? null : readSave();
+const first = seed ? null : saves.latest();
+const saved = readSave(first);
 let game = saved ?? new Game(seed || Math.floor(Math.random() * 1e9));
+// The manual slot the running game belongs to. Save (Ctrl+S) writes over it.
+let slotId = saved && first && !first.auto ? first.id : null;
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const renderer = new Renderer(canvas);
 const ui = new UI(game);
@@ -33,18 +37,35 @@ diag.attach(game);
 const debug = new DebugPanel();
 renderer.centerOn(game.hq.x, game.hq.y);
 ui.toast(saved
-  ? 'Welcome back! Your settlers are heading back to work.'
+  ? `Welcome back to "${first!.name}"! Your settlers are heading back to work.`
   : 'Welcome! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
 
-function save(quiet = false) {
-  if (crashed()) return; // Never write a broken game over the last good save.
+const islandName = (g: Game) => `Island ${g.seed}`;
+
+// Save to a manual slot: the given one, or a new one. Returns null if it could not save.
+function save(name = saves.get(slotId ?? '')?.name ?? islandName(game), id = slotId ?? undefined): Slot | null {
+  if (crashed()) return null; // Never write a broken game over a good save.
   try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(game.save()));
-    if (!quiet) ui.toast('Game saved');
-    diag.event(quiet ? 'Autosaved' : 'Saved');
+    const slot = saves.write(game.save(), name, id);
+    slotId = slot.id;
+    ui.toast(`Saved as "${slot.name}"`);
+    diag.event(`Saved to slot ${slot.id}`);
+    return slot;
   } catch (err) {
     console.warn('Could not save', err);
-    ui.toast('Could not save the game. The browser storage may be full or blocked.');
+    ui.toast('Could not save the game. The browser storage may be full or blocked. Try deleting an old save.');
+    return null;
+  }
+}
+
+function autosave() {
+  if (crashed() || !saves.autosaveEvery) return;
+  try {
+    const slot = saves.autosave(game.save());
+    diag.event(`Autosaved to slot ${slot.id}`);
+  } catch (err) {
+    console.warn('Could not autosave', err);
+    ui.toast('Could not autosave. The browser storage may be full. Try deleting an old save.');
   }
 }
 
@@ -58,23 +79,45 @@ function play(g: Game) {
   Object.assign(window, { game });
 }
 
+function load(slot: Slot) {
+  const g = readSave(slot);
+  if (!g) return ui.toast(`Could not load "${slot.name}". It may be from a different version of Hitoria.`);
+  play(g);
+  slotId = slot.auto ? null : slot.id;
+  saveT = saves.autosaveEvery;
+  ui.toast(`Loaded "${slot.name}"`);
+}
+
+function showSaves() {
+  const wasPaused = ui.paused;
+  ui.paused = true;
+  ui.refresh();
+  openSaveMenu(saves, {
+    save: (name, id) => save(name, id),
+    load,
+    current: () => slotId,
+    defaultName: () => saves.get(slotId ?? '')?.name ?? islandName(game),
+    closed: () => {
+      ui.paused = wasPaused;
+      ui.refresh();
+    },
+  });
+}
+
 for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
   btn.onclick = () => {
     const what = btn.dataset.file;
     if (what === 'report') return reportProblem();
-    if (what === 'save') return save();
-    if (what === 'load') {
-      const g = readSave();
-      if (!g) return ui.toast('There is no saved game yet');
-      play(g);
-      return ui.toast('Loaded your last save');
-    }
-    if (!confirm('Start a new island? Your next save will replace the current one.')) return;
+    if (what === 'save') return void save();
+    if (what === 'saves') return showSaves();
+    if (!confirm('Start a new island? Save first if you want to come back to this one.')) return;
+    autosave(); // a safety copy, in case the player forgot
     play(new Game(Math.floor(Math.random() * 1e9)));
+    slotId = null;
     ui.toast('A new island! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
   };
 }
-addEventListener('pagehide', () => save(true));
+addEventListener('pagehide', autosave);
 
 let hover: P | null = null;
 let preview: P[] | null = null;
@@ -117,7 +160,8 @@ canvas.addEventListener('wheel', (e) => {
 addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
     e.preventDefault();
-    return save();
+    save();
+    return;
   }
   keys.add(e.key.toLowerCase());
   if (e.key === 'Escape') cancel();
@@ -174,7 +218,7 @@ const STEP = 1 / 30;
 let last = performance.now();
 let acc = 0;
 let uiT = 0;
-let saveT = AUTOSAVE;
+let saveT: number = saves.autosaveEvery;
 
 function frame(now: number) {
   if (crashed()) return;
@@ -222,8 +266,8 @@ function frame(now: number) {
   }
   saveT -= dt;
   if (saveT <= 0) {
-    saveT = AUTOSAVE;
-    save(true);
+    saveT = saves.autosaveEvery || 60; // when autosave is off, look again in a minute
+    autosave();
   }
   requestAnimationFrame(frame);
 }
