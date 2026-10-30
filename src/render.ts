@@ -746,6 +746,13 @@ export class Renderer {
         this.add(g, new THREE.BoxGeometry(0.3, 0.12, 0.12), '#6b4a28', 0.38, 0.06, 0.25);
         break;
       }
+      case 'storehouse': {
+        this.house(g, 0.4, 0.46, 0.36, def.wall, def.roof, 0, -0.06);
+        for (const [x, z, y] of [[-0.3, 0.42, 0.07], [-0.14, 0.42, 0.07], [-0.22, 0.42, 0.21]])
+          this.add(g, new THREE.BoxGeometry(0.13, 0.13, 0.13), '#a07444', x, y, z);
+        this.add(g, new THREE.CylinderGeometry(0.07, 0.07, 0.17, 10), '#7a5230', 0.28, 0.085, 0.42);
+        break;
+      }
       default: {
         this.house(g, 0.3, 0.42, 0.3, def.wall, def.roof, -0.04, -0.04);
         if (type === 'woodcutter') {

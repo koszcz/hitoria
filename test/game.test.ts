@@ -352,3 +352,70 @@ describe('save and load', () => {
     expect(() => Game.load({ ...d, v: SAVE_VERSION + 1 })).toThrow();
   });
 });
+
+describe('storehouses', () => {
+  // A finished storehouse east of the HQ, joined to it by road.
+  function storehouse(g: Game) {
+    const s = placeLinked(g, 'storehouse', g.hq.x + 5, g.hq.y);
+    runUntil(g, () => s.built, 300);
+    expect(s.status).toBe('Storing goods');
+    return s;
+  }
+
+  test('spare goods go to the nearest store, not the HQ', () => {
+    const g = flatGame();
+    const s = storehouse(g);
+    // The woodcutter's only road runs through the storehouse's flag.
+    const cutter = g.place('woodcutter', s.x + 3, s.y - 3);
+    g.buildRoad(cutter.flag, g.flags.get(s.flag)!);
+    for (const [dx, dy] of [[1, -2], [-1, -2], [2, 0]]) g.world.at(cutter.x + dx, cutter.y + dy).tree = 1;
+    runUntil(g, () => cutter.built, 300);
+    const hqLogs = g.hq.stock.log;
+    runUntil(g, () => s.stock.log >= 2, 400, () => expectIncomingConsistent(g));
+    expect(g.hq.stock.log).toBe(hqLogs);
+  });
+
+  test('sites are supplied from the nearest store that has the goods', () => {
+    const g = flatGame();
+    const s = storehouse(g);
+    s.stock = { log: 0, plank: 5, stone: 5 };
+    const hq = { ...g.hq.stock };
+    const site = g.place('woodcutter', s.x + 3, s.y - 3);
+    g.buildRoad(site.flag, g.flags.get(s.flag)!);
+    runUntil(g, () => site.built, 300);
+    expect(s.stock.plank).toBe(3);
+    expect(g.hq.stock).toEqual(hq);
+  });
+
+  test('when the nearest store runs out, a farther one sends the rest', () => {
+    const g = flatGame();
+    const s = storehouse(g);
+    s.stock = { log: 0, plank: 1, stone: 0 };
+    const site = g.place('woodcutter', s.x + 3, s.y - 3);
+    g.buildRoad(site.flag, g.flags.get(s.flag)!);
+    runUntil(g, () => site.built, 300);
+    expect(s.stock.plank).toBe(0);
+  });
+
+  test('the goods count adds up every store', () => {
+    const g = flatGame();
+    const s = storehouse(g);
+    s.stock = { log: 1, plank: 2, stone: 3 };
+    const { log, plank, stone } = g.hq.stock;
+    expect(g.stored).toEqual({ log: log + 1, plank: plank + 2, stone: stone + 3 });
+  });
+
+  test('an unfinished storehouse stores nothing', () => {
+    const g = flatGame();
+    const s = placeLinked(g, 'storehouse', g.hq.x + 5, g.hq.y);
+    expect(g.isStore(s)).toBe(false);
+  });
+
+  test('save and load keep stored goods', () => {
+    const g = flatGame();
+    const s = storehouse(g);
+    s.stock = { log: 1, plank: 2, stone: 3 };
+    const h = Game.load(JSON.parse(JSON.stringify(g.save())));
+    expect(h.buildings.get(s.id)).toMatchObject({ stock: s.stock, status: 'Storing goods' });
+  });
+});

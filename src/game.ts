@@ -7,7 +7,7 @@ export type Bag = Record<Good, number>;
 export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, ...p });
 
 export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout';
-export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout';
+export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse';
 export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant';
 
 export interface BDef {
@@ -29,8 +29,9 @@ export const BDEFS: Record<BType, BDef> = {
   quarry: { name: 'Quarry', icon: '⛏️', desc: 'Breaks nearby boulders into stone.', cost: { plank: 2 }, buildTime: 6, worker: 'stonecutter', radius: 6, wall: '#b9b4a8', roof: '#6d6a66' },
   sawmill: { name: 'Sawmill', icon: '🪚', desc: 'Saws logs into planks.', cost: { plank: 2, stone: 2 }, buildTime: 9, worker: 'sawyer', radius: 0, wall: '#c49a6c', roof: '#8a4b2a' },
   lookout: { name: 'Lookout Tower', icon: '🔭', desc: 'Expands your land. No soldiers, just a view.', cost: { plank: 3, stone: 3 }, buildTime: 10, worker: 'scout', radius: 7, wall: '#d2c4a4', roof: '#3f5f8a' },
+  storehouse: { name: 'Storehouse', icon: '📦', desc: 'Stores spare goods close to where they are made and needed.', cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0, wall: '#c8b48c', roof: '#7a5a3a' },
 };
-export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout'];
+export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse'];
 
 export interface Building {
   id: number;
@@ -40,7 +41,7 @@ export interface Building {
   flag: number; // the flag in front of the door, at (x, y + 1)
   built: boolean;
   progress: number; // construction 0..1
-  stock: Bag; // construction materials or production inputs (the HQ's warehouse)
+  stock: Bag; // construction materials, production inputs, or stored goods (HQ and storehouses)
   out: Bag; // finished goods waiting for room on the flag
   incoming: Bag; // goods already routed here
   worker: number;
@@ -169,7 +170,7 @@ export class Game {
     for (const b of buildings) {
       b.worker = b.builder = 0;
       b.busy = false;
-      if (b.type !== 'hq') b.status = b.built ? 'Waiting for a worker' : 'Waiting for a builder';
+      if (b.type !== 'hq') b.status = b.built ? this.builtStatus(b) : 'Waiting for a builder';
     }
     for (const r of roads) r.carrier = 0;
     return {
@@ -245,6 +246,22 @@ export class Game {
     const b = this.addBuilding(type, x, y);
     b.status = 'Waiting for a builder';
     return b;
+  }
+
+  // The HQ and every finished storehouse keep goods for the whole settlement.
+  isStore(b: Building) {
+    return b.type === 'hq' || (b.type === 'storehouse' && b.built);
+  }
+
+  // All goods kept in the HQ and storehouses.
+  get stored(): Bag {
+    const sum = bag();
+    for (const b of this.buildings.values()) if (this.isStore(b)) for (const g of GOODS) sum[g] += b.stock[g];
+    return sum;
+  }
+
+  private builtStatus(b: Building) {
+    return BDEFS[b.type].worker ? 'Waiting for a worker' : 'Storing goods';
   }
 
   // Is the building joined to the HQ by roads?
@@ -527,28 +544,38 @@ export class Game {
       });
     }
 
-    // The HQ sends out what buildings still need.
-    const hf = this.flags.get(this.hq.flag)!;
+    // Stores send out what buildings still need, the nearest store by road first.
     for (const b of this.buildings.values()) {
-      if (b === this.hq || !this.linked(b)) continue;
+      if (this.isStore(b)) continue;
+      const dist = this.distTo(b.flag);
+      const stores = [...this.buildings.values()]
+        .filter((s) => this.isStore(s) && dist.has(s.flag))
+        .sort((p, q) => dist.get(p.flag)! - dist.get(q.flag)!);
       for (const g of GOODS)
-        while (this.missing(b, g) > 0 && this.hq.stock[g] > 0 && hf.items.length < FLAG_CAP) {
-          this.hq.stock[g]--;
+        while (this.missing(b, g) > 0) {
+          const s = stores.find((s) => s.stock[g] > 0 && this.flags.get(s.flag)!.items.length < FLAG_CAP);
+          if (!s) break;
+          s.stock[g]--;
           b.incoming[g]++;
-          hf.items.push({ g, dest: b.id });
+          this.flags.get(s.flag)!.items.push({ g, dest: b.id });
         }
     }
   }
 
-  // Nearest building (by road) that wants this good, else the HQ.
+  // Nearest building (by road) that wants this good, else the nearest store.
   private pickDest(f: Flag, g: Good) {
     let best: Building | undefined, bd = Infinity;
     for (const b of this.buildings.values()) {
-      if (b === this.hq || this.missing(b, g) <= 0) continue;
+      if (this.isStore(b) || this.missing(b, g) <= 0) continue;
       const d = this.distTo(b.flag).get(f.id);
       if (d !== undefined && d < bd) { bd = d; best = b; }
     }
-    if (!best && this.distTo(this.hq.flag).has(f.id)) best = this.hq;
+    if (best) return best;
+    for (const b of this.buildings.values()) {
+      if (!this.isStore(b)) continue;
+      const d = this.distTo(b.flag).get(f.id);
+      if (d !== undefined && d < bd) { bd = d; best = b; }
+    }
     return best;
   }
 
@@ -594,7 +621,7 @@ export class Game {
     b.built = true;
     b.stock = bag();
     b.builder = 0;
-    b.status = 'Waiting for a worker';
+    b.status = this.builtStatus(b);
     builder.atWork = false;
     builder.anim = '';
     builder.tasks = [{ k: 'walk', x: this.hq.x, y: this.hq.y }, { k: 'do', f: () => this.despawn(builder) }];

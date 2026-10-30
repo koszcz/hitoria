@@ -81,8 +81,9 @@ export class UI {
     while (g.toasts.length) this.toast(g.toasts.shift()!);
 
     const busy = g.settlers.size;
+    const stored = g.stored;
     $('res').innerHTML =
-      GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${g.hq.stock[k]}</b> ${GOOD_NAME[k]}</div>`).join('') +
+      GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${stored[k]}</b> ${GOOD_NAME[k]}</div>`).join('') +
       `<div class="pill">🧑‍🌾 <b>${g.pool}</b> idle / ${busy} busy</div>`;
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);
@@ -103,8 +104,9 @@ export class UI {
       rows.push(`<div class="bar"><i style="width:${Math.round(b.progress * 100)}%"></i></div>`);
       for (const k of GOODS)
         if (def.cost[k]) rows.push(`<div><span class="good ${k}"></span>${GOOD_NAME[k]}: ${b.stock[k]} / ${def.cost[k]}</div>`);
-    } else if (b.type === 'hq') {
-      rows.push(`<div>Land radius: ${def.radius} tiles</div>`);
+    } else if (g.isStore(b)) {
+      if (b.type === 'hq') rows.push(`<div>Land radius: ${def.radius} tiles</div>`);
+      for (const k of GOODS) rows.push(`<div>Stored: <span class="good ${k}"></span>${b.stock[k]} ${GOOD_NAME[k]}</div>`);
     } else {
       for (const k of GOODS) {
         if (b.stock[k]) rows.push(`<div>In: <span class="good ${k}"></span>${b.stock[k]} ${GOOD_NAME[k]}</div>`);
