@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep: timber-framed huts, a windmill, a lookout tower and a stone mine, joined by roads](docs/screenshot.jpg)
+![A village around the HQ keep: stone-and-timber houses, a windmill, a lookout tower and a stone mine, joined by roads](docs/screenshot.jpg)
 
 ## How to play
 
@@ -126,6 +126,7 @@ back to their building or flag, so nothing is lost.
 | `src/game.ts` | Simulation: buildings, settlers, task queues, carrier dispatch |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render.ts` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle |
+| `src/art.ts` | The game's colours and light in one place: sky, sun, land, water, trees and roofs |
 | `src/ui.ts` | HUD, build bar, info panel |
 | `src/main.ts` | Input, camera, fixed-step game loop |
 

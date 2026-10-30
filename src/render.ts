@@ -4,6 +4,23 @@ import { Game, Building, Settler, BDEFS, BType, Good, GOODS, Role, bag } from '.
 import { World, Tile, W, H } from './world';
 import { TW, toIso, fromIso } from './iso';
 import type { P } from './path';
+import { ART } from './art';
+
+// Settlers are drawn a third larger than true scale so you can follow them, and a load
+// sits on top of their big heads.
+const PERSON_SCALE = 1.35;
+const CARRY_Y = 0.42 * PERSON_SCALE + 0.07;
+
+// Shifts any model colour toward the game's palette.
+const graded = new Map<string, string>();
+function grade(hex: string) {
+  let out = graded.get(hex);
+  if (out) return out;
+  const { h, s, l, tint, k } = ART.grade;
+  out = '#' + new THREE.Color(hex).offsetHSL(h, s, l).lerp(new THREE.Color(tint), k).getHexString();
+  graded.set(hex, out);
+  return out;
+}
 
 // World tile (x, y) maps to the 3D ground at (X = x, Z = y); Y is up. One tile is one unit.
 // The camera keeps the old 2:1 isometric angle (45° around, 30° down), so `cam` still pans in
@@ -80,7 +97,8 @@ function grainTexture() {
   const cx = cv.getContext('2d')!;
   const img = cx.createImageData(n, n);
   for (let i = 0; i < n * n; i++) {
-    const v = 175 + f[i] * 70 + (Math.random() - 0.5) * 28;
+    const k = ART.grain;
+    const v = Math.max(0, Math.min(255, 215 - 40 * k + f[i] * 70 * k + (Math.random() - 0.5) * 28 * k));
     img.data.set([v, v, v, 255], i * 4);
   }
   cx.putImageData(img, 0, 0);
@@ -193,7 +211,7 @@ function noRoadTexture() {
 // Paints a whole geometry one colour (as a vertex colour) so pieces can be merged into one mesh.
 function paint(g: THREE.BufferGeometry, color: string, jitter = 0) {
   const geo = g.index ? g.toNonIndexed() : g;
-  const c = new THREE.Color(color);
+  const c = new THREE.Color(grade(color));
   const pos = geo.attributes.position;
   const col = new Float32Array(pos.count * 3);
   for (let i = 0; i < pos.count; i++) {
@@ -271,6 +289,7 @@ interface Model {
   spin?: THREE.Object3D; // a saw blade that turns while the building works
 }
 
+
 type Roof = 'tile' | 'thatch' | 'slate';
 
 interface House {
@@ -309,7 +328,7 @@ export class Renderer {
   private gl: THREE.WebGLRenderer;
   private scene = new THREE.Scene();
   private camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
-  private sun = new THREE.DirectionalLight('#ffe6c0', 2.4);
+  private sun = new THREE.DirectionalLight(ART.sun, ART.sunPower);
   private ray = new THREE.Raycaster();
   private mats = new Map<string, THREE.Material>();
   private grain = grainTexture();
@@ -354,20 +373,20 @@ export class Renderer {
   private v = new THREE.Vector3();
   private s = new THREE.Vector3();
   private c = new THREE.Color();
-  private deep = new THREE.Color('#1c4f6a'); // sea floor colour far from shore
+  private deep = new THREE.Color(ART.deep); // sea floor colour far from shore
 
   constructor(public canvas: HTMLCanvasElement) {
     this.gl = new THREE.WebGLRenderer({ canvas, antialias: true });
     this.gl.shadowMap.enabled = true;
     this.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     this.gl.toneMapping = THREE.NeutralToneMapping;
-    this.gl.toneMappingExposure = 1.0;
+    this.gl.toneMappingExposure = ART.exposure;
     this.resize();
     addEventListener('resize', () => this.resize());
 
     const { scene, sun } = this;
-    scene.background = new THREE.Color('#3d8fb0');
-    scene.add(new THREE.HemisphereLight('#d8ecff', '#6a5a3a', 1.35));
+    scene.background = new THREE.Color(ART.sky);
+    scene.add(new THREE.HemisphereLight(ART.hemiSky, ART.hemiGround, ART.hemi));
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     sun.shadow.bias = -0.0004;
@@ -615,7 +634,7 @@ export class Renderer {
     ripples.repeat.set(40, 40);
     this.water = new THREE.Mesh(
       new THREE.PlaneGeometry(W * 8, H * 8).rotateX(-Math.PI / 2),
-      new THREE.MeshStandardMaterial({ color: '#2a8cb0', roughness: 0.15, metalness: 0.05, transparent: true, opacity: 0.68, normalMap: ripples, normalScale: new THREE.Vector2(0.35, 0.35) }),
+      new THREE.MeshStandardMaterial({ color: ART.water, roughness: 0.15, metalness: 0.05, transparent: true, opacity: ART.waterOpacity, normalMap: ripples, normalScale: new THREE.Vector2(0.35, 0.35) }),
     );
     this.water.position.set(W / 2, SEA, H / 2);
     this.water.receiveShadow = true;
@@ -632,16 +651,17 @@ export class Renderer {
       let c = base.get(key);
       if (c) return c;
       const t = world.at(x, y);
-      c = t.t === 'water' ? new THREE.Color('#d4c08a')
+      c = t.t === 'water' ? new THREE.Color(ART.sand)
         : t.t === 'mountain' ? new THREE.Color().setHSL(0.07, 0.1, 0.44 + hash(x, y) * 0.08)
-        : t.t === 'grass' ? new THREE.Color(t.col).offsetHSL(0.0, -0.08, 0.05)
+        : t.t === 'grass' ? new THREE.Color(t.col).offsetHSL(ART.grass.h, ART.grass.s, ART.grass.l)
         : new THREE.Color(t.col).offsetHSL(0, 0.05, 0.04);
+      if (t.t !== 'grass') c.set(grade('#' + c.getHexString()));
       // Land outside your border stays readable, just cooler and dimmer.
       if (!world.territory[key] && t.t !== 'water') c.offsetHSL(0, -0.12, 0).multiplyScalar(0.72).lerp(new THREE.Color('#4a5070'), 0.12);
       base.set(key, c);
       return c;
     };
-    const rock = new THREE.Color('#857a6a'), snow = new THREE.Color('#f6f8fa');
+    const rock = new THREE.Color(ART.rock), snow = new THREE.Color(ART.snow), line = ART.snowLine;
     for (let j = 0; j <= H; j++)
       for (let i = 0; i <= W; i++) {
         const k = j * (W + 1) + i;
@@ -656,7 +676,7 @@ export class Renderer {
         const h = C[k];
         const slope = Math.abs(C[Math.min(k + 1, C.length - 1)] - h) + Math.abs(C[Math.min(k + W + 1, C.length - 1)] - h);
         if (slope > 0.35 && h > 0.3) c.lerp(rock, Math.min(0.8, (slope - 0.35) * 1.5));
-        if (h > 2.4) c.lerp(snow, Math.min(1, (h - 2.4) * 1.2));
+        if (h > line) c.lerp(snow, Math.min(1, (h - line) * 1.2));
         if (h < SEA) c.lerp(this.deep, Math.min(0.85, -h * 0.5));
         col.setXYZ(k, c.r, c.g, c.b);
       }
@@ -693,7 +713,7 @@ export class Renderer {
   private drawRoads(game: Game) {
     for (const c of this.roads.children) (c as THREE.Mesh).geometry.dispose();
     this.roads.clear();
-    for (const [width, color, lift, off] of [[0.38, '#8a7350', 0.02, -1], [0.26, '#d2b886', 0.03, -2]] as const) {
+    for (const [width, color, lift, off] of [[0.38, ART.roads[0], 0.02, -1], [0.26, ART.roads[1], 0.03, -2]] as const) {
       const pos: number[] = [], idx: number[] = [];
       for (const r of game.roads.values()) {
         const pts: THREE.Vector2[] = [];
@@ -747,7 +767,7 @@ export class Renderer {
           const n = t.conifer ? np++ : nl++;
           mesh.setMatrixAt(n, this.m4);
           // A little warmer or cooler, lighter or darker, so a forest is not one flat green.
-          mesh.setColorAt(n, this.c.setHSL(0.11 + (hash(y, x * 5) - 0.5) * 0.2, 0.4, 0.82 + hash(x, y * 3) * 0.22));
+          mesh.setColorAt(n, this.c.setHSL(ART.tree.hue + (hash(y, x * 5) - 0.5) * ART.tree.range, ART.tree.s, ART.tree.l + hash(x, y * 3) * 0.22));
         }
         if (t.crop > 0) {
           const px = x + 0.5, pz = y + 0.5, gy = this.heightAt(px, pz);
@@ -784,7 +804,7 @@ export class Renderer {
   private mat(color: string, extra: THREE.MeshStandardMaterialParameters = {}) {
     const key = color + JSON.stringify(extra);
     let m = this.mats.get(key);
-    if (!m) this.mats.set(key, (m = new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...extra })));
+    if (!m) this.mats.set(key, (m = new THREE.MeshStandardMaterial({ color: grade(color), roughness: 0.85, ...extra })));
     return m;
   }
 
@@ -806,6 +826,11 @@ export class Renderer {
     g.add(at);
     this.add(at, new THREE.BoxGeometry(2 * w + 0.08, 0.3, 2 * d + 0.08), '#9d958a', 0, -0.1, 0);
     this.add(at, new THREE.BoxGeometry(2 * w, h, 2 * d), wall, 0, h / 2 + 0.05, 0);
+    // A stone ground floor with lighter corner stones; the timber frame sits on top.
+    const sh = h * 0.5;
+    this.add(at, new THREE.BoxGeometry(2 * w + 0.03, sh, 2 * d + 0.03), '#a59d8e', 0, 0.05 + sh / 2, 0);
+    for (const [x, z] of [[-w, -d], [w, -d], [-w, d], [w, d]])
+      for (let i = 0; i < 3; i++) this.add(at, new THREE.BoxGeometry(0.07, sh / 3 - 0.01, 0.07), i % 2 ? '#bdb5a6' : '#c8c0b0', x, 0.05 + (i + 0.5) * (sh / 3), z);
 
     // Timber frame: corner posts, a sill, a middle rail and a top beam.
     for (const [x, z] of [[-w, -d], [w, -d], [-w, d], [w, d]]) this.add(at, new THREE.BoxGeometry(0.045, h, 0.045), beam, x, h / 2 + 0.05, z);
@@ -941,7 +966,7 @@ export class Renderer {
       model.bar = bar;
       return model;
     }
-    const { wall, roof } = def;
+    const wall = def.wall, roof = ART.roofs[type];
     switch (type) {
       case 'hq': {
         this.add(g, new THREE.BoxGeometry(1.02, 0.3, 1.02), '#a39a8c', 0, -0.1, 0);
@@ -1228,7 +1253,7 @@ export class Renderer {
     this.add(g, new THREE.CylinderGeometry(0.013, 0.017, 0.58, 6), '#5a3c22', 0, 0.29, 0);
     this.add(g, new THREE.SphereGeometry(0.022, 8, 6), '#f0c030', 0, 0.59, 0, { metalness: 0.5, roughness: 0.4 });
     const pennant = new THREE.Shape([new THREE.Vector2(0, 0.075), new THREE.Vector2(0.25, 0.075), new THREE.Vector2(0.19, 0), new THREE.Vector2(0.25, -0.075), new THREE.Vector2(0, -0.075)]);
-    const cloth = this.add(g, new THREE.ShapeGeometry(pennant), '#e8443a', 0, 0.49, 0, { side: THREE.DoubleSide });
+    const cloth = this.add(g, new THREE.ShapeGeometry(pennant), ART.flag, 0, 0.49, 0, { side: THREE.DoubleSide });
     this.add(cloth, new THREE.PlaneGeometry(0.25, 0.022).translate(0.1, 0.06, 0.001), '#f0c030', 0, 0, 0, { side: THREE.DoubleSide });
     return { g, key: 'flag', cloth };
   }
@@ -1288,6 +1313,13 @@ export class Renderer {
     tool.position.set(0, -0.1, 0);
     tool.visible = false;
     arms[1].add(tool);
+    // A big head on a small body, so the hat shows the trade: scale up everything above the neck.
+    for (const c of body.children)
+      if (c.position.y >= 0.28) {
+        c.position.y = 0.3 + (c.position.y - 0.3) * 1.6 + 0.05;
+        c.scale.multiplyScalar(1.6);
+      }
+    body.scale.setScalar(PERSON_SCALE);
     return { g, legs, arms, tool, body, px: NaN, py: NaN, heading: 0 };
   }
 
@@ -1409,7 +1441,7 @@ export class Renderer {
       : s.anim === 'fish' ? -1.2 + Math.sin(now * 1.5) * 0.08
       : s.anim === 'reap' ? -0.6 + Math.sin(now * 6) * 0.7
       : -1.2 + Math.sin(now * 9) * 0.9;
-    if (s.carrying) this.good(s.carrying, x, y + 0.42, z, p.heading + Math.PI / 2);
+    if (s.carrying) this.good(s.carrying, x, y + CARRY_Y, z, p.heading + Math.PI / 2);
   }
 
   // --- overlays ------------------------------------------------------------
