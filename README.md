@@ -13,9 +13,10 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 ## Running it
 
-Needs [Bun](https://bun.sh) (no other dependencies):
+Needs [Bun](https://bun.sh). The only library is [Three.js](https://threejs.org), for the 3D view.
 
 ```bash
+bun install      # first time only
 bun run dev      # http://localhost:5173  (add ?seed=123 to start a fixed map fresh)
 bun run build    # static build in dist/
 bun test         # game logic tests in test/
@@ -44,7 +45,7 @@ back to their building or flag, so nothing is lost.
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains |
 | `src/game.ts` | Simulation: buildings, settlers, task queues, carrier dispatch |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render.ts` | Canvas isometric renderer (terrain, buildings, settlers) |
+| `src/render.ts` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle |
 | `src/ui.ts` | HUD, build bar, info panel |
 | `src/main.ts` | Input, camera, fixed-step game loop |
 
@@ -67,4 +68,4 @@ gets no materials.
 4. **Population.** Houses that grow your settler count over time.
 5. **Demolish and move buildings.**
 6. **Goals instead of enemies.** Peaceful scenarios: build a monument, trade with a ship, survive winter.
-7. **Art pass.** Sprite sheets in place of the procedural shapes.
+7. **Art pass.** Swap the built-in 3D shapes for detailed models (for example, free CC0 packs from Kenney or Quaternius).
