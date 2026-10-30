@@ -80,21 +80,22 @@ canvas {
 }
 #speed button.active { background: rgba(255, 210, 74, 0.25); color: var(--gold); }
 
+/* Goods are drawn as small pictures, the same everywhere a good is listed. */
 .good {
   display: inline-block;
-  width: 12px;
-  height: 8px;
-  border-radius: 2px;
-  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  vertical-align: -3px;
   margin-right: 3px;
+  background: center / contain no-repeat;
 }
-.good.log { background: #7a4a24; border-radius: 4px; }
-.good.plank { background: #d9b27a; }
-.good.stone { background: #9c9c96; border-radius: 50%; width: 10px; height: 10px; }
-.good.fish { background: #7fa8bf; border-radius: 50%; }
-.good.grain { background: #d8b84a; border-radius: 3px 3px 5px 5px; width: 9px; height: 11px; }
-.good.flour { background: #f1ece0; border-radius: 4px 4px 2px 2px; width: 10px; height: 10px; }
-.good.bread { background: #b8732e; border-radius: 6px; }
+.good.log { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%3E%3Crect%20x%3D%271%27%20y%3D%275%27%20width%3D%2712%27%20height%3D%276%27%20rx%3D%271%27%20fill%3D%27%238a5228%27%2F%3E%3Cpath%20d%3D%27M3%207h7M4%209h6%27%20stroke%3D%27%235e361a%27%20stroke-width%3D%27.8%27%2F%3E%3Cellipse%20cx%3D%2713%27%20cy%3D%278%27%20rx%3D%272.2%27%20ry%3D%273%27%20fill%3D%27%23e6c38c%27%20stroke%3D%27%238a5228%27%20stroke-width%3D%27.8%27%2F%3E%3Ccircle%20cx%3D%2713%27%20cy%3D%278%27%20r%3D%27.9%27%20fill%3D%27%23b98a52%27%2F%3E%3C%2Fsvg%3E"); }
+.good.plank { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%3E%3Cpath%20d%3D%27M1%209l11-3%203%201-11%203z%27%20fill%3D%27%23e6c08a%27%2F%3E%3Cpath%20d%3D%27M1%209v2l3%201v-2z%27%20fill%3D%27%23b88a52%27%2F%3E%3Cpath%20d%3D%27M4%2010v2l11-3V7z%27%20fill%3D%27%23d2a66c%27%2F%3E%3Cpath%20d%3D%27M1%206l11-3%203%201-11%203z%27%20fill%3D%27%23f0d09c%27%2F%3E%3Cpath%20d%3D%27M1%206v2l3%201V7z%27%20fill%3D%27%23b88a52%27%2F%3E%3Cpath%20d%3D%27M4%207v2l11-3V4z%27%20fill%3D%27%23dcb27a%27%2F%3E%3C%2Fsvg%3E"); }
+.good.stone { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%3E%3Cpath%20d%3D%27M2%2011l2-5%204-2%205%202%201%205-4%203H5z%27%20fill%3D%27%23a8a69e%27%2F%3E%3Cpath%20d%3D%27M4%206l4-2%205%202-4%202z%27%20fill%3D%27%23cfccc4%27%2F%3E%3Cpath%20d%3D%27M9%208l4-2%201%205-4%203z%27%20fill%3D%27%238a8880%27%2F%3E%3C%2Fsvg%3E"); }
+.good.fish { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%3E%3Cpath%20d%3D%27M2%208c3-4%208-4%2010%200-2%204-7%204-10%200z%27%20fill%3D%27%238fb6c8%27%2F%3E%3Cpath%20d%3D%27M11%208l4-3v6z%27%20fill%3D%27%236f98ad%27%2F%3E%3Ccircle%20cx%3D%275%27%20cy%3D%277.3%27%20r%3D%27.9%27%20fill%3D%27%231e2a30%27%2F%3E%3Cpath%20d%3D%27M3%208.5c3%201.5%206%201.5%208.5%200%27%20stroke%3D%27%23cfe2ea%27%20stroke-width%3D%27.8%27%20fill%3D%27none%27%2F%3E%3C%2Fsvg%3E"); }
+.good.grain { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%3E%3Cpath%20d%3D%27M8%2015V6%27%20stroke%3D%27%23a07a2a%27%20stroke-width%3D%271.2%27%2F%3E%3Cg%20fill%3D%27%23e3bf4c%27%3E%3Cellipse%20cx%3D%278%27%20cy%3D%273%27%20rx%3D%271.4%27%20ry%3D%272.2%27%2F%3E%3Cellipse%20cx%3D%276%27%20cy%3D%276%27%20rx%3D%271.3%27%20ry%3D%272%27%20transform%3D%27rotate(-30%206%206)%27%2F%3E%3Cellipse%20cx%3D%2710%27%20cy%3D%276%27%20rx%3D%271.3%27%20ry%3D%272%27%20transform%3D%27rotate(30%2010%206)%27%2F%3E%3Cellipse%20cx%3D%276%27%20cy%3D%279.5%27%20rx%3D%271.3%27%20ry%3D%272%27%20transform%3D%27rotate(-30%206%209.5)%27%2F%3E%3Cellipse%20cx%3D%2710%27%20cy%3D%279.5%27%20rx%3D%271.3%27%20ry%3D%272%27%20transform%3D%27rotate(30%2010%209.5)%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); }
+.good.flour { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%3E%3Cpath%20d%3D%27M5%204h6l2%203v6a2%202%200%2001-2%202H5a2%202%200%2001-2-2V7z%27%20fill%3D%27%23f3eee2%27%20stroke%3D%27%23b8a888%27%20stroke-width%3D%27.8%27%2F%3E%3Cpath%20d%3D%27M5.5%204.5l5%200%27%20stroke%3D%27%239a744a%27%20stroke-width%3D%271.4%27%2F%3E%3Cpath%20d%3D%27M6%201.5h4l-1%203H7z%27%20fill%3D%27%23e2d8c0%27%2F%3E%3C%2Fsvg%3E"); }
+.good.bread { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2016%2016%27%3E%3Cpath%20d%3D%27M1.5%2010c0-4%203-6%206.5-6s6.5%202%206.5%206c0%201.5-1%202-2%202H3.5c-1%200-2-.5-2-2z%27%20fill%3D%27%23c07a36%27%2F%3E%3Cpath%20d%3D%27M5%206l1.5%203M8%205.5l1%203M11%206l-.5%203%27%20stroke%3D%27%23f0c88a%27%20stroke-width%3D%271.1%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E"); }
 
 #buildbar {
   position: fixed;

@@ -273,4 +273,4 @@ function frame(now: number) {
 }
 requestAnimationFrame(frame);
 
-Object.assign(window, { game, diag }); // handy for poking at state from the console
+Object.assign(window, { game, diag, renderer }); // handy for poking at state from the console
