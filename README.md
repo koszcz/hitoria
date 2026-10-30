@@ -18,6 +18,7 @@ Needs [Bun](https://bun.sh) (no other dependencies):
 ```bash
 bun run dev      # http://localhost:5173  (add ?seed=123 to start a fixed map fresh)
 bun run build    # static build in dist/
+bun test         # game logic tests in test/
 ```
 
 Controls: drag to pan, scroll to zoom, `1`–`5` to pick a building, `R` to draw roads, `X` to
