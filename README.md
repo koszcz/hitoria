@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A small settlement: the HQ, a quarry and a woodcutter's hut joined by roads, with carriers on the way](docs/screenshot.jpg)
+![A village around the HQ keep: timber-framed huts, a windmill, a lookout tower and a stone mine, joined by roads](docs/screenshot.jpg)
 
 ## How to play
 

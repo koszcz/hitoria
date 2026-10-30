@@ -9,17 +9,23 @@ import type { P } from './path';
 // The camera keeps the old 2:1 isometric angle (45° around, 30° down), so `cam` still pans in
 // the same screen-pixel space as the 2D renderer did.
 
+// Tunic colours, hats and hair, so you can tell a settler's trade at a glance.
 const ROLE_COLOR: Record<Role, string> = {
-  carrier: '#c9b27c', builder: '#e08a2c', woodcutter: '#3f7d3a', forester: '#8bc34a',
-  stonecutter: '#8d8d8d', sawyer: '#8a5a2b', scout: '#4a7bd0',
-  fisher: '#3f6f8a', farmer: '#c9a43a', miller: '#e8e2d0', baker: '#d07a3a', miner: '#5a4a3a',
+  carrier: '#d8c08a', builder: '#e0883a', woodcutter: '#b0402e', forester: '#5f9a3a',
+  stonecutter: '#8a8f96', sawyer: '#a8763e', scout: '#3f6fc0',
+  fisher: '#3f7a96', farmer: '#c8a040', miller: '#efe8d6', baker: '#d9894a', miner: '#5a5048',
 };
-const GOOD_COLOR: Record<Good, string> = {
-  log: '#7a4a24', plank: '#d9b27a', stone: '#9c9c96', fish: '#7fa8bf', grain: '#d8b84a', flour: '#f1ece0', bread: '#b8732e',
+const HAT: Record<Role, string> = {
+  carrier: '', builder: '#f2c23a', woodcutter: '#3f6a34', forester: '#4a6a2c', stonecutter: '#6a6e72',
+  sawyer: '#6b4a28', scout: '#2c4a8a', fisher: '#e8c84a', farmer: '#ead48a', miller: '#ffffff', baker: '#ffffff', miner: '#4a4440',
+};
+const HAIR: Record<Role, string> = {
+  carrier: '#6a4a2a', builder: '#3a2618', woodcutter: '#8a4a22', forester: '#4a3020', stonecutter: '#2a2420',
+  sawyer: '#b0803a', scout: '#d8b060', fisher: '#5a5048', farmer: '#9a6a32', miller: '#c8c0b0', baker: '#4a3020', miner: '#2a2420',
 };
 const GOOD_LIST = GOODS;
 // How high a building's sign floats.
-const iconY = (type: BType) => (type === 'lookout' ? 2.15 : type === 'mill' ? 1.95 : 1.3);
+const iconY = (type: BType) => (type === 'lookout' ? 2.45 : type === 'mill' ? 1.95 : 1.3);
 
 export interface View {
   hover: P | null;
@@ -114,40 +120,70 @@ function softDot() {
   return new THREE.CanvasTexture(cv);
 }
 
+// A small wooden shield with the building's symbol on it, hung over finished buildings.
 function iconTexture(icon: string) {
-  const cv = Object.assign(document.createElement('canvas'), { width: 64, height: 64 });
+  const n = 96, cv = Object.assign(document.createElement('canvas'), { width: n, height: n });
   const cx = cv.getContext('2d')!;
-  cx.beginPath();
-  cx.arc(32, 32, 29, 0, Math.PI * 2);
-  cx.fillStyle = 'rgba(255, 250, 235, 0.92)';
+  const shield = () => {
+    cx.beginPath();
+    cx.moveTo(14, 12);
+    cx.lineTo(82, 12);
+    cx.lineTo(82, 50);
+    cx.quadraticCurveTo(82, 78, 48, 90);
+    cx.quadraticCurveTo(14, 78, 14, 50);
+    cx.closePath();
+  };
+  shield();
+  const wood = cx.createLinearGradient(0, 12, 0, 90);
+  wood.addColorStop(0, '#f6e6c0');
+  wood.addColorStop(1, '#e2c792');
+  cx.fillStyle = wood;
   cx.fill();
-  cx.font = '34px system-ui, "Apple Color Emoji", sans-serif';
+  cx.lineWidth = 6;
+  cx.strokeStyle = '#6a4628';
+  cx.stroke();
+  cx.font = '40px system-ui, "Apple Color Emoji", sans-serif';
   cx.textAlign = 'center';
   cx.textBaseline = 'middle';
-  cx.fillText(icon, 32, 35);
+  cx.fillText(icon, 48, 48);
   const t = new THREE.CanvasTexture(cv);
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
 }
 
-// A road sign with a red bar through it, shown over buildings that have no road to the HQ.
+// A round sign showing a road with a red bar through it, over buildings with no road to the HQ.
 function noRoadTexture() {
-  const cv = Object.assign(document.createElement('canvas'), { width: 64, height: 64 });
+  const n = 96, cv = Object.assign(document.createElement('canvas'), { width: n, height: n });
   const cx = cv.getContext('2d')!;
   cx.beginPath();
-  cx.arc(32, 32, 29, 0, Math.PI * 2);
-  cx.fillStyle = 'rgba(255, 250, 235, 0.95)';
+  cx.arc(48, 48, 42, 0, Math.PI * 2);
+  cx.fillStyle = '#fff8ea';
   cx.fill();
-  cx.lineWidth = 5;
+  cx.lineWidth = 8;
   cx.strokeStyle = '#d23a2a';
   cx.stroke();
-  cx.font = '30px system-ui, "Apple Color Emoji", sans-serif';
-  cx.textAlign = 'center';
-  cx.textBaseline = 'middle';
-  cx.fillText('🛤️', 32, 34);
+  // A road running off into the distance, with a dashed middle line.
   cx.beginPath();
-  cx.moveTo(13, 51);
-  cx.lineTo(51, 13);
+  cx.moveTo(30, 80);
+  cx.lineTo(43, 18);
+  cx.lineTo(53, 18);
+  cx.lineTo(66, 80);
+  cx.closePath();
+  cx.fillStyle = '#9a7a52';
+  cx.fill();
+  cx.strokeStyle = '#fff8ea';
+  cx.lineWidth = 3;
+  cx.setLineDash([7, 6]);
+  cx.beginPath();
+  cx.moveTo(48, 78);
+  cx.lineTo(48, 20);
+  cx.stroke();
+  cx.setLineDash([]);
+  cx.lineWidth = 9;
+  cx.strokeStyle = '#d23a2a';
+  cx.beginPath();
+  cx.moveTo(19, 77);
+  cx.lineTo(77, 19);
   cx.stroke();
   const t = new THREE.CanvasTexture(cv);
   t.colorSpace = THREE.SRGBColorSpace;
@@ -187,22 +223,39 @@ function seeded<T>(seed: number, f: () => T): T {
   }
 }
 
-const conifer = () => seeded(11, () => mergeGeometries([
-  piece(new THREE.CylinderGeometry(0.035, 0.055, 0.3, 6), '#4f3219', 0, 0.15, 0),
-  piece(new THREE.ConeGeometry(0.3, 0.5, 8), '#24492a', 0, 0.42, 0, 0.12),
-  piece(new THREE.ConeGeometry(0.23, 0.42, 8), '#2c5832', 0, 0.66, 0, 0.12),
-  piece(new THREE.ConeGeometry(0.15, 0.34, 7), '#356a3a', 0, 0.88, 0, 0.12),
-]));
+// Darkens the bottom of a model and lightens its top, like light falling from the sky.
+function skyShade(g: THREE.BufferGeometry, low = 0.7, high = 1.15) {
+  g.computeBoundingBox();
+  const { min, max } = g.boundingBox!;
+  const pos = g.attributes.position, col = g.attributes.color;
+  for (let i = 0; i < pos.count; i++) {
+    const k = low + ((pos.getY(i) - min.y) / (max.y - min.y || 1)) * (high - low);
+    col.setXYZ(i, col.getX(i) * k, col.getY(i) * k, col.getZ(i) * k);
+  }
+  return g;
+}
 
-const broadleaf = () => seeded(23, () => mergeGeometries([
-  piece(new THREE.CylinderGeometry(0.035, 0.06, 0.42, 6), '#56381c', 0, 0.21, 0),
-  piece(new THREE.IcosahedronGeometry(0.27, 1), '#33662a', 0, 0.56, 0, 0.25),
-  piece(new THREE.IcosahedronGeometry(0.2, 1), '#3f7a32', 0.13, 0.7, 0.06, 0.25),
-  piece(new THREE.IcosahedronGeometry(0.19, 1), '#3a7230', -0.12, 0.66, -0.08, 0.25),
-  piece(new THREE.IcosahedronGeometry(0.15, 1), '#4f8f3e', 0.02, 0.82, -0.02, 0.25),
-]));
+// A fir: a bare trunk under four drooping tiers that narrow to a point.
+const conifer = () => seeded(11, () => skyShade(mergeGeometries([
+  piece(new THREE.CylinderGeometry(0.03, 0.05, 0.28, 6), '#5a3a1e', 0, 0.14, 0),
+  piece(new THREE.ConeGeometry(0.29, 0.34, 9), '#2a6a3a', 0, 0.36, 0, 0.1),
+  piece(new THREE.ConeGeometry(0.24, 0.32, 9), '#2f7740', 0.01, 0.55, 0, 0.1),
+  piece(new THREE.ConeGeometry(0.18, 0.3, 8), '#368546', -0.01, 0.73, 0.01, 0.1),
+  piece(new THREE.ConeGeometry(0.11, 0.26, 7), '#3f9150', 0, 0.9, 0, 0.1),
+]), 0.6, 1.2));
 
-const boulder = () => seeded(5, () => paint(new THREE.DodecahedronGeometry(0.16, 1), '#ffffff', 0.35));
+// A round, leafy tree: a forked trunk under a cluster of soft blobs.
+const broadleaf = () => seeded(23, () => skyShade(mergeGeometries([
+  piece(new THREE.CylinderGeometry(0.035, 0.06, 0.4, 6), '#6a4524', 0, 0.2, 0),
+  piece(new THREE.CylinderGeometry(0.015, 0.025, 0.2, 5).rotateZ(0.6), '#6a4524', 0.06, 0.42, 0),
+  piece(new THREE.IcosahedronGeometry(0.25, 1), '#4a8f34', 0, 0.56, 0, 0.18),
+  piece(new THREE.IcosahedronGeometry(0.2, 1), '#559c3a', 0.15, 0.62, 0.07, 0.18),
+  piece(new THREE.IcosahedronGeometry(0.19, 1), '#4f9636', -0.14, 0.6, -0.07, 0.18),
+  piece(new THREE.IcosahedronGeometry(0.17, 1), '#5aa43e', 0.03, 0.62, 0.15, 0.18),
+  piece(new THREE.IcosahedronGeometry(0.17, 1), '#66b046', 0.02, 0.8, -0.02, 0.18),
+]), 0.55, 1.25));
+
+const boulder = () => seeded(5, () => skyShade(paint(new THREE.DodecahedronGeometry(0.16, 1), '#ffffff', 0.35), 0.75, 1.15));
 
 interface Model {
   g: THREE.Group;
@@ -214,11 +267,33 @@ interface Model {
   cloth?: THREE.Object3D;
   sails?: THREE.Object3D;
   noRoad?: THREE.Sprite;
+  chimney?: THREE.Vector3; // where smoke rises from while the building works
+  spin?: THREE.Object3D; // a saw blade that turns while the building works
+}
+
+type Roof = 'tile' | 'thatch' | 'slate';
+
+interface House {
+  w: number;
+  d: number;
+  h: number;
+  rh: number;
+  wall: string;
+  roof: string;
+  style?: Roof;
+  x?: number;
+  z?: number;
+  chimney?: boolean;
+  door?: number; // across the front wall, from -1 (left) to 1 (right)
+  win?: number | null; // the same for the front window; null for none
+  bigDoor?: boolean;
+  shutter?: string;
 }
 
 interface Person {
   g: THREE.Group;
   legs: THREE.Object3D[];
+  arms: THREE.Object3D[];
   tool: THREE.Object3D;
   body: THREE.Group;
   px: number;
@@ -234,7 +309,7 @@ export class Renderer {
   private gl: THREE.WebGLRenderer;
   private scene = new THREE.Scene();
   private camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
-  private sun = new THREE.DirectionalLight('#fff0d8', 2.6);
+  private sun = new THREE.DirectionalLight('#ffe6c0', 2.4);
   private ray = new THREE.Raycaster();
   private mats = new Map<string, THREE.Material>();
   private grain = grainTexture();
@@ -279,19 +354,20 @@ export class Renderer {
   private v = new THREE.Vector3();
   private s = new THREE.Vector3();
   private c = new THREE.Color();
+  private deep = new THREE.Color('#1c4f6a'); // sea floor colour far from shore
 
   constructor(public canvas: HTMLCanvasElement) {
     this.gl = new THREE.WebGLRenderer({ canvas, antialias: true });
     this.gl.shadowMap.enabled = true;
     this.gl.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.gl.toneMapping = THREE.ACESFilmicToneMapping;
-    this.gl.toneMappingExposure = 1.05;
+    this.gl.toneMapping = THREE.NeutralToneMapping;
+    this.gl.toneMappingExposure = 1.0;
     this.resize();
     addEventListener('resize', () => this.resize());
 
     const { scene, sun } = this;
-    scene.background = new THREE.Color('#2a5f86');
-    scene.add(new THREE.HemisphereLight('#cfe6ff', '#5b5236', 1.1));
+    scene.background = new THREE.Color('#3d8fb0');
+    scene.add(new THREE.HemisphereLight('#d8ecff', '#6a5a3a', 1.35));
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     sun.shadow.bias = -0.0004;
@@ -312,13 +388,34 @@ export class Renderer {
     scene.add(this.rocks);
 
     const goodGeo: Record<Good, THREE.BufferGeometry> = {
-      log: new THREE.CylinderGeometry(0.035, 0.035, 0.2, 7).rotateZ(Math.PI / 2),
-      plank: new THREE.BoxGeometry(0.2, 0.03, 0.08),
-      stone: new THREE.DodecahedronGeometry(0.055, 0),
-      fish: new THREE.SphereGeometry(0.05, 8, 6).scale(1.9, 0.55, 0.8),
-      grain: new THREE.CylinderGeometry(0.045, 0.055, 0.13, 7).translate(0, 0.03, 0),
-      flour: new THREE.SphereGeometry(0.065, 8, 6).scale(1, 0.85, 1).translate(0, 0.02, 0),
-      bread: new THREE.SphereGeometry(0.06, 8, 6).scale(1.5, 0.6, 0.9),
+      log: mergeGeometries([
+        piece(new THREE.CylinderGeometry(0.035, 0.035, 0.2, 7).rotateZ(Math.PI / 2), '#7a4a24', 0, 0, 0),
+        piece(new THREE.CylinderGeometry(0.03, 0.03, 0.205, 7).rotateZ(Math.PI / 2), '#e0bf8a', 0, 0, 0),
+      ]),
+      plank: mergeGeometries([
+        piece(new THREE.BoxGeometry(0.2, 0.025, 0.08), '#e0bb84', 0, 0, 0),
+        piece(new THREE.BoxGeometry(0.2, 0.025, 0.08), '#cfa56c', 0.01, 0.026, 0.005),
+      ]),
+      stone: piece(new THREE.DodecahedronGeometry(0.055, 0), '#a8a69e', 0, 0, 0),
+      fish: mergeGeometries([
+        piece(new THREE.SphereGeometry(0.045, 8, 6).scale(1.9, 0.6, 0.75), '#8fb6c8', 0, 0, 0),
+        piece(new THREE.ConeGeometry(0.035, 0.05, 4).rotateZ(Math.PI / 2), '#6f98ad', -0.1, 0, 0),
+      ]),
+      grain: mergeGeometries([
+        piece(new THREE.CylinderGeometry(0.035, 0.045, 0.14, 7), '#d8b84a', 0, 0.04, 0),
+        piece(new THREE.CylinderGeometry(0.038, 0.038, 0.02, 7), '#8a5a2a', 0, 0.03, 0),
+        piece(new THREE.SphereGeometry(0.05, 7, 5), '#e8c860', 0, 0.12, 0),
+      ]),
+      flour: mergeGeometries([
+        piece(new THREE.SphereGeometry(0.065, 8, 6).scale(1, 0.9, 1), '#f3eee2', 0, 0.02, 0),
+        piece(new THREE.CylinderGeometry(0.02, 0.03, 0.04, 6), '#e2d8c0', 0, 0.09, 0),
+        piece(new THREE.CylinderGeometry(0.022, 0.022, 0.01, 6), '#a07a4a', 0, 0.075, 0),
+      ]),
+      bread: mergeGeometries([
+        piece(new THREE.SphereGeometry(0.06, 8, 6).scale(1.5, 0.6, 0.9), '#b8732e', 0, 0, 0),
+        piece(new THREE.BoxGeometry(0.012, 0.01, 0.06), '#e8c080', -0.03, 0.035, 0),
+        piece(new THREE.BoxGeometry(0.012, 0.01, 0.06), '#e8c080', 0.03, 0.035, 0),
+      ]),
     };
 
     // Grain fields: a patch of tilled soil under a tuft of stalks that grows and turns gold.
@@ -338,7 +435,7 @@ export class Renderer {
     }
     this.goods = {} as Record<Good, THREE.InstancedMesh>;
     for (const g of GOOD_LIST) {
-      const m = new THREE.InstancedMesh(goodGeo[g], this.mat(GOOD_COLOR[g]), 4000);
+      const m = new THREE.InstancedMesh(goodGeo[g], new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.8 }), 4000);
       m.castShadow = true;
       m.frustumCulled = false;
       scene.add(m);
@@ -518,7 +615,7 @@ export class Renderer {
     ripples.repeat.set(40, 40);
     this.water = new THREE.Mesh(
       new THREE.PlaneGeometry(W * 8, H * 8).rotateX(-Math.PI / 2),
-      new THREE.MeshStandardMaterial({ color: '#2b6f9c', roughness: 0.18, metalness: 0.05, transparent: true, opacity: 0.86, normalMap: ripples, normalScale: new THREE.Vector2(0.35, 0.35) }),
+      new THREE.MeshStandardMaterial({ color: '#2a8cb0', roughness: 0.15, metalness: 0.05, transparent: true, opacity: 0.68, normalMap: ripples, normalScale: new THREE.Vector2(0.35, 0.35) }),
     );
     this.water.position.set(W / 2, SEA, H / 2);
     this.water.receiveShadow = true;
@@ -535,14 +632,16 @@ export class Renderer {
       let c = base.get(key);
       if (c) return c;
       const t = world.at(x, y);
-      c = t.t === 'water' ? new THREE.Color('#b9a77a')
-        : t.t === 'mountain' ? new THREE.Color().setHSL(0.08, 0.08, 0.36 + hash(x, y) * 0.08)
-        : new THREE.Color(t.col).offsetHSL(0, t.t === 'grass' ? -0.14 : -0.05, -0.03);
-      if (!world.territory[key] && t.t !== 'water') c.offsetHSL(0, -0.15, 0).multiplyScalar(0.5).lerp(new THREE.Color('#2a2440'), 0.15);
+      c = t.t === 'water' ? new THREE.Color('#d4c08a')
+        : t.t === 'mountain' ? new THREE.Color().setHSL(0.07, 0.1, 0.44 + hash(x, y) * 0.08)
+        : t.t === 'grass' ? new THREE.Color(t.col).offsetHSL(0.0, -0.08, 0.05)
+        : new THREE.Color(t.col).offsetHSL(0, 0.05, 0.04);
+      // Land outside your border stays readable, just cooler and dimmer.
+      if (!world.territory[key] && t.t !== 'water') c.offsetHSL(0, -0.12, 0).multiplyScalar(0.72).lerp(new THREE.Color('#4a5070'), 0.12);
       base.set(key, c);
       return c;
     };
-    const rock = new THREE.Color('#6f675c'), snow = new THREE.Color('#f2f4f6');
+    const rock = new THREE.Color('#857a6a'), snow = new THREE.Color('#f6f8fa');
     for (let j = 0; j <= H; j++)
       for (let i = 0; i <= W; i++) {
         const k = j * (W + 1) + i;
@@ -558,7 +657,7 @@ export class Renderer {
         const slope = Math.abs(C[Math.min(k + 1, C.length - 1)] - h) + Math.abs(C[Math.min(k + W + 1, C.length - 1)] - h);
         if (slope > 0.35 && h > 0.3) c.lerp(rock, Math.min(0.8, (slope - 0.35) * 1.5));
         if (h > 2.4) c.lerp(snow, Math.min(1, (h - 2.4) * 1.2));
-        if (h < SEA) c.multiplyScalar(Math.max(0.35, 1 + h * 0.4));
+        if (h < SEA) c.lerp(this.deep, Math.min(0.85, -h * 0.5));
         col.setXYZ(k, c.r, c.g, c.b);
       }
     col.needsUpdate = true;
@@ -594,7 +693,7 @@ export class Renderer {
   private drawRoads(game: Game) {
     for (const c of this.roads.children) (c as THREE.Mesh).geometry.dispose();
     this.roads.clear();
-    for (const [width, color, lift, off] of [[0.36, '#6f5a3c', 0.02, -1], [0.24, '#b49a6c', 0.03, -2]] as const) {
+    for (const [width, color, lift, off] of [[0.38, '#8a7350', 0.02, -1], [0.26, '#d2b886', 0.03, -2]] as const) {
       const pos: number[] = [], idx: number[] = [];
       for (const r of game.roads.values()) {
         const pts: THREE.Vector2[] = [];
@@ -647,7 +746,8 @@ export class Renderer {
           const mesh = t.conifer ? pine : leafy;
           const n = t.conifer ? np++ : nl++;
           mesh.setMatrixAt(n, this.m4);
-          mesh.setColorAt(n, this.c.setHSL(0.25 + (hash(y, x * 5) - 0.5) * 0.08, 0.35, 0.75 + hash(x, y * 3) * 0.3));
+          // A little warmer or cooler, lighter or darker, so a forest is not one flat green.
+          mesh.setColorAt(n, this.c.setHSL(0.11 + (hash(y, x * 5) - 0.5) * 0.2, 0.4, 0.82 + hash(x, y * 3) * 0.22));
         }
         if (t.crop > 0) {
           const px = x + 0.5, pz = y + 0.5, gy = this.heightAt(px, pz);
@@ -668,7 +768,7 @@ export class Renderer {
             this.e.set(hash(i, x) * 3, hash(y, i) * 6, 0);
             this.m4.compose(this.v.set(px, this.heightAt(px, pz) + 0.02, pz), this.q.setFromEuler(this.e), this.s.set(s, s * 0.7, s));
             this.rocks.setMatrixAt(nr, this.m4);
-            this.rocks.setColorAt(nr++, this.c.setHSL(0.09, 0.05, 0.24 + hash(x + i, y * 2) * 0.1));
+            this.rocks.setColorAt(nr++, this.c.setHSL(0.08 + hash(i, y) * 0.04, 0.08, 0.5 + hash(x + i, y * 2) * 0.14));
           }
         }
       }
@@ -696,38 +796,106 @@ export class Renderer {
     return m;
   }
 
-  // A timber-framed house on a stone footing, gable roof ridge along X, door facing +Z.
-  private house(g: THREE.Group, f: number, h: number, rh: number, wall: string, roof: string, ox = 0, oz = 0) {
-    const e = 0.07, beam = '#4a3220';
+  // A timber-framed house on a stone footing. The roof ridge runs along X and the door faces +Z.
+  // `w` and `d` are half the width (X) and half the depth (Z) of the walls.
+  private house(g: THREE.Group, model: Model, o: House) {
+    const { w, d, h, rh, wall, roof, style = 'tile', chimney = true, door = -0.35, win = 0.45 } = o;
+    const e = style === 'thatch' ? 0.09 : 0.07, beam = '#4e3420', top = h + 0.05;
     const at = new THREE.Group();
-    at.position.set(ox, 0, oz);
+    at.position.set(o.x ?? 0, 0, o.z ?? 0);
     g.add(at);
-    this.add(at, new THREE.BoxGeometry(2 * f + 0.08, 0.3, 2 * f + 0.08), '#8a8378', 0, -0.1, 0);
-    this.add(at, new THREE.BoxGeometry(2 * f, h, 2 * f), wall, 0, h / 2 + 0.05, 0);
-    for (const [x, z] of [[-f, -f], [f, -f], [-f, f], [f, f]]) this.add(at, new THREE.BoxGeometry(0.04, h, 0.04), beam, x, h / 2 + 0.05, z);
-    this.add(at, new THREE.BoxGeometry(2 * f + 0.02, 0.035, 2 * f + 0.02), beam, 0, h + 0.03, 0);
-    this.add(at, new THREE.BoxGeometry(2 * f + 0.02, 0.03, 2 * f + 0.02), beam, 0, h * 0.5 + 0.05, 0);
-    const shape = new THREE.Shape([new THREE.Vector2(-f, 0), new THREE.Vector2(f, 0), new THREE.Vector2(0, rh)]);
-    const gable = new THREE.ExtrudeGeometry(shape, { depth: 2 * f, bevelEnabled: false }).rotateY(Math.PI / 2).translate(-f, h + 0.05, 0);
-    this.add(at, gable, wall, 0, 0, 0);
-    const L = Math.hypot(f + e, rh), a = Math.atan2(rh, f + e);
-    for (const side of [1, -1]) {
-      const slab = this.add(at, new THREE.BoxGeometry(2 * f + 2 * e, 0.05, L + 0.02), roof, 0, h + 0.05 + rh / 2 + 0.02, (side * (f + e)) / 2);
-      slab.rotation.x = side * a;
+    this.add(at, new THREE.BoxGeometry(2 * w + 0.08, 0.3, 2 * d + 0.08), '#9d958a', 0, -0.1, 0);
+    this.add(at, new THREE.BoxGeometry(2 * w, h, 2 * d), wall, 0, h / 2 + 0.05, 0);
+
+    // Timber frame: corner posts, a sill, a middle rail and a top beam.
+    for (const [x, z] of [[-w, -d], [w, -d], [-w, d], [w, d]]) this.add(at, new THREE.BoxGeometry(0.045, h, 0.045), beam, x, h / 2 + 0.05, z);
+    for (const y of [0.07, 0.05 + h * 0.55, top - 0.02]) this.add(at, new THREE.BoxGeometry(2 * w + 0.03, 0.035, 2 * d + 0.03), beam, 0, y, 0);
+    // A cross of braces in the upper half of the side wall.
+    const span = h * 0.45 - 0.03, len = Math.hypot(span, 2 * d);
+    for (const s of [1, -1]) {
+      const b = this.add(at, new THREE.BoxGeometry(0.02, len, 0.025), beam, w + 0.012, 0.05 + h * 0.775, 0);
+      b.rotation.x = s * Math.atan2(2 * d, span);
     }
-    this.add(at, new THREE.BoxGeometry(2 * f + 2 * e, 0.05, 0.05), shadeOf(roof, 0.7), 0, h + 0.07 + rh, 0);
-    this.add(at, new THREE.BoxGeometry(0.13, 0.22, 0.02), '#3a2414', -f * 0.35, 0.16, f + 0.01);
-    this.add(at, new THREE.BoxGeometry(0.02, 0.1, 0.12), '#ffcf6a', f + 0.01, h * 0.6, 0, { emissive: '#ff9a30', emissiveIntensity: 0.6 });
-    this.add(at, new THREE.BoxGeometry(0.1, 0.1, 0.02), '#ffcf6a', f * 0.4, h * 0.6, f + 0.01, { emissive: '#ff9a30', emissiveIntensity: 0.6 });
-    this.add(at, new THREE.BoxGeometry(0.08, rh + 0.2, 0.08), '#7a7068', f * 0.5, h + rh * 0.55, -f * 0.35);
+
+    // Gable walls and the two roof slopes.
+    const shape = new THREE.Shape([new THREE.Vector2(-d, 0), new THREE.Vector2(d, 0), new THREE.Vector2(0, rh)]);
+    this.add(at, new THREE.ExtrudeGeometry(shape, { depth: 2 * w, bevelEnabled: false }).rotateY(Math.PI / 2).translate(-w, top, 0), wall, 0, 0, 0);
+    const t = style === 'thatch' ? 0.1 : 0.05;
+    const L = Math.hypot(d + e, rh) + 0.03, a = Math.atan2(rh, d + e);
+    for (const side of [1, -1]) {
+      const slab = this.add(at, new THREE.BoxGeometry(2 * w + 2 * e, t, L), roof, 0, top + rh / 2 + t / 2 - 0.005, (side * (d + e)) / 2);
+      slab.rotation.x = side * a;
+      if (style === 'thatch') {
+        // A thick, shaggy lower edge.
+        this.add(slab, new THREE.BoxGeometry(2 * w + 2 * e + 0.02, t * 1.3, 0.06), shadeOf(roof, 0.78), 0, -0.01, side * (L / 2 - 0.02));
+      } else {
+        // Rows of tiles or slates, each a little darker at its lower lip.
+        const n = Math.max(3, Math.round(L / (style === 'slate' ? 0.07 : 0.09)));
+        for (let i = 0; i < n; i++)
+          this.add(slab, new THREE.BoxGeometry(2 * w + 2 * e + 0.005, 0.022, 0.03), shadeOf(roof, 0.8), 0, t / 2, -L / 2 + ((i + 0.6) * L) / n);
+      }
+    }
+    if (style === 'thatch') this.add(at, new THREE.CylinderGeometry(0.06, 0.06, 2 * w + 2 * e, 8).rotateZ(Math.PI / 2), shadeOf(roof, 0.72), 0, top + rh + 0.03, 0);
+    else this.add(at, new THREE.BoxGeometry(2 * w + 2 * e + 0.02, 0.06, 0.07), shadeOf(roof, 0.65), 0, top + rh + 0.04, 0);
+
+    if (chimney) {
+      const cx = w * 0.55, cz = -d * 0.4, ch = rh + 0.24, cy = top + rh * 0.45 + ch / 2 - 0.1;
+      this.add(at, new THREE.BoxGeometry(0.1, ch, 0.1), '#8c8278', cx, cy, cz);
+      this.add(at, new THREE.BoxGeometry(0.13, 0.035, 0.13), '#6e665e', cx, cy + ch / 2, cz);
+      model.chimney = new THREE.Vector3((o.x ?? 0) + cx, cy + ch / 2 + 0.05, (o.z ?? 0) + cz);
+    }
+
+    // Door with a frame and a stone step; a shuttered window beside it and one on the side.
+    if (o.bigDoor) {
+      this.add(at, new THREE.BoxGeometry(0.34, 0.34, 0.02), beam, 0, 0.22, d + 0.008);
+      for (const s of [-1, 1]) this.add(at, new THREE.BoxGeometry(0.14, 0.3, 0.025), '#6a4628', s * 0.075, 0.2, d + 0.014);
+      this.add(at, new THREE.BoxGeometry(0.28, 0.025, 0.03), beam, 0, 0.2, d + 0.03);
+    } else {
+      const dx = door * w;
+      this.add(at, new THREE.BoxGeometry(0.17, 0.27, 0.02), beam, dx, 0.185, d + 0.008);
+      this.add(at, new THREE.BoxGeometry(0.12, 0.23, 0.025), '#6a4628', dx, 0.165, d + 0.014);
+      this.add(at, new THREE.BoxGeometry(0.2, 0.04, 0.08), '#a39b8f', dx, 0.03, d + 0.06);
+    }
+    const glass = { emissive: '#ffa040', emissiveIntensity: 0.35 };
+    const shutter = shadeOf(o.shutter ?? roof, 0.85);
+    if (win !== null) {
+      const wx = win * w, wy = 0.05 + h * 0.62;
+      this.add(at, new THREE.BoxGeometry(0.1, 0.1, 0.02), '#ffd88a', wx, wy, d + 0.012, glass);
+      for (const s of [-1, 1]) this.add(at, new THREE.BoxGeometry(0.045, 0.11, 0.015), shutter, wx + s * 0.075, wy, d + 0.016);
+      this.add(at, new THREE.BoxGeometry(0.13, 0.02, 0.04), beam, wx, wy - 0.06, d + 0.02);
+    }
+    this.add(at, new THREE.BoxGeometry(0.02, 0.09, 0.09), '#ffd88a', w + 0.012, 0.05 + h * 0.3, d * 0.35, glass);
     return at;
   }
 
   private logPile(g: THREE.Group, x: number, z: number, n: number) {
     for (let i = 0; i < n; i++) {
-      const m = this.add(g, new THREE.CylinderGeometry(0.035, 0.035, 0.26, 7), '#7a4a24', x + (i % 3) * 0.075 - 0.075 + (i >= 3 ? 0.037 : 0), 0.04 + (i >= 3 ? 0.06 : 0), z);
+      const row = i >= 3 ? 1 : 0;
+      const m = this.add(g, new THREE.CylinderGeometry(0.035, 0.035, 0.26, 7), '#7a4a24', x + (i % 3) * 0.075 - 0.075 + row * 0.037, 0.04 + row * 0.06, z);
       m.rotation.x = Math.PI / 2;
+      // Pale cut ends.
+      for (const s of [-1, 1]) {
+        const end = this.add(m, new THREE.CylinderGeometry(0.03, 0.03, 0.005, 7), '#e0bf8a', 0, s * 0.13, 0);
+        end.castShadow = false;
+      }
     }
+  }
+
+  // A small leafy sapling, used by the forester and as decoration.
+  private sapling(g: THREE.Object3D, x: number, z: number, s = 1) {
+    this.add(g, new THREE.CylinderGeometry(0.008 * s, 0.012 * s, 0.1 * s, 4), '#6a4524', x, 0.05 * s, z);
+    this.add(g, new THREE.IcosahedronGeometry(0.05 * s, 0), '#6cb648', x, 0.12 * s, z, { flatShading: true });
+  }
+
+  private crate(g: THREE.Object3D, x: number, y: number, z: number, s = 0.13) {
+    this.add(g, new THREE.BoxGeometry(s, s, s), '#b4844e', x, y + s / 2, z);
+    this.add(g, new THREE.BoxGeometry(s + 0.006, 0.02, s + 0.006), '#7a5530', x, y + s * 0.8, z);
+    this.add(g, new THREE.BoxGeometry(s + 0.006, 0.02, s + 0.006), '#7a5530', x, y + s * 0.2, z);
+  }
+
+  private barrel(g: THREE.Object3D, x: number, z: number) {
+    this.add(g, new THREE.CylinderGeometry(0.06, 0.06, 0.16, 10), '#8a5a32', x, 0.08, z);
+    for (const y of [0.03, 0.13]) this.add(g, new THREE.CylinderGeometry(0.064, 0.064, 0.015, 10), '#4a4440', x, y, z);
   }
 
   private makeBuilding(type: BType, built: boolean): Model {
@@ -735,15 +903,35 @@ export class Renderer {
     const def = BDEFS[type];
     const model: Model = { g, key: `${type}:${built}` };
     if (!built) {
-      this.add(g, new THREE.BoxGeometry(0.9, 0.06, 0.9), '#a88d63', 0, 0.01, 0);
-      const rise = this.add(g, new THREE.BoxGeometry(0.66, 1, 0.66), '#c99c62', 0, 0, 0);
-      rise.geometry.translate(0, 0.5, 0);
+      // A building site: a stone footing, scaffolding, and a timber frame that rises as it is built.
+      this.add(g, new THREE.BoxGeometry(0.86, 0.08, 0.86), '#a39b8f', 0, 0.0, 0);
+      const rise = new THREE.Group();
+      for (const [x, z] of [[-0.28, -0.28], [0.28, -0.28], [-0.28, 0.28], [0.28, 0.28], [0, -0.28], [0, 0.28], [-0.28, 0], [0.28, 0]])
+        this.add(rise, new THREE.BoxGeometry(0.04, 1, 0.04).translate(0, 0.5, 0), '#c99a5e', x, 0, z);
+      for (const y of [0.33, 0.66, 0.98]) {
+        this.add(rise, new THREE.BoxGeometry(0.6, 0.035, 0.04), '#b0824c', 0, y, 0.28);
+        this.add(rise, new THREE.BoxGeometry(0.6, 0.035, 0.04), '#b0824c', 0, y, -0.28);
+        this.add(rise, new THREE.BoxGeometry(0.04, 0.035, 0.6), '#b0824c', 0.28, y, 0);
+        this.add(rise, new THREE.BoxGeometry(0.04, 0.035, 0.6), '#b0824c', -0.28, y, 0);
+      }
+      g.add(rise);
       model.rise = rise;
-      for (const [x, z] of [[-0.36, 0.36], [0.36, 0.36], [0.36, -0.36], [-0.36, -0.36]])
-        this.add(g, new THREE.CylinderGeometry(0.02, 0.02, 0.7, 5), '#6b4a28', x, 0.35, z);
-      const bg = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#000000', opacity: 0.55, transparent: true, depthTest: false }));
-      bg.scale.set(0.6, 0.07, 1);
-      bg.position.y = 1.05;
+      // Scaffold poles and a ladder stay full height.
+      for (const [x, z] of [[-0.4, 0.4], [0.4, 0.4], [0.4, -0.4], [-0.4, -0.4]])
+        this.add(g, new THREE.CylinderGeometry(0.018, 0.02, 0.8, 5), '#7a5530', x, 0.4, z);
+      for (const y of [0.4, 0.75]) {
+        this.add(g, new THREE.BoxGeometry(0.82, 0.02, 0.07), '#9c7444', 0, y, 0.4);
+        this.add(g, new THREE.BoxGeometry(0.07, 0.02, 0.82), '#9c7444', 0.4, y, 0);
+      }
+      const ladder = new THREE.Group();
+      for (const s of [-1, 1]) this.add(ladder, new THREE.BoxGeometry(0.015, 0.75, 0.015), '#7a5530', s * 0.05, 0.37, 0);
+      for (let i = 0; i < 6; i++) this.add(ladder, new THREE.BoxGeometry(0.1, 0.012, 0.012), '#7a5530', 0, 0.08 + i * 0.12, 0);
+      ladder.position.set(-0.2, 0, 0.46);
+      ladder.rotation.x = -0.15;
+      g.add(ladder);
+      const bg = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#2a1e12', opacity: 0.7, transparent: true, depthTest: false }));
+      bg.scale.set(0.62, 0.08, 1);
+      bg.position.y = 1.1;
       bg.renderOrder = 10;
       const bar = new THREE.Sprite(new THREE.SpriteMaterial({ color: '#ffd24a', depthTest: false }));
       bar.center.set(0, 0.5);
@@ -753,102 +941,183 @@ export class Renderer {
       model.bar = bar;
       return model;
     }
+    const { wall, roof } = def;
     switch (type) {
       case 'hq': {
-        this.add(g, new THREE.BoxGeometry(0.98, 0.3, 0.98), '#8a8378', 0, -0.1, 0);
-        const tx = -0.22, tz = -0.22;
-        this.add(g, new THREE.BoxGeometry(0.42, 1.3, 0.42), '#cbbd9e', tx, 0.65, tz);
+        this.add(g, new THREE.BoxGeometry(1.02, 0.3, 1.02), '#a39a8c', 0, -0.1, 0);
+        // A square stone keep with battlements and a banner.
+        const tx = -0.22, tz = -0.22, stone = '#d8cdb2';
+        this.add(g, new THREE.BoxGeometry(0.44, 1.35, 0.44), stone, tx, 0.67, tz);
+        this.add(g, new THREE.BoxGeometry(0.5, 0.08, 0.5), shadeOf(stone, 0.85), tx, 1.36, tz);
         for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1], [0, -1], [0, 1], [-1, 0], [1, 0]])
-          this.add(g, new THREE.BoxGeometry(0.09, 0.1, 0.09), '#b8aa8a', tx + x * 0.17, 1.35, tz + z * 0.17);
-        this.add(g, new THREE.CylinderGeometry(0.012, 0.012, 0.5, 5), '#3b2b1a', tx, 1.6, tz);
-        const cloth = this.add(g, new THREE.PlaneGeometry(0.32, 0.18).translate(0.16, 0, 0), '#c8382a', tx, 1.75, tz, { side: THREE.DoubleSide });
-        model.cloth = cloth;
-        this.house(g, 0.4, 0.62, 0.42, def.wall, def.roof, 0.06, 0.06);
+          this.add(g, new THREE.BoxGeometry(0.1, 0.11, 0.1), stone, tx + x * 0.2, 1.45, tz + z * 0.2);
+        for (const y of [0.85, 1.12]) {
+          this.add(g, new THREE.BoxGeometry(0.04, 0.12, 0.02), '#2a2420', tx + 0.1, y, tz + 0.225);
+          this.add(g, new THREE.BoxGeometry(0.02, 0.12, 0.04), '#2a2420', tx + 0.225, y, tz - 0.05);
+        }
+        this.add(g, new THREE.CylinderGeometry(0.012, 0.012, 0.55, 5), '#3b2b1a', tx, 1.7, tz);
+        model.cloth = this.add(g, new THREE.PlaneGeometry(0.34, 0.2).translate(0.17, 0, 0), roof, tx, 1.86, tz, { side: THREE.DoubleSide });
+        // A round corner tower with a pointed roof.
+        this.add(g, new THREE.CylinderGeometry(0.13, 0.14, 0.95, 12), stone, 0.3, 0.47, -0.3);
+        this.add(g, new THREE.ConeGeometry(0.18, 0.36, 12), roof, 0.3, 1.12, -0.3);
+        // The main hall in front.
+        this.house(g, model, { w: 0.42, d: 0.3, h: 0.58, rh: 0.4, wall, roof, x: 0.06, z: 0.14, door: 0.0, win: 0.6, bigDoor: true });
+        this.barrel(g, -0.4, 0.4);
+        this.crate(g, 0.42, 0, 0.47, 0.1);
         break;
       }
       case 'lookout': {
-        this.add(g, new THREE.BoxGeometry(0.6, 0.3, 0.6), '#8a8378', 0, -0.1, 0);
-        this.add(g, new THREE.BoxGeometry(0.44, 1.1, 0.44), def.wall, 0, 0.6, 0);
-        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) this.add(g, new THREE.BoxGeometry(0.05, 1.15, 0.05), '#4a3220', x * 0.22, 0.6, z * 0.22);
-        this.add(g, new THREE.BoxGeometry(0.6, 0.05, 0.6), '#6b4a28', 0, 1.17, 0);
-        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) this.add(g, new THREE.BoxGeometry(0.035, 0.28, 0.035), '#4a3220', x * 0.27, 1.32, z * 0.27);
-        const roof = this.add(g, new THREE.ConeGeometry(0.46, 0.45, 4), def.roof, 0, 1.68, 0);
-        roof.rotation.y = Math.PI / 4;
-        this.add(g, new THREE.BoxGeometry(0.12, 0.22, 0.02), '#3a2414', 0, 0.16, 0.23);
+        this.add(g, new THREE.BoxGeometry(0.6, 0.3, 0.6), '#9d958a', 0, -0.1, 0);
+        // A small room at the bottom, four tall posts with braces, a railed platform and a spire.
+        this.add(g, new THREE.BoxGeometry(0.38, 0.38, 0.38), wall, 0, 0.24, 0);
+        this.add(g, new THREE.BoxGeometry(0.12, 0.22, 0.02), '#6a4628', 0, 0.16, 0.2);
+        const beam = '#5a3c22', top = 1.2;
+        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) this.add(g, new THREE.BoxGeometry(0.055, top, 0.055), beam, x * 0.21, top / 2, z * 0.21);
+        for (const [y0, y1] of [[0.45, 0.82], [0.82, 1.18]]) {
+          const dy = y1 - y0, len = Math.hypot(0.42, dy), ang = Math.atan2(0.42, dy);
+          for (const s of [1, -1]) {
+            for (const z of [0.21, -0.21]) this.add(g, new THREE.BoxGeometry(0.025, len, 0.025), beam, 0, (y0 + y1) / 2, z).rotation.z = s * ang;
+            for (const x of [0.21, -0.21]) this.add(g, new THREE.BoxGeometry(0.025, len, 0.025), beam, x, (y0 + y1) / 2, 0).rotation.x = s * ang;
+          }
+        }
+        this.add(g, new THREE.BoxGeometry(0.64, 0.05, 0.64), '#8a6238', 0, top, 0);
+        for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) this.add(g, new THREE.BoxGeometry(0.035, 0.3, 0.035), beam, x * 0.29, top + 0.15, z * 0.29);
+        for (const [x, z, sx, sz] of [[0, 0.29, 0.6, 0.025], [0, -0.29, 0.6, 0.025], [0.29, 0, 0.025, 0.6], [-0.29, 0, 0.025, 0.6]])
+          this.add(g, new THREE.BoxGeometry(sx, 0.025, sz), beam, x, top + 0.12, z);
+        const spire = this.add(g, new THREE.ConeGeometry(0.46, 0.5, 4), roof, 0, top + 0.55, 0);
+        spire.rotation.y = Math.PI / 4;
+        this.add(g, new THREE.CylinderGeometry(0.008, 0.008, 0.22, 4), beam, 0, top + 0.9, 0);
+        model.cloth = this.add(g, new THREE.PlaneGeometry(0.16, 0.09).translate(0.08, 0, 0), '#e9c440', 0, top + 0.96, 0, { side: THREE.DoubleSide });
         break;
       }
       case 'sawmill': {
-        this.house(g, 0.36, 0.48, 0.32, def.wall, def.roof, -0.05, -0.05);
-        this.logPile(g, 0.38, -0.1, 5);
-        const blade = this.add(g, new THREE.CylinderGeometry(0.11, 0.11, 0.015, 16), '#c0c4c8', 0.38, 0.22, 0.25, { metalness: 0.8, roughness: 0.3 });
-        blade.rotation.x = Math.PI / 2;
-        this.add(g, new THREE.BoxGeometry(0.3, 0.12, 0.12), '#6b4a28', 0.38, 0.06, 0.25);
+        this.house(g, model, { w: 0.3, d: 0.26, h: 0.44, rh: 0.3, wall, roof, x: -0.14, z: -0.14, win: 0.4 });
+        // An open shed over the saw bench.
+        const beam = '#5a3c22';
+        for (const [x, z] of [[0.12, 0.12], [0.44, 0.12], [0.12, 0.44], [0.44, 0.44]]) this.add(g, new THREE.BoxGeometry(0.035, 0.42, 0.035), beam, x, 0.21, z);
+        const lean = this.add(g, new THREE.BoxGeometry(0.42, 0.035, 0.44), roof, 0.28, 0.44, 0.28);
+        lean.rotation.x = 0.25;
+        this.add(g, new THREE.BoxGeometry(0.3, 0.1, 0.12), '#7a5530', 0.28, 0.08, 0.3);
+        const log = this.add(g, new THREE.CylinderGeometry(0.035, 0.035, 0.3, 7), '#7a4a24', 0.28, 0.16, 0.3);
+        log.rotation.z = Math.PI / 2;
+        const blade = this.add(g, new THREE.CylinderGeometry(0.09, 0.09, 0.012, 16), '#c8ccd0', 0.32, 0.17, 0.3, { metalness: 0.7, roughness: 0.3 });
+        blade.geometry.rotateX(Math.PI / 2);
+        model.spin = blade;
+        this.logPile(g, -0.28, 0.35, 5);
+        this.add(g, new THREE.BoxGeometry(0.2, 0.03, 0.08), '#d9b27a', 0.3, 0.015, -0.3);
+        this.add(g, new THREE.BoxGeometry(0.2, 0.03, 0.08), '#d9b27a', 0.32, 0.045, -0.3);
         break;
       }
       case 'storehouse': {
-        this.house(g, 0.4, 0.46, 0.36, def.wall, def.roof, 0, -0.06);
-        for (const [x, z, y] of [[-0.3, 0.42, 0.07], [-0.14, 0.42, 0.07], [-0.22, 0.42, 0.21]])
-          this.add(g, new THREE.BoxGeometry(0.13, 0.13, 0.13), '#a07444', x, y, z);
-        this.add(g, new THREE.CylinderGeometry(0.07, 0.07, 0.17, 10), '#7a5230', 0.28, 0.085, 0.42);
+        // A wide barn with big double doors, crates and barrels.
+        this.house(g, model, { w: 0.42, d: 0.3, h: 0.46, rh: 0.4, wall, roof, z: -0.08, chimney: false, win: null, bigDoor: true });
+        this.crate(g, -0.36, 0, 0.36);
+        this.crate(g, -0.22, 0, 0.4, 0.11);
+        this.crate(g, -0.3, 0.13, 0.37, 0.1);
+        this.barrel(g, 0.32, 0.36);
+        this.barrel(g, 0.42, 0.24);
         break;
       }
       case 'mill': {
-        this.add(g, new THREE.CylinderGeometry(0.34, 0.36, 0.3, 12), '#8a8378', 0, -0.1, 0);
-        this.add(g, new THREE.CylinderGeometry(0.22, 0.3, 1.05, 10), def.wall, 0, 0.55, 0);
-        this.add(g, new THREE.ConeGeometry(0.27, 0.36, 10), def.roof, 0, 1.25, 0);
-        this.add(g, new THREE.BoxGeometry(0.13, 0.24, 0.02), '#3a2414', 0, 0.14, 0.27);
+        // A tapered white tower with a turning cap and four lattice sails.
+        this.add(g, new THREE.CylinderGeometry(0.36, 0.38, 0.3, 14), '#9d958a', 0, -0.1, 0);
+        this.add(g, new THREE.CylinderGeometry(0.22, 0.31, 1.05, 14), wall, 0, 0.57, 0);
+        this.add(g, new THREE.CylinderGeometry(0.33, 0.33, 0.04, 14), '#6a4628', 0, 0.42, 0);
+        this.add(g, new THREE.ConeGeometry(0.28, 0.4, 14), roof, 0, 1.29, 0);
+        this.add(g, new THREE.CylinderGeometry(0.24, 0.24, 0.06, 14), shadeOf(roof, 0.75), 0, 1.11, 0);
+        this.add(g, new THREE.BoxGeometry(0.13, 0.25, 0.03), '#6a4628', 0, 0.17, 0.3);
+        this.add(g, new THREE.BoxGeometry(0.07, 0.09, 0.02), '#ffd88a', 0, 0.75, 0.25, { emissive: '#ffa040', emissiveIntensity: 0.35 });
+        this.add(g, new THREE.CylinderGeometry(0.035, 0.035, 0.18, 8).rotateX(Math.PI / 2), '#4a3220', 0, 1.08, 0.27);
         const sails = new THREE.Group();
-        sails.position.set(0, 1.05, 0.3);
+        sails.position.set(0, 1.08, 0.36);
         for (let i = 0; i < 4; i++) {
           const arm = new THREE.Group();
           arm.rotation.z = (i * Math.PI) / 2;
-          this.add(arm, new THREE.BoxGeometry(0.03, 0.62, 0.02), '#5a3c22', 0, 0.31, 0);
-          this.add(arm, new THREE.BoxGeometry(0.13, 0.42, 0.01), '#efe6d2', 0.08, 0.38, 0.01);
+          this.add(arm, new THREE.BoxGeometry(0.03, 0.66, 0.025), '#5a3c22', 0, 0.33, 0);
+          this.add(arm, new THREE.BoxGeometry(0.14, 0.46, 0.008), '#f2ead8', 0.085, 0.4, 0.008);
+          for (let k = 0; k < 4; k++) this.add(arm, new THREE.BoxGeometry(0.15, 0.012, 0.015), '#7a5530', 0.085, 0.2 + k * 0.13, 0.016);
+          this.add(arm, new THREE.BoxGeometry(0.012, 0.46, 0.015), '#7a5530', 0.155, 0.4, 0.016);
           sails.add(arm);
         }
         g.add(sails);
         model.sails = sails;
+        for (const [x, z] of [[0.32, 0.22], [0.38, 0.1]]) this.add(g, new THREE.SphereGeometry(0.06, 8, 6).scale(1, 1.15, 1), '#efe6d0', x, 0.06, z);
         break;
       }
       case 'mine': {
-        this.add(g, new THREE.BoxGeometry(0.9, 0.3, 0.9), '#7d776d', 0, -0.1, 0);
-        this.add(g, new THREE.DodecahedronGeometry(0.5, 0).scale(1, 0.75, 0.8), '#8c867b', 0, 0.2, -0.15, { flatShading: true });
-        this.add(g, new THREE.BoxGeometry(0.32, 0.36, 0.1), '#1c1814', 0, 0.18, 0.24);
-        for (const x of [-0.18, 0.18]) this.add(g, new THREE.BoxGeometry(0.05, 0.42, 0.06), '#5a3c22', x, 0.21, 0.29);
-        this.add(g, new THREE.BoxGeometry(0.44, 0.05, 0.07), '#5a3c22', 0, 0.44, 0.29);
-        this.add(g, new THREE.BoxGeometry(0.18, 0.1, 0.12), '#5d5248', 0.32, 0.08, 0.36);
-        for (const [x, z] of [[0.33, 0.33], [0.28, 0.38], [0.36, 0.38]]) this.add(g, new THREE.DodecahedronGeometry(0.04, 0), '#a3a19a', x, 0.15, z);
+        this.add(g, new THREE.BoxGeometry(0.9, 0.3, 0.9), '#8a8378', 0, -0.1, 0);
+        // A rocky mound with a timbered tunnel mouth, rails and a cart of stone.
+        this.add(g, new THREE.DodecahedronGeometry(0.5, 0).scale(1, 0.8, 0.8), '#948d80', 0, 0.22, -0.18, { flatShading: true });
+        this.add(g, new THREE.DodecahedronGeometry(0.28, 0).scale(1, 0.9, 1), '#857e72', -0.3, 0.16, 0.05, { flatShading: true });
+        this.add(g, new THREE.DodecahedronGeometry(0.22, 0), '#9c9588', 0.32, 0.12, -0.12, { flatShading: true });
+        this.add(g, new THREE.BoxGeometry(0.3, 0.34, 0.12), '#16120e', 0, 0.17, 0.22);
+        const beam = '#5a3c22';
+        for (const x of [-0.17, 0.17]) this.add(g, new THREE.BoxGeometry(0.055, 0.42, 0.06), beam, x, 0.21, 0.29);
+        this.add(g, new THREE.BoxGeometry(0.46, 0.06, 0.08), beam, 0, 0.44, 0.29);
+        this.add(g, new THREE.BoxGeometry(0.03, 0.06, 0.03), '#ffcf6a', 0.2, 0.36, 0.33, { emissive: '#ffa040', emissiveIntensity: 0.9 });
+        for (const x of [-0.06, 0.06]) this.add(g, new THREE.BoxGeometry(0.015, 0.012, 0.3), '#6a6460', x, 0.01, 0.42);
+        for (let i = 0; i < 4; i++) this.add(g, new THREE.BoxGeometry(0.18, 0.012, 0.03), '#6a4628', 0, 0.005, 0.3 + i * 0.07);
+        this.add(g, new THREE.BoxGeometry(0.16, 0.08, 0.12), '#5d5248', 0, 0.07, 0.43);
+        for (const [x, z] of [[-0.03, 0.42], [0.04, 0.44], [0, 0.4]]) this.add(g, new THREE.DodecahedronGeometry(0.035, 0), '#b0ada4', x, 0.13, z);
         break;
       }
       default: {
-        this.house(g, 0.3, 0.42, 0.3, def.wall, def.roof, -0.04, -0.04);
+        const style: Roof = type === 'quarry' ? 'slate' : type === 'bakery' ? 'tile' : 'thatch';
+        this.house(g, model, { w: 0.3, d: 0.25, h: 0.42, rh: 0.3, wall, roof, style, x: -0.08, z: -0.08, shutter: '#4f6f5a' });
         if (type === 'woodcutter') {
-          this.logPile(g, 0.3, 0.3, 3);
-          this.add(g, new THREE.CylinderGeometry(0.06, 0.07, 0.1, 8), '#6b4a28', -0.32, 0.05, 0.32);
+          this.logPile(g, 0.3, 0.32, 5);
+          this.add(g, new THREE.CylinderGeometry(0.06, 0.07, 0.1, 8), '#7a5530', -0.33, 0.05, 0.33);
+          this.add(g, new THREE.CylinderGeometry(0.055, 0.055, 0.005, 8), '#e0bf8a', -0.33, 0.1, 0.33);
+          const axe = new THREE.Group();
+          this.add(axe, new THREE.BoxGeometry(0.012, 0.16, 0.012), '#6a4628', 0, 0.08, 0);
+          this.add(axe, new THREE.BoxGeometry(0.05, 0.035, 0.012), '#c8ccd0', 0.02, 0.15, 0);
+          axe.position.set(-0.33, 0.09, 0.33);
+          axe.rotation.z = 0.3;
+          g.add(axe);
         } else if (type === 'forester') {
-          for (const [x, z] of [[0.33, 0.28], [0.36, -0.1]]) {
-            this.add(g, new THREE.CylinderGeometry(0.01, 0.012, 0.1, 4), '#56381c', x, 0.05, z);
-            this.add(g, new THREE.IcosahedronGeometry(0.06, 0), '#6aa848', x, 0.12, z, { flatShading: true });
-          }
+          // A little fenced nursery bed of saplings.
+          this.add(g, new THREE.BoxGeometry(0.22, 0.03, 0.34), '#6b4a2c', 0.36, 0.015, 0.05);
+          for (const [x, z] of [[0.31, -0.06], [0.41, 0.05], [0.31, 0.16], [0.4, -0.08]]) this.sapling(g, x, z, 0.9);
+          for (const z of [-0.13, 0.23]) this.add(g, new THREE.BoxGeometry(0.24, 0.02, 0.015), '#8a6238', 0.36, 0.07, z);
+          this.sapling(g, -0.36, 0.38, 1.3);
         } else if (type === 'fisher') {
-          const boat = this.add(g, new THREE.BoxGeometry(0.34, 0.06, 0.13), '#7a5230', 0.3, 0.04, 0.32);
-          boat.rotation.y = 0.4;
-          this.add(g, new THREE.CylinderGeometry(0.008, 0.008, 0.4, 4), '#4a3220', 0.38, 0.2, -0.2);
-          this.add(g, new THREE.BoxGeometry(0.18, 0.14, 0.01), '#cfc7a8', 0.38, 0.22, -0.18, { transparent: true, opacity: 0.7 });
+          // An upturned boat, a drying rack with fish and a net.
+          const boat = this.add(g, new THREE.SphereGeometry(0.1, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2).scale(1.9, 0.6, 0.75), '#7a5230', 0.26, 0, 0.36);
+          boat.rotation.y = 0.35;
+          for (const x of [0.28, 0.46]) this.add(g, new THREE.BoxGeometry(0.02, 0.3, 0.02), '#5a3c22', x, 0.15, -0.18);
+          this.add(g, new THREE.BoxGeometry(0.22, 0.015, 0.015), '#5a3c22', 0.37, 0.29, -0.18);
+          for (const x of [0.32, 0.37, 0.42]) this.add(g, new THREE.SphereGeometry(0.02, 6, 4).scale(0.6, 2.2, 0.6), '#9cc0d0', x, 0.23, -0.18);
+          this.add(g, new THREE.PlaneGeometry(0.2, 0.14), '#e8e0c4', -0.36, 0.12, 0.3, { transparent: true, opacity: 0.55, side: THREE.DoubleSide }).rotation.y = 0.8;
         } else if (type === 'farm') {
-          this.add(g, new THREE.CylinderGeometry(0.09, 0.09, 0.12, 10).rotateZ(Math.PI / 2), '#d8b84a', 0.32, 0.09, 0.3);
-          this.add(g, new THREE.CylinderGeometry(0.09, 0.09, 0.12, 10).rotateZ(Math.PI / 2), '#cfae42', 0.36, 0.09, 0.08);
+          // A haystack, sacks of grain and a stretch of fence.
+          this.add(g, new THREE.CylinderGeometry(0.12, 0.13, 0.12, 10), '#d8b84a', 0.33, 0.06, 0.3);
+          this.add(g, new THREE.ConeGeometry(0.13, 0.16, 10), '#e3c457', 0.33, 0.2, 0.3);
+          for (const [x, z] of [[0.38, 0.04], [0.32, -0.06]]) this.add(g, new THREE.SphereGeometry(0.05, 8, 6).scale(1, 1.3, 0.9), '#cdb488', x, 0.06, z);
+          for (let i = 0; i < 4; i++) this.add(g, new THREE.BoxGeometry(0.02, 0.12, 0.02), '#8a6238', -0.44 + i * 0.12, 0.06, 0.42);
+          for (const y of [0.05, 0.1]) this.add(g, new THREE.BoxGeometry(0.38, 0.015, 0.012), '#8a6238', -0.26, y, 0.42);
         } else if (type === 'bakery') {
-          this.add(g, new THREE.BoxGeometry(0.1, 0.36, 0.1), '#8a5a3a', 0.12, 0.72, -0.12);
-          this.add(g, new THREE.SphereGeometry(0.13, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), '#b8a088', 0.33, 0, 0.28);
+          // A domed brick oven with its own chimney, where the smoke comes from.
+          this.add(g, new THREE.SphereGeometry(0.16, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2).scale(1, 0.85, 1), '#b5654a', 0.3, 0, 0.26);
+          this.add(g, new THREE.BoxGeometry(0.08, 0.07, 0.03), '#1a100a', 0.3, 0.04, 0.41, { emissive: '#ff6a20', emissiveIntensity: 0.8 });
+          this.add(g, new THREE.BoxGeometry(0.06, 0.18, 0.06), '#9a4f3a', 0.3, 0.2, 0.18);
+          model.chimney = new THREE.Vector3(0.3, 0.33, 0.18);
+          this.add(g, new THREE.BoxGeometry(0.16, 0.02, 0.1), '#8a6238', -0.36, 0.12, 0.36);
+          for (const s of [-1, 1]) this.add(g, new THREE.BoxGeometry(0.015, 0.12, 0.015), '#6a4628', -0.36 + s * 0.06, 0.06, 0.36);
+          this.add(g, new THREE.SphereGeometry(0.035, 8, 6).scale(1.5, 0.7, 1), '#c07a36', -0.36, 0.145, 0.36);
         } else if (type === 'quarry') {
-          for (const [x, z, s] of [[0.33, 0.25, 0.09], [0.38, -0.05, 0.07], [0.26, -0.3, 0.08]])
-            this.add(g, new THREE.BoxGeometry(s * 1.6, s, s * 1.2), '#a3a19a', x, s / 2, z);
+          for (const [x, y, z, s] of [[0.33, 0, 0.27, 0.1], [0.42, 0, 0.12, 0.09], [0.37, 0.1, 0.22, 0.08], [0.28, 0, -0.3, 0.09]])
+            this.add(g, new THREE.BoxGeometry(s * 1.5, s, s * 1.1), '#bdb9ae', x, y + s / 2, z);
+          const pick = new THREE.Group();
+          this.add(pick, new THREE.BoxGeometry(0.012, 0.17, 0.012), '#6a4628', 0, 0.085, 0);
+          this.add(pick, new THREE.BoxGeometry(0.12, 0.018, 0.018), '#8c9094', 0, 0.17, 0);
+          pick.position.set(-0.36, 0, 0.36);
+          pick.rotation.z = -0.4;
+          g.add(pick);
         }
       }
     }
     const icon = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.icon(type), depthTest: false, transparent: true }));
-    icon.scale.setScalar(0.34);
+    icon.scale.setScalar(0.3);
     icon.renderOrder = 12;
     if (type !== 'hq') {
       icon.position.y = iconY(type);
@@ -928,11 +1197,13 @@ export class Renderer {
     if (m.cloth) m.cloth.rotation.y = Math.sin(now * 3) * 0.35;
     if (m.icon) m.icon.position.y = iconY(b.type) + Math.sin(now * 2 + b.id) * 0.03;
     if (m.sails && b.busy) m.sails.rotation.z = -now * 1.6;
+    if (m.spin && b.busy) m.spin.rotation.z = -now * 14;
+    const c = m.chimney;
     m.smoke!.forEach((s, i) => {
-      s.visible = b.busy;
-      if (!b.busy) return;
+      s.visible = b.busy && !!c;
+      if (!s.visible) return;
       const t = (now * 0.5 + i / 3) % 1;
-      s.position.set(0.12 + Math.sin(t * 6) * 0.05, 0.95 + t * 0.7, -0.12);
+      s.position.set(c!.x + Math.sin(t * 6) * 0.05 + t * 0.12, c!.y + t * 0.7, c!.z);
       s.scale.setScalar(0.12 + t * 0.25);
       (s.material as THREE.SpriteMaterial).opacity = 0.55 * (1 - t);
     });
@@ -953,8 +1224,12 @@ export class Renderer {
 
   private makeFlag(): Model {
     const g = new THREE.Group();
-    this.add(g, new THREE.CylinderGeometry(0.014, 0.018, 0.55, 5), '#4a3420', 0, 0.27, 0);
-    const cloth = this.add(g, new THREE.PlaneGeometry(0.24, 0.15).translate(0.12, 0, 0), '#e9c440', 0, 0.46, 0, { side: THREE.DoubleSide });
+    this.add(g, new THREE.DodecahedronGeometry(0.045, 0).scale(1, 0.5, 1), '#9d958a', 0, 0.01, 0);
+    this.add(g, new THREE.CylinderGeometry(0.013, 0.017, 0.58, 6), '#5a3c22', 0, 0.29, 0);
+    this.add(g, new THREE.SphereGeometry(0.022, 8, 6), '#f0c030', 0, 0.59, 0, { metalness: 0.5, roughness: 0.4 });
+    const pennant = new THREE.Shape([new THREE.Vector2(0, 0.075), new THREE.Vector2(0.25, 0.075), new THREE.Vector2(0.19, 0), new THREE.Vector2(0.25, -0.075), new THREE.Vector2(0, -0.075)]);
+    const cloth = this.add(g, new THREE.ShapeGeometry(pennant), '#e8443a', 0, 0.49, 0, { side: THREE.DoubleSide });
+    this.add(cloth, new THREE.PlaneGeometry(0.25, 0.022).translate(0.1, 0.06, 0.001), '#f0c030', 0, 0, 0, { side: THREE.DoubleSide });
     return { g, key: 'flag', cloth };
   }
 
@@ -983,26 +1258,108 @@ export class Renderer {
       }
   }
 
+  // A settler: legs, a tunic in their trade's colour, swinging arms, and a hat and tool for the job.
   private makePerson(role: Role): Person {
     const g = new THREE.Group(), body = new THREE.Group();
     g.add(body);
-    const legs = [-0.03, 0.03].map((x) => {
+    const shirt = ROLE_COLOR[role], skin = '#eac39a', trousers = '#4a3a2c';
+    const legs = [-0.028, 0.028].map((x) => {
       const pivot = new THREE.Group();
       pivot.position.set(x, 0.12, 0);
-      this.add(pivot, new THREE.BoxGeometry(0.035, 0.12, 0.04), '#3a2a1c', 0, -0.06, 0);
+      this.add(pivot, new THREE.BoxGeometry(0.036, 0.11, 0.04), trousers, 0, -0.055, 0);
+      this.add(pivot, new THREE.BoxGeometry(0.04, 0.025, 0.055), '#2e2218', 0, -0.108, 0.008);
       body.add(pivot);
       return pivot;
     });
-    this.add(body, new THREE.CylinderGeometry(0.05, 0.065, 0.15, 8), ROLE_COLOR[role], 0, 0.19, 0);
-    this.add(body, new THREE.SphereGeometry(0.042, 10, 8), '#e8bf94', 0, 0.3, 0);
-    this.add(body, new THREE.CylinderGeometry(0.03, 0.06, 0.04, 10), shadeOf(ROLE_COLOR[role], 0.65), 0, 0.34, 0);
-    const tool = new THREE.Group();
-    tool.position.set(0.07, 0.22, 0.02);
-    this.add(tool, new THREE.BoxGeometry(0.015, 0.015, 0.16), '#6b4a28', 0, 0, 0.08);
-    this.add(tool, new THREE.BoxGeometry(0.04, 0.04, 0.03), role === 'forester' || role === 'farmer' ? '#6abf4b' : '#c0c4c8', 0, 0, 0.16);
+    this.add(body, new THREE.CylinderGeometry(0.048, 0.062, 0.15, 8), shirt, 0, 0.19, 0);
+    this.add(body, new THREE.CylinderGeometry(0.063, 0.063, 0.02, 8), '#3a2a1c', 0, 0.14, 0);
+    this.add(body, new THREE.SphereGeometry(0.042, 10, 8), skin, 0, 0.3, 0);
+    this.add(body, new THREE.SphereGeometry(0.044, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2.2), HAIR[role], 0, 0.305, -0.004);
+    this.hat(body, role);
+    const arms = [-1, 1].map((s) => {
+      const pivot = new THREE.Group();
+      pivot.position.set(s * 0.062, 0.255, 0);
+      this.add(pivot, new THREE.BoxGeometry(0.026, 0.1, 0.03), shirt, 0, -0.045, 0);
+      this.add(pivot, new THREE.SphereGeometry(0.016, 6, 4), skin, 0, -0.1, 0);
+      body.add(pivot);
+      return pivot;
+    });
+    const tool = this.tool(role);
+    tool.position.set(0, -0.1, 0);
     tool.visible = false;
-    body.add(tool);
-    return { g, legs, tool, body, px: NaN, py: NaN, heading: 0 };
+    arms[1].add(tool);
+    return { g, legs, arms, tool, body, px: NaN, py: NaN, heading: 0 };
+  }
+
+  private hat(body: THREE.Group, role: Role) {
+    const y = 0.33;
+    const brim = (r: number, color: string) => this.add(body, new THREE.CylinderGeometry(r, r, 0.012, 12), color, 0, y, 0);
+    switch (role) {
+      case 'farmer':
+      case 'fisher':
+        brim(0.085, HAT[role]);
+        this.add(body, new THREE.CylinderGeometry(0.035, 0.045, 0.04, 10), HAT[role], 0, y + 0.02, 0);
+        break;
+      case 'forester':
+        brim(0.07, HAT[role]);
+        this.add(body, new THREE.ConeGeometry(0.045, 0.07, 10), HAT[role], 0, y + 0.035, 0);
+        break;
+      case 'woodcutter':
+      case 'scout':
+        this.add(body, new THREE.ConeGeometry(0.048, 0.1, 10), HAT[role], 0, y + 0.04, -0.008).rotation.x = -0.35;
+        if (role === 'scout') this.add(body, new THREE.BoxGeometry(0.008, 0.07, 0.02), '#e84a3a', 0.03, y + 0.06, -0.02).rotation.z = -0.4;
+        break;
+      case 'baker':
+        this.add(body, new THREE.CylinderGeometry(0.05, 0.04, 0.07, 10), HAT[role], 0, y + 0.03, 0);
+        break;
+      case 'miller':
+        this.add(body, new THREE.SphereGeometry(0.048, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), HAT[role], 0.01, y - 0.005, 0);
+        break;
+      case 'miner':
+        this.add(body, new THREE.SphereGeometry(0.047, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), HAT[role], 0, y - 0.01, 0);
+        this.add(body, new THREE.BoxGeometry(0.02, 0.02, 0.012), '#ffe08a', 0, y + 0.02, 0.045, { emissive: '#ffb040', emissiveIntensity: 1 });
+        break;
+      case 'carrier':
+        break;
+      default:
+        // A flat cap with a short peak.
+        this.add(body, new THREE.CylinderGeometry(0.045, 0.047, 0.025, 10), HAT[role], 0, y + 0.005, 0);
+        this.add(body, new THREE.BoxGeometry(0.06, 0.008, 0.035), HAT[role], 0, y - 0.004, 0.045);
+    }
+  }
+
+  // The tool a worker holds while working. Its handle points along +Z from the hand.
+  private tool(role: Role) {
+    const t = new THREE.Group(), wood = '#6b4a28', iron = '#b8bcc0';
+    const handle = (len: number) => this.add(t, new THREE.BoxGeometry(0.014, 0.014, len), wood, 0, 0, len / 2 - 0.03);
+    switch (role) {
+      case 'woodcutter':
+        handle(0.18);
+        this.add(t, new THREE.BoxGeometry(0.008, 0.06, 0.04), iron, 0, 0.02, 0.14);
+        break;
+      case 'stonecutter':
+      case 'miner':
+        handle(0.17);
+        this.add(t, new THREE.BoxGeometry(0.014, 0.12, 0.018), iron, 0, 0, 0.13).rotation.x = 0.2;
+        break;
+      case 'forester':
+        handle(0.2);
+        this.add(t, new THREE.BoxGeometry(0.05, 0.008, 0.06), iron, 0, 0, 0.19);
+        break;
+      case 'farmer': {
+        handle(0.1);
+        const blade = this.add(t, new THREE.TorusGeometry(0.045, 0.006, 4, 10, Math.PI * 1.2), iron, 0, 0.0, 0.1);
+        blade.rotation.y = Math.PI / 2;
+        break;
+      }
+      case 'fisher':
+        this.add(t, new THREE.CylinderGeometry(0.004, 0.007, 0.4, 4).rotateX(Math.PI / 2), wood, 0, 0, 0.17);
+        break;
+      default:
+        handle(0.14);
+        this.add(t, new THREE.BoxGeometry(0.02, 0.05, 0.03), '#8c9094', 0, 0, 0.11);
+    }
+    return t;
   }
 
   private settlers(game: Game, now: number) {
@@ -1043,10 +1400,15 @@ export class Renderer {
     const swing = s.walking ? Math.sin(ph) * 0.6 : 0;
     p.legs[0].rotation.x = swing;
     p.legs[1].rotation.x = -swing;
+    // Arms swing against the legs, hold a load up on the head, or swing the tool.
+    const [armL, armR] = p.arms;
+    armL.rotation.x = s.carrying ? -2.7 : -swing * 0.8;
+    armR.rotation.x = s.carrying ? -2.7 : swing * 0.8;
     p.tool.visible = !!s.anim;
-    if (s.anim) p.tool.rotation.x = s.anim === 'plant' ? 0.9 + Math.sin(now * 6) * 0.3
-      : s.anim === 'fish' ? -0.9 + Math.sin(now * 1.5) * 0.08
-      : -0.4 + Math.sin(now * (s.anim === 'reap' ? 6 : 9)) * 0.9;
+    if (s.anim) armR.rotation.x = s.anim === 'plant' ? -0.5 + Math.sin(now * 6) * 0.35
+      : s.anim === 'fish' ? -1.2 + Math.sin(now * 1.5) * 0.08
+      : s.anim === 'reap' ? -0.6 + Math.sin(now * 6) * 0.7
+      : -1.2 + Math.sin(now * 9) * 0.9;
     if (s.carrying) this.good(s.carrying, x, y + 0.42, z, p.heading + Math.PI / 2);
   }
 
