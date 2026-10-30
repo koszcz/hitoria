@@ -2,6 +2,45 @@
 
 A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
+![A small settlement: the HQ, a quarry and a woodcutter's hut joined by roads, with carriers on the way](docs/screenshot.jpg)
+
+## How to play
+
+You start with a headquarters (HQ), some goods and 18 settlers. Your goal is to grow a working
+economy. Nobody attacks you.
+
+1. **Place a woodcutter's hut.** Press `1`, then click open grass near trees.
+2. **Connect it with a road.** Press `R`, click the hut's flag, then click the flag in front of the
+   HQ. Right-click to stop drawing.
+3. **Watch it get built.** A builder walks to the site. Carriers bring planks from the HQ along the
+   road. Once it is built, a woodcutter moves in and starts felling trees.
+4. **Grow your economy.**
+   - A forester (`2`) plants new trees, so the woodcutter never runs out.
+   - A quarry (`3`) next to boulders makes stone.
+   - A sawmill (`4`) turns logs into planks. You need planks for every new building.
+   - A lookout tower (`5`) expands your land, so you have room for more.
+
+Every building needs a road to the HQ. Without one, no goods arrive and the builder or worker
+waits. A sign with a crossed-out road floats over any building that has no road. Click a building
+to see what it is doing and what it is waiting for.
+
+### Controls
+
+| Action | Input |
+| --- | --- |
+| Move the map | Drag |
+| Zoom | Scroll |
+| Pick a building | `1`–`5`, or the build bar |
+| Place several of the same building | Shift-click |
+| Draw roads | `R` |
+| Remove a road or a lone flag | `X` |
+| Cancel | Right-click or Esc |
+| Pause | Space |
+| Save | Ctrl+S (or Cmd+S) |
+| Show live diagnostics | F3 |
+
+If something looks wrong, click **Report**. It saves a problem report to `reports/`.
+
 ## Design pillars
 
 - **No raids, ever.** Nobody attacks you. The challenge is logistics: keeping goods flowing,
@@ -21,10 +60,6 @@ bun run dev      # http://main.localhost:5173  (add ?seed=123 to start a fixed m
 bun run build    # static build in dist/
 bun test         # game logic tests in test/
 ```
-
-Controls: drag to pan, scroll to zoom, `1`–`5` to pick a building, `R` to draw roads, `X` to
-remove roads or flags, shift-click to place several, right-click or Esc to cancel, space to pause,
-Ctrl+S (or Cmd+S) to save.
 
 ## Running several copies
 
