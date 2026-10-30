@@ -123,16 +123,6 @@ each road section has one carrier who passes goods from flag to flag, and a flag
 the load. Settlers walk 1.5× faster on roads. A building that isn't connected to the HQ by road
 gets no materials.
 
-## Roadmap ideas
-
-1. **Road upgrades.** Donkeys on busy roads, warehouses as extra hubs, demolishing buildings.
-2. **Food chain.** Fisher, hunter, farm → mill → bakery, well. Miners and workers need food.
-3. **Mountains and mines.** Coal, iron and gold mines, smelter, toolmaker. Tools gate new workers.
-4. **Population.** Houses that grow your settler count over time.
-5. **Demolish and move buildings.**
-6. **Goals instead of enemies.** Peaceful scenarios: build a monument, trade with a ship, survive winter.
-7. **Art pass.** Swap the built-in 3D shapes for detailed models (for example, free CC0 packs from Kenney or Quaternius).
-
 ## Ideas
 
 Ideas for the game, and what we build next, live in [ideas/](ideas/README.md).
