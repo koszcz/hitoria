@@ -11,6 +11,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
+- **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
 
 ## Inbox
@@ -35,7 +36,6 @@ Triaged, but not next.
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
-- **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
