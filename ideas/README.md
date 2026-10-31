@@ -48,6 +48,8 @@ For each idea in the inbox, follow these steps.
 
 ## Build an idea
 
+To have Claude do it, run `/build`, or `/build` followed by the idea's title.
+
 1. Move the top idea in **Next** to **Building now**.
 2. Name the branch after it, for example `claude/storehouse`.
 3. When it's merged, move it to **Done** with the date.
