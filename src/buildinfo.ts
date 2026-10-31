@@ -13,8 +13,8 @@ const GATHER: Partial<Record<BType, Gather>> = {
   farm: {
     good: 'grain',
     from: {
-      en: `fields it sows on free grass. Grain ripens in ${CROP_GROW} s`,
-      pl: `z pól, które obsiewa na wolnej trawie. Zboże dojrzewa w ${CROP_GROW} s`,
+      en: `fields it sows on free grass. Grain ripens in ${CROP_GROW} s, and grows only from spring to autumn`,
+      pl: `z pól, które obsiewa na wolnej trawie. Zboże dojrzewa w ${CROP_GROW} s i rośnie tylko od wiosny do jesieni`,
     },
   },
 };

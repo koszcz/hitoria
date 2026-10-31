@@ -50,7 +50,8 @@ in the morning. The light turns orange at dawn and dusk, and blue at night. Work
 
 The island also goes through the four seasons. A full year lasts 20 minutes of game time, and a
 new game starts in spring. Leafy trees turn yellow, orange and red in autumn and lose their leaves
-in winter, when snow falls and covers the land. The seasons change only the look, not the work.
+in winter, when snow falls and covers the land. Grain grows only from spring to autumn. In
+winter, farmers bring in ripe grain but sow nothing, so store grain and food before the snow comes.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ, and its flag and roads stay.
@@ -189,7 +190,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
-| `src/seasons/` | The year clock, and how the island looks at each point in the year |
+| `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
@@ -213,6 +214,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A well draws water on any flat grass. The bakery needs 1 flour and 1 water for each loaf.
 - Each farm keeps 6 fields of its own on the grass around it. You can place a farm only where
   they fit, and nothing else can be built on them. Demolishing the farm frees them.
+- Grain grows only from spring to autumn. In winter the fields rest, and sown grain waits for
+  spring.
 - A house turns fish, meat or bread into new settlers.
 - A lookout tower expands your land.
 - A monument does no work. Building one is your last goal.

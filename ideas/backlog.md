@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look · Approved · Branch: worktree-agent-a6278ff305d9a926f*
+Nothing right now.
 
 ## Next
 
@@ -54,6 +54,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Winter fields**: grain grows only in the warm months, so you store food for winter. In winter, farmers bring in ripe grain but sow nothing, and sown grain waits for spring. *2026-11-01*
 - **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. A full year takes about 20 minutes of play. *2026-10-31*
 - **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *2026-10-31*
 - **Smelter**: a smelter melts 1 iron ore and 1 coal into 1 iron. Nothing uses iron yet. *2026-10-31*

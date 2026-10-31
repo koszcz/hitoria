@@ -5,6 +5,7 @@ import { BDEFS, Good, PILE, RECIPES, WELL_DRAW } from './defs';
 import { carry } from './carriers';
 import type { Game } from './game';
 import { hunt } from './hunting';
+import { fieldsGrow } from '../seasons/year';
 import { near, plantable } from './land';
 import type { Building, Settler } from './types';
 
@@ -90,8 +91,10 @@ export function idle(g: Game, s: Settler) {
     case 'farmer': {
       // Harvest ripe grain first, then sow the bare fields. A farmer only uses its own farm's fields.
       const ripe = home.out.grain < PILE ? findTile(g, home, r, (t) => t.field === home.id && t.crop >= 1) : null;
-      const at = ripe ?? findTile(g, home, r, (t) => t.field === home.id && !t.crop, true);
-      if (!at) return rest(3, home.out.grain >= PILE ? 'Full, waiting for a carrier' : 'Waiting for the grain to ripen');
+      // In winter the fields rest: the farmer brings in ripe grain but sows nothing.
+      const sow = fieldsGrow(g.time);
+      const at = ripe ?? (sow ? findTile(g, home, r, (t) => t.field === home.id && !t.crop, true) : null);
+      if (!at) return rest(3, home.out.grain >= PILE ? 'Full, waiting for a carrier' : sow ? 'Waiting for the grain to ripen' : 'Fields rest in winter');
       home.status = ripe ? 'Harvesting grain' : 'Sowing grain';
       const i = claim(g, s, at);
       const tile = g.world.at(at.x, at.y);
@@ -103,7 +106,7 @@ export function idle(g: Game, s: Settler) {
           if (ripe && tile.crop >= 1) {
             tile.crop = 0;
             s.carrying = 'grain';
-          } else if (!ripe && !tile.crop && tile.field === home.id) tile.crop = 0.02;
+          } else if (!ripe && !tile.crop && tile.field === home.id && fieldsGrow(g.time)) tile.crop = 0.02;
         } },
         { k: 'walk', x: home.x, y: home.y },
         { k: 'do', f: () => {

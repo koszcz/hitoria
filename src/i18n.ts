@@ -117,6 +117,7 @@ const MESSAGES_PL: Record<string, string> = {
   'No shore in range': 'Brak brzegu w zasięgu',
   Fishing: 'Łowi ryby',
   'Waiting for the grain to ripen': 'Czeka, aż zboże dojrzeje',
+  'Fields rest in winter': 'Zimą pola odpoczywają',
   'Harvesting grain': 'Zbiera zboże',
   'Sowing grain': 'Sieje zboże',
   'Keeping watch over your land': 'Pilnuje twoich ziem',

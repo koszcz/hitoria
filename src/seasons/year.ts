@@ -17,6 +17,11 @@ export function seasonAt(year: number) {
   return SEASONS[Math.min(3, Math.floor((year - Math.floor(year)) * 4))];
 }
 
+// Grain grows only in the warm months. In winter the fields rest, so food must be stored ahead.
+export function fieldsGrow(time: number) {
+  return seasonAt(yearAt(time)) !== 'winter';
+}
+
 export type SeasonLook = {
   autumn: number; // 0 green leaves, 1 fully orange and red
   bare: number; // 0 leafy trees in leaf, 1 bare branches

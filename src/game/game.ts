@@ -7,6 +7,7 @@ import { spawnAnimals, stepAnimal } from './animals';
 import { regrow } from './hunting';
 import { planAutoRoad } from './autoroad';
 import { pickFields } from './fields';
+import { fieldsGrow } from '../seasons/year';
 import { checkGoals, goalNow } from './goals';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
 import { raise } from './houses';
@@ -153,9 +154,10 @@ export class Game {
     this.growT -= dt;
     if (this.growT <= 0) {
       this.growT += 1; // add, not reset, so float steps never stretch the second
+      const crops = fieldsGrow(this.time);
       for (const t of this.world.tiles) {
         if (t.tree > 0 && t.tree < 1) t.tree = Math.min(1, t.tree + 1 / 40);
-        if (t.crop > 0 && t.crop < 1) t.crop = Math.min(1, t.crop + 1 / CROP_GROW);
+        if (crops && t.crop > 0 && t.crop < 1) t.crop = Math.min(1, t.crop + 1 / CROP_GROW);
       }
       fade(this);
     }
