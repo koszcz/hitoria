@@ -8,7 +8,8 @@ export type Step =
   | { wait: number }
   | { key: string } // a Puppeteer key name; join keys with + to hold them together, as in Control+s
   | { click: string | [number, number] }
-  | { hover: string | [number, number] };
+  | { hover: string | [number, number] }
+  | { wheel: number }; // turns the mouse wheel this many notches; positive zooms out, negative zooms in
 
 export type Shot = {
   name: string;

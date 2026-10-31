@@ -45,6 +45,10 @@ async function runStep(page: Page, view: View, step: Step, log: (msg: string) =>
     for (const k of keys.reverse()) await page.keyboard.up(k);
     return;
   }
+  if ('wheel' in step) {
+    for (let i = 0; i < Math.abs(step.wheel); i++) await page.mouse.wheel({ deltaY: Math.sign(step.wheel) * 100 });
+    return;
+  }
   const [action, target] = 'click' in step ? (['click', step.click] as const) : (['hover', step.hover] as const);
   const at = await point(page, view, target);
   if (!at) return log(`  ${action} ${target}: not in this version, skipped`);

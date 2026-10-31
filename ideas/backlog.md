@@ -5,7 +5,6 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M · Branch: claude/build-5facc8*
-- **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M · Branch: claude/build-6ab056*
 
 ## Next
 
@@ -61,6 +60,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Second island**: a wooded island with a sandy beach sits across the water from the mouth of the bay. Water at least 3 tiles wide cuts it off from the home island. *2026-10-31*
 - **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *2026-10-31*
 - **Sound basics**: soft wind and waves that follow the camera, with a mute button and the M key. The game remembers the choice. *2026-10-31*
 - **Farms keep their fields**: you can place a farm only where it has room for 6 fields. The farm marks them as tilled soil when placed, and no buildings, flags, roads or trees can go on them. *2026-10-31*

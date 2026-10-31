@@ -26,7 +26,8 @@ export const H = 64;
 // seed makes needs a new version here, and the old versions must keep building the same land.
 // 1: the first maps. 2: adds a mountain and a bay near the start.
 // 3: mountains rise smoothly from the land around them, with no cliff at their edge.
-export const MAP_VERSION = 3;
+// 4: a second island sits off the mouth of the bay.
+export const MAP_VERSION = 4;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -41,6 +42,11 @@ const BAY_WIDTH = 1.8;
 // From map version 3, land rises at most this much per tile where the generator flattens it, so
 // the flat parts slope into the mountains around them.
 const SLOPE = 0.065;
+// From map version 4, the second island: how far past the head of the bay its centre sits, how
+// wide it is, and how wide the strait of water around it is. The strait runs on out to the open sea.
+const ISLE_AWAY = 14;
+const ISLE_SIZE = 6.5;
+const STRAIT = 3.5;
 // The guaranteed grove and quarry near the start: how wide they are.
 const GROVE = 2.8;
 const QUARRY = 1.9;
@@ -84,6 +90,7 @@ export class World {
     const landmarks = map >= 2, smooth = map >= 3;
     const grove = { x: sx + 6, y: sy - 4 }, quarry = { x: sx - 5, y: sy + 5 };
     const { peak, bay, out } = this.landmarks(seed);
+    const isle = { x: bay.x + out.x * ISLE_AWAY, y: bay.y + out.y * ISLE_AWAY };
     this.peak = peak;
 
     for (let y = 0; y < H; y++) {
@@ -111,6 +118,7 @@ export class World {
           if (toBay < BAY_WIDTH) h = Math.min(h, 0.24);
           else if (toBay < BAY_WIDTH + 1.2) h = Math.min(h, 0.32);
         }
+        if (map >= 4) h = this.island(h, x - isle.x, y - isle.y, out, n3(x, y));
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
       }
@@ -169,6 +177,19 @@ export class World {
       bay: { x: sx + out.x * BAY_AWAY, y: sy + out.y * BAY_AWAY },
       out,
     };
+  }
+
+  // The height of land near the second island, which is `dx, dy` from the island's centre. The
+  // strait lowers the home island's coast into sea, with a sandy shore and a bank like the bay's.
+  // The island rises from a sandy beach to a low,
+  // grassy middle, with `bump` from the noise so its shore is not a perfect circle.
+  private island(h: number, dx: number, dy: number, out: { x: number; y: number }, bump: number) {
+    const past = Math.max(0, dx * out.x + dy * out.y);
+    const side = Math.hypot(dx - out.x * past, dy - out.y * past);
+    const shore = ISLE_SIZE + STRAIT + 1.2;
+    h = Math.min(h, side < ISLE_SIZE + STRAIT ? 0.22 : side < shore ? 0.32 : 0.62 + (side - shore) * SLOPE);
+    const r = Math.hypot(dx, dy) / ISLE_SIZE;
+    return r < 1 ? Math.max(h, 0.24 + (1 - r * r) * 0.38 + (bump - 0.5) * 0.08) : h;
   }
 
   // Plants use their own random numbers, so adding them moves no tree or boulder on a map.
