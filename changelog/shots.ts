@@ -10,10 +10,9 @@
 import { mkdirSync, rmSync } from 'node:fs';
 import type { Browser, Page } from 'puppeteer-core';
 import { CACHE, build, git, launchChrome, serve, tryGit } from './builds';
-import { SHOTS, readEntries, readEntry, type Entry, type Shot, type Step } from './entries';
+import { SHOTS, readEntries, readEntry, viewFor, type Entry, type Shot, type Step, type View } from './entries';
 
 const SEED = 20261030;
-const VIEW = { width: 1280, height: 800 };
 const LOAD_MS = 3000; // time for the island to appear and settlers to start moving
 
 // Which versions to compare. null means "this checkout as it is now". undefined means there is no
@@ -28,13 +27,16 @@ function versions(e: Entry): { before?: string; after: string | null } {
   return { before, after: null };
 }
 
-async function point(page: Page, target: string | [number, number]): Promise<[number, number] | null> {
-  if (Array.isArray(target)) return [VIEW.width / 2 + target[0], VIEW.height / 2 + target[1]];
-  const box = await (await page.$(target))?.boundingBox();
+async function point(page: Page, view: View, target: string | [number, number]): Promise<[number, number] | null> {
+  if (Array.isArray(target)) return [view.width / 2 + target[0], view.height / 2 + target[1]];
+  const el = await page.$(target);
+  // Bring an element that sits off screen, such as the end of a long bar, into view first.
+  await el?.evaluate((node) => node.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+  const box = await el?.boundingBox();
   return box ? [box.x + box.width / 2, box.y + box.height / 2] : null;
 }
 
-async function runStep(page: Page, step: Step, log: (msg: string) => void) {
+async function runStep(page: Page, view: View, step: Step, log: (msg: string) => void) {
   if ('wait' in step) return void (await Bun.sleep(step.wait));
   if ('key' in step) {
     // "Control+s" holds Control while it presses s.
@@ -44,20 +46,38 @@ async function runStep(page: Page, step: Step, log: (msg: string) => void) {
     return;
   }
   const [action, target] = 'click' in step ? (['click', step.click] as const) : (['hover', step.hover] as const);
-  const at = await point(page, target);
+  const at = await point(page, view, target);
   if (!at) return log(`  ${action} ${target}: not in this version, skipped`);
+  if (view.hasTouch) return void (action === 'click' && (await page.touchscreen.tap(...at)));
   await page.mouse.move(...at, { steps: 5 });
   if (action === 'click') await page.mouse.click(...at);
+}
+
+// Makes the page see these browser languages, in this order.
+async function useLanguages(page: Page, languages: string[]) {
+  await page.setExtraHTTPHeaders({ 'Accept-Language': languages.join(',') });
+  await page.evaluateOnNewDocument((langs: string[]) => {
+    Object.defineProperty(navigator, 'languages', { get: () => langs });
+    Object.defineProperty(navigator, 'language', { get: () => langs[0] });
+  }, languages);
 }
 
 async function capture(browser: Browser, url: string, shot: Shot, file: string, log: (msg: string) => void) {
   const context = await browser.createBrowserContext(); // a fresh, empty localStorage
   try {
     const page = await context.newPage();
-    await page.setViewport(VIEW);
+    const view = viewFor(shot);
+    await page.setViewport(view);
+    if (view.hasTouch) {
+      const cdp = await page.createCDPSession();
+      await cdp.send('Emulation.setEmulatedMedia', {
+        features: [{ name: 'pointer', value: 'coarse' }, { name: 'hover', value: 'none' }],
+      });
+    }
+    if (shot.languages) await useLanguages(page, shot.languages);
     await page.goto(`${url}/?seed=${SEED}`, { waitUntil: 'load' });
     await Bun.sleep(LOAD_MS);
-    for (const step of shot.steps ?? []) await runStep(page, step, log);
+    for (const step of shot.steps ?? []) await runStep(page, view, step, log);
     await Bun.sleep(300); // let the last frame draw
     await page.screenshot({ path: file as `${string}.jpeg`, type: 'jpeg', quality: 82 });
   } finally {

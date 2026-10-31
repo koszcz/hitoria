@@ -10,7 +10,21 @@ export type Step =
   | { click: string | [number, number] }
   | { hover: string | [number, number] };
 
-export type Shot = { name: string; caption?: string; steps?: Step[] };
+export type Shot = {
+  name: string;
+  caption?: string;
+  device?: 'phone'; // take the shot on a phone-sized touch screen instead of a desktop window
+  languages?: string[]; // the browser's languages, in order, such as [de, pl]
+  steps?: Step[];
+};
+
+export type View = { width: number; height: number; deviceScaleFactor: number; isMobile: boolean; hasTouch: boolean };
+
+const DESKTOP: View = { width: 1280, height: 800, deviceScaleFactor: 1, isMobile: false, hasTouch: false };
+const PHONE: View = { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
+
+// The window a shot is taken in.
+export const viewFor = (shot: Shot): View => (shot.device === 'phone' ? PHONE : DESKTOP);
 
 export type Entry = {
   id: string; // the file name without .md, such as 2026-10-30-build-bar-cards

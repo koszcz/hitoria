@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { parseEntry, readEntries } from './entries';
+import { parseEntry, readEntries, viewFor } from './entries';
 import { render } from './build';
 
 const entry = (front: string, body = 'What changed.') => `---\n${front}\n---\n${body}\n`;
@@ -35,6 +35,14 @@ shots:
     expect(() => parseEntry('x', 'Just text')).toThrow('no front matter');
   });
 
+  test('takes a phone shot on a small touch screen, in the languages it names', () => {
+    const e = parseEntry('x', entry(`title: T\ndate: '2026-10-30'\nshots:\n  - name: a\n    device: phone\n    languages: [de, pl]\n  - name: b`));
+    const [phone, desktop] = e.shots;
+    expect(phone.languages).toEqual(['de', 'pl']);
+    expect(viewFor(phone)).toMatchObject({ width: 390, height: 844, isMobile: true, hasTouch: true });
+    expect(viewFor(desktop)).toMatchObject({ width: 1280, height: 800, isMobile: false, hasTouch: false });
+  });
+
   test('every entry in the project is valid and the newest comes first', () => {
     const all = readEntries();
     expect(all.length).toBeGreaterThan(0);
@@ -59,5 +67,10 @@ describe('changelog page', () => {
   test('says when a screenshot is missing', () => {
     const html = render([parseEntry('none', entry(`title: T\ndate: '2026-10-30'\nshots:\n  - name: start`))]);
     expect(html).toContain('No screenshot');
+  });
+
+  test('shows phone shots narrow', () => {
+    const html = render([parseEntry('p', entry(`title: T\ndate: '2026-10-30'\nshots:\n  - name: start\n    device: phone`))]);
+    expect(html).toContain('class="pair single phone"');
   });
 });

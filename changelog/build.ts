@@ -27,7 +27,7 @@ function entry(e: Entry) {
       const base = `changelog/shots/${e.id}/${s.name}`;
       const before = existsSync(`${ROOT}/${base}-before.jpg`) ? figure(`${base}-before.jpg`, 'Before') : '';
       return `<div class="shot">${s.caption ? `<p class="caption">${esc(s.caption)}</p>` : ''}
-        <div class="pair${before ? '' : ' single'}">${before}${figure(`${base}-after.jpg`, before ? 'After' : 'Screenshot')}</div></div>`;
+        <div class="pair${before ? '' : ' single'}${s.device === 'phone' ? ' phone' : ''}">${before}${figure(`${base}-after.jpg`, before ? 'After' : 'Screenshot')}</div></div>`;
     })
     .join('');
   return `<article class="${e.kind}" id="${e.id}">
@@ -62,6 +62,8 @@ export function render(entries: Entry[]) {
   .caption { color: var(--dim); font-style: italic; margin: 16px 0 8px; }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .pair.single { grid-template-columns: 1fr; max-width: 640px; }
+  .pair.phone { max-width: 560px; }
+  .pair.phone.single { max-width: 280px; }
   figure { margin: 0; }
   figcaption { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); margin-bottom: 4px; }
   img { width: 100%; display: block; border-radius: 6px; border: 1px solid var(--line); }

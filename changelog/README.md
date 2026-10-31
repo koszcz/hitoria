@@ -60,7 +60,7 @@ Add the entry in the same commit as the change, or in the last commit of the bra
 - **Before** is the point where your branch left `main`. Once the entry is committed, it is the
   commit before the one that added the entry. If the change spans several commits, set `before`.
 
-Both versions start a new game on the same island, with no saves. The window is 1280 × 800.
+Both versions start a new game on the same island, with no saves. The window is 1280 × 800, unless the shot sets `device: phone`.
 The camera starts on the HQ, in the middle of the screen. After the island loads, the tool runs
 each shot's steps:
 
@@ -73,6 +73,15 @@ each shot's steps:
 | `hover: ...` | Moves the mouse there, without clicking. Takes a selector or pixels, like `click`. |
 
 If the before version has no element for a selector, the tool skips that step.
+If an element is off screen, such as a button at the end of a long bar, the tool scrolls it into
+view first.
+
+A shot can also set these fields:
+
+| Field | What it does |
+| --- | --- |
+| `device: phone` | Takes the shot on a 390 × 844 touch screen, like a phone. Clicks become taps. |
+| `languages: [de, pl]` | Sets the browser's languages, in this order. |
 
 To take the screenshots for every entry again, run `bun run changelog:shots --all`.
 This takes a few minutes the first time, because it builds each version.
