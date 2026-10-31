@@ -5,12 +5,12 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths · Branch: claude/build-2ef03a*
+- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S · Branch: claude/build-73858d*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
 
 ## Inbox
