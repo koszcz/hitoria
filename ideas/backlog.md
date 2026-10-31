@@ -6,13 +6,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 - **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S · Branch: claude/build-f2bace*
 - **Worn paths**: settlers' footsteps wear the grass into dirt paths. Worn tiles are faster to walk on, so settlers keep to the same lines. Unused paths slowly fade back to grass over several minutes, and busy paths never fade. *Fun 2 · Effort S · Branch: claude/build-2fe14d*
+- **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M · Branch: claude/build-afcc1c*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths*
-- **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M*
 
 ## Inbox
 
