@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines · Approved · Branch: worktree-agent-aa77fb81e909f1939*
+Nothing right now.
 
 ## Next
 
@@ -57,6 +57,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Smelter**: a smelter melts 1 iron ore and 1 coal into 1 iron. Nothing uses iron yet. *2026-10-31*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *2026-10-31*
 - **Day and night light**: the light slowly turns from morning to evening to night and back. *2026-10-31*
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *2026-10-31*

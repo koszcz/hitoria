@@ -1,13 +1,13 @@
 // Goods, roles and building types, with the costs, recipes and timings that tune the game.
-export type Good = 'log' | 'plank' | 'stone' | 'fish' | 'grain' | 'flour' | 'bread' | 'water' | 'coal' | 'ore' | 'meat';
-export const GOODS: Good[] = ['log', 'plank', 'stone', 'fish', 'grain', 'flour', 'bread', 'water', 'coal', 'ore', 'meat'];
+export type Good = 'log' | 'plank' | 'stone' | 'fish' | 'grain' | 'flour' | 'bread' | 'water' | 'coal' | 'ore' | 'meat' | 'iron';
+export const GOODS: Good[] = ['log', 'plank', 'stone', 'fish', 'grain', 'flour', 'bread', 'water', 'coal', 'ore', 'meat', 'iron'];
 export type Bag = Record<Good, number>;
-export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, fish: 0, grain: 0, flour: 0, bread: 0, water: 0, coal: 0, ore: 0, meat: 0, ...p });
+export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, fish: 0, grain: 0, flour: 0, bread: 0, water: 0, coal: 0, ore: 0, meat: 0, iron: 0, ...p });
 
 export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout'
-  | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner' | 'drawer' | 'hunter';
+  | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner' | 'drawer' | 'hunter' | 'smelter';
 export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse'
-  | 'fisher' | 'farm' | 'well' | 'mill' | 'bakery' | 'mine' | 'coalmine' | 'ironmine' | 'house' | 'monument' | 'hunter';
+  | 'fisher' | 'farm' | 'well' | 'mill' | 'bakery' | 'mine' | 'coalmine' | 'ironmine' | 'house' | 'monument' | 'hunter' | 'smelter';
 export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant' | 'fish' | 'reap' | 'hunt';
 
 // Houses grow your number of settlers.
@@ -44,11 +44,12 @@ export const BDEFS: Record<BType, BDef> = {
   mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
   coalmine: { name: 'Coal Mine', icon: '⚫', desc: 'Digs coal out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 coal. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
   hunter: { name: "Hunter's Lodge", icon: '🏹', desc: 'Hunts deer and hares nearby and brings home meat. Animals slowly come back.', cost: { plank: 2 }, buildTime: 6, worker: 'hunter', radius: 7 },
+  smelter: { name: 'Smelter', icon: '🔥', desc: 'Melts iron ore with coal into iron. It uses 1 iron ore and 1 coal for each bar of iron.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'smelter', radius: 0 },
   ironmine: { name: 'Iron Mine', icon: '🪨', desc: 'Digs iron ore out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 iron ore. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
 };
 // Mines dig into a mountain, so they go next to one.
 export const MINES: BType[] = ['mine', 'coalmine', 'ironmine'];
-export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well', 'coalmine', 'ironmine', 'hunter'];
+export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well', 'coalmine', 'ironmine', 'hunter', 'smelter'];
 
 // Workshops turn goods into other goods inside the building. With several inputs in `from`, any one of them
 // will do. The good in `with` is needed as well.
@@ -69,6 +70,7 @@ export const RECIPES: Partial<Record<BType, Recipe>> = {
   mine: { from: ['bread', 'fish', 'meat'], to: 'stone', n: 2, t: 8, doing: 'Digging stone', waiting: 'Waiting for food' },
   coalmine: { from: ['bread', 'fish', 'meat'], to: 'coal', n: 2, t: 8, doing: 'Digging coal', waiting: 'Waiting for food' },
   ironmine: { from: ['bread', 'fish', 'meat'], to: 'ore', n: 2, t: 8, doing: 'Digging iron ore', waiting: 'Waiting for food' },
+  smelter: { from: ['ore'], with: 'coal', to: 'iron', n: 1, t: 6, doing: 'Smelting iron', waiting: 'Waiting for iron ore', lacking: 'Waiting for coal' },
 };
 
 export const SPEED = 1.7; // tiles per second

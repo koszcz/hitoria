@@ -21,7 +21,10 @@ describe('build card facts', () => {
     expect(consumers('fish')).toEqual(['mine', 'house', 'coalmine', 'ironmine']);
     expect(producers('coal')).toEqual(['coalmine']);
     expect(producers('ore')).toEqual(['ironmine']);
-    expect(consumers('coal')).toEqual([]);
+    expect(consumers('coal')).toEqual(['smelter']);
+    expect(consumers('ore')).toEqual(['smelter']);
+    expect(producers('iron')).toEqual(['smelter']);
+    expect(consumers('iron')).toEqual([]);
     expect(consumers('flour')).toEqual(['bakery']);
     expect(makes('well')).toBe('water');
     expect(producers('water')).toEqual(['well']);
@@ -47,9 +50,11 @@ describe('build card facts', () => {
     expect(buildFacts('quarry').worth[0]).toMatch(/^\d+ of \d+ buildings need Stone to be built\.$/);
   });
 
-  test('coal and iron ore say nothing uses them yet', () => {
-    expect(buildFacts('coalmine').worth).toContain('Nothing uses Coal yet. It waits in your stores.');
-    expect(buildFacts('ironmine').worth).toContain('Nothing uses Iron Ore yet. It waits in your stores.');
+  test('coal and iron ore feed the smelter, and iron says nothing uses it yet', () => {
+    expect(buildFacts('coalmine').worth).toContain('Coal feeds the Smelter.');
+    expect(buildFacts('ironmine').worth).toContain('Iron Ore feeds the Smelter.');
+    expect(buildFacts('smelter').makes).toBe('Turns 1 Iron Ore and 1 Coal into 1 Iron every 6 s. That is up to 10 a minute.');
+    expect(buildFacts('smelter').worth).toContain('Nothing uses Iron yet. It waits in your stores.');
   });
 
   test('placement rules and workers are listed', () => {
@@ -107,6 +112,7 @@ describe('build card notes about your game', () => {
     const g = flatGame();
     g.hq.stock.fish = 0;
     g.hq.stock.bread = 0;
+    expect(buildNow(g, 'smelter').warn).toEqual(['You make no Iron Ore yet. Build an Iron Mine first.', 'You make no Coal yet. Build a Coal Mine first.']);
     expect(buildNow(g, 'mine').warn).toContain("You make no Bread, Fish or Meat yet. Build a Bakery, Fisher's Hut or Hunter's Lodge first.");
   });
 

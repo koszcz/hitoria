@@ -127,6 +127,7 @@ export function idle(g: Game, s: Settler) {
     case 'sawyer':
     case 'miller':
     case 'baker':
+    case 'smelter':
     case 'miner': {
       const rc = RECIPES[home.type]!;
       if (home.out[rc.to] >= PILE) return rest(2, 'Full, waiting for a carrier');

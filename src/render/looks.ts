@@ -2,7 +2,7 @@
 import type { BType } from '../game';
 
 export type Body = 'keep' | 'cabin' | 'steep' | 'stonehut' | 'shed' | 'tower' | 'barn' | 'stilts'
-  | 'longhouse' | 'windmill' | 'brick' | 'mound' | 'pit' | 'adit' | 'cottage' | 'obelisk' | 'wellhead' | 'lodge';
+  | 'longhouse' | 'windmill' | 'brick' | 'mound' | 'pit' | 'adit' | 'cottage' | 'obelisk' | 'wellhead' | 'lodge' | 'furnace';
 
 export interface Look {
   body: Body;
@@ -28,6 +28,7 @@ export const LOOKS: Record<BType, Look> = {
   mine: { body: 'mound', wall: '#9a948a', roof: '#2e3034' },
   coalmine: { body: 'pit', wall: '#6a625a', roof: '#d8d2c0' },
   ironmine: { body: 'adit', wall: '#a07a62', roof: '#e07a20' },
+  smelter: { body: 'furnace', wall: '#9a8a7a', roof: '#8ab0d0' },
   house: { body: 'cottage', wall: '#e8d6b0', roof: '#b87a66' },
   monument: { body: 'obelisk', wall: '#d6d0c2', roof: '#f0e6a8' },
 };

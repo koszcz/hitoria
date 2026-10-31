@@ -52,6 +52,10 @@ function goodGeometry(): Record<Good, THREE.BufferGeometry> {
       piece(new THREE.SphereGeometry(0.045, 8, 6).scale(1.2, 0.7, 0.9), '#e8c8b0', -0.012, 0.012, 0),
       piece(new THREE.CylinderGeometry(0.012, 0.012, 0.08, 6).rotateZ(Math.PI / 2), '#f2ece0', 0.08, 0, 0),
     ]),
+    iron: mergeGeometries([
+      piece(new THREE.BoxGeometry(0.15, 0.035, 0.06), '#6a7078', 0, 0, 0),
+      piece(new THREE.BoxGeometry(0.13, 0.012, 0.045), '#9aa4ae', 0, 0.022, 0),
+    ]),
     ore: mergeGeometries([
       piece(new THREE.DodecahedronGeometry(0.055, 0), '#8a4a30', 0, 0, 0),
       piece(new THREE.DodecahedronGeometry(0.02, 0), '#c8763e', 0.035, 0.03, 0.02),

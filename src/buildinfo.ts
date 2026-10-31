@@ -21,7 +21,7 @@ const GATHER: Partial<Record<BType, Gather>> = {
 
 // One of a good, for the recipe line.
 const ONE_EN: Record<Good, string> = {
-  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat',
+  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat', iron: 'Iron',
 };
 // Polish goods counted one by one: the form after 1, after 2–4, and after 5 or more.
 const COUNT_PL: Record<Good, [string, string, string]> = {
@@ -36,6 +36,7 @@ const COUNT_PL: Record<Good, [string, string, string]> = {
   coal: ['worek węgla', 'worki węgla', 'worków węgla'],
   ore: ['bryłę rudy żelaza', 'bryły rudy żelaza', 'brył rudy żelaza'],
   meat: ['porcję mięsa', 'porcje mięsa', 'porcji mięsa'],
+  iron: ['sztabkę żelaza', 'sztabki żelaza', 'sztabek żelaza'],
 };
 // Polish goods whose name is plural ("Kłody zasilają"), not singular ("Kamień zasila").
 const PLURAL_PL: Partial<Record<Good, true>> = { log: true, plank: true, fish: true };
@@ -67,7 +68,7 @@ const EN = {
   none: 'You have none yet.',
   have: (built: number, planned: number) => `You have ${built} built${planned ? ` and ${planned} being built` : ''}.`,
   noInput: (from: Good[], src: BType[]) =>
-    `You make no ${join(from.map(goodName), 'or')} yet. Build a ${join(src.map(bname), 'or')} first.`,
+    `You make no ${join(from.map(goodName), 'or')} yet. Build ${/^[AEIOU]/.test(bname(src[0])) ? 'an' : 'a'} ${join(src.map(bname), 'or')} first.`,
   noWoodcutter: "New trees only help once a Woodcutter's Hut fells them.",
   noIdle: 'No idle settlers right now. It will wait for a worker.',
   unused: (g: Good) => `Nothing uses ${goodName(g)} yet. It waits in your stores.`,

@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge and a stone mine, all joined by roads. The current goal shows at the top left](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a smelter and a stone mine, all joined by roads. The current goal shows at the top left](docs/screenshot.jpg)
 
 ## How to play
 
@@ -37,7 +37,8 @@ Only goods your settlers make count toward a goal, not the goods you start with.
    - Fishers, hunters, farms, mills and bakeries make food. A bakery also needs water from a
      well. Houses turn food into new settlers.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
-   - Coal and iron mines also go next to a mountain. Nothing uses their coal and iron ore yet.
+   - Coal and iron mines also go next to a mountain. A smelter melts their iron ore and coal
+     into iron. Nothing uses iron yet.
    - Across the water from the bay lies a second island. You can't reach it yet.
 
 Settlers must be able to walk from the HQ to every building. If water, mountains or trees cut a
@@ -193,8 +194,9 @@ Browsers block sound until you click or press a key, so the sound starts then.
 - Woodcutter → logs → Sawmill → planks. A forester replants trees.
 - A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
   eats fish, meat or bread.
-- A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way. Nothing
-  uses coal or iron ore yet.
+- A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way.
+- Iron mine → iron ore, and coal mine → coal → Smelter → iron. The smelter needs 1 iron ore and
+  1 coal for each bar of iron. Nothing uses iron yet.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
 - A hunter catches deer and hares up to 7 tiles from the Hunter's Lodge and brings home meat.
   Foxes are left alone.

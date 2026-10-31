@@ -14,6 +14,7 @@ export function hut(g: THREE.Group, model: Model, type: BType, wall: string, roo
   else if (type === 'farm') farm(g, model, wall, roof);
   else if (type === 'bakery') bakery(g, model, wall, roof);
   else if (type === 'well') well(g, wall, roof);
+  else if (type === 'smelter') smelter(g, model, wall, roof);
 }
 
 // A log cabin with a mossy roof, a pile of logs and a chopping block with an axe in it.
@@ -112,6 +113,18 @@ function bakery(g: THREE.Group, model: Model, wall: string, roof: string) {
   add(g, new THREE.BoxGeometry(0.16, 0.02, 0.1), '#8a6238', -0.36, 0.12, 0.36);
   for (const s of [-1, 1]) add(g, new THREE.BoxGeometry(0.015, 0.12, 0.015), '#6a4628', -0.36 + s * 0.06, 0.06, 0.36);
   add(g, new THREE.SphereGeometry(0.035, 8, 6).scale(1.5, 0.7, 1), '#c07a36', -0.36, 0.145, 0.36);
+}
+
+// A stone shed with a steel-blue slate roof beside a tall stone furnace that glows at its mouth, with
+// smoke from its top, a heap of coal and a stack of iron bars.
+function smelter(g: THREE.Group, model: Model, wall: string, roof: string) {
+  house(g, model, { w: 0.26, d: 0.22, h: 0.3, rh: 0.18, wall, roof, style: 'slate', walls: 'stone', x: -0.14, z: -0.12, chimney: false, shutter: '#4a4440' });
+  add(g, new THREE.CylinderGeometry(0.1, 0.17, 0.62, 10), '#7a6e64', 0.26, 0.31, 0.12);
+  add(g, new THREE.CylinderGeometry(0.11, 0.11, 0.05, 10), '#5a524a', 0.26, 0.63, 0.12);
+  add(g, new THREE.BoxGeometry(0.09, 0.08, 0.03), '#1a100a', 0.26, 0.06, 0.28, { emissive: '#ff6a20', emissiveIntensity: 1 });
+  model.chimney = new THREE.Vector3(0.26, 0.68, 0.12);
+  for (const [x, z] of [[-0.32, 0.32], [-0.26, 0.38], [-0.38, 0.38]]) add(g, new THREE.DodecahedronGeometry(0.05, 0), '#262424', x, 0.03, z);
+  for (let i = 0; i < 3; i++) add(g, new THREE.BoxGeometry(0.12, 0.03, 0.05), '#6a7078', 0.02, 0.015 + i * 0.03, 0.38 - (i % 2) * 0.02);
 }
 
 // A round stone well under a little pitched roof, with a winch, a rope and a bucket, and a trough beside it.

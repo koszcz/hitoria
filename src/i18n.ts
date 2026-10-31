@@ -68,6 +68,7 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
     name: 'Kopalnia węgla',
     desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 worki węgla. Zbuduj ją przy górze.',
   },
+  smelter: { name: 'Huta', desc: 'Wytapia żelazo z rudy żelaza i węgla. Na każdą sztabkę żelaza zużywa 1 bryłę rudy i 1 worek węgla.' },
   ironmine: {
     name: 'Kopalnia żelaza',
     desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 bryły rudy. Zbuduj ją przy górze.',
@@ -87,10 +88,10 @@ export const buildingDesc = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].desc :
 
 // Goods as a label, as in "Planks: 4".
 const GOOD_EN: Record<Good, string> = {
-  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat',
+  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat', iron: 'Iron',
 };
 const GOOD_PL: Record<Good, string> = {
-  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza', meat: 'Mięso',
+  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza', meat: 'Mięso', iron: 'Żelazo',
 };
 export const goodName = (g: Good) => (lang === 'pl' ? GOOD_PL : GOOD_EN)[g];
 
@@ -131,6 +132,9 @@ const MESSAGES_PL: Record<string, string> = {
   'Digging coal': 'Wydobywa węgiel',
   'Digging iron ore': 'Wydobywa rudę żelaza',
   'Waiting for food': 'Czeka na jedzenie',
+  'Smelting iron': 'Wytapia żelazo',
+  'Waiting for iron ore': 'Czeka na rudę żelaza',
+  'Waiting for coal': 'Czeka na węgiel',
   Hunting: 'Poluje',
   'No animals in range': 'Brak zwierzyny w zasięgu',
   'A settler will be born soon': 'Wkrótce urodzi się osadnik',
