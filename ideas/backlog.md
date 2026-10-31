@@ -18,7 +18,12 @@ At most 3 ideas, in the order we build them.
 
 New ideas go here, not scored yet.
 
-*Empty.*
+- **Birds**: gulls circle over the shore, and small birds fly up from a tree when a woodcutter fells it.
+- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. They are only there to watch.
+- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water.
+- **Butterflies and fireflies**: butterflies float over flower meadows, and fireflies glow at the forest edge.
+- **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free.
+- **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons.
 
 ## Later
 
@@ -53,6 +58,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Plants and wind**: grass, flowers, bushes, ferns, mushrooms, fallen logs, reeds and pebbles; birches and trees in blossom; wind gusts that bend them. *2026-10-31*
 - **Stone mine and food chain**: fishers, farms, a mill and a bakery feed a stone mine that never runs dry. *2026-10-30*
 - **Storehouse**: a building that stores goods near where they're made, so carriers walk less. *2026-10-30*
 - **Road warning sign**: a sign over buildings with no road to the HQ. *2026-10-30*

@@ -1,4 +1,7 @@
 export type Terrain = 'water' | 'sand' | 'grass' | 'mountain';
+// Small plants and stones that are only there to look at. They never block anything, and they
+// hide while something else stands on their tile.
+export type Plant = '' | 'grass' | 'flowers' | 'bush' | 'fern' | 'mushrooms' | 'log' | 'reeds' | 'pebbles';
 
 export interface Tile {
   t: Terrain;
@@ -7,6 +10,7 @@ export interface Tile {
   conifer: boolean;
   rock: number; // stone left in the boulder, 0 = none
   crop: number; // 0 = none, (0, 1) = growing grain, 1 = ripe
+  plant: Plant;
   b: number; // id of the building on this tile, 0 = none
   flag: number; // id of the flag on this tile, 0 = none
   road: number; // id of the road crossing this tile (between its flags), 0 = none
@@ -60,7 +64,7 @@ export class World {
         const near = Math.hypot(x - sx, y - sy);
         if (near < 8) h = h * (near / 8) + 0.5 * (1 - near / 8);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
-        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, b: 0, flag: 0, road: 0, col: '' });
+        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
       }
     }
 
@@ -97,6 +101,29 @@ export class World {
           : '';
       }
     }
+    this.sowPlants(seed);
+  }
+
+  // Plants use their own random numbers, so adding them moves no tree or boulder on a map.
+  // Forest floor gets ferns, mushrooms and fallen logs, which show once the trees are felled.
+  // Forest edges get bushes. Open grass gets meadows of tall grass and patches of flowers.
+  private sowPlants(seed: number) {
+    const rand = rng(seed ^ 0x5eed);
+    const meadow = noise(rand, 6), bloom = noise(rand, 4);
+    for (let y = 0; y < H; y++)
+      for (let x = 0; x < W; x++) {
+        const t = this.at(x, y), r = rand();
+        if (t.t === 'sand') t.plant = this.nearWater(x, y) && r < 0.5 ? 'reeds' : r > 0.92 ? 'pebbles' : '';
+        else if (t.t === 'mountain') t.plant = r < 0.14 ? 'pebbles' : '';
+        else if (t.t === 'grass') {
+          const woods = this.treesAround(x, y);
+          if (woods >= 4) t.plant = r < 0.35 ? 'fern' : r < 0.5 ? 'mushrooms' : r < 0.57 ? 'log' : r < 0.72 ? 'bush' : '';
+          else if (woods >= 1) t.plant = r < 0.3 ? 'bush' : r < 0.48 ? 'fern' : r < 0.68 ? 'grass' : '';
+          else if (bloom(x, y) > 0.6 && r < 0.75) t.plant = 'flowers';
+          else if (meadow(x, y) > 0.45 && r < 0.65) t.plant = 'grass';
+          else t.plant = r < 0.05 ? 'bush' : r < 0.12 ? 'flowers' : r < 0.2 ? 'grass' : '';
+        }
+      }
   }
 
   inside(x: number, y: number) {
@@ -109,6 +136,22 @@ export class World {
 
   private hAt(x: number, y: number) {
     return this.at(Math.max(0, Math.min(W - 1, x)), Math.max(0, Math.min(H - 1, y))).h;
+  }
+
+  // Grown trees on this tile and the eight around it.
+  private treesAround(x: number, y: number) {
+    let n = 0;
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++)
+        if (this.inside(x + dx, y + dy) && this.at(x + dx, y + dy).tree) n++;
+    return n;
+  }
+
+  private nearWater(x: number, y: number) {
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++)
+        if (this.inside(x + dx, y + dy) && this.at(x + dx, y + dy).t === 'water') return true;
+    return false;
   }
 
   private nearMountain(x: number, y: number) {
