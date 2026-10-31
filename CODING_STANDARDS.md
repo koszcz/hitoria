@@ -7,7 +7,7 @@ rules that a script can test, so this file only holds the rules that need judgem
 
 A file should hold one idea, so an agent can read the whole file without searching through it.
 
-- `bun run check` fails when a file in `src/`, `test/`, `scripts/` or `changelog/` passes
+- `bun run check` fails when a file in `src/`, `test/`, `scripts/`, `changelog/` or `ideas/` passes
   400 lines. The pre-commit hook and CI both run it.
 - Some files were already too long when the check started. They are listed in `OVERSIZE` in
   [scripts/check-size.ts](scripts/check-size.ts), and each may not grow. When you touch one,

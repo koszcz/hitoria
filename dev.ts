@@ -1,4 +1,4 @@
-// Dev server: serves the game and saves crash and problem reports from the browser to reports/.
+// Dev server: serves the game and the backlog dashboard at /backlog, and saves crash and problem reports from the browser to reports/.
 //
 // Each checkout (the main folder or a git worktree) gets its own address, http://<branch>.localhost:5173,
 // so several copies can run side by side. The game itself runs on a free port. Whichever dev server
@@ -9,6 +9,8 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { basename, resolve } from 'node:path';
 import type { ServerWebSocket } from 'bun';
 import index from './index.html';
+import { render as renderBacklog } from './ideas/build';
+import { readBacklog } from './ideas/parse';
 
 const FRONT_PORT = Number(process.env.PORT) || 5173;
 
@@ -66,6 +68,7 @@ const game = Bun.serve({
   development: true,
   routes: {
     '/': index,
+    '/backlog': () => new Response(renderBacklog(readBacklog()), { headers: { 'content-type': 'text/html' } }),
     '/report/:kind': {
       async POST(req) {
         const kind = req.params.kind === 'crash' ? 'crash' : 'problem';
