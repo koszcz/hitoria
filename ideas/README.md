@@ -70,3 +70,23 @@ this backlog, so `main` is the only copy that shows what everyone is building.
 
 **Building now** can hold several ideas, one for each branch. If a branch is abandoned, move its
 idea back to **Next** by hand.
+
+## The factory
+
+The factory builds approved ideas one after another, without you.
+
+1. Run `/factory-triage`. Claude scores and sorts the ideas itself. It asks you about one idea at
+   a time: build it or drop it?
+2. Run `/factory-build`. Claude builds and ships every approved idea, one at a time, until none
+   is left. You can be away while it runs. It reports at the end.
+
+An approved idea has `Approved` at the end of its scores:
+
+```markdown
+- **Hunter**: a hunter catches wild animals. *Fun 2 · Effort S · Needs: Wild animals · Approved*
+```
+
+- The factory builds only Approved ideas. Ideas in **Next** must still follow the rules above.
+- A dropped idea goes to **Dropped**, with the reason after its sentence.
+- If the factory can't ship an idea, it moves the idea back to **Later** without `Approved`.
+  The next `/factory-triage` asks you about it again.

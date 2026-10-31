@@ -46,3 +46,14 @@ which idea you took.
    Put the "Nothing right now." placeholder back only if **Building now** is empty.
 8. **Ship it** with the `ship` skill, once the user agrees it is done.
 9. **Report** what was built, and suggest `/triage` if **Next** has fewer than 3 ideas.
+
+## Factory runs
+
+The `factory-build` skill runs this skill in a subagent while the user is away.
+In a factory run, keep moving:
+
+- Step 2: if you would stop, stop and report the reason. Leave `/triage` to the user.
+- Step 4: write the plan into your report and go on without waiting.
+- Step 6: describe what the screenshot shows in your report.
+- Step 8: ship as soon as steps 5 and 6 pass.
+- Decide every other open point yourself, and list each choice in your report.
