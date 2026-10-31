@@ -10,7 +10,6 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-- **Demolish a building**: remove a building you placed in the wrong spot. *Fun 2 · Effort S*
 - **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *Fun 2 · Effort S*
 - **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S*
 
@@ -66,6 +65,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Demolish a building**: remove a building you placed in the wrong spot. Its goods go back to the HQ. *2026-10-31*
 - **Start near a mountain and shore**: every map puts a mountain and a bay to the open sea in the HQ's land, with room for a stone mine and a fisher. *2026-10-31*
 - **Buildings that look different**: each building has its own shape and colours, so you can tell them apart at a glance. *2026-10-31*
 - **Auto road for new buildings**: a new building gets the shortest road to the nearest joined flag or road. *2026-10-31*

@@ -133,7 +133,7 @@ const MESSAGES_PL: Record<string, string> = {
     'Drogę zaczynasz od flagi, budynku albo wolnego pola z dala od innych flag',
   'No room for a road there': 'Tu nie zmieści się droga',
   'Nothing to remove here': 'Nie ma tu nic do usunięcia',
-  'Demolishing buildings is not in yet': 'Burzenia budynków jeszcze nie ma',
+  'The HQ cannot be demolished': 'Siedziby nie można zburzyć',
 };
 
 const BTYPES = Object.keys(BDEFS) as BType[];
@@ -142,10 +142,11 @@ const BTYPES = Object.keys(BDEFS) as BType[];
 export function tr(msg: string): string {
   if (lang === 'en') return msg;
   if (MESSAGES_PL[msg]) return MESSAGES_PL[msg];
-  // "🪓 Woodcutter's Hut finished"
+  // "🪓 Woodcutter's Hut finished" and "🪓 Woodcutter's Hut demolished"
   for (const t of BTYPES) {
     const def = BDEFS[t];
     if (msg === `${def.icon} ${def.name} finished`) return `${def.icon} Gotowe: ${BUILDING_PL[t].name}`;
+    if (msg === `${def.icon} ${def.name} demolished`) return `${def.icon} Zburzono: ${BUILDING_PL[t].name}`;
   }
   return msg;
 }
@@ -183,7 +184,7 @@ const EN = {
   road: 'Road',
   roadDesc: 'Click a flag or building, then where the road should go. Keeps going from the new end until you right-click.',
   remove: 'Remove',
-  removeDesc: 'Remove a road or a lone flag.',
+  removeDesc: 'Remove a road, a lone flag, or a building. Its goods go back to the HQ.',
   key: (k: string) => `key ${k}`,
   settlers: (idle: number, busy: number) => `<b>${idle}</b> idle / ${busy} busy`,
   whyBuild: 'Why build it',
@@ -265,7 +266,7 @@ const PL: typeof EN = {
   road: 'Droga',
   roadDesc: 'Kliknij flagę lub budynek, a potem miejsce, do którego ma biec droga. Droga biegnie dalej od nowego końca, aż klikniesz prawym przyciskiem.',
   remove: 'Usuń',
-  removeDesc: 'Usuwa drogę albo samotną flagę.',
+  removeDesc: 'Usuwa drogę, samotną flagę albo budynek. Jego towary wracają do siedziby.',
   key: (k: string) => `klawisz ${k}`,
   settlers: (idle: number, busy: number) => `<b>${idle}</b> ${plural(idle, 'wolny', 'wolni', 'wolnych')} / ${busy} przy pracy`,
   whyBuild: 'Po co budować',

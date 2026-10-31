@@ -60,6 +60,12 @@ describe('game messages in Polish', () => {
     expect(tr('something new')).toBe('something new');
   });
 
+  test('the "demolished" toast names the building in Polish', () => {
+    setLang('pl');
+    const def = BDEFS.woodcutter;
+    expect(tr(`${def.icon} ${def.name} demolished`)).toBe(`${def.icon} Zburzono: Chata drwala`);
+  });
+
   test('the "finished" toast names the building in Polish', () => {
     setLang('pl');
     const def = BDEFS.woodcutter;
