@@ -7,11 +7,12 @@ import { planAutoRoad } from './autoroad';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
 import { raise } from './houses';
 import { computeTerritory, passable } from './land';
-import { isStore, moveGoods, stored } from './logistics';
+import { moveGoods } from './logistics';
 import { buildRoad, flagAt, planRoad, removeAt, startFlag } from './roads';
 import { checkVersion, restore, save, SaveData } from './save';
 import { step } from './settlers';
 import { staff } from './staff';
+import { isStore, stored } from './stores';
 import type { Building, Flag, Road, Settler } from './types';
 
 export class Game {
@@ -117,8 +118,8 @@ export class Game {
     this.dispatchT -= dt;
     if (this.dispatchT <= 0) {
       this.dispatchT = 0.25;
-      staff(this);
       moveGoods(this);
+      staff(this);
     }
     this.growT -= dt;
     if (this.growT <= 0) {

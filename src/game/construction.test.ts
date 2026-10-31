@@ -79,6 +79,7 @@ describe('construction', () => {
   test('houses get a builder before other sites', () => {
     const g = flatGame();
     g.pool = 1;
+    g.hq.stock = bag(); // nothing to carry, so no carrier takes the one settler
     const hut = placeLinked(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     const house = placeLinked(g, 'house', g.hq.x - 4, g.hq.y);
     run(g, 0.5);

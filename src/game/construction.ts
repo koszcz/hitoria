@@ -47,7 +47,7 @@ export function placeSite(g: Game, type: BType, x: number, y: number) {
 export function addBuilding(g: Game, type: BType, x: number, y: number) {
   const b: Building = {
     id: g.nextId++, type, x, y, flag: 0, built: false, progress: 0,
-    stock: bag(), out: bag(), incoming: bag(),
+    stock: bag(), out: bag(), incoming: bag(), sending: bag(),
     worker: 0, builder: 0, busy: false, using: null, status: '', born: 0, grow: 0,
   };
   g.buildings.set(b.id, b);

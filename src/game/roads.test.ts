@@ -17,12 +17,12 @@ describe('roads and flags', () => {
     expect(g.flags.get(g.hq.flag)!.roads).toEqual([r.id]);
   });
 
-  test('long roads get extra flags so several carriers share them', () => {
+  test('a long road gets flags only at its ends', () => {
     const g = flatGame();
     const end = g.buildRoad(g.hq.flag, { x: g.hq.x + 9, y: g.hq.y + 1 });
     expect(typeof end).not.toBe('string');
-    expect(g.roads.size).toBeGreaterThan(1);
-    for (const r of g.roads.values()) expect(r.path.length - 1).toBeLessThanOrEqual(5);
+    expect(g.roads.size).toBe(1);
+    expect(g.flags.size).toBe(2);
   });
 
   test('starting a road on an existing road splits it with a new flag', () => {

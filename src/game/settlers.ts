@@ -10,7 +10,7 @@ export function takeSettler(g: Game, role: Role): Settler | null {
   if (g.pool <= 0) return null;
   g.pool--;
   const s: Settler = {
-    id: g.nextId++, role, x: g.hq.x, y: g.hq.y, path: null, tasks: [], carrying: null, item: null, ri: 0, since: 0,
+    id: g.nextId++, role, x: g.hq.x, y: g.hq.y, path: null, tasks: [], carrying: null, job: null,
     home: 0, inside: false, atWork: false, returning: false, walking: false, anim: '', facing: 1, onAbort: null,
   };
   g.settlers.set(s.id, s);

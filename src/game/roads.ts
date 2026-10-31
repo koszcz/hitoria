@@ -1,10 +1,8 @@
-// Building and removing roads and flags, and what happens to goods and carriers caught on them.
+// Building and removing roads and flags.
 import { findPath, P } from '../path';
-import { FLAG_SPACING } from './defs';
 import type { Game } from './game';
 import { flaggable, roadable } from './land';
-import { despawn } from './settlers';
-import type { Flag, Item, Road } from './types';
+import type { Flag, Road } from './types';
 
 export function flagAt(g: Game, t: P): Flag | null {
   if (!g.world.inside(t.x, t.y)) return null;
@@ -44,13 +42,6 @@ export function layRoad(g: Game, fromId: number, path: P[]): Flag {
   const last = path[path.length - 1];
   const end = ensureFlag(g, last.x, last.y);
   createRoad(g, fromId, end.id, path);
-  // Flags along long roads let several carriers share the work.
-  let since = 0;
-  for (let i = 1; i < path.length - 2; i++) {
-    if (++since < FLAG_SPACING || !flaggable(g, path[i].x, path[i].y)) continue;
-    ensureFlag(g, path[i].x, path[i].y);
-    since = 0;
-  }
   return end;
 }
 
@@ -67,7 +58,7 @@ export function removeAt(g: Game, t: P): string | null {
 }
 
 function newFlag(g: Game, x: number, y: number) {
-  const f: Flag = { id: g.nextId++, x, y, items: [], roads: [], building: 0 };
+  const f: Flag = { id: g.nextId++, x, y, roads: [], building: 0 };
   g.flags.set(f.id, f);
   Object.assign(g.world.at(x, y), { flag: f.id, crop: 0 });
   g.net++;
@@ -82,7 +73,7 @@ export function ensureFlag(g: Game, x: number, y: number): Flag {
 }
 
 function createRoad(g: Game, a: number, b: number, path: P[]) {
-  const r: Road = { id: g.nextId++, a, b, path, carrier: 0 };
+  const r: Road = { id: g.nextId++, a, b, path };
   for (let i = 1; i < path.length - 1; i++) Object.assign(g.world.at(path[i].x, path[i].y), { road: r.id, crop: 0 });
   g.flags.get(a)!.roads.push(r.id);
   g.flags.get(b)!.roads.push(r.id);
@@ -114,38 +105,14 @@ function removeRoad(g: Game, rid: number) {
   }
   g.roads.delete(rid);
   g.net++;
-  const s = g.settlers.get(r.carrier);
-  if (!s) return;
-  if (s.item) {
-    const f = g.flags.get(s.ri < r.path.length / 2 ? r.a : r.b);
-    if (f) f.items.push(s.item);
-    else dropItem(g, s.item);
-  }
-  s.item = null;
-  s.carrying = null;
-  s.onAbort = null;
-  s.atWork = false;
-  s.home = 0;
-  s.path = null;
-  s.walking = false;
-  s.anim = '';
-  s.tasks = [{ k: 'walk', x: g.hq.x, y: g.hq.y }, { k: 'do', f: () => despawn(g, s) }];
 }
 
 function removeFlag(g: Game, fid: number): string | null {
   const f = g.flags.get(fid)!;
   if (f.building) return "A building's own flag can't be removed";
   for (const rid of [...f.roads]) removeRoad(g, rid);
-  for (const it of f.items) dropItem(g, it);
   g.world.at(f.x, f.y).flag = 0;
   g.flags.delete(fid);
   g.net++;
   return null;
-}
-
-// Goods stranded by a removed road or flag go back into the HQ's stock.
-function dropItem(g: Game, it: Item) {
-  const dest = g.buildings.get(it.dest);
-  if (dest) dest.incoming[it.g]--;
-  g.hq.stock[it.g]++;
 }

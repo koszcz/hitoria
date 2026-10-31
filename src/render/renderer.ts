@@ -272,11 +272,6 @@ export class Renderer {
         this.scene.add(m.g);
       }
       m.cloth!.rotation.y = Math.sin(now * 4 + f.x) * 0.4;
-      const p = m.g.position;
-      f.items.forEach((it, k) => {
-        const a = (k / 8) * Math.PI * 2 + 0.4;
-        this.goods.put(it.g, p.x + Math.cos(a) * 0.2, p.y + 0.04, p.z + Math.sin(a) * 0.2, -a);
-      });
     }
     for (const [id, m] of this.flags)
       if (!seen.has(id)) {

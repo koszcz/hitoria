@@ -52,12 +52,12 @@ describe('auto road for new buildings', () => {
     expect(g.roads.size).toBe(2);
   });
 
-  test('long roads get flags along the way', () => {
+  test('a long road gets no flags along the way', () => {
     const g = flatGame();
     const b = g.place('woodcutter', g.hq.x, g.hq.y - 8);
     expect(g.linked(b)).toBe(true);
-    expect(g.roads.size).toBeGreaterThan(1);
-    for (const r of g.roads.values()) expect(r.path.length - 1).toBeLessThanOrEqual(5);
+    expect(g.roads.size).toBe(1);
+    expect(g.flags.size).toBe(2);
   });
 
   test('a building no road can reach stays without one', () => {

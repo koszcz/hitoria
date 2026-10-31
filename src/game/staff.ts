@@ -1,22 +1,11 @@
-// Sending settlers out of the HQ: a carrier for every busy road, a builder for every site, a worker for every hut.
+// Sending settlers out of the HQ: a builder for every site and a worker for every hut.
 import { BDEFS } from './defs';
-import { cargo } from './carriers';
 import { linked } from './construction';
 import type { Game } from './game';
-import { despawn, giveUp, takeSettler } from './settlers';
+import { giveUp, takeSettler } from './settlers';
 import type { Building } from './types';
 
 export function staff(g: Game) {
-  for (const r of g.roads.values()) {
-    if (r.carrier || !cargo(g, r, 0) && !cargo(g, r, 1)) continue;
-    const s = takeSettler(g, 'carrier');
-    if (!s) break;
-    r.carrier = s.id;
-    s.home = r.id;
-    const mid = r.path.length >> 1;
-    s.onAbort = () => { r.carrier = 0; despawn(g, s); };
-    s.tasks = [{ k: 'walk', ...r.path[mid] }, { k: 'do', f: () => { s.atWork = true; s.ri = mid; s.since = g.time; s.onAbort = null; } }];
-  }
   // Houses come first, because only they bring in more settlers.
   for (const b of g.buildings.values()) if (b.type === 'house' && !sendBuilder(g, b)) break;
   for (const b of g.buildings.values()) {

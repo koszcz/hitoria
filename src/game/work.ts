@@ -23,7 +23,7 @@ export function idle(g: Game, s: Settler) {
     case 'stonecutter': {
       const wood = s.role === 'woodcutter';
       const good: Good = wood ? 'log' : 'stone';
-      if (home.out[good] >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
+      if (home.out[good] >= PILE) return rest(2, 'Full, waiting for a carrier');
       const at = findTile(g, home, r, (t) => (wood ? t.tree >= 1 : t.rock > 0));
       if (!at) return rest(3, wood ? 'No grown trees in range' : 'No boulders in range');
       home.status = wood ? 'Felling a tree' : 'Breaking stone';
@@ -66,7 +66,7 @@ export function idle(g: Game, s: Settler) {
       return;
     }
     case 'fisher': {
-      if (home.out.fish >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
+      if (home.out.fish >= PILE) return rest(2, 'Full, waiting for a carrier');
       const at = findTile(g, home, r, (t, x, y) => t.t !== 'water' && g.passable(x, y) && near(g, x, y, 1, (n) => n.t === 'water'));
       if (!at) return rest(3, 'No shore in range');
       home.status = 'Fishing';
@@ -85,7 +85,7 @@ export function idle(g: Game, s: Settler) {
       // Harvest ripe grain first, then sow new fields.
       const ripe = home.out.grain < PILE ? findTile(g, home, r, (t) => t.crop >= 1) : null;
       const at = ripe ?? findTile(g, home, r, free, true);
-      if (!at) return rest(3, home.out.grain >= PILE ? 'Flag is full, waiting for a carrier' : 'Waiting for the grain to ripen');
+      if (!at) return rest(3, home.out.grain >= PILE ? 'Full, waiting for a carrier' : 'Waiting for the grain to ripen');
       home.status = ripe ? 'Harvesting grain' : 'Sowing grain';
       const i = claim(g, s, at);
       const tile = g.world.at(at.x, at.y);
@@ -115,7 +115,7 @@ export function idle(g: Game, s: Settler) {
     case 'baker':
     case 'miner': {
       const rc = RECIPES[home.type]!;
-      if (home.out[rc.to] >= PILE) return rest(2, 'Flag is full, waiting for a carrier');
+      if (home.out[rc.to] >= PILE) return rest(2, 'Full, waiting for a carrier');
       const input = rc.from.find((k) => home.stock[k] > 0);
       if (!input) return rest(1, rc.waiting);
       home.status = rc.doing;

@@ -4,16 +4,34 @@ import { Game, bag } from '.';
 import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, placeBare } from './test-helpers';
 
 describe('logistics', () => {
+  test('one carrier walks each good the whole way, along the roads', () => {
+    const g = flatGame();
+    const site = placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
+    const tiles = new Set([...g.roads.values()].flatMap((r) => r.path.map((p) => `${p.x},${p.y}`)));
+    tiles.add(`${g.hq.x},${g.hq.y}`).add(`${site.x},${site.y}`);
+    const delivered = new Set<number>();
+    runUntil(g, () => site.built, 300, () => {
+      for (const s of g.settlers.values()) {
+        if (s.role !== 'carrier' || !s.carrying) continue;
+        // Whoever holds a good took it from the HQ and keeps it until the site.
+        delivered.add(s.id);
+        expect(s.job).toMatchObject({ from: g.hq.id, to: site.id });
+        if (!s.walking) continue;
+        const near = [Math.floor, Math.ceil].some((fx) => [Math.floor, Math.ceil].some((fy) => tiles.has(`${fx(s.x)},${fy(s.y)}`)));
+        expect(near).toBe(true);
+      }
+      expectIncomingConsistent(g);
+    });
+    expect(delivered.size).toBeGreaterThan(0);
+  });
+
   test('cutting a road mid-delivery loses no goods', () => {
     const g = flatGame();
     const before = totalGoods(g);
     placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
-    runUntil(g, () => [...g.settlers.values()].some((s) => s.item), 120);
-    const r = [...g.roads.values()].find((r) => g.settlers.get(r.carrier)?.item)!;
-    const item = g.settlers.get(r.carrier)!.item!;
+    runUntil(g, () => [...g.settlers.values()].some((s) => s.carrying), 120);
+    const r = [...g.roads.values()][0];
     g.removeAt(r.path[1]);
-    // The carrier drops the good on the nearer flag, where it waits for a new route.
-    expect([r.a, r.b].some((id) => g.flags.get(id)!.items.includes(item))).toBe(true);
     expect(totalGoods(g)).toEqual(before);
     expectIncomingConsistent(g);
     run(g, 60, () => {
@@ -23,18 +41,14 @@ describe('logistics', () => {
     });
   });
 
-  test('removing a flag with goods on it sends them back to the HQ', () => {
+  test('goods wait inside a building that has no road', () => {
     const g = flatGame();
-    const before = totalGoods(g);
-    placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
-    const loaded = () => [...g.flags.values()].find((f) => !f.building && f.items.length);
-    runUntil(g, () => !!loaded(), 120);
-    const f = loaded()!;
-    const stock = { ...g.hq.stock };
-    expect(g.removeAt(f)).toBeNull();
-    expect(g.hq.stock.plank + g.hq.stock.stone).toBeGreaterThan(stock.plank + stock.stone);
-    expect(totalGoods(g)).toEqual(before);
-    expectIncomingConsistent(g);
+    const cutter = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
+    Object.assign(cutter, { built: true, progress: 1 });
+    cutter.out.log = 2;
+    run(g, 10);
+    expect(cutter.out.log).toBe(2);
+    expect([...g.settlers.values()].some((s) => s.role === 'carrier')).toBe(false);
   });
 
   test('goods head for the building that needs them, not the HQ', () => {

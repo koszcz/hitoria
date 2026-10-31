@@ -1,4 +1,4 @@
-// Goods lying at flags and buildings or carried by settlers. Each good is one instanced mesh,
+// Goods lying at buildings or carried by settlers. Each good is one instanced mesh,
 // refilled every frame: call `start`, then `put` for each good, then `finish`.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
