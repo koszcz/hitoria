@@ -10,6 +10,7 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look · Approved*
 - **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M · Approved*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
 
@@ -24,7 +25,6 @@ New ideas go here, not scored yet.
 Triaged, but not next.
 
 - **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
-- **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look · Approved*
 - **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle · Approved*
 
 - **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *Fun 2 · Effort M · Needs: Well and water · Approved*
