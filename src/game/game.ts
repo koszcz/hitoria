@@ -1,7 +1,7 @@
 // The Game class: all the state of one settlement, and the actions the player and the main loop call.
 // The work itself lives in the other files of this folder, as functions that take the game.
 import type { P } from '../path';
-import { MAP_VERSION, World } from '../world';
+import { MAP_VERSION, World, W, H } from '../world';
 import { BType, CROP_GROW, bag } from './defs';
 import { planAutoRoad } from './autoroad';
 import { pickFields } from './fields';
@@ -14,6 +14,7 @@ import { buildRoad, flagAt, planRoad, removeAt, startFlag } from './roads';
 import { checkVersion, mapVersion, restore, save, SaveData } from './save';
 import { step } from './settlers';
 import { staff } from './staff';
+import { fade } from './wear';
 import { isStore, stored } from './stores';
 import type { Building, Flag, Road, Settler } from './types';
 
@@ -30,6 +31,8 @@ export class Game {
   toasts: string[] = [];
   made = bag(); // every good the settlement has made since the game began
   goal = 0; // index in GOALS of the goal the player is on
+  wear = new Float32Array(W * H); // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
+  worn = 0; // bumped whenever a tile's wear changes enough to see
 
   // Internal state for the files in this folder. Code outside src/game/ should not touch it.
   nextId = 1;
@@ -37,6 +40,7 @@ export class Game {
   snubbed = new Map<number, number>(); // unreachable tiles -> retry time
   dist = new Map<number, Map<number, number>>(); // per destination flag, cached for `distNet`
   distNet = -1;
+  trod = new Float32Array(W * H); // game time of the last footstep on each tile
   private dispatchT = 0;
   private growT = 0;
 
@@ -143,6 +147,7 @@ export class Game {
         if (t.tree > 0 && t.tree < 1) t.tree = Math.min(1, t.tree + 1 / 40);
         if (t.crop > 0 && t.crop < 1) t.crop = Math.min(1, t.crop + 1 / CROP_GROW);
       }
+      fade(this);
     }
     for (const b of this.buildings.values()) {
       if (!b.built) construct(this, b, dt);

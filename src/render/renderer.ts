@@ -46,6 +46,7 @@ export class Renderer {
 
   private roads = new THREE.Group();
   private roadNet = -1;
+  private wornKey = -1; // game.worn when the ground was last painted
   private models = new Map<number, Model>();
   private flags = new Map<number, Model>();
   private people = new Map<number, Person>();
@@ -142,8 +143,12 @@ export class Renderer {
     for (let i = 0; i < terr.length; i++) if (terr[i]) tk += i;
     if (tk !== this.terrKey) {
       this.terrKey = tk;
-      this.ground.paint();
+      this.wornKey = game.worn;
+      this.ground.paint(game.wear);
       this.ground.drawBorder();
+    } else if (game.worn !== this.wornKey) {
+      this.wornKey = game.worn;
+      this.ground.paint(game.wear);
     }
     if (game.net !== this.roadNet) {
       this.roadNet = game.net;
@@ -151,7 +156,7 @@ export class Renderer {
     }
 
     this.goods.start();
-    this.scenery.draw(game.world, now);
+    this.scenery.draw(game.world, game.wear, now);
     this.buildings(game, now);
     this.flagsAndGoods(game, now);
     this.settlers(game, now);
