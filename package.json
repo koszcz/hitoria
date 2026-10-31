@@ -8,7 +8,9 @@
     "build": "\"$npm_execpath\" build ./index.html --outdir dist --minify && bun changelog/build.ts dist",
     "test": "bun test",
     "changelog": "bun changelog/build.ts",
-    "changelog:shots": "bun changelog/shots.ts"
+    "changelog:shots": "bun changelog/shots.ts",
+    "check": "tsc --noEmit && bun scripts/check-size.ts",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
     "three": "^0.187.0"
@@ -16,6 +18,7 @@
   "devDependencies": {
     "@types/bun": "^1.4.4",
     "@types/three": "^0.187.0",
-    "puppeteer-core": "^25.16.0"
+    "puppeteer-core": "^25.16.0",
+    "typescript": "^7.0.2"
   }
 }

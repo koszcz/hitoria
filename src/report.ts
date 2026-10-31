@@ -26,8 +26,8 @@ for (const level of ['warn', 'error'] as const) {
   };
 }
 
-addEventListener('error', (e) => crash(e.error ?? e.message));
-addEventListener('unhandledrejection', (e) => crash(e.reason));
+window.addEventListener('error', (e) => crash(e.error ?? e.message));
+window.addEventListener('unhandledrejection', (e) => crash(e.reason));
 
 function text(v: unknown): string {
   if (v instanceof Error) return v.stack ?? `${v.name}: ${v.message}`;

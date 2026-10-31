@@ -2,7 +2,7 @@ import { crashed, watch, reportProblem } from './report';
 import { diag } from './diag';
 import { DebugPanel } from './debug';
 import { Game, BUILDABLE, BType } from './game';
-import { Renderer } from './render';
+import { Renderer } from './render/renderer';
 import { UI } from './ui';
 import { Saves, type Slot } from './saves';
 import { openSaveMenu } from './savemenu';
@@ -122,7 +122,7 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
     ui.toast(T().newIsland);
   };
 }
-addEventListener('pagehide', autosave);
+window.addEventListener('pagehide', autosave);
 
 let hover: P | null = null;
 let preview: P[] | null = null;
@@ -162,7 +162,7 @@ canvas.addEventListener('wheel', (e) => {
   cam.y += before.y - (e.clientY - renderer.h / 2) / cam.zoom;
 }, { passive: false });
 
-addEventListener('keydown', (e) => {
+window.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
     e.preventDefault();
     save();
@@ -183,8 +183,8 @@ addEventListener('keydown', (e) => {
     ui.refresh();
   }
 });
-addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
-addEventListener('blur', () => keys.clear());
+window.addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
+window.addEventListener('blur', () => keys.clear());
 
 // Step back one level: drop the road being drawn, then the tool, then the selection.
 function cancel() {

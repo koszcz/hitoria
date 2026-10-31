@@ -14,6 +14,7 @@ jobs:
           fetch-depth: 0 # the changelog reads which commit added each entry
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
+      - run: bun run check
       - run: bun test
       - run: bun run build
       - uses: actions/upload-pages-artifact@v3

@@ -54,7 +54,8 @@ mkdirSync(routesDir, { recursive: true });
 const taken = readRoute(name);
 if (taken && taken.pid !== process.pid) {
   console.error(`Another copy is already running as "${name}" (from ${taken.dir}).`);
-  console.error('Stop it, or start this one with a different name: DEV_NAME=other bun run dev');
+  if (taken.dir === process.cwd()) console.error(`It already serves this folder, so use it: http://${name}.localhost:5173/`);
+  else console.error('Stop it, or start this one with a different name: DEV_NAME=other bun run dev');
   process.exit(1);
 }
 
