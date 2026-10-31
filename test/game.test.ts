@@ -69,7 +69,39 @@ describe('canPlace', () => {
     for (let dy = -2; dy <= 3; dy++)
       for (let dx = -2; dx <= 2; dx++)
         if (Math.abs(dx) === 2 || dy === -2 || dy === 3) g.world.at(bx + dx, by + dy).t = 'water';
-    expect(g.canPlace('woodcutter', bx, by)).toBe('Settlers cannot walk there');
+    expect(g.canPlace('woodcutter', bx, by)).toBe('No road can reach it');
+  });
+
+  // Ring the flag tile in front of (bx, by) with trees of the given size, leaving the building's own tile free.
+  const wallFlag = (g: ReturnType<typeof flatGame>, bx: number, by: number, tree: number) => {
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++)
+        if ((dx || dy) && (dx || dy !== -1)) g.world.at(bx + dx, by + 1 + dy).tree = tree;
+  };
+
+  test('refuses a spot whose flag is walled in by trees', () => {
+    const g = flatGame();
+    const bx = g.hq.x + 5, by = g.hq.y - 4;
+    wallFlag(g, bx, by, 1);
+    expect(g.canPlace('woodcutter', bx, by)).toBe('No road can reach it');
+  });
+
+  test('saplings around the flag also block roads', () => {
+    const g = flatGame();
+    const bx = g.hq.x + 5, by = g.hq.y - 4;
+    wallFlag(g, bx, by, 0.1);
+    expect(g.canPlace('woodcutter', bx, by)).toBe('No road can reach it');
+  });
+
+  test('a road may reach the flag through a gap in the trees', () => {
+    const g = flatGame();
+    const bx = g.hq.x + 5, by = g.hq.y - 4;
+    wallFlag(g, bx, by, 1);
+    g.world.at(bx, by + 2).tree = 0;
+    expect(g.canPlace('woodcutter', bx, by)).toBeNull();
+    const b = g.place('woodcutter', bx, by);
+    expect(typeof g.buildRoad(b.flag, g.flags.get(g.hq.flag)!)).toBe('object');
+    expect(g.linked(b)).toBe(true);
   });
 });
 
@@ -239,6 +271,19 @@ describe('production', () => {
     const before = count(1);
     runUntil(g, () => count(0.01) > before, 200);
     runUntil(g, () => count(1) > before, 200);
+  });
+
+  test('a forester never plants next to a flag', () => {
+    const g = flatGame();
+    const b = placeLinked(g, 'forester', g.hq.x + 4, g.hq.y - 3);
+    // A lone flag near the hut, with nothing around it but the planting ground.
+    const lone = g.buildRoad(b.flag, { x: b.x + 3, y: b.y + 1 });
+    if (typeof lone === 'string') throw new Error(lone);
+    run(g, 400);
+    for (const f of g.flags.values())
+      for (let dy = -1; dy <= 1; dy++)
+        for (let dx = -1; dx <= 1; dx++)
+          expect(g.world.at(f.x + dx, f.y + dy).tree).toBe(0);
   });
 
   test('saplings grow fully in about 40 seconds', () => {

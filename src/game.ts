@@ -276,7 +276,10 @@ export class Game {
     const front = this.world.at(x, y + 1);
     const flagOk = front.flag ? !this.flags.get(front.flag)!.building : this.flaggable(x, y + 1);
     if (!flagOk) return 'No room for its flag in front';
-    if (!findPath(this.hq.x, this.hq.y, x, y, this.passable)) return 'Settlers cannot walk there';
+    // Players can't fell trees themselves, so a flag walled in by trees would never get a road.
+    const hq = this.flags.get(this.hq.flag)!;
+    const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && (this.roadable(tx, ty) || !!this.world.at(tx, ty).road || !!this.world.at(tx, ty).flag);
+    if (!findPath(hq.x, hq.y, x, y + 1, reach)) return 'No road can reach it';
     return BDEFS[type] ? null : 'Unknown building';
   }
 
@@ -978,12 +981,16 @@ export class Game {
   // Free grass in your land where a tree or grain can grow.
   private plantable = (t: Tile, x: number, y: number) =>
     t.t === 'grass' && !t.tree && !t.crop && !t.rock && !t.b && !t.road && !t.flag
-    && !!this.world.territory[y * W + x] && !this.besideBuilding(x, y);
+    && !!this.world.territory[y * W + x] && !this.besideBuildingOrFlag(x, y);
 
-  private besideBuilding(x: number, y: number) {
+  // Trees next to a flag could wall it in, so nothing is planted there.
+  private besideBuildingOrFlag(x: number, y: number) {
     for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++)
-        if (this.world.inside(x + dx, y + dy) && this.world.at(x + dx, y + dy).b) return true;
+      for (let dx = -1; dx <= 1; dx++) {
+        if (!this.world.inside(x + dx, y + dy)) continue;
+        const t = this.world.at(x + dx, y + dy);
+        if (t.b || t.flag) return true;
+      }
     return false;
   }
 
