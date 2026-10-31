@@ -1,5 +1,5 @@
 // Saving a game to plain data and restoring it. The map is rebuilt from the seed; only what changes during play is stored.
-import { GOODS, Good, bag } from './defs';
+import { GOODS, Bag, Good, bag } from './defs';
 import { builtStatus } from './construction';
 import type { Game } from './game';
 import { claimFields } from './fields';
@@ -23,6 +23,8 @@ export interface SaveData {
   buildings: Building[];
   flags: Flag[];
   roads: Road[];
+  made?: Bag; // goods made since the game began; saves from before goals have none
+  goal?: number; // index of the goal the player is on
 }
 
 export function save(g: Game): SaveData {
@@ -55,7 +57,7 @@ export function save(g: Game): SaveData {
   return {
     v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool: g.population, nextId: g.nextId, hq: g.hq.id,
     tiles: g.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field]),
-    buildings, flags, roads,
+    buildings, flags, roads, made: { ...g.made }, goal: g.goal,
   };
 }
 
@@ -98,6 +100,8 @@ export function restore(g: Game, d: SaveData) {
   g.pool = d.pool;
   g.time = d.time;
   g.nextId = d.nextId;
+  g.made = bag(d.made);
+  g.goal = d.goal ?? 0;
   g.net++;
   computeTerritory(g);
   // Farms from saves made before fields take theirs now, keeping the grain already growing.

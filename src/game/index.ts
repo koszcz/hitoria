@@ -3,3 +3,4 @@ export * from './defs';
 export * from './types';
 export { Game } from './game';
 export { SAVE_VERSION, type SaveData } from './save';
+export { GOALS } from './goals';

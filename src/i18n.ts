@@ -62,6 +62,10 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
     name: 'Kopalnia kamienia',
     desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 kamienie. Zbuduj ją przy górze.',
   },
+  monument: {
+    name: 'Pomnik',
+    desc: 'Wysoki kamienny pomnik twojej spokojnej wyspy. Nie wykonuje żadnej pracy, ale osadnicy są z niego dumni.',
+  },
   house: {
     name: 'Dom',
     desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników.`,
@@ -116,6 +120,12 @@ const MESSAGES_PL: Record<string, string> = {
   'A settler will be born soon': 'Wkrótce urodzi się osadnik',
   'House is full': 'Dom jest pełny',
   '👶 A new settler was born': '👶 Urodził się nowy osadnik',
+  // Goals
+  'Make 50 planks': 'Zrób 50 desek',
+  'Bake 20 bread': 'Upiecz 20 bochenków chleba',
+  'Grow to 30 settlers': 'Dojdź do 30 osadników',
+  'Build 3 houses': 'Zbuduj 3 domy',
+  'Build a monument': 'Zbuduj pomnik',
   // Why a building can't go here
   'Outside the map': 'Poza mapą',
   Occupied: 'Zajęte',
@@ -144,6 +154,8 @@ const BTYPES = Object.keys(BDEFS) as BType[];
 export function tr(msg: string): string {
   if (lang === 'en') return msg;
   if (MESSAGES_PL[msg]) return MESSAGES_PL[msg];
+  const goal = msg.match(/^🏆 Goal reached: (.+)$/);
+  if (goal) return `🏆 Cel osiągnięty: ${tr(goal[1])}`;
   // "🪓 Woodcutter's Hut finished" and "🪓 Woodcutter's Hut demolished"
   for (const t of BTYPES) {
     const def = BDEFS[t];
@@ -199,6 +211,8 @@ const EN = {
   input: 'In:',
   ready: 'Ready:',
   born: (n: number, max: number) => `Settlers born here: ${n} / ${max}`,
+  goal: 'Goal',
+  goalsDone: 'Every goal reached. Well done!',
   notLinked: 'Not connected to your HQ by road',
   welcome: 'Welcome! Place a woodcutter near some trees. It gets its own road to your HQ.',
   welcomeBack: (name: string) => `Welcome back to "${name}"! Your settlers are heading back to work.`,
@@ -283,6 +297,8 @@ const PL: typeof EN = {
   input: 'Wsad:',
   ready: 'Gotowe:',
   born: (n: number, max: number) => `Urodzeni tu osadnicy: ${n} / ${max}`,
+  goal: 'Cel',
+  goalsDone: 'Wszystkie cele osiągnięte. Brawo!',
   notLinked: 'Brak drogi do siedziby',
   welcome: 'Witaj! Postaw chatę drwala blisko drzew. Sama dostanie drogę do siedziby.',
   welcomeBack: (name: string) => `Witaj z powrotem w „${name}”! Twoi osadnicy wracają do pracy.`,

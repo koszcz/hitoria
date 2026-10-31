@@ -5,6 +5,7 @@ import { MAP_VERSION, World } from '../world';
 import { BType, CROP_GROW, bag } from './defs';
 import { planAutoRoad } from './autoroad';
 import { pickFields } from './fields';
+import { checkGoals, goalNow } from './goals';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
 import { raise } from './houses';
 import { computeTerritory, passable } from './land';
@@ -27,6 +28,8 @@ export class Game {
   time = 0;
   net = 0; // bumped whenever the road network changes
   toasts: string[] = [];
+  made = bag(); // every good the settlement has made since the game began
+  goal = 0; // index in GOALS of the goal the player is on
 
   // Internal state for the files in this folder. Code outside src/game/ should not touch it.
   nextId = 1;
@@ -115,6 +118,11 @@ export class Game {
     return type === 'farm' ? pickFields(this, x, y) : [];
   }
 
+  // The goal the player is on now, with its progress, or null once every goal is reached.
+  goalNow() {
+    return goalNow(this);
+  }
+
   removeAt(t: P) {
     return removeAt(this, t);
   }
@@ -126,6 +134,7 @@ export class Game {
       this.dispatchT = 0.25;
       moveGoods(this);
       staff(this);
+      checkGoals(this);
     }
     this.growT -= dt;
     if (this.growT <= 0) {

@@ -17,6 +17,11 @@ export function idle(g: Game, s: Settler) {
   };
   const r = BDEFS[home.type].radius;
   const free = (t: Tile, x: number, y: number) => plantable(g, t, x, y);
+  // A finished good goes onto the hut's pile, and counts toward the goods the settlement has made.
+  const make = (good: Good, n = 1) => {
+    home.out[good] += n;
+    g.made[good] += n;
+  };
 
   switch (s.role) {
     case 'woodcutter':
@@ -38,7 +43,7 @@ export function idle(g: Game, s: Settler) {
           s.carrying = good;
         } },
         { k: 'walk', x: home.x, y: home.y },
-        { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; home.out[good]++; } },
+        { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; make(good); } },
         { k: 'work', t: 1.5 },
       ];
       return;
@@ -76,7 +81,7 @@ export function idle(g: Game, s: Settler) {
         { k: 'work', t: 6, anim: 'fish' },
         { k: 'do', f: () => { g.claimed.delete(i); s.carrying = 'fish'; } },
         { k: 'walk', x: home.x, y: home.y },
-        { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; home.out.fish++; } },
+        { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; make('fish'); } },
         { k: 'work', t: 2 },
       ];
       return;
@@ -101,7 +106,7 @@ export function idle(g: Game, s: Settler) {
         } },
         { k: 'walk', x: home.x, y: home.y },
         { k: 'do', f: () => {
-          if (s.carrying) home.out.grain++;
+          if (s.carrying) make('grain');
           s.carrying = null;
           s.onAbort = null;
           s.inside = true;
@@ -122,7 +127,7 @@ export function idle(g: Game, s: Settler) {
       s.tasks = [
         { k: 'do', f: () => { home.stock[input]--; home.busy = true; home.using = input; } },
         { k: 'work', t: rc.t },
-        { k: 'do', f: () => { home.out[rc.to] += rc.n; home.busy = false; home.using = null; } },
+        { k: 'do', f: () => { make(rc.to, rc.n); home.busy = false; home.using = null; } },
       ];
       return;
     }

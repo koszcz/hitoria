@@ -2,7 +2,7 @@
 import type { BType } from '../game';
 
 export type Body = 'keep' | 'cabin' | 'steep' | 'stonehut' | 'shed' | 'tower' | 'barn' | 'stilts'
-  | 'longhouse' | 'windmill' | 'brick' | 'mound' | 'cottage';
+  | 'longhouse' | 'windmill' | 'brick' | 'mound' | 'cottage' | 'obelisk';
 
 export interface Look {
   body: Body;
@@ -25,6 +25,7 @@ export const LOOKS: Record<BType, Look> = {
   bakery: { body: 'brick', wall: '#b0624a', roof: '#c4503a' },
   mine: { body: 'mound', wall: '#9a948a', roof: '#2e3034' },
   house: { body: 'cottage', wall: '#e8d6b0', roof: '#b87a66' },
+  monument: { body: 'obelisk', wall: '#d6d0c2', roof: '#f0e6a8' },
 };
 
 // How different two colours look to the eye: 0 for the same colour, about 100 from black to white.
