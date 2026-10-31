@@ -34,7 +34,7 @@ const renderer = new Renderer(canvas);
 const ui = new UI(game);
 watch(() => game);
 diag.attach(game);
-const debug = new DebugPanel();
+const debug = new DebugPanel(() => game);
 renderer.centerOn(game.hq.x, game.hq.y);
 ui.toast(saved
   ? `Welcome back to "${first!.name}"! Your settlers are heading back to work.`

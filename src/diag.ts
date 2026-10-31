@@ -180,6 +180,86 @@ export class Diagnostics {
     return [...roles].map(([r, n]) => `${r} ${n}`).join(', ') || 'none';
   }
 
+  // Everything the F3 panel can copy: the whole settlement as it is right now, as Markdown.
+  // It leaves out the save, which only the problem report includes.
+  snapshot(): string {
+    const g = this.game;
+    if (!g) return '(no game running)';
+    const now = g.time;
+    const nonzero = (b: Record<string, number>) =>
+      Object.entries(b).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(', ') || '-';
+    const name = (id: number) => {
+      const b = g.buildings.get(id);
+      return b ? `${BDEFS[b.type].name} #${b.id}` : `#${id}`;
+    };
+    const lines = [
+      '## Hitoria debug snapshot',
+      `Island seed ${g.seed} · game time ${now.toFixed(1)} s · population ${g.population} · idle in the HQ ${g.pool}`,
+      `Stored in the HQ and storehouses: ${nonzero({ ...g.stored })}`,
+      '',
+      '### Things that look stuck',
+      this.issues.size ? [...this.issues.values()].map((i) => `- ${i.text}`).join('\n') : '(none)',
+      '',
+      '### Buildings',
+      'building | at | built | status (for how long) | worker | road to HQ | stock | out | coming | in range',
+    ];
+    for (const b of g.buildings.values()) {
+      const def = BDEFS[b.type];
+      const since = this.status.get(b.id)?.since ?? now;
+      const worker = !def.worker ? '-' : b.worker ? `${def.worker} #${b.worker}` : 'none';
+      const extra = b.type === 'house' ? ` · born ${b.born}, next in ${b.grow.toFixed(0)} s` : '';
+      lines.push([
+        `${def.name} #${b.id}`, `${b.x},${b.y}`,
+        b.built ? 'yes' : `${Math.round(b.progress * 100)}%${b.builder ? ` (builder #${b.builder})` : ''}`,
+        `${b.status} (${Math.round(now - since)} s)${b.using ? ` · using ${b.using}` : ''}${extra}`,
+        worker, b.type === 'hq' ? '-' : g.linked(b) ? 'yes' : 'no',
+        nonzero({ ...b.stock }), nonzero({ ...b.out }), nonzero({ ...b.incoming }), this.around(g, b.x, b.y, def.radius),
+      ].join(' | '));
+    }
+
+    lines.push('', '### Settlers out of the HQ', 'settler | at | home | doing | carrying');
+    for (const s of g.settlers.values()) {
+      const road = g.roads.get(s.home);
+      const home = s.role === 'carrier' ? (road ? `road #${road.id} (flags #${road.a}-#${road.b})` : '-') : name(s.home);
+      const doing = s.tasks.map((t) => (t.k === 'walk' ? `walk to ${t.x},${t.y}` : t.k === 'work' ? `work ${t.t.toFixed(0)} s` : 'act')).join(' → ')
+        || (s.inside ? 'inside' : s.atWork ? 'at work' : 'idle');
+      lines.push(`${s.role} #${s.id} | ${s.x.toFixed(1)},${s.y.toFixed(1)} | ${home} | ${doing} | ${s.carrying ?? s.item?.g ?? '-'}`);
+    }
+
+    lines.push('', '### Flags with goods', 'flag | at | goods (→ where to)');
+    for (const f of g.flags.values())
+      if (f.items.length)
+        lines.push(`#${f.id} | ${f.x},${f.y} | ${f.items.map((it) => `${it.g} → ${it.dest ? name(it.dest) : 'nowhere'}`).join(', ')}`);
+
+    lines.push('', '### Roads', 'road | flags | length | carrier');
+    for (const r of g.roads.values()) lines.push(`#${r.id} | #${r.a}-#${r.b} | ${r.path.length - 1} | ${r.carrier ? `#${r.carrier}` : 'none'}`);
+
+    lines.push(
+      '', '### Timeline (every 10 s of game time, last 2 minutes)',
+      'time | HQ stock | idle | busy | goods on flags | buildings',
+      ...this.samples.slice(-12).map((s) => `${s.t}s | ${s.hq} | ${s.pool} | ${s.busy} | ${s.onFlags} | ${s.buildings}`),
+      '', '### Recent events', this.events.slice(-60).join('\n') || '(none)',
+    );
+    return lines.join('\n');
+  }
+
+  // What a building's worker can use within its radius.
+  private around(g: Game, x: number, y: number, r: number) {
+    if (!r) return '-';
+    let grown = 0, young = 0, rock = 0, ripe = 0, growing = 0;
+    for (let dy = -r; dy <= r; dy++)
+      for (let dx = -r; dx <= r; dx++) {
+        if (Math.hypot(dx, dy) > r || !g.world.inside(x + dx, y + dy)) continue;
+        const t = g.world.at(x + dx, y + dy);
+        if (t.tree >= 1) grown++;
+        else if (t.tree > 0) young++;
+        if (t.rock > 0) rock++;
+        if (t.crop >= 1) ripe++;
+        else if (t.crop > 0) growing++;
+      }
+    return `trees ${grown} grown + ${young} young · rocks ${rock} · grain ${ripe} ripe + ${growing} growing`;
+  }
+
   // The parts of a bug report that this module knows about, as Markdown.
   report(): string {
     const p = this.perf;
