@@ -6,8 +6,10 @@ import { Renderer } from './render';
 import { UI } from './ui';
 import { Saves, type Slot } from './saves';
 import { openSaveMenu } from './savemenu';
+import { T, getLang, setLang, startLang } from './i18n';
 import type { P } from './path';
 
+setLang(startLang());
 const saves = new Saves();
 
 function readSave(slot: Slot | null): Game | null {
@@ -32,15 +34,14 @@ let slotId = saved && first && !first.auto ? first.id : null;
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const renderer = new Renderer(canvas);
 const ui = new UI(game);
+ui.relabel();
 watch(() => game);
 diag.attach(game);
 const debug = new DebugPanel();
 renderer.centerOn(game.hq.x, game.hq.y);
-ui.toast(saved
-  ? `Welcome back to "${first!.name}"! Your settlers are heading back to work.`
-  : 'Welcome! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
+ui.toast(saved ? T().welcomeBack(first!.name) : T().welcome);
 
-const islandName = (g: Game) => `Island ${g.seed}`;
+const islandName = (g: Game) => T().island(g.seed);
 
 // Save to a manual slot: the given one, or a new one. Returns null if it could not save.
 function save(name = saves.get(slotId ?? '')?.name ?? islandName(game), id = slotId ?? undefined): Slot | null {
@@ -48,12 +49,12 @@ function save(name = saves.get(slotId ?? '')?.name ?? islandName(game), id = slo
   try {
     const slot = saves.write(game.save(), name, id);
     slotId = slot.id;
-    ui.toast(`Saved as "${slot.name}"`);
+    ui.toast(T().saved(slot.name));
     diag.event(`Saved to slot ${slot.id}`);
     return slot;
   } catch (err) {
     console.warn('Could not save', err);
-    ui.toast('Could not save the game. The browser storage may be full or blocked. Try deleting an old save.');
+    ui.toast(T().saveFailed);
     return null;
   }
 }
@@ -65,7 +66,7 @@ function autosave() {
     diag.event(`Autosaved to slot ${slot.id}`);
   } catch (err) {
     console.warn('Could not autosave', err);
-    ui.toast('Could not autosave. The browser storage may be full. Try deleting an old save.');
+    ui.toast(T().autosaveFailed);
   }
 }
 
@@ -81,11 +82,11 @@ function play(g: Game) {
 
 function load(slot: Slot) {
   const g = readSave(slot);
-  if (!g) return ui.toast(`Could not load "${slot.name}". It may be from a different version of Hitoria.`);
+  if (!g) return ui.toast(T().loadFailed(slot.name));
   play(g);
   slotId = slot.auto ? null : slot.id;
   saveT = saves.autosaveEvery;
-  ui.toast(`Loaded "${slot.name}"`);
+  ui.toast(T().loaded(slot.name));
 }
 
 function showSaves() {
@@ -110,11 +111,15 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
     if (what === 'report') return reportProblem();
     if (what === 'save') return void save();
     if (what === 'saves') return showSaves();
-    if (!confirm('Start a new island? Save first if you want to come back to this one.')) return;
+    if (what === 'lang') {
+      setLang(getLang() === 'pl' ? 'en' : 'pl');
+      return ui.relabel();
+    }
+    if (!confirm(T().confirmNew)) return;
     autosave(); // a safety copy, in case the player forgot
     play(new Game(Math.floor(Math.random() * 1e9)));
     slotId = null;
-    ui.toast('A new island! Place a woodcutter, then press R and draw a road from its flag to your HQ.');
+    ui.toast(T().newIsland);
   };
 }
 addEventListener('pagehide', autosave);

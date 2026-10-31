@@ -2,6 +2,7 @@
 // player reports a problem that isn't a crash.
 import type { Game } from './game';
 import { diag } from './diag';
+import { T } from './i18n';
 
 const CRASH_KEY = 'hitoria.crash';
 
@@ -79,20 +80,18 @@ function crash(err: unknown) {
     localStorage.setItem(CRASH_KEY, crashReport);
   } catch {}
   send('crash', crashReport);
-  show('Hitoria crashed', 'The game has stopped. Your last save is safe. Copy this report and paste it into the chat.', crashReport, true);
+  show(T().crashTitle, T().crashIntro, crashReport, true);
 }
 
 // Ask the player what looks wrong, then show a report with everything the game knows right now.
 export async function reportProblem() {
   if (crashed() || document.getElementById('report')) return;
-  const what = prompt('What looks wrong? For example: "The woodcutter never gets any logs to the sawmill."');
+  const what = prompt(T().reportAsk);
   if (what === null) return;
   diag.event(`Player reported a problem: ${what || '(no description)'}`);
   const report = build('Hitoria problem report', 'What the player saw', what || '(no description)');
   const file = await send('problem', report);
-  show('Problem report',
-    file ? `Saved as ${file}. Tell Claude about it, or copy the report and paste it into the chat.` : 'Copy this report and paste it into the chat.',
-    report, false);
+  show(T().reportTitleBox, file ? T().reportSaved(file) : T().reportCopyIntro, report, false);
 }
 
 function show(title: string, intro: string, report: string, fatal: boolean) {
@@ -104,8 +103,8 @@ function show(title: string, intro: string, report: string, fatal: boolean) {
       <p></p>
       <textarea readonly></textarea>
       <div class="actions">
-        <button data-act="copy">📋 Copy report</button>
-        ${fatal ? '<button data-act="reload">🔄 Reload from last save</button>' : '<button data-act="close">▶️ Back to the game</button>'}
+        <button data-act="copy">${T().copyReport}</button>
+        ${fatal ? `<button data-act="reload">${T().reload}</button>` : `<button data-act="close">${T().backToGame}</button>`}
       </div>
     </div>`;
   box.querySelector('h2')!.textContent = title;
@@ -120,7 +119,7 @@ function show(title: string, intro: string, report: string, fatal: boolean) {
       area.select();
       document.execCommand('copy');
     }
-    copy.textContent = '✅ Copied';
+    copy.textContent = T().copied;
   };
   const reload = box.querySelector<HTMLButtonElement>('[data-act=reload]');
   if (reload) reload.onclick = () => location.reload();
