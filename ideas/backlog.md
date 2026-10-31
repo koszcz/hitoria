@@ -5,12 +5,12 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M · Branch: claude/build-6ab056*
+- **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S · Branch: claude/build-f2bace*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S*
 - **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 
 ## Inbox
