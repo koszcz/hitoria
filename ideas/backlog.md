@@ -10,6 +10,7 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Auto road for new buildings**: a new building gets the shortest road to the nearest flag, joining existing roads instead of running beside them. *Fun 3 · Effort M*
 - **Start near a mountain and shore**: every map puts a mountain and the shore within early reach of the HQ. *Fun 2 · Effort S*
 - **Demolish a building**: remove a building you placed in the wrong spot. *Fun 2 · Effort S*
 
@@ -22,6 +23,10 @@ New ideas go here, not scored yet.
 ## Later
 
 Triaged, but not next.
+
+- **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S*
+- **Worn paths**: settlers who walk off-road wear dirt trails into the grass, and unused trails fade back. *Fun 2 · Effort S*
+- **Shortcuts from footsteps**: a busy trail between two flags becomes a road, but only if it is much shorter than the current road route. *Fun 2 · Effort M · Needs: Auto road for new buildings, Worn paths*
 
 - **Goals**: peaceful goals such as "make 50 planks", "build a monument" or "survive winter". "Survive winter" needs seasons, which the game doesn't have yet. *Fun 3 · Effort M*
 - **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M*
@@ -43,6 +48,8 @@ Triaged, but not next.
 - **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
 - **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. They are only there to watch. *Fun 2 · Effort M*
 - **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M*
+- **Work sounds**: chopping, sawing and hammering you hear near the camera. *Fun 2 · Effort M · Needs: Sound basics*
+- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Build menu groups**: the build bar groups buildings by type, and every building gets a hotkey. *Fun 1 · Effort S*
