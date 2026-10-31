@@ -11,8 +11,9 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
-- **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
+- **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
+- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 
 ## Inbox
 
@@ -30,13 +31,12 @@ Triaged, but not next.
 - **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle*
 
 - **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
-- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 - **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
-- **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
+- **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. *Fun 3 · Effort M · Needs: Sail to settle, Coal and iron mines*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
 - **Faster roads**: busy roads get a donkey that carries two goods at once. *Fun 2 · Effort M*
