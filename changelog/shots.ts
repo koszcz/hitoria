@@ -55,6 +55,8 @@ async function capture(browser: Browser, url: string, shot: Shot, file: string, 
   try {
     const page = await context.newPage();
     await page.setViewport(VIEW);
+    // Headless Chrome draws slowly, and auto graphics would drop to Low. Pin High for every shot.
+    await page.evaluateOnNewDocument(() => localStorage.setItem('hitoria.graphics', 'high'));
     await page.goto(`${url}/?seed=${SEED}`, { waitUntil: 'load' });
     await Bun.sleep(LOAD_MS);
     for (const step of shot.steps ?? []) await runStep(page, step, log);

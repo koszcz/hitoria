@@ -2,6 +2,7 @@ import { Game, BDEFS, BType, GOODS, HOUSE_SIZE, HOUSE_GROW } from './game';
 import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
 import { openBuildMenu } from './buildmenu/menu';
 import { costText } from './buildmenu/card';
+import type { Level } from './quality/levels';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -20,6 +21,9 @@ export class UI {
   paused = false;
   private buttons = new Map<Tool, HTMLButtonElement>();
   private buildBtn!: HTMLButtonElement;
+
+  // The graphics setting, shown on its menu button. main.ts sets it.
+  graphics: { choice: string; level: Level } = { choice: 'auto', level: 'high' };
 
   constructor(public game: Game) {
     this.drawBar();
@@ -43,6 +47,7 @@ export class UI {
     const file: Record<string, [string, string]> = {
       save: [x.save, x.saveTitle], saves: [x.saves, x.savesTitle], new: [x.newGame, x.newTitle],
       report: [x.report, x.reportTitle], lang: [x.langButton, x.langTitle],
+      graphics: [x.graphics(this.graphics.choice, x.levels[this.graphics.level]), x.graphicsTitle],
     };
     for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
       const [label, title] = file[btn.dataset.file!] ?? [btn.textContent!, btn.title];

@@ -9,7 +9,7 @@ export class DebugPanel {
   private body = document.createElement('div');
   private copy = document.createElement('button');
 
-  constructor(private game: () => Game | undefined) {
+  constructor(private game: () => Game | undefined, private gfx: () => string = () => '') {
     this.el.id = 'debug';
     this.el.hidden = true;
     this.copy.textContent = '📋 Copy for Claude';
@@ -47,7 +47,7 @@ export class DebugPanel {
     const issues = [...diag.issues.values()];
     this.body.innerHTML = [
       `<h4>Performance</h4>${(1000 / Math.max(1, p.frameMs)).toFixed(0)} fps · frame ${p.frameMs.toFixed(1)} ms<br>` +
-        `update ${p.updateMs.toFixed(1)} ms · draw ${p.drawMs.toFixed(1)} ms · worst ${p.worstMs.toFixed(0)} ms`,
+        `update ${p.updateMs.toFixed(1)} ms · draw ${p.drawMs.toFixed(1)} ms · worst ${p.worstMs.toFixed(0)} ms<br>${esc(this.gfx())}`,
       `<h4>Settlers out (${g?.settlers.size ?? 0}) · idle in the HQ (${g?.pool ?? 0})</h4>${esc(diag.settlers())}`,
       `<h4>Looks stuck (${issues.length})</h4>` +
         (issues.length ? issues.map((i) => `<div class="issue">${esc(i.text)}</div>`).join('') : 'Nothing'),
