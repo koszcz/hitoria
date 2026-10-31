@@ -144,6 +144,7 @@ window.addEventListener('pagehide', autosave);
 
 let hover: P | null = null;
 let preview: P[] | null = null;
+let fields: P[] = []; // fields the farm under the cursor would take
 let previewKey = '';
 const keys = new Set<string>();
 const gestures = new Gestures(renderer);
@@ -301,9 +302,10 @@ function frame(now: number) {
   if (key !== previewKey) {
     previewKey = key;
     if (tool === 'road' && ui.roadFrom && hover) preview = game.planRoad(ui.roadFrom, hover);
-    else preview = placeOk ? game.planAutoRoad(hover!.x, hover!.y) : null;
+    else preview = placeOk ? game.planAutoRoad(placing!, hover!.x, hover!.y) : null;
+    fields = placeOk ? game.planFields(placing!, hover!.x, hover!.y) : [];
   }
-  renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, selected: ui.selected }, now / 1000);
+  renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, fields, selected: ui.selected }, now / 1000);
   diag.frame(dt * 1000, t1 - t0, performance.now() - t1);
   // On auto, the graphics level follows how fast frames are. Tell the player when it drops.
   const was = graphics.level, changed = graphics.frame(frameMs);

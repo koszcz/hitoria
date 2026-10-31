@@ -1,7 +1,7 @@
 // What the player is pointing at or doing: hover and selection rings, work radius circles,
-// the planned road, and a see-through ghost of the building being placed.
+// the planned road, and a see-through ghost of the building being placed, with a farm's fields.
 import * as THREE from 'three';
-import { Game, BDEFS, BType } from '../game';
+import { Game, BDEFS, BType, FARM_FIELDS } from '../game';
 import type { P } from '../path';
 import { smoothPath } from '../curve';
 import { ghostify, makeBuilding, makeFlag } from './buildings';
@@ -14,6 +14,7 @@ export interface View {
   tool: 'road' | 'remove' | null;
   roadFrom: number; // flag a road is being drawn from
   preview: P[] | null; // planned road under the cursor
+  fields: P[]; // fields the farm being placed would take
   selected: number;
 }
 
@@ -28,13 +29,21 @@ export class Overlays {
   private previewOf: P[] | null = null;
   private ghosts = new Map<BType, THREE.Group>();
   private ghostFlag: THREE.Group;
+  private fieldFills: THREE.Mesh[];
 
   constructor(private scene: THREE.Scene, private ground: Terrain) {
     scene.add(this.preview);
-    const tileGeo = new THREE.BufferGeometry();
-    tileGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(12), 3));
-    tileGeo.setIndex([0, 2, 1, 0, 3, 2]);
-    this.hoverFill = new THREE.Mesh(tileGeo, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.4, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }));
+    const tileFill = (color?: string) => {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(12), 3));
+      geo.setIndex([0, 2, 1, 0, 3, 2]);
+      const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.4, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }));
+      m.frustumCulled = false;
+      scene.add(m);
+      return m;
+    };
+    this.hoverFill = tileFill();
+    this.fieldFills = Array.from({ length: FARM_FIELDS }, () => tileFill('#c98a4a'));
     const loop = (color: string, n: number) => {
       const l = new THREE.LineLoop(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.9 }));
       l.geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(n * 3), 3));
@@ -47,8 +56,6 @@ export class Overlays {
     this.fromRing = loop('#ffe27a', 4);
     this.selRadius = loop('#ffffff', 96);
     this.placeRadius = loop('#ffffff', 96);
-    this.hoverFill.frustumCulled = false;
-    scene.add(this.hoverFill);
 
     this.ghostFlag = makeFlag().g;
     ghostify(this.ghostFlag);
@@ -75,7 +82,7 @@ export class Overlays {
   draw(game: Game, view: View) {
     const height = (x: number, y: number) => this.ground.heightAt(x, y);
     for (const o of [this.hoverFill, this.hoverRing, this.selRing, this.fromRing, this.selRadius, this.placeRadius, this.ghostFlag]) o.visible = false;
-    for (const g of this.ghosts.values()) g.visible = false;
+    for (const o of [...this.ghosts.values(), ...this.fieldFills]) o.visible = false;
     const world = game.world;
 
     const from = view.tool === 'road' && view.roadFrom ? game.flags.get(view.roadFrom) : null;
@@ -121,6 +128,7 @@ export class Overlays {
         ghost.visible = true;
         this.ghostFlag.position.set(hv.x + 0.5, height(hv.x + 0.5, hv.y + 1.5), hv.y + 1.5);
         this.ghostFlag.visible = true;
+        view.fields.forEach((p, i) => this.fieldFills[i] && this.tileOutline(this.fieldFills[i], p.x, p.y, 0.03));
       }
     } else {
       (this.hoverRing.material as THREE.LineBasicMaterial).color.set(view.tool === 'remove' ? '#ff6a5a' : '#ffffff');

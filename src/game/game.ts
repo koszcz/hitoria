@@ -4,6 +4,7 @@ import type { P } from '../path';
 import { MAP_VERSION, World } from '../world';
 import { BType, CROP_GROW, bag } from './defs';
 import { planAutoRoad } from './autoroad';
+import { pickFields } from './fields';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
 import { raise } from './houses';
 import { computeTerritory, passable } from './land';
@@ -105,8 +106,13 @@ export class Game {
   }
 
   // The road a building placed at (x, y) would get, for showing before you place it.
-  planAutoRoad(x: number, y: number) {
-    return planAutoRoad(this, { x, y: y + 1 }, { x, y });
+  planAutoRoad(type: BType, x: number, y: number) {
+    return planAutoRoad(this, { x, y: y + 1 }, [{ x, y }, ...this.planFields(type, x, y)]);
+  }
+
+  // The fields a building placed at (x, y) would take. Only farms have fields.
+  planFields(type: BType, x: number, y: number) {
+    return type === 'farm' ? pickFields(this, x, y) : [];
   }
 
   removeAt(t: P) {

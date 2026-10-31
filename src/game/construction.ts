@@ -2,7 +2,8 @@
 import { findPath } from '../path';
 import { W } from '../world';
 import { autoRoad } from './autoroad';
-import { BDEFS, BType, GOODS, bag } from './defs';
+import { BDEFS, BType, FARM_FIELDS, GOODS, bag } from './defs';
+import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory, flaggable, near, roadable } from './land';
 import { ensureFlag } from './roads';
@@ -18,14 +19,18 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   if (t.t !== 'grass') return 'Needs flat grass';
   if (t.tree) return 'A tree is in the way';
   if (t.rock) return 'A boulder is in the way';
+  if (t.field) return 'This is a farm field';
   if (type === 'mine' && !near(g, x, y, BDEFS.mine.radius, (n) => n.t === 'mountain')) return 'Must be next to a mountain';
   if (type === 'fisher' && !near(g, x, y, BDEFS.fisher.radius, (n) => n.t === 'water')) return 'Must be near water';
+  const fields = type === 'farm' ? pickFields(g, x, y) : [];
+  if (type === 'farm' && fields.length < FARM_FIELDS) return 'No room for its fields';
   const front = g.world.at(x, y + 1);
   const flagOk = front.flag ? !g.flags.get(front.flag)!.building : flaggable(g, x, y + 1);
   if (!flagOk) return 'No room for its flag in front';
   // Players can't fell trees themselves, so a flag walled in by trees would never get a road.
   const hq = g.flags.get(g.hq.flag)!;
-  const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && (roadable(g, tx, ty) || !!g.world.at(tx, ty).road || !!g.world.at(tx, ty).flag);
+  const onField = (tx: number, ty: number) => fields.some((p) => p.x === tx && p.y === ty);
+  const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && !onField(tx, ty) && (roadable(g, tx, ty) || !!g.world.at(tx, ty).road || !!g.world.at(tx, ty).flag);
   if (!findPath(hq.x, hq.y, x, y + 1, reach)) return 'No road can reach it';
   return BDEFS[type] ? null : 'Unknown building';
 }
@@ -41,6 +46,7 @@ export function place(g: Game, type: BType, x: number, y: number) {
 export function placeSite(g: Game, type: BType, x: number, y: number) {
   const b = addBuilding(g, type, x, y);
   b.status = 'Waiting for a builder';
+  if (type === 'farm') claimFields(g, b);
   return b;
 }
 

@@ -29,7 +29,7 @@ const crowded = (g: Game, x: number, y: number) =>
 function placeRound(g: Game, round: BType[]) {
   for (const type of round) {
     const at = spots(g).find(
-      ({ x, y }) => !g.canPlace(type, x, y) && !crowded(g, x, y) && g.planAutoRoad(x, y),
+      ({ x, y }) => !g.canPlace(type, x, y) && !crowded(g, x, y) && g.planAutoRoad(type, x, y),
     );
     if (at) g.place(type, at.x, at.y);
   }

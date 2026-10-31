@@ -51,7 +51,6 @@ Triaged, but not next.
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
-- **Field limits**: you choose how many fields a farm sows, or where it sows them. *Fun 1 · Effort S*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 - **Survive winter goal**: a goal to get through the winter. *Fun 2 · Effort S · Needs: Goals, Seasons*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
@@ -64,6 +63,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Farms keep their fields**: you can place a farm only where it has room for 6 fields. The farm marks them as tilled soil when placed, and no buildings, flags, roads or trees can go on them. *2026-10-31*
 - **Demolish a building**: remove a building you placed in the wrong spot. Its goods go back to the HQ. *2026-10-31*
 - **Start near a mountain and shore**: every map puts a mountain and a bay to the open sea in the HQ's land, with room for a stone mine and a fisher. *2026-10-31*
 - **Buildings that look different**: each building has its own shape and colours, so you can tell them apart at a glance. *2026-10-31*

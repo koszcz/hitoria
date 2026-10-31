@@ -1,6 +1,7 @@
 // Demolishing a building: taking it off the map and sending its goods and people back to the HQ.
 import { BDEFS, GOODS } from './defs';
 import { cancel } from './carriers';
+import { freeFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory } from './land';
 import { sendHome } from './settlers';
@@ -30,6 +31,7 @@ export function demolish(g: Game, b: Building): string | null {
   for (const k of GOODS) g.hq.stock[k] += b.stock[k] + b.out[k];
   g.flags.get(b.flag)!.building = 0; // the flag and its roads stay
   g.world.at(b.x, b.y).b = 0;
+  freeFields(g, b);
   g.buildings.delete(b.id);
   if (b.type === 'lookout' && b.built) computeTerritory(g);
   g.toasts.push(`${BDEFS[b.type].icon} ${BDEFS[b.type].name} demolished`);

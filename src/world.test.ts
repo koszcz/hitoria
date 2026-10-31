@@ -30,7 +30,9 @@ describe('World', () => {
   // Saved games store only what changed on the map, so each map version must keep building
   // exactly the same land. These fingerprints come from the generator before map version 2.
   test('map version 1 builds the map from before the guaranteed mountain and bay', () => {
-    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(new World(seed, 1).tiles)).toString();
+    // Farm fields came later and belong to the game, not the land, so they stay out of the fingerprint.
+    const land = (seed: number) => new World(seed, 1).tiles.map(({ field: _, ...t }) => t);
+    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(land(seed))).toString();
     expect(fingerprint(1)).toBe('3576088837111545344');
     expect(fingerprint(12345)).toBe('4996496841631808014');
   });

@@ -12,8 +12,8 @@ const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -
 // The tiles of the shortest road from a flag at `from` to the network joined to the HQ, both ends included.
 // The road may end at a joined flag, or on a joined road, which then gets a new flag there.
 // Returns [] when `from` is already on the network, and null when no road can reach it.
-// `block` is a tile the road may not use, such as the building the flag will belong to.
-export function planAutoRoad(g: Game, from: P, block?: P): P[] | null {
+// `block` holds tiles the road may not use, such as the building the flag will belong to and its fields.
+export function planAutoRoad(g: Game, from: P, block: P[] = []): P[] | null {
   const joined = distTo(g, g.hq.flag);
   const goal = (x: number, y: number) => {
     const t = g.world.at(x, y);
@@ -23,7 +23,7 @@ export function planAutoRoad(g: Game, from: P, block?: P): P[] | null {
     return flaggable(g, x, y) && Math.max(Math.abs(x - from.x), Math.abs(y - from.y)) > 1;
   };
   if (goal(from.x, from.y)) return [];
-  const free = (x: number, y: number) => (!block || x !== block.x || y !== block.y) && roadable(g, x, y);
+  const free = (x: number, y: number) => !block.some((b) => b.x === x && b.y === y) && roadable(g, x, y);
   const ok = (x: number, y: number) => x >= 0 && y >= 0 && x < W && y < H && (free(x, y) || goal(x, y));
 
   // Dijkstra over free ground. Goal tiles may be entered but not walked through.

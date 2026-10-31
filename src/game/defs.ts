@@ -63,3 +63,4 @@ export const SPEED = 1.7; // tiles per second
 export const ROAD_SPEED = 1.5; // multiplier on roads
 export const PILE = 4; // max finished goods a hut keeps before its worker pauses
 export const CROP_GROW = 60; // seconds for sown grain to ripen
+export const FARM_FIELDS = 6; // fields every farm keeps for itself

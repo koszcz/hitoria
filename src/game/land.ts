@@ -16,7 +16,7 @@ export function walkCost(g: Game, x: number, y: number) {
 export function roadable(g: Game, x: number, y: number) {
   if (!g.world.inside(x, y) || !g.world.territory[y * W + x]) return false;
   const t = g.world.at(x, y);
-  return (t.t === 'grass' || t.t === 'sand') && !t.tree && !t.rock && !t.b && !t.road && !t.flag;
+  return (t.t === 'grass' || t.t === 'sand') && !t.tree && !t.rock && !t.b && !t.road && !t.flag && !t.field;
 }
 
 // A flag may go on free ground or on a road, but never right next to another flag.
@@ -37,9 +37,9 @@ export function near(g: Game, x: number, y: number, r: number, ok: (t: Tile) => 
   return false;
 }
 
-// Free grass in your land where a tree or grain can grow.
+// Free grass in your land where a tree can grow. Farm fields are kept for grain.
 export function plantable(g: Game, t: Tile, x: number, y: number) {
-  return t.t === 'grass' && !t.tree && !t.crop && !t.rock && !t.b && !t.road && !t.flag
+  return t.t === 'grass' && !t.tree && !t.crop && !t.field && !t.rock && !t.b && !t.road && !t.flag
     && !!g.world.territory[y * W + x] && !besideBuildingOrFlag(g, x, y);
 }
 
