@@ -1,7 +1,7 @@
 // The Game class: all the state of one settlement, and the actions the player and the main loop call.
 // The work itself lives in the other files of this folder, as functions that take the game.
 import type { P } from '../path';
-import { World } from '../world';
+import { MAP_VERSION, World } from '../world';
 import { BType, CROP_GROW, bag } from './defs';
 import { planAutoRoad } from './autoroad';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
@@ -9,7 +9,7 @@ import { raise } from './houses';
 import { computeTerritory, passable } from './land';
 import { isStore, moveGoods, stored } from './logistics';
 import { buildRoad, flagAt, planRoad, removeAt, startFlag } from './roads';
-import { checkVersion, restore, save, SaveData } from './save';
+import { checkVersion, mapVersion, restore, save, SaveData } from './save';
 import { step } from './settlers';
 import { staff } from './staff';
 import type { Building, Flag, Road, Settler } from './types';
@@ -35,8 +35,8 @@ export class Game {
   private dispatchT = 0;
   private growT = 0;
 
-  constructor(readonly seed: number) {
-    this.world = new World(seed);
+  constructor(readonly seed: number, map = MAP_VERSION) {
+    this.world = new World(seed, map);
     const { x, y } = this.world.start;
     this.hq = addBuilding(this, 'hq', x, y);
     this.hq.built = true;
@@ -51,7 +51,7 @@ export class Game {
 
   static load(d: SaveData): Game {
     checkVersion(d);
-    const g = new Game(d.seed);
+    const g = new Game(d.seed, mapVersion(d));
     restore(g, d);
     return g;
   }

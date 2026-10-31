@@ -20,6 +20,12 @@ export interface Tile {
 export const W = 64;
 export const H = 64;
 
+// Which version of the map generator to use. A saved game stores only what changed on the map,
+// so loading it must build exactly the same land as when it was saved. Any change to the land a
+// seed makes needs a new version here, and the old versions must keep building the same land.
+// 1: the first maps. 2: adds a mountain and a bay near the start.
+export const MAP_VERSION = 2;
+
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
 // The guaranteed mountain: how far its centre sits from the start, and how wide it is.
@@ -60,11 +66,12 @@ export class World {
   start = { x: W / 2, y: H / 2 };
   private peak = this.start;
 
-  constructor(seed: number) {
+  constructor(seed: number, readonly map = MAP_VERSION) {
     const rand = rng(seed);
     const n1 = noise(rand, 16), n2 = noise(rand, 8), n3 = noise(rand, 4);
     const forest = noise(rand, 7), rocks = noise(rand, 5), tint = noise(rand, 3);
     const { x: sx, y: sy } = this.start;
+    const landmarks = map >= 2;
     const { peak, bay, out } = this.landmarks(seed);
     this.peak = peak;
 
@@ -75,14 +82,16 @@ export class World {
         h = h + 0.2 - d * d * 0.55;
         const near = Math.hypot(x - sx, y - sy);
         if (near < 8) h = h * (near / 8) + 0.5 * (1 - near / 8);
-        if (near < OPEN) h = Math.min(h, 0.66); // room to build, whatever the noise says
-        const toPeak = Math.hypot(x - peak.x, y - peak.y);
-        if (toPeak < PEAK_SIZE) h = Math.max(h, 0.8 - toPeak * 0.03);
-        // The bay runs from its head straight out to the open sea, with a sandy shore.
-        const along = Math.max(0, (x - bay.x) * out.x + (y - bay.y) * out.y);
-        const toBay = Math.hypot(x - bay.x - out.x * along, y - bay.y - out.y * along);
-        if (toBay < BAY_WIDTH) h = Math.min(h, 0.24);
-        else if (toBay < BAY_WIDTH + 1.2) h = Math.min(h, 0.32);
+        if (landmarks) {
+          if (near < OPEN) h = Math.min(h, 0.66); // room to build, whatever the noise says
+          const toPeak = Math.hypot(x - peak.x, y - peak.y);
+          if (toPeak < PEAK_SIZE) h = Math.max(h, 0.8 - toPeak * 0.03);
+          // The bay runs from its head straight out to the open sea, with a sandy shore.
+          const along = Math.max(0, (x - bay.x) * out.x + (y - bay.y) * out.y);
+          const toBay = Math.hypot(x - bay.x - out.x * along, y - bay.y - out.y * along);
+          if (toBay < BAY_WIDTH) h = Math.min(h, 0.24);
+          else if (toBay < BAY_WIDTH + 1.2) h = Math.min(h, 0.32);
+        }
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
       }
@@ -99,7 +108,7 @@ export class World {
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
         // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
-        const foot = Math.hypot(x - this.peak.x, y - this.peak.y) < PEAK_SIZE + 2.5;
+        const foot = landmarks && Math.hypot(x - this.peak.x, y - this.peak.y) < PEAK_SIZE + 2.5;
         if (tile.t !== 'grass' || near < 3.5 || foot) continue;
         if (Math.hypot(x - grove.x, y - grove.y) < 2.8 && rand() < 0.8) tile.tree = 1;
         else if (Math.hypot(x - quarry.x, y - quarry.y) < 1.9) tile.rock = 4 + Math.floor(rand() * 3);

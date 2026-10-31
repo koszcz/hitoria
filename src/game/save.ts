@@ -4,13 +4,15 @@ import { builtStatus } from './construction';
 import type { Game } from './game';
 import { computeTerritory } from './land';
 import type { Building, Flag, Road } from './types';
+import { MAP_VERSION } from '../world';
 
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 // A saved game. Settlers are not stored: on load everyone is back in the HQ and the dispatcher sends them out again.
 export interface SaveData {
   v: number;
   seed: number;
+  map?: number; // the map generator version; saves before version 3 have none and use map 1
   time: number;
   pool: number;
   nextId: number;
@@ -46,15 +48,18 @@ export function save(g: Game): SaveData {
   }
   for (const r of roads) r.carrier = 0;
   return {
-    v: SAVE_VERSION, seed: g.seed, time: g.time, pool: g.population, nextId: g.nextId, hq: g.hq.id,
+    v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool: g.population, nextId: g.nextId, hq: g.hq.id,
     tiles: g.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop]),
     buildings, flags, roads,
   };
 }
 
 export function checkVersion(d: SaveData) {
-  if (d.v !== 1 && d.v !== SAVE_VERSION) throw new Error('This save is from a different version of Hitoria');
+  if (![1, 2, SAVE_VERSION].includes(d.v)) throw new Error('This save is from a different version of Hitoria');
 }
+
+// The map generator version to rebuild a save's land with.
+export const mapVersion = (d: SaveData) => d.map ?? 1;
 
 // Put the saved state into `g`, a new game made from the same seed.
 export function restore(g: Game, d: SaveData) {

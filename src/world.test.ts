@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { World, W, H, rng } from './world';
+import { World, W, H, MAP_VERSION, rng } from './world';
 import { toIso, fromIso } from './iso';
 
 describe('rng', () => {
@@ -25,6 +25,19 @@ describe('World', () => {
 
   test('builds different maps from different seeds', () => {
     expect(new World(1).tiles).not.toEqual(new World(2).tiles);
+  });
+
+  // Saved games store only what changed on the map, so each map version must keep building
+  // exactly the same land. These fingerprints come from the generator before map version 2.
+  test('map version 1 builds the map from before the guaranteed mountain and bay', () => {
+    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(new World(seed, 1).tiles)).toString();
+    expect(fingerprint(1)).toBe('3576088837111545344');
+    expect(fingerprint(12345)).toBe('4996496841631808014');
+  });
+
+  test('new maps use the latest map version', () => {
+    expect(new World(1).tiles).toEqual(new World(1, MAP_VERSION).tiles);
+    expect(new World(1).tiles).not.toEqual(new World(1, 1).tiles);
   });
 
   // Every seed must be playable: flat land at the start, plus trees and stone close by.
