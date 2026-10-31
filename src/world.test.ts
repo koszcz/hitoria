@@ -2,6 +2,18 @@ import { describe, expect, test } from 'bun:test';
 import { World, W, H, MAP_VERSION, rng } from './world';
 import { toIso, fromIso } from './iso';
 
+// A short hash of the land, to check that a map version keeps building the same map. Numbers are
+// rounded first, because Math.hypot can differ in the last digit between the Mac and the Linux
+// machine that runs the checks. That last digit changes neither the land nor how it looks.
+const SIGNIFICANT = 12;
+const round = (n: number) => Number(n.toPrecision(SIGNIFICANT));
+const fingerprint = (tiles: object[]) =>
+  Bun.hash(
+    JSON.stringify(tiles, (_, v) =>
+      typeof v === 'number' ? round(v) : typeof v === 'string' ? v.replace(/\d+\.\d+/g, (n) => String(round(+n))) : v,
+    ),
+  ).toString();
+
 describe('rng', () => {
   test('gives the same numbers for the same seed', () => {
     const a = rng(42), b = rng(42);
@@ -31,10 +43,9 @@ describe('World', () => {
   // exactly the same land. These fingerprints come from the generator before map version 2.
   test('map version 1 builds the map from before the guaranteed mountain and bay', () => {
     // Farm fields came later and belong to the game, not the land, so they stay out of the fingerprint.
-    const land = (seed: number) => new World(seed, 1).tiles.map(({ field: _, ...t }) => t);
-    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(land(seed))).toString();
-    expect(fingerprint(1)).toBe('3576088837111545344');
-    expect(fingerprint(12345)).toBe('4996496841631808014');
+    const land = (seed: number) => fingerprint(new World(seed, 1).tiles.map(({ field: _, ...t }) => t));
+    expect(land(1)).toBe('14398328318203238592');
+    expect(land(12345)).toBe('12474217824429824127');
   });
 
   test('new maps use the latest map version', () => {
@@ -111,15 +122,15 @@ describe('isometric projection', () => {
 
 describe('mountain shape', () => {
   test('map version 2 still builds the same land', () => {
-    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(new World(seed, 2).tiles)).toString();
-    expect(fingerprint(1)).toBe('16039032628908514351');
-    expect(fingerprint(12345)).toBe('13263900864715892175');
+    const land = (seed: number) => fingerprint(new World(seed, 2).tiles);
+    expect(land(1)).toBe('2871695370361363416');
+    expect(land(12345)).toBe('1121737019291508181');
   });
 
   test('map version 3 still builds the same land', () => {
-    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(new World(seed, 3).tiles)).toString();
-    expect(fingerprint(1)).toBe('3212099056026993538');
-    expect(fingerprint(12345)).toBe('15624742147733716703');
+    const land = (seed: number) => fingerprint(new World(seed, 3).tiles);
+    expect(land(1)).toBe('10147040875723101861');
+    expect(land(12345)).toBe('13456480345537670572');
   });
 
   // A step this big between two tiles next to each other draws as a cliff wall.
