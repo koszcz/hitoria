@@ -5,6 +5,7 @@ import { World, Tile, Plant, W, H } from './world';
 import { wind, flutter, WIND_DIR } from './wind';
 import { TW, toIso, fromIso } from './iso';
 import type { P } from './path';
+import { smoothPath } from './curve';
 import { ART } from './art';
 
 // Settlers are drawn a third larger than true scale so you can follow them, and a load
@@ -843,11 +844,12 @@ export class Renderer {
     for (const [width, color, lift, off] of [[0.38, ART.roads[0], 0.02, -1], [0.26, ART.roads[1], 0.03, -2]] as const) {
       const pos: number[] = [], idx: number[] = [];
       for (const r of game.roads.values()) {
-        const pts: THREE.Vector2[] = [];
-        r.path.forEach((p, i) => {
+        // Round the corners, then add points so no step is longer than a quarter tile.
+        const curve = smoothPath(r.path), pts: THREE.Vector2[] = [];
+        curve.forEach((p, i) => {
           if (i) {
-            const a = r.path[i - 1];
-            for (let s = 1; s < 4; s++) pts.push(new THREE.Vector2(a.x + 0.5 + ((p.x - a.x) * s) / 4, a.y + 0.5 + ((p.y - a.y) * s) / 4));
+            const a = curve[i - 1], n = Math.ceil(Math.hypot(p.x - a.x, p.y - a.y) / 0.25);
+            for (let s = 1; s < n; s++) pts.push(new THREE.Vector2(a.x + 0.5 + ((p.x - a.x) * s) / n, a.y + 0.5 + ((p.y - a.y) * s) / n));
           }
           pts.push(new THREE.Vector2(p.x + 0.5, p.y + 0.5));
         });
@@ -1633,7 +1635,7 @@ export class Renderer {
     if (path !== this.previewOf) {
       this.previewOf = path;
       const g = new THREE.BufferGeometry();
-      if (path) g.setFromPoints(path.map((p) => new THREE.Vector3(p.x + 0.5, this.heightAt(p.x + 0.5, p.y + 0.5) + 0.08, p.y + 0.5)));
+      if (path) g.setFromPoints(smoothPath(path).map((p) => new THREE.Vector3(p.x + 0.5, this.heightAt(p.x + 0.5, p.y + 0.5) + 0.08, p.y + 0.5)));
       this.preview.geometry.dispose();
       this.preview.geometry = g;
       // A geometry without points has no position attribute, which computeLineDistances needs.
