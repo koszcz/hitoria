@@ -12,7 +12,8 @@ before you merge and push.
 
 1. Run `bun run check` and `bun test`. Both must pass.
 2. Add a changelog entry, unless the branch already has one for this change.
-   Follow `changelog/README.md`, then run `bun run changelog`. Skip changelog screenshots.
+   Follow `changelog/README.md`. If the change shows in the game, take before and after
+   changelog screenshots and check that they show the change. Then run `bun run changelog`.
 3. Bring `README.md` up to date. Read it, then fix every part this change made wrong or left out:
    how to play, controls, saving, the current economy, the commands and the code map.
    Write in the README's plain style. If nothing in it changed, say so and move on.
