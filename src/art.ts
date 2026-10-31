@@ -19,6 +19,7 @@ export const ART = {
   rock: '#7a6e5a',
   snow: '#ece6d8',
   snowLine: 2.4,
+  winter: '#e4ebf2', // fresh winter snow on the land, a little cooler than the old snow on peaks
   sand: '#c2ac78',
   water: '#3f7470',
   waterOpacity: 0.8,

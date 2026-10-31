@@ -17,6 +17,9 @@ import { Overlays, View } from './overlays';
 import { disposeModel } from './merge';
 import { GRAPHICS, type Graphics } from '../quality/levels';
 import { clock, daylightAt } from './daylight';
+import { seasonLook, yearAt, type SeasonLook } from '../seasons/year';
+import { setSeason } from './seasonal';
+import { Snowfall } from './snowfall';
 
 export type { View } from './overlays';
 
@@ -48,6 +51,9 @@ export class Renderer {
   private goods: Goods;
   private animals: Animals;
   private overlays: Overlays;
+  private snowfall: Snowfall;
+  private season: SeasonLook = seasonLook(0);
+  private reach = 20; // half the width of the ground in view
 
   private roads = new THREE.Group();
   private roadNet = -1;
@@ -77,6 +83,7 @@ export class Renderer {
     this.animals = new Animals(scene, this.ground);
     scene.add(this.roads);
     this.overlays = new Overlays(scene, this.ground);
+    this.snowfall = new Snowfall(scene);
     this.setGraphics(this.graphics);
   }
 
@@ -143,6 +150,7 @@ export class Renderer {
   draw(game: Game, view: View, now: number) {
     if (game.world !== this.world) this.setWorld(game.world);
     this.light(game.time);
+    setSeason((this.season = seasonLook(yearAt(game.time))));
     this.placeCamera();
 
     let tk = 0;
@@ -163,7 +171,8 @@ export class Renderer {
     }
 
     this.goods.start();
-    this.scenery.draw(game.world, game.wear, now);
+    this.scenery.draw(game.world, game.wear, now, this.season);
+    this.snowfall.draw(this.season.snowfall, this.sun.target.position, this.reach * 1.3, now, this.gl.getPixelRatio());
     this.buildings(game, now);
     this.flagsAndGoods(game, now);
     this.settlers(game, now);
@@ -189,7 +198,7 @@ export class Renderer {
     camera.lookAt(target);
 
     // The shadow camera covers the view. The time of day turns the sun around it.
-    const reach = Math.min(42, Math.max(hw, hh * 2) + 3);
+    const reach = (this.reach = Math.min(42, Math.max(hw, hh * 2) + 3));
     sun.position.copy(target).addScaledVector(this.sunDir, reach * 1.6);
     sun.target.position.copy(target);
     const sc = sun.shadow.camera;

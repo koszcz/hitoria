@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. A full year takes about 20 minutes of play. *Fun 2 · Effort M · Approved · Branch: worktree-agent-a1da6f91d4d142b0f*
+Nothing right now.
 
 ## Next
 
@@ -55,6 +55,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. A full year takes about 20 minutes of play. *2026-10-31*
 - **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *2026-10-31*
 - **Smelter**: a smelter melts 1 iron ore and 1 coal into 1 iron. Nothing uses iron yet. *2026-10-31*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *2026-10-31*

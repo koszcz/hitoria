@@ -7,6 +7,8 @@ import { ART } from '../art';
 import { grade, hash } from './kit';
 import { KINDS, Kind, LEAN_AXIS, PETALS, PLANTS, UP, birch, blossom, boulder, broadleaf, conifer, flowerParts } from './plants';
 import type { Terrain } from './terrain';
+import type { SeasonLook } from '../seasons/year';
+import { seasonTree } from './seasonal';
 
 export class Scenery {
   private trees: THREE.InstancedMesh[];
@@ -25,14 +27,16 @@ export class Scenery {
   private c = new THREE.Color();
 
   constructor(scene: THREE.Scene, private ground: Terrain) {
-    const tree = (geo: THREE.BufferGeometry) => {
-      const m = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, flatShading: true }), W * H);
+    const tree = (geo: THREE.BufferGeometry, leafy = true) => {
+      const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, flatShading: true });
+      seasonTree(mat, leafy);
+      const m = new THREE.InstancedMesh(geo, mat, W * H);
       m.castShadow = m.receiveShadow = true;
       m.frustumCulled = false;
       scene.add(m);
       return m;
     };
-    this.trees = [tree(broadleaf()), tree(conifer()), tree(birch()), tree(blossom())];
+    this.trees = [tree(broadleaf()), tree(conifer(), false), tree(birch()), tree(blossom())];
     const plant = (geo: THREE.BufferGeometry, shadow = false) => {
       const m = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, flatShading: true }), W * H);
       m.castShadow = shadow;
@@ -43,7 +47,9 @@ export class Scenery {
     };
     for (const k of KINDS) this.plants[k] = plant(PLANTS[k].geo(), PLANTS[k].shadow);
     this.petals = plant(flowerParts(true));
-    this.rocks = new THREE.InstancedMesh(boulder(), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, flatShading: true }), W * H * 3);
+    const stone = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, flatShading: true });
+    seasonTree(stone, false); // snow settles on top of rocks too
+    this.rocks = new THREE.InstancedMesh(boulder(), stone, W * H * 3);
     this.rocks.castShadow = this.rocks.receiveShadow = true;
     this.rocks.frustumCulled = false;
     scene.add(this.rocks);
@@ -72,7 +78,7 @@ export class Scenery {
     return this.q.premultiply(this.q2);
   }
 
-  draw(world: World, wear: Float32Array, now: number) {
+  draw(world: World, wear: Float32Array, now: number, season: SeasonLook) {
     const height = (x: number, y: number) => this.ground.heightAt(x, y);
     const [leafy, pine, birch, bloom] = this.trees;
     const nt = [0, 0, 0, 0];
@@ -87,7 +93,7 @@ export class Scenery {
           const s = (0.3 + 0.7 * t.tree) * (0.85 + hash(x * 3, y) * 0.35);
           // Some leafy trees are birches, and a few are in blossom. Only the look changes.
           const pick = hash(x * 7 + 1, y * 13 + 2);
-          const kind = t.conifer ? 1 : pick < 0.2 ? 2 : pick < 0.27 ? 3 : 0;
+          const kind = t.conifer ? 1 : pick < 0.2 ? 2 : pick < 0.27 && season.blossom ? 3 : 0; // blossom only in spring
           const bend = gust * 0.07 + flutter(x, y, now) * 0.012;
           this.m4.compose(this.v.set(px, height(px, pz) - 0.02, pz), this.bent(hash(x, y * 7) * Math.PI * 2, bend), this.s.setScalar(s));
           const mesh = this.trees[kind], n = nt[kind]++;
@@ -109,8 +115,8 @@ export class Scenery {
           // Green while growing, gold when ripe.
           this.crops.setColorAt(nc++, t.crop >= 1 ? this.c.set('#e0b84a') : this.c.setHSL(0.25 - 0.1 * t.crop, 0.55, 0.36 + 0.1 * t.crop));
         }
-        // A plant hides under anything else on its tile, or on a worn path, and comes back when that is gone.
-        if (t.plant && !t.tree && !t.crop && !t.field && !t.rock && !t.b && !t.flag && !t.road && wear[y * W + x] < 0.3) {
+        // A plant hides under anything else on its tile, on a worn path or under snow, and comes back when that is gone.
+        if (t.plant && season.snow < 0.5 && !t.tree && !t.crop && !t.field && !t.rock && !t.b && !t.flag && !t.road && wear[y * W + x] < 0.3) {
           const p = PLANTS[t.plant], mesh = this.plants[t.plant], n = np[t.plant]++;
           const px = x + 0.5 + (hash(x * 5, y) - 0.5) * 0.2, pz = y + 0.5 + (hash(x, y * 5) - 0.5) * 0.2;
           const bend = p.bend * (gust + flutter(x, y, now, 1.6) * 0.25);
@@ -119,7 +125,7 @@ export class Scenery {
           this.m4.compose(this.v.set(px, height(px, pz) - 0.01, pz), q, this.s.setScalar(s));
           mesh.setMatrixAt(n, this.m4);
           mesh.setColorAt(n, t.plant === 'pebbles' ? this.c.setHSL(0.08, 0.08, 0.55 + hash(x, y * 9) * 0.2) : this.c.setHSL(0.15, 0.2, 0.85 + hash(x * 9, y) * 0.15));
-          if (t.plant === 'flowers') {
+          if (t.plant === 'flowers' && season.flowers) {
             this.petals.setMatrixAt(nf, this.m4);
             this.petals.setColorAt(nf++, this.c.set(grade(PETALS[Math.floor(hash(x * 13, y * 17) * PETALS.length)])));
           }

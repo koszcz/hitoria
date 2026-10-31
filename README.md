@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a smelter and a stone mine, all joined by roads. The current goal shows at the top left](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a smelter and a stone mine, all joined by roads. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
 
 ## How to play
 
@@ -47,6 +47,10 @@ Click a building to see what it is doing and what it is waiting for.
 
 Days and nights pass as you play. A full day lasts 8 minutes of game time, and a new game starts
 in the morning. The light turns orange at dawn and dusk, and blue at night. Work goes on at night.
+
+The island also goes through the four seasons. A full year lasts 20 minutes of game time, and a
+new game starts in spring. Leafy trees turn yellow, orange and red in autumn and lose their leaves
+in winter, when snow falls and covers the land. The seasons change only the look, not the work.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ, and its flag and roads stay.
@@ -144,7 +148,7 @@ The save buttons are in the ☰ menu at the top right.
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
 
-The save keeps the map, buildings, roads, flags, worn paths, every good, your goals and the time of day. It does not keep where settlers and
+The save keeps the map, buildings, roads, flags, worn paths, every good, your goals and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
@@ -184,7 +188,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
 | `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays and the light for each time of day (`daylight.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/seasons/` | The year clock, and how the island looks at each point in the year |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |

@@ -5,6 +5,7 @@ import { ART } from '../art';
 import { grade, hash } from './kit';
 import { groundHeight } from './elevation';
 import { grainTexture, rippleNormals } from './textures';
+import { seasonGround } from './seasonal';
 
 export const SEA = -0.04;
 
@@ -71,7 +72,9 @@ export class Terrain {
     geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(pos.length), 3));
     geo.setIndex(idx);
     geo.computeVertexNormals();
-    this.mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, map: this.grain, roughness: 0.95 }));
+    const mat = new THREE.MeshStandardMaterial({ vertexColors: true, map: this.grain, roughness: 0.95 });
+    seasonGround(mat);
+    this.mesh = new THREE.Mesh(geo, mat);
     this.mesh.receiveShadow = true;
 
     const ripples = rippleNormals();
