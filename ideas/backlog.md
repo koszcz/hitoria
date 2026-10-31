@@ -12,6 +12,7 @@ At most 3 ideas, in the order we build them.
 
 - **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *Fun 2 · Effort S*
 - **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S*
+- **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M*
 
 ## Inbox
 
@@ -23,7 +24,6 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
-- **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Worn paths**: settlers who walk off-road wear dirt trails into the grass, and unused trails fade back. *Fun 2 · Effort S*
