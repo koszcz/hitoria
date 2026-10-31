@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines · Approved · Branch: worktree-agent-aa77fb81e909f1939*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines · Approved*
 - **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *Fun 2 · Effort S · Needs: Sound basics · Approved*
 
 ## Inbox
