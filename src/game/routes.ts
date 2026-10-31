@@ -1,7 +1,5 @@
-// Road distances between flags, and the way along the roads from one flag to another.
-import type { P } from '../path';
+// Road distances between flags. Auto-road uses them to find the flags already joined to the HQ.
 import type { Game } from './game';
-import type { Flag } from './types';
 
 // Road distance from every flag to flag `to` (only flags connected to it appear).
 // Results are cached until the road network changes.
@@ -31,31 +29,4 @@ export function distTo(g: Game, to: number) {
   }
   g.dist.set(to, d);
   return d;
-}
-
-// The road to take from flag `f` to get closer to flag `to`.
-export function nextRoad(g: Game, f: Flag, to: number) {
-  const dist = distTo(g, to);
-  let best = 0, bd = Infinity;
-  for (const rid of f.roads) {
-    const r = g.roads.get(rid)!;
-    const d = r.path.length - 1 + (dist.get(r.a === f.id ? r.b : r.a) ?? Infinity);
-    if (d < bd) { bd = d; best = rid; }
-  }
-  return best;
-}
-
-// The tiles along the roads from flag `from` to flag `to`, both flag tiles included.
-// Null when no roads join them.
-export function roadWay(g: Game, from: number, to: number): P[] | null {
-  if (!distTo(g, to).has(from)) return null;
-  let cur = g.flags.get(from)!;
-  const way: P[] = [{ x: cur.x, y: cur.y }];
-  while (cur.id !== to) {
-    const r = g.roads.get(nextRoad(g, cur, to))!;
-    const fwd = r.a === cur.id;
-    way.push(...(fwd ? r.path : [...r.path].reverse()).slice(1));
-    cur = g.flags.get(fwd ? r.b : r.a)!;
-  }
-  return way;
 }

@@ -24,11 +24,11 @@ Only goods your settlers make count toward a goal, not the goods you start with.
 
 1. **Place a woodcutter's hut.** Press `B` to open the build menu and pick the woodcutter's hut.
    Then click open grass near trees.
-2. **Check its road.** The game lays a road to your nearest flag when one fits. If it can't, press
-   `R`, click the hut's flag, then click a flag that is joined to the HQ. Right-click to stop
-   drawing.
-3. **Watch it get built.** A builder walks to the site. Carriers bring planks from the HQ along the
-   road. Once it is built, a woodcutter moves in and starts felling trees.
+2. **Watch it get built.** A builder walks to the site. Carriers walk planks over from the HQ.
+   Once it is built, a woodcutter moves in and starts felling trees.
+3. **Add roads if you like.** The game lays a road to your nearest flag when one fits. Settlers walk
+   faster on roads, but no building needs one. To draw a road yourself, press `R`, click a flag or
+   building, then click where the road should go. Right-click to stop drawing.
 4. **Grow your economy.**
    - A forester (`2`) plants new trees, so the woodcutter never runs out.
    - A quarry (`3`) next to boulders makes stone.
@@ -40,9 +40,9 @@ Only goods your settlers make count toward a goal, not the goods you start with.
    - Coal and iron mines also go next to a mountain. Nothing uses their coal and iron ore yet.
    - Across the water from the bay lies a second island. You can't reach it yet.
 
-Every building needs a road to the HQ. Without one, no goods arrive and the builder or worker
-waits. A sign with a crossed-out road floats over any building that has no road. Click a building
-to see what it is doing and what it is waiting for.
+Settlers must be able to walk from the HQ to every building. If water, mountains or trees cut a
+building off, no goods arrive and the builder or worker waits. A warning sign floats over it.
+Click a building to see what it is doing and what it is waiting for.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ, and its flag and roads stay.
@@ -172,7 +172,7 @@ Browsers block sound until you click or press a key, so the sound starts then.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, settlers, carriers, farm fields, food, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
@@ -201,9 +201,10 @@ Browsers block sound until you click or press a key, so the sound starts then.
 - Goods are stored at the HQ and in storehouses.
 
 Every building has a flag in front of its door. Flags mark where roads end and where they meet.
-A carrier takes one good from the building that has it and walks it along the roads, all the way
-to the building that needs it. Goods never wait on flags. Settlers walk 1.5× faster on roads.
-A building that isn't connected to the HQ by road gets no materials.
+A carrier takes one good from the building that has it and walks it the quickest way, all the way
+to the building that needs it. Carriers don't need roads. They cross the grass, but they keep to
+roads and paths when those are quicker. Spare goods go to the store that is nearest on foot.
+Goods never wait on flags. Settlers walk 1.5× faster on roads.
 
 Off the roads, settlers' footsteps wear the grass into dirt paths. Settlers walk up to 1.25×
 faster on a well-worn path, so they keep to the same lines. A path nobody walks for a minute

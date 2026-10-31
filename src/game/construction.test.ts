@@ -1,7 +1,7 @@
 // Builders, building sites and finished buildings.
 import { describe, expect, test } from 'bun:test';
 import { BDEFS, bag } from '.';
-import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, inside, placeBare } from './test-helpers';
+import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, inside, placeBare, wallOff } from './test-helpers';
 
 describe('construction', () => {
   test('a linked site gets its materials and is built', () => {
@@ -12,13 +12,12 @@ describe('construction', () => {
     expect(g.hq.stock.plank).toBe(24 - BDEFS.woodcutter.cost.plank!);
   });
 
-  test('a site with no road is never supplied', () => {
+  test('a site with no road is supplied on foot and built', () => {
     const g = flatGame();
     const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
-    run(g, 60);
-    expect(b.built).toBe(false);
-    expect(b.stock).toEqual(bag({ log: 0, plank: 0, stone: 0 }));
-    expect(b.status).toBe('Needs a road to your HQ');
+    expect(g.linked(b)).toBe(true);
+    runUntil(g, () => b.built, 120);
+    expect(g.hq.stock.plank).toBe(24 - BDEFS.woodcutter.cost.plank!);
   });
 
   test('no goods or settlers appear or vanish while building', () => {
@@ -51,28 +50,27 @@ describe('construction', () => {
     runUntil(g, () => ![...g.settlers.values()].some((s) => s.role === 'builder'), 60);
   });
 
-  test('a site with no road to the HQ gets no builder', () => {
+  test('a site walled off by water gets no builder', () => {
     const g = flatGame();
-    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 6, g.hq.y);
+    wallOff(g, b);
     run(g, 10);
+    expect(g.linked(b)).toBe(false);
     expect(b.builder).toBe(0);
     expect(g.pool).toBe(18);
-    expect(b.status).toBe('Needs a road to your HQ');
+    expect(b.status).toBe('No way to walk to your HQ');
   });
 
-  test('a builder goes home when their site loses its road', () => {
+  test('a builder leaves their site when it is cut off', () => {
     const g = flatGame();
-    g.hq.stock.plank = 0; // no materials, so the site can't finish before the road goes
+    g.hq.stock.plank = 0; // no materials, so the site can't finish before it is cut off
     g.hq.stock.stone = 0;
-    const b = placeLinked(g, 'woodcutter', g.hq.x + 8, g.hq.y);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 8, g.hq.y);
     runUntil(g, () => !!g.settlers.get(b.builder)?.atWork, 60);
-    const road = g.roads.get(g.flags.get(b.flag)!.roads[0])!;
-    expect(g.removeAt(road.path[1])).toBeNull();
-    expect(g.linked(b)).toBe(false);
-    runUntil(g, () => ![...g.settlers.values()].some((s) => s.role === 'builder'), 60);
-    expect(b.builder).toBe(0);
+    wallOff(g, b);
+    runUntil(g, () => b.builder === 0, 60);
     expect(b.built).toBe(false);
-    expect(b.status).toBe('Needs a road to your HQ');
+    expect(b.status).toBe('No way to walk to your HQ');
     expect(g.population).toBe(18);
   });
 

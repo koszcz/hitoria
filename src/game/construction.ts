@@ -7,9 +7,9 @@ import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory, flaggable, near, roadable } from './land';
 import { ensureFlag } from './roads';
-import { distTo } from './routes';
 import { sendHome } from './settlers';
 import type { Building } from './types';
+import { walkDist } from './walking';
 
 export function canPlace(g: Game, type: BType, x: number, y: number): string | null {
   if (!g.world.inside(x, y) || !g.world.inside(x, y + 1)) return 'Outside the map';
@@ -68,9 +68,9 @@ export function builtStatus(b: Building) {
   return BDEFS[b.type].worker ? 'Waiting for a worker' : 'Storing goods';
 }
 
-// Is the building joined to the HQ by roads?
+// Can settlers walk from the HQ to the building?
 export function linked(g: Game, b: Building) {
-  return distTo(g, b.flag).has(g.hq.flag);
+  return b === g.hq || walkDist(g, g.hq, b) < Infinity;
 }
 
 export function construct(g: Game, b: Building, dt: number) {
@@ -83,7 +83,7 @@ export function construct(g: Game, b: Building, dt: number) {
   }
   const cap = need ? have / need : 1;
   if (!builder?.atWork) {
-    b.status = builder ? 'Builder on the way' : linked(g, b) ? 'Waiting for a free settler' : 'Needs a road to your HQ';
+    b.status = builder ? 'Builder on the way' : linked(g, b) ? 'Waiting for a free settler' : 'No way to walk to your HQ';
     return;
   }
   if (b.progress >= cap) {
@@ -91,7 +91,7 @@ export function construct(g: Game, b: Building, dt: number) {
     if (linked(g, b)) b.status = 'Waiting for materials';
     else {
       // No materials can reach the site, so the builder goes home to help elsewhere.
-      b.status = 'Needs a road to your HQ';
+      b.status = 'No way to walk to your HQ';
       b.builder = 0;
       sendHome(g, builder);
     }

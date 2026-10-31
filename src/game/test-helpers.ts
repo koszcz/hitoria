@@ -84,5 +84,12 @@ export function placeLinked(g: Game, type: Parameters<Game['place']>[0], x: numb
   return b;
 }
 
+// Ring building `b` with water two tiles out, so nobody can walk to it. Settlers inside the ring stay where they are.
+export function wallOff(g: Game, b: { x: number; y: number }) {
+  for (let dy = -2; dy <= 3; dy++)
+    for (let dx = -2; dx <= 2; dx++)
+      if (Math.abs(dx) === 2 || dy === -2 || dy === 3) g.world.at(b.x + dx, b.y + dy).t = 'water';
+}
+
 // Is the tile at (x, y) part of your land?
 export const inside = (g: Game, x: number, y: number) => !!g.world.territory[y * W + x];

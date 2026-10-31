@@ -12,7 +12,7 @@ const SLOW_FRAME = 50; // ms
 // How long something may stay the same before it counts as a long wait, in game seconds.
 export const LIMITS = {
   settlerStill: 20, // a settler with a walk planned who hasn't moved
-  buildingWaiting: 180, // a building whose "Waiting…", "Unreachable…" or "Needs a road…" status hasn't changed
+  buildingWaiting: 180, // a building whose "Waiting…", "Unreachable…" or "No way to walk…" status hasn't changed
   noSettlers: 30, // buildings wait for a settler while nobody is idle in the HQ
 };
 
@@ -111,7 +111,7 @@ export class Diagnostics {
       else if (prev.status !== b.status) this.event(`${name}: ${prev.status} → ${b.status}`);
       const since = prev && prev.status === b.status && prev.built === b.built ? prev.since : now;
       this.status.set(b.id, { status: b.status, built: b.built, since });
-      if (b.type !== 'hq' && /^(Waiting|Unreachable|Needs a road)/.test(b.status))
+      if (b.type !== 'hq' && /^(Waiting|Unreachable|No way to walk)/.test(b.status))
         flag(`b${b.id}`, since, LIMITS.buildingWaiting, `${name} has said "${b.status}" for ${Math.round(now - since)} s`);
     }
     // Settlers: buildings that wait for one while the HQ has nobody left to send.

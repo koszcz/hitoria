@@ -1,7 +1,6 @@
-// Carriers: each one fetches a good from a building and walks it along the roads to the building
+// Carriers: each one fetches a good from a building and walks it on foot to the building
 // that needs it. With no trip to make, a carrier walks back to the HQ and can be sent out again on the way.
 import type { Game } from './game';
-import { roadWay } from './routes';
 import { despawn, takeSettler } from './settlers';
 import { isStore } from './stores';
 import type { Building, Job, Settler, Task } from './types';
@@ -22,14 +21,14 @@ export function hire(g: Game, job: Job): boolean {
   s.walking = false;
   s.onAbort = () => { cancel(g, s); despawn(g, s); };
   s.tasks = [
-    { k: 'do', f: () => { s.tasks.unshift(wayTo(g, s, from)); } },
+    wayTo(from),
     { k: 'do', f: () => {
       from.sending[job.g]--;
       if (isStore(from)) from.stock[job.g]--;
       else from.out[job.g]--;
       s.carrying = job.g;
     } },
-    { k: 'do', f: () => { s.tasks.unshift(wayTo(g, s, to)); } },
+    wayTo(to),
     { k: 'do', f: () => {
       to.incoming[job.g]--;
       to.stock[job.g]++;
@@ -45,7 +44,7 @@ export function hire(g: Game, job: Job): boolean {
 export function carry(g: Game, s: Settler) {
   if (s.job) return;
   s.onAbort = () => despawn(g, s);
-  s.tasks = [wayTo(g, s, g.hq), { k: 'do', f: () => despawn(g, s) }];
+  s.tasks = [wayTo(g.hq), { k: 'do', f: () => despawn(g, s) }];
 }
 
 // Undo a trip that can't be finished. A good already picked up goes into the HQ's stock.
@@ -71,13 +70,7 @@ function nearestFree(all: Settler[], b: Building) {
   return best;
 }
 
-// Walk to building `b`: along the roads when standing at a building or a flag, else the shortest way.
-function wayTo(g: Game, s: Settler, b: Building): Task {
-  const tile = g.world.at(Math.round(s.x), Math.round(s.y));
-  const at = tile.b ? g.buildings.get(tile.b) : undefined;
-  const start = at ? at.flag : tile.flag;
-  const way = start ? roadWay(g, start, b.flag) : null;
-  if (!way) return { k: 'walk', x: b.x, y: b.y };
-  if (!at) way.shift(); // already standing on the first flag
-  return { k: 'walk', x: b.x, y: b.y, via: [...way, { x: b.x, y: b.y }] };
+// Walk to building `b` the cheapest way on foot. Roads and worn paths are quicker, so carriers keep to them when they help.
+function wayTo(b: Building): Task {
+  return { k: 'walk', x: b.x, y: b.y };
 }

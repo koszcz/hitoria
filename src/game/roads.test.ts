@@ -3,12 +3,10 @@ import { describe, expect, test } from 'bun:test';
 import { flatGame, placeLinked, placeBare } from './test-helpers';
 
 describe('roads and flags', () => {
-  test('a road links a building to the HQ', () => {
+  test("a road joins a building's flag to the HQ's flag", () => {
     const g = flatGame();
     const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
-    expect(g.linked(b)).toBe(false);
     g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-    expect(g.linked(b)).toBe(true);
     expect(g.roads.size).toBe(1);
     const r = [...g.roads.values()][0];
     // The road's inner tiles are marked; its end tiles are the two flags.
@@ -47,7 +45,7 @@ describe('roads and flags', () => {
     expect(g.buildRoad(hf.id, { x: hf.x + 7, y: hf.y + 1 })).toBe('No room for a road there');
   });
 
-  test('removing a road unlinks the building', () => {
+  test('removing a road clears its tiles, and settlers can still walk to the building', () => {
     const g = flatGame();
     const b = placeLinked(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     const r = [...g.roads.values()][0];
@@ -55,7 +53,7 @@ describe('roads and flags', () => {
     expect(g.removeAt(p)).toBeNull();
     expect(g.roads.size).toBe(0);
     for (const q of r.path) expect(g.world.at(q.x, q.y).road).toBe(0);
-    expect(g.linked(b)).toBe(false);
+    expect(g.linked(b)).toBe(true);
   });
 
   test('removing a flag removes its roads too', () => {

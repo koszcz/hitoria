@@ -22,7 +22,7 @@ export function raise(g: Game, b: Building, dt: number) {
   if (!b.busy) {
     const food = HOUSE_FOOD.find((k) => b.stock[k] > 0);
     if (!food) {
-      b.status = linked(g, b) ? 'Waiting for fish or bread' : 'Needs a road to your HQ';
+      b.status = linked(g, b) ? 'Waiting for fish or bread' : 'No way to walk to your HQ';
       return;
     }
     b.stock[food]--;

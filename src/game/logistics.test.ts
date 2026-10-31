@@ -1,7 +1,7 @@
 // Goods finding their way to the buildings that need them, and storehouses.
 import { describe, expect, test } from 'bun:test';
 import { Game, bag } from '.';
-import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, placeBare } from './test-helpers';
+import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, placeBare, wallOff } from './test-helpers';
 
 describe('logistics', () => {
   test('one carrier walks each good the whole way, along the roads', () => {
@@ -25,13 +25,12 @@ describe('logistics', () => {
     expect(delivered.size).toBeGreaterThan(0);
   });
 
-  test('cutting a road mid-delivery loses no goods', () => {
+  test('walling off a site mid-delivery loses no goods', () => {
     const g = flatGame();
     const before = totalGoods(g);
-    placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
+    const site = placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
     runUntil(g, () => [...g.settlers.values()].some((s) => s.carrying), 120);
-    const r = [...g.roads.values()][0];
-    g.removeAt(r.path[1]);
+    wallOff(g, site);
     expect(totalGoods(g)).toEqual(before);
     expectIncomingConsistent(g);
     run(g, 60, () => {
@@ -41,9 +40,10 @@ describe('logistics', () => {
     });
   });
 
-  test('goods wait inside a building that has no road', () => {
+  test('goods wait inside a building that nobody can walk to', () => {
     const g = flatGame();
-    const cutter = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
+    const cutter = placeBare(g, 'woodcutter', g.hq.x + 6, g.hq.y);
+    wallOff(g, cutter);
     Object.assign(cutter, { built: true, progress: 1 });
     cutter.out.log = 2;
     run(g, 10);
@@ -104,6 +104,34 @@ describe('storehouses', () => {
     g.buildRoad(site.flag, g.flags.get(s.flag)!);
     runUntil(g, () => site.built, 300);
     expect(s.stock.plank).toBe(0);
+  });
+
+  test('goods with no road go to the nearest store on foot', () => {
+    const g = flatGame();
+    const s = placeBare(g, 'storehouse', g.hq.x + 8, g.hq.y);
+    runUntil(g, () => s.built, 300);
+    const cutter = placeBare(g, 'woodcutter', s.x + 3, s.y);
+    Object.assign(cutter, { built: true, progress: 1 });
+    cutter.out.log = 2;
+    const hqLogs = g.hq.stock.log;
+    runUntil(g, () => s.stock.log === 2, 120, () => expectIncomingConsistent(g));
+    expect(g.hq.stock.log).toBe(hqLogs);
+    expect(g.roads.size).toBe(0);
+  });
+
+  test('goods go to the store that is nearest on foot, not as the crow flies', () => {
+    const g = flatGame();
+    const s = placeBare(g, 'storehouse', g.hq.x + 10, g.hq.y);
+    runUntil(g, () => s.built, 300);
+    // The woodcutter is 4 tiles from the storehouse and 6 from the HQ, but water lies between it
+    // and the storehouse, so the walk there is much longer.
+    for (let y = s.y - 8; y <= s.y + 8; y++) g.world.at(s.x - 2, y).t = 'water';
+    const cutter = placeBare(g, 'woodcutter', g.hq.x + 6, g.hq.y);
+    Object.assign(cutter, { built: true, progress: 1 });
+    cutter.out.log = 1;
+    const hqLogs = g.hq.stock.log;
+    runUntil(g, () => g.hq.stock.log === hqLogs + 1, 120);
+    expect(s.stock.log).toBe(0);
   });
 
   test('the goods count adds up every store', () => {

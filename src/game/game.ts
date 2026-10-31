@@ -40,6 +40,8 @@ export class Game {
   snubbed = new Map<number, number>(); // unreachable tiles -> retry time
   dist = new Map<number, Map<number, number>>(); // per destination flag, cached for `distNet`
   distNet = -1;
+  walks = new Map<number, { t: number; d: Float32Array }>(); // walking distances from each building
+  ground: { t: number; kind: Uint8Array; cost: Float32Array } | null = null; // what each tile is to a walker
   trod = new Float32Array(W * H); // game time of the last footstep on each tile
   private dispatchT = 0;
   private growT = 0;

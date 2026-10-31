@@ -3,9 +3,10 @@ import { BDEFS, GOODS, Good, PILE, RECIPES } from './defs';
 import { hire } from './carriers';
 import type { Game } from './game';
 import { pantry } from './houses';
-import { distTo } from './routes';
 import { isStore } from './stores';
 import type { Building } from './types';
+import { walkFrom } from './walking';
+import { W } from '../world';
 
 function want(b: Building, g: Good) {
   if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
@@ -35,13 +36,13 @@ export function moveGoods(g: Game) {
       }
   }
 
-  // Stores send out what buildings still need, the nearest store by road first.
+  // Stores send out what buildings still need, the nearest store on foot first.
   for (const b of g.buildings.values()) {
-    if (isStore(b)) continue;
-    const dist = distTo(g, b.flag);
+    if (isStore(b) || !GOODS.some((k) => missing(b, k) > 0)) continue;
+    const dist = walkFrom(g, b);
     const stores = [...g.buildings.values()]
-      .filter((s) => isStore(s) && dist.has(s.flag))
-      .sort((p, q) => dist.get(p.flag)! - dist.get(q.flag)!);
+      .filter((s) => isStore(s) && at(dist, s) < Infinity)
+      .sort((p, q) => at(dist, p) - at(dist, q));
     for (const k of GOODS)
       while (missing(b, k) > 0) {
         const s = stores.find((s) => s.stock[k] > s.sending[k]);
@@ -51,19 +52,20 @@ export function moveGoods(g: Game) {
   }
 }
 
-// Nearest building (by road) that wants this good, else the nearest store.
+// Nearest building on foot that wants this good, else the nearest store.
 function pickDest(g: Game, from: Building, good: Good) {
+  const dist = walkFrom(g, from);
   let best: Building | undefined, bd = Infinity;
   for (const b of g.buildings.values()) {
     if (b === from || isStore(b) || missing(b, good) <= 0) continue;
-    const d = distTo(g, b.flag).get(from.flag);
-    if (d !== undefined && d < bd) { bd = d; best = b; }
+    if (at(dist, b) < bd) { bd = at(dist, b); best = b; }
   }
   if (best) return best;
   for (const b of g.buildings.values()) {
-    if (!isStore(b)) continue;
-    const d = distTo(g, b.flag).get(from.flag);
-    if (d !== undefined && d < bd) { bd = d; best = b; }
+    if (isStore(b) && at(dist, b) < bd) { bd = at(dist, b); best = b; }
   }
   return best;
 }
+
+// How far it is to walk into building `b`, read from a map of walking distances.
+const at = (dist: Float32Array, b: Building) => dist[b.y * W + b.x];

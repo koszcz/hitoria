@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, PILE } from '.';
-import { flatGame, placeLinked, run, runUntil, expectIncomingConsistent } from './test-helpers';
+import { flatGame, placeLinked, run, runUntil, expectIncomingConsistent, wallOff } from './test-helpers';
 
 describe('wells and water', () => {
   test('a well draws water and carriers take it to the HQ', () => {
@@ -16,8 +16,8 @@ describe('wells and water', () => {
     const well = placeLinked(g, 'well', g.hq.x + 4, g.hq.y);
     runUntil(g, () => well.built, 150);
     runUntil(g, () => well.status === 'Drawing water', 60);
-    // With the road gone, no carrier comes, so the water piles up.
-    for (const r of [...g.roads.values()]) g.removeAt(r.path[1]);
+    // With the well walled off, no carrier comes, so the water piles up.
+    wallOff(g, well);
     runUntil(g, () => well.status === 'Full, waiting for a carrier', 120, () => {
       expect(well.out.water).toBeLessThanOrEqual(PILE);
     });

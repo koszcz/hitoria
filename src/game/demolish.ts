@@ -33,6 +33,7 @@ export function demolish(g: Game, b: Building): string | null {
   g.world.at(b.x, b.y).b = 0;
   freeFields(g, b);
   g.buildings.delete(b.id);
+  g.walks.delete(b.id);
   if (b.type === 'lookout' && b.built) computeTerritory(g);
   g.toasts.push(`${BDEFS[b.type].icon} ${BDEFS[b.type].name} demolished`);
   return null;

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { Diagnostics, LIMITS } from './diag';
-import { flatGame, run, placeBare } from './game/test-helpers';
+import { flatGame, run, placeBare, wallOff } from './game/test-helpers';
 
 function watched(seed = 1) {
   const g = flatGame(seed);
@@ -26,11 +26,12 @@ describe('diagnostics', () => {
     expect(d.events.some((e) => e.includes('Resolved'))).toBe(true);
   });
 
-  test('flags a site that has no road to the HQ', () => {
+  test('flags a site that nobody can walk to from the HQ', () => {
     const { g, d, run } = watched();
-    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 6, g.hq.y + 1);
+    wallOff(g, b);
     run(LIMITS.buildingWaiting + 15);
-    expect(d.issues.get(`b${b.id}`)?.text).toContain('Needs a road to your HQ');
+    expect(d.issues.get(`b${b.id}`)?.text).toContain('No way to walk to your HQ');
   });
 
   test('flags a building that waits for a settler while none are idle, and clears it once one is free', () => {

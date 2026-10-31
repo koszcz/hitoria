@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths · Branch: claude/build-2ef03a*
+Nothing right now.
 
 ## Next
 
@@ -62,6 +62,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *2026-10-31*
 - **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *2026-10-31*
 - **Worn paths**: settlers' footsteps wear the grass into dirt paths. Worn tiles are faster to walk on, so settlers keep to the same lines. Unused paths slowly fade back to grass over several minutes, and busy paths never fade. *2026-10-31*
 - **Well and water**: a well draws water on any flat grass, and the bakery needs 1 flour and 1 water for each loaf. *2026-10-31*
