@@ -1,7 +1,7 @@
 // Saving a game and loading it back.
 import { describe, expect, test } from 'bun:test';
-import { Game, SAVE_VERSION } from '../../src/game';
-import { flatGame, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from '../helpers';
+import { Game, SAVE_VERSION } from '.';
+import { flatGame, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
 
 describe('save and load', () => {
   test('a JSON round trip keeps every good and settler', () => {

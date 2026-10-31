@@ -1,7 +1,7 @@
 // Goods finding their way to the buildings that need them, and storehouses.
 import { describe, expect, test } from 'bun:test';
-import { Game, bag } from '../../src/game';
-import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from '../helpers';
+import { Game, bag } from '.';
+import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
 
 describe('logistics', () => {
   test('cutting a road mid-delivery loses no goods', () => {

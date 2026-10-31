@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { Game, Good } from '../src/game';
-import { flatGame, run, runUntil, expectIncomingConsistent } from './helpers';
+import { Game, Good } from '.';
+import { flatGame, run, runUntil, expectIncomingConsistent } from './test-helpers';
 
 function placeLinked(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
   expect(g.canPlace(type, x, y)).toBeNull();

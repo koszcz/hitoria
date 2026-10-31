@@ -1,6 +1,6 @@
 // Huts and workshops that make goods.
 import { describe, expect, test } from 'bun:test';
-import { flatGame, run, runUntil, totalGoods, placeLinked } from '../helpers';
+import { flatGame, run, runUntil, totalGoods, placeLinked } from './test-helpers';
 
 describe('production', () => {
   test('a woodcutter fells trees and sends logs to the HQ', () => {

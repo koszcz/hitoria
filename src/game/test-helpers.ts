@@ -1,6 +1,6 @@
 import { expect } from 'bun:test';
-import { Game, GOODS, Bag, bag } from '../src/game';
-import { W } from '../src/world';
+import { Game, GOODS, Bag, bag } from './index';
+import { W } from '../world';
 
 // A game whose land around the HQ is flat grass with no trees or boulders, so tests can
 // place things where they want without depending on how the map generator lays out a seed.

@@ -1,8 +1,8 @@
 // A new game, and where buildings may go.
 import { describe, expect, test } from 'bun:test';
-import { Game, BDEFS, bag } from '../../src/game';
-import { W } from '../../src/world';
-import { flatGame, inside } from '../helpers';
+import { Game, BDEFS, bag } from '.';
+import { W } from '../world';
+import { flatGame, inside } from './test-helpers';
 
 describe('a new game', () => {
   test('starts with a built HQ, its flag in front, and starting goods', () => {

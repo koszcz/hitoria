@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { World, W, H, rng } from '../src/world';
-import { toIso, fromIso } from '../src/iso';
+import { World, W, H, rng } from './world';
+import { toIso, fromIso } from './iso';
 
 describe('rng', () => {
   test('gives the same numbers for the same seed', () => {

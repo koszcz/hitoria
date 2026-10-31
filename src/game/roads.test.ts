@@ -1,6 +1,6 @@
 // Building and removing roads and flags.
 import { describe, expect, test } from 'bun:test';
-import { flatGame, placeLinked } from '../helpers';
+import { flatGame, placeLinked } from './test-helpers';
 
 describe('roads and flags', () => {
   test('a road links a building to the HQ', () => {

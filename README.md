@@ -61,7 +61,7 @@ bun install      # first time only
 bun run dev      # http://main.localhost:5173  (add ?seed=123 to start a fixed map fresh)
 bun run play     # http://play.localhost:5174  (a copy to play on, see below)
 bun run build    # static build in dist/
-bun test         # game logic tests in test/
+bun test         # tests, kept next to the code they test
 ```
 
 ## Running several copies

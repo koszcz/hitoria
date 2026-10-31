@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { Game } from '../src/game';
-import { Saves, playTime } from '../src/saves';
+import { Game } from './game';
+import { Saves, playTime } from './saves';
 
 class MemStore {
   map = new Map<string, string>();

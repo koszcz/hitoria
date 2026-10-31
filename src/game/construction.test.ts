@@ -1,7 +1,7 @@
 // Builders, building sites and finished buildings.
 import { describe, expect, test } from 'bun:test';
-import { BDEFS, bag } from '../../src/game';
-import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, inside } from '../helpers';
+import { BDEFS, bag } from '.';
+import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, inside } from './test-helpers';
 
 describe('construction', () => {
   test('a linked site gets its materials and is built', () => {

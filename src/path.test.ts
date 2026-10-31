@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { findPath, P } from '../src/path';
+import { findPath, P } from './path';
 
 const open = () => true;
 const walls = (...blocked: P[]) => (x: number, y: number) => !blocked.some((b) => b.x === x && b.y === y);

@@ -1,7 +1,7 @@
 // Road carriers: when they come out, and when they go home.
 import { describe, expect, test } from 'bun:test';
-import { Game } from '../../src/game';
-import { flatGame, run, runUntil, placeLinked } from '../helpers';
+import { Game } from '.';
+import { flatGame, run, runUntil, placeLinked } from './test-helpers';
 
 describe('carriers', () => {
   const carriers = (g: Game) => [...g.settlers.values()].filter((s) => s.role === 'carrier');

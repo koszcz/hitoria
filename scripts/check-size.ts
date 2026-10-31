@@ -8,7 +8,7 @@ const LIMIT = 400;
 const OVERSIZE: Record<string, number> = {};
 
 const problems: string[] = [];
-for (const pattern of ['src/**/*.ts', 'test/**/*.ts', '*.ts', 'changelog/**/*.ts', 'ideas/**/*.ts', 'scripts/**/*.ts']) {
+for (const pattern of ['src/**/*.ts', '*.ts', 'changelog/**/*.ts', 'ideas/**/*.ts', 'scripts/**/*.ts']) {
   for await (const file of new Glob(pattern).scan('.')) {
     const lines = (await Bun.file(file).text()).split('\n').length - 1;
     const cap = OVERSIZE[file] ?? LIMIT;
