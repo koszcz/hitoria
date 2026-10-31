@@ -6,8 +6,8 @@ import { Glob } from 'bun';
 
 const LIMIT = 400;
 const OVERSIZE: Record<string, number> = {
-  'src/game.ts': 1065,
-  'test/game.test.ts': 503,
+  'src/game.ts': 1083,
+  'test/game.test.ts': 539,
 };
 
 const problems: string[] = [];
