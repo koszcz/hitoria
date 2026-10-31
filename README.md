@@ -47,6 +47,7 @@ to the HQ, and its flag and roads stay.
 | Cancel | Right-click or Esc |
 | Pause | Space |
 | Save | Ctrl+S (or Cmd+S) |
+| Mute or unmute the sound | `M`, or the Sound button |
 | Show live diagnostics | F3 |
 
 If something looks wrong, click **Report**. It saves a problem report to `reports/`.
@@ -143,6 +144,14 @@ The **Graphics** button in the menu sets how the game is drawn. Click it to go t
 
 Press F3 to see the level, and how much the game draws each frame.
 
+## Sound
+
+You hear soft wind and, near the shore, waves. The wind grows louder as gusts pass, and both
+sounds get quieter when you zoom out. The game makes them from noise, so there are no sound files.
+
+To mute the sound, click **Sound** in the menu or press M. The browser remembers your choice.
+Browsers block sound until you click or press a key, so the sound starts then.
+
 ## Code map
 
 | File | What it does |
@@ -152,6 +161,7 @@ Press F3 to see the level, and how much the game draws each frame.
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
+| `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, and the mute setting |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, land, water and trees |
 | `src/ui.ts` | HUD and info panel |
 | `src/buildmenu/` | The build menu |
