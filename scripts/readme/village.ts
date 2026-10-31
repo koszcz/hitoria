@@ -1,6 +1,7 @@
 // Grows the village shown in the README screenshot: places a fixed list of buildings near the HQ
 // on a fixed island, each with a road, then lets the game run until the village is built.
 import { Game, type BType } from '../../src/game';
+import { clock } from '../../src/render/daylight';
 
 export const SEED = 214;
 
@@ -41,5 +42,7 @@ export function growVillage(seed = SEED) {
     placeRound(g, round);
     for (let t = 0; t < ROUND_SECONDS; t += 0.1) g.update(0.1);
   }
+  // Runs on to midday, so the picture always has the same bright light.
+  while (Math.abs(clock(g.time) - 0.5) > 0.005) g.update(0.1);
   return g;
 }

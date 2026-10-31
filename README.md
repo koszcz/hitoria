@@ -44,6 +44,9 @@ Settlers must be able to walk from the HQ to every building. If water, mountains
 building off, no goods arrive and the builder or worker waits. A warning sign floats over it.
 Click a building to see what it is doing and what it is waiting for.
 
+Days and nights pass as you play. A full day lasts 8 minutes of game time, and a new game starts
+in the morning. The light turns orange at dawn and dusk, and blue at night. Work goes on at night.
+
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ, and its flag and roads stay.
 
@@ -139,7 +142,7 @@ The save buttons are in the ☰ menu at the top right.
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
 
-The save keeps the map, buildings, roads, flags, worn paths, every good and your goals. It does not keep where settlers and
+The save keeps the map, buildings, roads, flags, worn paths, every good, your goals and the time of day. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
@@ -175,10 +178,10 @@ Browsers block sound until you click or press a key, so the sound starts then.
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
 | `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays and the light for each time of day (`daylight.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, and the mute setting |
-| `src/art.ts` | The game's colours and light in one place: sky, sun, land, water and trees |
+| `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
 | `src/ui.ts` | HUD, goal panel and info panel |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |

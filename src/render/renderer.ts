@@ -16,6 +16,7 @@ import { drawRoads } from './roads';
 import { Overlays, View } from './overlays';
 import { disposeModel } from './merge';
 import { GRAPHICS, type Graphics } from '../quality/levels';
+import { clock, daylightAt } from './daylight';
 
 export type { View } from './overlays';
 
@@ -36,6 +37,8 @@ export class Renderer {
   private scene = new THREE.Scene();
   private camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
   private sun = new THREE.DirectionalLight(ART.sun, ART.sunPower);
+  private hemi = new THREE.HemisphereLight(ART.hemiSky, ART.hemiGround, ART.hemi);
+  private sunDir = new THREE.Vector3(-0.9, 1.3, 0.35).normalize();
   private ray = new THREE.Raycaster();
 
   private world: World | null = null;
@@ -63,7 +66,7 @@ export class Renderer {
 
     const { scene, sun } = this;
     scene.background = new THREE.Color(ART.sky);
-    scene.add(new THREE.HemisphereLight(ART.hemiSky, ART.hemiGround, ART.hemi));
+    scene.add(this.hemi);
     sun.shadow.bias = -0.0004;
     sun.shadow.normalBias = 0.02;
     scene.add(sun, sun.target);
@@ -139,6 +142,7 @@ export class Renderer {
 
   draw(game: Game, view: View, now: number) {
     if (game.world !== this.world) this.setWorld(game.world);
+    this.light(game.time);
     this.placeCamera();
 
     let tk = 0;
@@ -184,13 +188,25 @@ export class Renderer {
     camera.position.copy(target).addScaledVector(VIEW_DIR, 150);
     camera.lookAt(target);
 
-    // Sun from the upper left of the screen, so shadows fall to the right as before.
+    // The shadow camera covers the view. The time of day turns the sun around it.
     const reach = Math.min(42, Math.max(hw, hh * 2) + 3);
-    sun.position.copy(target).add(new THREE.Vector3(-reach * 0.9, reach * 1.3, reach * 0.35));
+    sun.position.copy(target).addScaledVector(this.sunDir, reach * 1.6);
     sun.target.position.copy(target);
     const sc = sun.shadow.camera;
     Object.assign(sc, { left: -reach, right: reach, top: reach, bottom: -reach, near: 0.1, far: reach * 4 });
     sc.updateProjectionMatrix();
+  }
+
+  // Sets the sun, sky and background for the time of day.
+  private light(time: number) {
+    const l = daylightAt(clock(time));
+    this.sun.color.copy(l.sun);
+    this.sun.intensity = l.sunPower;
+    this.hemi.color.copy(l.hemiSky);
+    this.hemi.groundColor.copy(l.hemiGround);
+    this.hemi.intensity = l.hemi;
+    (this.scene.background as THREE.Color).copy(l.sky);
+    this.sunDir.copy(l.dir);
   }
 
   private setWorld(world: World) {

@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S · Branch: claude/build-73858d*
+Nothing right now.
 
 ## Next
 
@@ -59,6 +59,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Day and night light**: the light slowly turns from morning to evening to night and back. *2026-10-31*
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *2026-10-31*
 - **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *2026-10-31*
 - **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *2026-10-31*
