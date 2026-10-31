@@ -11,8 +11,8 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
-- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
-- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
+- **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free. *Fun 2 · Effort S*
+- **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths*
 
 ## Inbox
@@ -25,6 +25,8 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
+- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
+- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
@@ -32,9 +34,7 @@ Triaged, but not next.
 - **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
 - **Birds**: gulls circle over the shore, and small birds fly up from a tree when a woodcutter fells it. *Fun 2 · Effort S*
-- **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free. *Fun 2 · Effort S*
 - **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons. *Fun 2 · Effort S*
-- **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
 - **Faster roads**: busy roads get a donkey that carries two goods at once. *Fun 2 · Effort M*
