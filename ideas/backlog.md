@@ -5,12 +5,12 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M · Branch: claude/build-5facc8*
+- **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M · Branch: claude/build-6ab056*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M*
 - **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S*
 - **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 
