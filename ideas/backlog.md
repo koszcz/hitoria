@@ -12,9 +12,7 @@ At most 3 ideas, in the order we build them.
 
 - **Worn paths**: settlers' footsteps wear the grass into dirt paths. Worn tiles are faster to walk on, so settlers keep to the same lines. Unused paths slowly fade back to grass over several minutes, and busy paths never fade. *Fun 2 · Effort S*
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths*
-- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 - **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M*
-- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
 
 ## Inbox
 
@@ -26,6 +24,8 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
+- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
+- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
