@@ -6,12 +6,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 - **Worn paths**: settlers' footsteps wear the grass into dirt paths. Worn tiles are faster to walk on, so settlers keep to the same lines. Unused paths slowly fade back to grass over several minutes, and busy paths never fade. *Fun 2 · Effort S · Branch: claude/build-2fe14d*
 - **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M · Branch: claude/build-afcc1c*
+- **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free. *Fun 2 · Effort S · Branch: claude/forests-spread*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free. *Fun 2 · Effort S*
 - **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths*
 
