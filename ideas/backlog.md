@@ -10,9 +10,9 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
-- **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths*
 - **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *Fun 2 · Effort M*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
+- **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths*
 
 ## Inbox
 
@@ -23,6 +23,12 @@ New ideas go here, not scored yet.
 ## Later
 
 Triaged, but not next.
+
+- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S*
+- **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
+- **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. *Fun 2 · Effort M*
+- **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look*
+- **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle*
 
 - **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
 - **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
@@ -47,10 +53,10 @@ Triaged, but not next.
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
-- **Survive winter goal**: a goal to get through the winter. *Fun 2 · Effort S · Needs: Goals, Seasons*
+- **Survive winter goal**: a goal to get through the winter. *Fun 2 · Effort S · Needs: Goals, Winter fields*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
-- **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night*
+- **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night light*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
 
 ## Done
