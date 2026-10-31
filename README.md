@@ -66,6 +66,7 @@ to the HQ, and its flag and roads stay.
 | Pause | Space |
 | Save | Ctrl+S (or Cmd+S) |
 | Mute or unmute the sound | `M`, or **Sound** in the ☰ menu |
+| Change the music volume | **Music** in the ☰ menu |
 | Show live diagnostics | F3 |
 
 If something looks wrong, open the ☰ menu at the top right and click **Report**. It saves a problem report to `reports/`.
@@ -169,8 +170,12 @@ Press F3 to see the level, and how much the game draws each frame.
 You hear soft wind and, near the shore, waves. The wind grows louder as gusts pass, and both
 sounds get quieter when you zoom out. The game makes them from noise, so there are no sound files.
 
-To mute the sound, click **Sound** in the menu or press M. The browser remembers your choice.
-Browsers block sound until you click or press a key, so the sound starts then.
+A calm tune plays in the background: soft bells over slow chords. The game writes the notes in
+code too. To change how loud the music is, click **Music** in the menu. Each click moves it one
+step from Off to 100%. It starts at 50%.
+
+To mute all sound, music included, click **Sound** in the menu or press M. The browser remembers
+both choices. Browsers block sound until you click or press a key, so the sound starts then.
 
 ## Code map
 
@@ -181,7 +186,7 @@ Browsers block sound until you click or press a key, so the sound starts then.
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays and the light for each time of day (`daylight.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
-| `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, and the mute setting |
+| `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
 | `src/ui.ts` | HUD, goal panel and info panel |
 | `src/buildmenu/` | The build menu |

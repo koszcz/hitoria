@@ -26,6 +26,8 @@ export class UI {
   graphics: { choice: string; level: Level } = { choice: 'auto', level: 'high' };
   // Whether the sound is muted, shown on its menu button. main.ts sets it.
   muted = false;
+  // The music volume, 0..1, shown on its menu button. main.ts sets it.
+  music = 0.5;
 
   constructor(public game: Game) {
     this.drawBar();
@@ -51,6 +53,7 @@ export class UI {
       report: [x.report, x.reportTitle], lang: [x.langButton, x.langTitle],
       graphics: [x.graphics(this.graphics.choice, x.levels[this.graphics.level]), x.graphicsTitle],
       sound: [x.sound(this.muted), x.soundTitle],
+      music: [x.music(this.music), x.musicTitle],
     };
     for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
       const [label, title] = file[btn.dataset.file!] ?? [btn.textContent!, btn.title];

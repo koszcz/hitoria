@@ -13,7 +13,9 @@ import { GraphicsSetting } from './quality/setting';
 import { GRAPHICS, LEVELS } from './quality/levels';
 import { Ambience } from './sound/ambience';
 import { MuteChoice } from './sound/mute';
-import { mix, waterShare } from './sound/mix';
+import { mix, musicLevel, waterShare } from './sound/mix';
+import { Music } from './sound/music';
+import { MusicVolume } from './sound/volume';
 import { wind } from './wind';
 
 setLang(startLang());
@@ -47,7 +49,10 @@ const ui = new UI(game);
 ui.graphics = graphics;
 const mute = new MuteChoice();
 const ambience = new Ambience();
+const musicVolume = new MusicVolume();
+const music = new Music();
 ui.muted = mute.muted;
+ui.music = musicVolume.volume;
 ui.relabel();
 watch(() => game);
 diag.attach(game);
@@ -138,6 +143,12 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
       document.getElementById('file')!.classList.add('open');
       return toggleSound();
     }
+    if (what === 'music') {
+      document.getElementById('file')!.classList.add('open');
+      ui.music = musicVolume.cycle();
+      if (!mute.muted) music.start();
+      return ui.relabel();
+    }
     if (what === 'lang') {
       setLang(getLang() === 'pl' ? 'en' : 'pl');
       return ui.relabel();
@@ -155,12 +166,16 @@ window.addEventListener('pagehide', autosave);
 
 function toggleSound() {
   ui.muted = mute.toggle();
-  if (!ui.muted) ambience.start();
+  if (!ui.muted) startSound();
   ui.relabel();
 }
 // Browsers only allow sound after the player does something, so start it on the first input.
 for (const ev of ['pointerdown', 'keydown'])
-  window.addEventListener(ev, () => { if (!mute.muted) ambience.start(); }, true);
+  window.addEventListener(ev, () => { if (!mute.muted) startSound(); }, true);
+function startSound() {
+  ambience.start();
+  music.start();
+}
 
 // The sound follows the camera: waves near water, wind as gusts pass, quieter when zoomed out.
 function updateSound(t: number) {
@@ -169,6 +184,7 @@ function updateSound(t: number) {
   const water = waterShare((x, y) => !w.inside(x, y) || w.at(x, y).t === 'water', c.x, c.y, 8);
   const gust = wind(c.x, c.y, t);
   ambience.set(mix({ water, wind: gust, zoom: renderer.cam.zoom, muted: mute.muted }), gust, t);
+  music.set(musicLevel(musicVolume.volume, mute.muted));
 }
 
 let hover: P | null = null;
@@ -362,4 +378,4 @@ function frame(now: number) {
 }
 requestAnimationFrame(frame);
 
-Object.assign(window, { game, diag, renderer, ambience }); // handy for poking at state from the console
+Object.assign(window, { game, diag, renderer, ambience, music }); // handy for poking at state from the console

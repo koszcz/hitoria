@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *Fun 2 · Effort S · Needs: Sound basics · Approved · Branch: worktree-agent-ade68e139ffca3e07*
+Nothing right now.
 
 ## Next
 
@@ -57,6 +57,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *2026-10-31*
 - **Smelter**: a smelter melts 1 iron ore and 1 coal into 1 iron. Nothing uses iron yet. *2026-10-31*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *2026-10-31*
 - **Day and night light**: the light slowly turns from morning to evening to night and back. *2026-10-31*

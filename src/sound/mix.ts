@@ -35,3 +35,11 @@ export function mix(v: View) {
     waves: MAX_WAVES * Math.sqrt(v.water) * distance,
   };
 }
+
+// Loudest the music gets, at full music volume. Softer than the waves, so it stays behind the game.
+const MAX_MUSIC = 0.25;
+
+// How loud the music plays, from the music volume (0..1). Muting the sound mutes the music too.
+export function musicLevel(volume: number, muted: boolean) {
+  return muted ? 0 : MAX_MUSIC * volume;
+}
