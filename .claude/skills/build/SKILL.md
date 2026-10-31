@@ -6,7 +6,7 @@ description: Build an idea from the Hitoria backlog. Takes the top idea in Next,
 # Build an idea from the backlog
 
 The backlog is `ideas/backlog.md`. The rules are in `ideas/README.md`, under "Build an idea".
-Read both files first. If the README disagrees with this skill, follow the README.
+Read both files first, with the Read tool. If the README disagrees with this skill, follow the README.
 
 ## Steps
 

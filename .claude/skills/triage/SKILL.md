@@ -6,7 +6,7 @@ description: Triage the Hitoria ideas backlog. Scores each idea in the inbox, dr
 # Triage the ideas backlog
 
 The backlog is `ideas/backlog.md`. The rules are in `ideas/README.md`, under "Triage the inbox".
-Read both files first. The README is the only source of the rules. If it disagrees with this
+Read both files first, with the Read tool. The README is the only source of the rules. If it disagrees with this
 skill, follow the README, because the user edits it as their process changes.
 
 The user owns every decision here. Fun is a matter of taste, and it's their game. Your job is

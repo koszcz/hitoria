@@ -1,0 +1,5 @@
+#!/bin/sh
+# Runs before every commit. Install it with `bun install`, which sets core.hooksPath to .githooks.
+set -e
+bun run check
+bun test

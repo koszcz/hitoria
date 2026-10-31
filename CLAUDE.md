@@ -10,7 +10,8 @@
      The port may not be 5173, because `preview_start` moves to a free port when 5173 is busy.
   3. Navigate to that address. Do not use the plain `http://localhost:<port>` address. It only
      lists the running copies.
-- Every change needs a changelog entry, in the same commit or the last commit of the branch.
-  Follow [changelog/README.md](changelog/README.md):
-  1. Add a file to `changelog/entries/`.
-  2. Run `bun run changelog` to rebuild `changelog.html`.
+  - If `preview_start` fails with "Another copy is already running" from this same folder, the
+    server is already up. Navigate to the address in the error.
+  - Take screenshots with `scale: 0.5`. Use full size only to inspect small details.
+- Every change needs a changelog entry. See [changelog/README.md](changelog/README.md).
+- Code is split into small files, in folders by domain. See [CODING_STANDARDS.md](CODING_STANDARDS.md).
