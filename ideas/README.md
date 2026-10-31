@@ -17,6 +17,8 @@ The list itself is in [backlog.md](backlog.md).
 ## Triage the inbox
 
 Triage when the inbox has a few new ideas, or when **Next** is empty.
+Triage the latest backlog from `main`: run `git fetch origin`, then `git merge origin/main`.
+Never put an idea in **Next** that is already in **Building now**.
 To have Claude do it, run `/triage`. Claude proposes the scores and waits for you to agree.
 To add ideas and triage them in one go, run `/triage` followed by the ideas.
 For each idea in the inbox, follow these steps.
@@ -50,7 +52,21 @@ For each idea in the inbox, follow these steps.
 
 To have Claude do it, run `/build`, or `/build` followed by the idea's title.
 
-1. Move the top idea in **Next** to **Building now**.
-2. Name the branch after it, for example `claude/storehouse`.
-3. When it's merged, move it to **Done** with the date.
+Several sessions build at the same time, each in its own branch. Each branch has its own copy of
+this backlog, so `main` is the only copy that shows what everyone is building.
+
+1. Name the branch after the idea, for example `claude/storehouse`.
+2. **Claim the idea on `main`** before you change any code:
+   1. Run `git fetch origin`, then `git merge --ff-only origin/main`. Your branch now has the
+      latest backlog.
+   2. Move the idea from **Next** to **Building now**. Add the branch name to its scores, like
+      this: `*Fun 2 · Effort S · Branch: claude/storehouse*`.
+   3. Commit only `ideas/backlog.md`, then push it straight to `main` with
+      `git push origin HEAD:main`.
+   4. If the push is rejected, someone else changed `main` first. Undo your claim with
+      `git reset --keep HEAD~1`, then start again from step 1. They may have claimed the same idea.
+3. When the branch is merged, move the idea to **Done** with the date.
 4. Refill **Next** from **Later** or the inbox.
+
+**Building now** can hold several ideas, one for each branch. If a branch is abandoned, move its
+idea back to **Next** by hand.
