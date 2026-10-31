@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *Fun 2 · Effort S · Needs: Wild animals · Approved · Branch: worktree-agent-aff6afd7cec57cafb*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *Fun 2 · Effort S · Needs: Wild animals · Approved*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines · Approved*
 - **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *Fun 2 · Effort S · Needs: Sound basics · Approved*
 
