@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { Diagnostics, LIMITS } from './diag';
-import { flatGame, run } from './game/test-helpers';
+import { flatGame, run, placeBare } from './game/test-helpers';
 
 function watched(seed = 1) {
   const g = flatGame(seed);
@@ -13,7 +13,7 @@ describe('diagnostics', () => {
   test('flags a building that waits too long, and clears it once fixed', () => {
     const { g, d, run } = watched();
     g.hq.stock.plank = 0; // the site can never get its planks
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
     const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
     if (typeof r === 'string') throw new Error(r);
     run(LIMITS.buildingWaiting + 15);
@@ -28,7 +28,7 @@ describe('diagnostics', () => {
 
   test('flags a site that has no road to the HQ', () => {
     const { g, d, run } = watched();
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
     run(LIMITS.buildingWaiting + 15);
     expect(d.issues.get(`b${b.id}`)?.text).toContain('Needs a road to your HQ');
   });
@@ -36,7 +36,7 @@ describe('diagnostics', () => {
   test('flags a building that waits for a settler while none are idle, and clears it once one is free', () => {
     const { g, d, run } = watched();
     g.pool = 0;
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
     const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
     if (typeof r === 'string') throw new Error(r);
     run(LIMITS.noSettlers + 5);
@@ -50,7 +50,7 @@ describe('diagnostics', () => {
 
   test('reports nothing stuck in a healthy game', () => {
     const { g, d, run } = watched();
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
     const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
     if (typeof r === 'string') throw new Error(r);
     run(120);
@@ -69,7 +69,7 @@ describe('diagnostics', () => {
 
   test('builds a snapshot with every building, settler and the idle count', () => {
     const { g, d, run } = watched();
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
     const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
     if (typeof r === 'string') throw new Error(r);
     run(60);

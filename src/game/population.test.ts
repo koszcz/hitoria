@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { flatGame, run, runUntil, expectIncomingConsistent } from './test-helpers';
+import { flatGame, run, runUntil, expectIncomingConsistent, placeBare } from './test-helpers';
 
 function placeLinked(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
   expect(g.canPlace(type, x, y)).toBeNull();
-  const b = g.place(type, x, y);
+  const b = placeBare(g, type, x, y);
   const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
   if (typeof r === 'string') throw new Error(r);
   return b;

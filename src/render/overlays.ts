@@ -80,7 +80,9 @@ export class Overlays {
 
     const from = view.tool === 'road' && view.roadFrom ? game.flags.get(view.roadFrom) : null;
     if (from) this.tileOutline(this.fromRing, from.x, from.y);
-    const path = from ? view.preview : null;
+    // The road being drawn, or the road a building would get where you are about to place it.
+    const shown = from || view.placeOk ? view.preview : null;
+    const path = shown && shown.length > 1 ? shown : null;
     if (path !== this.previewOf) {
       this.previewOf = path;
       const g = new THREE.BufferGeometry();

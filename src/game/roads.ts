@@ -36,6 +36,11 @@ export function planRoad(g: Game, fromId: number, t: P): P[] | null {
 export function buildRoad(g: Game, fromId: number, t: P): Flag | string {
   const path = planRoad(g, fromId, t);
   if (!path) return 'No room for a road there';
+  return layRoad(g, fromId, path);
+}
+
+// Lay a road along `path`, which starts at flag `fromId`. Its end gets a flag if it has none.
+export function layRoad(g: Game, fromId: number, path: P[]): Flag {
   const last = path[path.length - 1];
   const end = ensureFlag(g, last.x, last.y);
   createRoad(g, fromId, end.id, path);

@@ -255,10 +255,11 @@ function frame(now: number) {
   const tool = ui.placing === 'road' || ui.placing === 'remove' ? ui.placing : null;
   const placing = tool ? null : (ui.placing as BType | null);
   const placeOk = !!placing && !!hover && !game.canPlace(placing, hover.x, hover.y);
-  const key = `${ui.roadFrom}:${hover?.x},${hover?.y}:${game.net}`;
+  const key = `${ui.placing}:${placeOk}:${ui.roadFrom}:${hover?.x},${hover?.y}:${game.net}`;
   if (key !== previewKey) {
     previewKey = key;
-    preview = tool === 'road' && ui.roadFrom && hover ? game.planRoad(ui.roadFrom, hover) : null;
+    if (tool === 'road' && ui.roadFrom && hover) preview = game.planRoad(ui.roadFrom, hover);
+    else preview = placeOk ? game.planAutoRoad(hover!.x, hover!.y) : null;
   }
   renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, selected: ui.selected }, now / 1000);
   diag.frame(dt * 1000, t1 - t0, performance.now() - t1);

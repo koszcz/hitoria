@@ -1,11 +1,11 @@
 // Building and removing roads and flags.
 import { describe, expect, test } from 'bun:test';
-import { flatGame, placeLinked } from './test-helpers';
+import { flatGame, placeLinked, placeBare } from './test-helpers';
 
 describe('roads and flags', () => {
   test('a road links a building to the HQ', () => {
     const g = flatGame();
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     expect(g.linked(b)).toBe(false);
     g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
     expect(g.linked(b)).toBe(true);
@@ -27,7 +27,7 @@ describe('roads and flags', () => {
 
   test('starting a road on an existing road splits it with a new flag', () => {
     const g = flatGame();
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
     expect(g.roads.size).toBe(1);
     const mid = { x: g.hq.x + 2, y: g.hq.y + 1 };

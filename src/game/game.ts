@@ -3,6 +3,7 @@
 import type { P } from '../path';
 import { World } from '../world';
 import { BType, CROP_GROW, bag } from './defs';
+import { planAutoRoad } from './autoroad';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
 import { raise } from './houses';
 import { computeTerritory, passable } from './land';
@@ -100,6 +101,11 @@ export class Game {
 
   buildRoad(fromId: number, t: P) {
     return buildRoad(this, fromId, t);
+  }
+
+  // The road a building placed at (x, y) would get, for showing before you place it.
+  planAutoRoad(x: number, y: number) {
+    return planAutoRoad(this, { x, y: y + 1 }, { x, y });
   }
 
   removeAt(t: P) {

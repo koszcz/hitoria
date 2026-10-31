@@ -1,7 +1,7 @@
 // Goods finding their way to the buildings that need them, and storehouses.
 import { describe, expect, test } from 'bun:test';
 import { Game, bag } from '.';
-import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
+import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, placeBare } from './test-helpers';
 
 describe('logistics', () => {
   test('cutting a road mid-delivery loses no goods', () => {
@@ -61,7 +61,7 @@ describe('storehouses', () => {
     const g = flatGame();
     const s = storehouse(g);
     // The woodcutter's only road runs through the storehouse's flag.
-    const cutter = g.place('woodcutter', s.x + 3, s.y - 3);
+    const cutter = placeBare(g, 'woodcutter', s.x + 3, s.y - 3);
     g.buildRoad(cutter.flag, g.flags.get(s.flag)!);
     for (const [dx, dy] of [[1, -2], [-1, -2], [2, 0]]) g.world.at(cutter.x + dx, cutter.y + dy).tree = 1;
     runUntil(g, () => cutter.built, 300);
@@ -75,7 +75,7 @@ describe('storehouses', () => {
     const s = storehouse(g);
     s.stock = bag({ log: 0, plank: 5, stone: 5 });
     const hq = { ...g.hq.stock };
-    const site = g.place('woodcutter', s.x + 3, s.y - 3);
+    const site = placeBare(g, 'woodcutter', s.x + 3, s.y - 3);
     g.buildRoad(site.flag, g.flags.get(s.flag)!);
     runUntil(g, () => site.built, 300);
     expect(s.stock.plank).toBe(3);
@@ -86,7 +86,7 @@ describe('storehouses', () => {
     const g = flatGame();
     const s = storehouse(g);
     s.stock = bag({ log: 0, plank: 1, stone: 0 });
-    const site = g.place('woodcutter', s.x + 3, s.y - 3);
+    const site = placeBare(g, 'woodcutter', s.x + 3, s.y - 3);
     g.buildRoad(site.flag, g.flags.get(s.flag)!);
     runUntil(g, () => site.built, 300);
     expect(s.stock.plank).toBe(0);

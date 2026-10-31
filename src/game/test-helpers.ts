@@ -1,6 +1,7 @@
 import { expect } from 'bun:test';
 import { Game, GOODS, Bag, bag } from './index';
 import { W } from '../world';
+import { placeSite } from './construction';
 
 // A game whose land around the HQ is flat grass with no trees or boulders, so tests can
 // place things where they want without depending on how the map generator lays out a seed.
@@ -67,10 +68,15 @@ export function expectIncomingConsistent(g: Game) {
   }
 }
 
-// Place a building and join its flag to the HQ's flag with a road.
+// Place a building site without the road it would get on its own, so a test can lay roads itself.
+export function placeBare(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
+  return placeSite(g, type, x, y);
+}
+
+// Place a building and join its flag to the HQ's flag with a road straight to it.
 export function placeLinked(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
   expect(g.canPlace(type, x, y)).toBeNull();
-  const b = g.place(type, x, y);
+  const b = placeBare(g, type, x, y);
   const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
   if (typeof r === 'string') throw new Error(r);
   expect(g.linked(b)).toBe(true);

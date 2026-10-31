@@ -1,6 +1,7 @@
 // Placing buildings and building them: where they may go, and how builders turn materials into a building.
 import { findPath } from '../path';
 import { W } from '../world';
+import { autoRoad } from './autoroad';
 import { BDEFS, BType, GOODS, bag } from './defs';
 import type { Game } from './game';
 import { computeTerritory, flaggable, near, roadable } from './land';
@@ -29,7 +30,15 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   return BDEFS[type] ? null : 'Unknown building';
 }
 
+// A new building site, with its road to your roads if one fits.
 export function place(g: Game, type: BType, x: number, y: number) {
+  const b = placeSite(g, type, x, y);
+  autoRoad(g, b);
+  return b;
+}
+
+// A new building site with no road yet.
+export function placeSite(g: Game, type: BType, x: number, y: number) {
   const b = addBuilding(g, type, x, y);
   b.status = 'Waiting for a builder';
   return b;

@@ -2,7 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, BDEFS, bag } from '.';
 import { W } from '../world';
-import { flatGame, inside } from './test-helpers';
+import { flatGame, inside, placeBare } from './test-helpers';
 
 describe('a new game', () => {
   test('starts with a built HQ, its flag in front, and starting goods', () => {
@@ -88,7 +88,7 @@ describe('canPlace', () => {
     wallFlag(g, bx, by, 1);
     g.world.at(bx, by + 2).tree = 0;
     expect(g.canPlace('woodcutter', bx, by)).toBeNull();
-    const b = g.place('woodcutter', bx, by);
+    const b = placeBare(g, 'woodcutter', bx, by);
     expect(typeof g.buildRoad(b.flag, g.flags.get(g.hq.flag)!)).toBe('object');
     expect(g.linked(b)).toBe(true);
   });

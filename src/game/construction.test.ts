@@ -1,7 +1,7 @@
 // Builders, building sites and finished buildings.
 import { describe, expect, test } from 'bun:test';
 import { BDEFS, bag } from '.';
-import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, inside } from './test-helpers';
+import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, inside, placeBare } from './test-helpers';
 
 describe('construction', () => {
   test('a linked site gets its materials and is built', () => {
@@ -14,7 +14,7 @@ describe('construction', () => {
 
   test('a site with no road is never supplied', () => {
     const g = flatGame();
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     run(g, 60);
     expect(b.built).toBe(false);
     expect(b.stock).toEqual(bag({ log: 0, plank: 0, stone: 0 }));
@@ -53,7 +53,7 @@ describe('construction', () => {
 
   test('a site with no road to the HQ gets no builder', () => {
     const g = flatGame();
-    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y);
+    const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     run(g, 10);
     expect(b.builder).toBe(0);
     expect(g.pool).toBe(18);
