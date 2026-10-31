@@ -137,7 +137,7 @@ Saves live in your browser's local storage. You can keep as many as the storage 
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
 
-The save keeps the map, buildings, roads, flags, every good and your goals. It does not keep where settlers are.
+The save keeps the map, buildings, roads, flags, worn paths, every good and your goals. It does not keep where settlers are.
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
 
@@ -170,7 +170,7 @@ Browsers block sound until you click or press a key, so the sound starts then.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
-| `src/game/` | Simulation: buildings, demolishing, roads, settlers, carriers, farm fields, food, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, settlers, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
@@ -200,6 +200,10 @@ Every building has a flag in front of its door. Flags mark where roads end and w
 A carrier takes one good from the building that has it and walks it along the roads, all the way
 to the building that needs it. Goods never wait on flags. Settlers walk 1.5× faster on roads.
 A building that isn't connected to the HQ by road gets no materials.
+
+Off the roads, settlers' footsteps wear the grass into dirt paths. Settlers walk up to 1.25×
+faster on a well-worn path, so they keep to the same lines. A path nobody walks for a minute
+fades back to grass over about 3 minutes.
 
 ## Ideas
 
