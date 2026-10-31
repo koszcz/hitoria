@@ -3,6 +3,7 @@
 import type { P } from '../path';
 import { MAP_VERSION, World, W, H } from '../world';
 import { BType, CROP_GROW, bag } from './defs';
+import { spawnAnimals, stepAnimal } from './animals';
 import { planAutoRoad } from './autoroad';
 import { pickFields } from './fields';
 import { checkGoals, goalNow } from './goals';
@@ -16,7 +17,7 @@ import { step } from './settlers';
 import { staff } from './staff';
 import { fade } from './wear';
 import { isStore, stored } from './stores';
-import type { Building, Flag, Road, Settler } from './types';
+import type { Animal, Building, Flag, Road, Settler } from './types';
 
 export class Game {
   world: World;
@@ -24,6 +25,7 @@ export class Game {
   settlers = new Map<number, Settler>();
   flags = new Map<number, Flag>();
   roads = new Map<number, Road>();
+  animals = new Map<number, Animal>(); // wild animals; not saved, a loaded game spawns them again
   hq: Building;
   pool = 18; // idle settlers inside the HQ
   time = 0;
@@ -52,6 +54,7 @@ export class Game {
     this.hq.progress = 1;
     this.hq.stock = bag({ log: 6, plank: 24, stone: 14 });
     this.computeTerritory();
+    spawnAnimals(this);
   }
 
   save(): SaveData {
@@ -154,5 +157,6 @@ export class Game {
       else if (b.type === 'house') raise(this, b, dt);
     }
     for (const s of this.settlers.values()) step(this, s, dt);
+    for (const a of this.animals.values()) stepAnimal(this, a, dt);
   }
 }
