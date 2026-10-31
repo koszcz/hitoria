@@ -1,8 +1,7 @@
 # Changelog
 
 Every change to Hitoria gets an entry here. Each entry is one Markdown file in
-[entries/](entries/). An entry can also have before and after screenshots in [shots/](shots/),
-but they are optional.
+[entries/](entries/), with before and after screenshots in [shots/](shots/).
 `bun run changelog` turns them into `changelog.html`. The build also puts the page online at
 https://koszcz.github.io/hitoria/changelog.html.
 
@@ -19,15 +18,27 @@ Add the entry in the same commit as the change, or in the last commit of the bra
    ---
    title: Storehouse
    date: '2026-10-30 22:36'
+   shots:
+     - name: card
+       caption: The storehouse in the build menu.
+       steps:
+         - key: b
+         - hover: '#buildmenu .tile[data-type="storehouse"]'
+         - wait: 500
    ---
    You can now build a storehouse. Spare goods go to the nearest store by road.
    ```
 
 3. Write the body for players. Say what they can now see or do. Use plain words.
-4. Commit the entry together with the change.
+4. If the change shows in the game, take the screenshots:
 
-You don't need screenshots. To add some anyway, see
-[Add screenshots if you want them](#add-screenshots-if-you-want-them).
+   ```bash
+   bun run changelog:shots 2026-10-30-storehouse
+   ```
+
+5. Look at the screenshots in `shots/<entry>/`. Check that they show the change.
+   If not, change the steps and run the command again.
+6. Commit the entry and its screenshots together with the change.
 
 ## Fields
 
@@ -36,34 +47,11 @@ You don't need screenshots. To add some anyway, see
 | `title` | Yes | A short name for the change. |
 | `date` | Yes | `'YYYY-MM-DD HH:MM'`, in quotes. Entries are listed newest first. |
 | `kind` | No | `dev` for changes players don't see, such as tests or tooling. These are hidden on the page unless the reader asks for them. Leave it out for game changes. |
-| `shots` | No | The screenshots to take. Leave it out unless you want screenshots. |
+| `shots` | No | The screenshots to take. Leave it out if the change doesn't show in the game. |
 | `commit` | No | The commit that made the change. Leave it out. It defaults to the commit that added the entry file. |
 | `before` | No | The version to compare with, as a commit or branch. Leave it out unless the default is wrong. |
 
-## Add screenshots if you want them
-
-1. Add a `shots` list to the entry:
-
-   ```markdown
-   shots:
-     - name: card
-       caption: Hovering over the storehouse in the build bar.
-       steps:
-         - hover: '#buildbar button:nth-child(6)'
-         - wait: 500
-   ```
-
-2. Take the screenshots:
-
-   ```bash
-   bun run changelog:shots 2026-10-30-storehouse
-   ```
-
-3. Look at the screenshots in `shots/<entry>/`. If they don't show the change, change the steps
-   and run the command again.
-4. Commit the screenshots with the entry.
-
-### How screenshots are taken
+## How screenshots are taken
 
 `bun run changelog:shots` builds two versions of the game and opens each in headless Chrome:
 

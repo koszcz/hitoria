@@ -1,6 +1,12 @@
 ---
 title: Build menu
 date: '2026-10-31 19:00'
+shots:
+  - name: menu
+    caption: The build menu, opened with the B key.
+    steps:
+      - key: b
+      - wait: 500
 ---
 The bar at the bottom of the screen is now short: **🔨 Build**, **🛤️ Road** and **✖️ Remove**.
 

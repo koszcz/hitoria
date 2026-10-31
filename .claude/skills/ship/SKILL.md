@@ -12,7 +12,8 @@ before you merge and push.
 
 1. Run `bun run check` and `bun test`. Both must pass.
 2. Add a changelog entry, unless the branch already has one for this change.
-   Follow `changelog/README.md`, then run `bun run changelog`. Skip screenshots.
+   Follow `changelog/README.md`. If the change shows in the game, take before and after
+   screenshots and check that they show the change. Then run `bun run changelog`.
 3. Commit your changes with a short message that says what changed. Add only the files this
    change touched, by name.
 4. If you are in a worktree, leave it first with `ExitWorktree` and `action: "keep"`. You are
