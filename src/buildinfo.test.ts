@@ -20,11 +20,17 @@ describe('build card facts', () => {
     expect(producers('stone')).toEqual(['quarry', 'mine']);
     expect(consumers('fish')).toEqual(['mine', 'house']);
     expect(consumers('flour')).toEqual(['bakery']);
+    expect(makes('well')).toBe('water');
+    expect(producers('water')).toEqual(['well']);
+    expect(consumers('water')).toEqual(['bakery']);
   });
 
   test('workshops show their speed', () => {
     expect(buildFacts('sawmill').makes).toBe('Turns 1 Log into 1 Plank every 5 s. That is up to 12 a minute.');
     expect(buildFacts('mine').makes).toBe('Turns 1 Bread or Fish into 2 Stone every 8 s. That is up to 15 a minute.');
+    expect(buildFacts('bakery').makes).toBe('Turns 1 Flour and 1 Water into 1 Bread every 6 s. That is up to 10 a minute.');
+    expect(buildFacts('well').makes).toBe('Draws 1 Water from the ground every 5 s. It needs no other goods.');
+    expect(buildFacts('well').worth).toContain('Water feeds the Bakery.');
   });
 
   test('worth names who uses the goods', () => {
@@ -68,10 +74,23 @@ describe('build card notes about your game', () => {
 
   test('stock in store also counts as supply', () => {
     const g = flatGame();
-    g.hq.stock.flour = 3;
+    Object.assign(g.hq.stock, { flour: 3, water: 3 });
     expect(buildNow(g, 'bakery').warn.some((w) => w.includes('You make no'))).toBe(false);
     g.hq.stock.flour = 0;
-    expect(buildNow(g, 'bakery').warn).toContain('You make no Flour yet. Build a Mill first.');
+    expect(buildNow(g, 'bakery').warn).toEqual(['You make no Flour yet. Build a Mill first.']);
+  });
+
+  test('a bakery warns about flour and water on their own', () => {
+    const g = flatGame();
+    Object.assign(g.hq.stock, { flour: 3, water: 0 });
+    expect(buildNow(g, 'bakery').warn).toEqual(['You make no Water yet. Build a Well first.']);
+    g.hq.stock.flour = 0;
+    expect(buildNow(g, 'bakery').warn).toEqual([
+      'You make no Flour yet. Build a Mill first.',
+      'You make no Water yet. Build a Well first.',
+    ]);
+    g.place('well', g.hq.x + 4, g.hq.y);
+    expect(buildNow(g, 'bakery').warn).toEqual(['You make no Flour yet. Build a Mill first.']);
   });
 
   test('the mine accepts either food', () => {

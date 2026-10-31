@@ -8,7 +8,7 @@ export const SEED = 214;
 // widen the land, so the second round has room.
 const ROUNDS: BType[][] = [
   ['woodcutter', 'forester', 'sawmill', 'quarry', 'lookout', 'lookout'],
-  ['fisher', 'farm', 'mill', 'bakery', 'house', 'storehouse', 'mine', 'woodcutter', 'house'],
+  ['fisher', 'farm', 'well', 'mill', 'bakery', 'house', 'storehouse', 'mine', 'woodcutter', 'house'],
 ];
 const RADIUS = 9; // how far from the HQ to look for a spot
 const GAP = 2; // free tiles to keep between buildings, so each one is easy to see

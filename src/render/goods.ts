@@ -32,6 +32,11 @@ function goodGeometry(): Record<Good, THREE.BufferGeometry> {
       piece(new THREE.CylinderGeometry(0.02, 0.03, 0.04, 6), '#e2d8c0', 0, 0.09, 0),
       piece(new THREE.CylinderGeometry(0.022, 0.022, 0.01, 6), '#a07a4a', 0, 0.075, 0),
     ]),
+    water: mergeGeometries([
+      piece(new THREE.CylinderGeometry(0.045, 0.036, 0.08, 9), '#8a6238', 0, 0.02, 0),
+      piece(new THREE.CylinderGeometry(0.04, 0.04, 0.005, 9), '#4a8ab0', 0, 0.058, 0),
+      piece(new THREE.TorusGeometry(0.045, 0.004, 4, 10, Math.PI), '#5a5048', 0, 0.06, 0),
+    ]),
     bread: mergeGeometries([
       piece(new THREE.SphereGeometry(0.06, 8, 6).scale(1.5, 0.6, 0.9), '#b8732e', 0, 0, 0),
       piece(new THREE.BoxGeometry(0.012, 0.01, 0.06), '#e8c080', -0.03, 0.035, 0),

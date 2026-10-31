@@ -1,13 +1,13 @@
 // Goods, roles and building types, with the costs, recipes and timings that tune the game.
-export type Good = 'log' | 'plank' | 'stone' | 'fish' | 'grain' | 'flour' | 'bread';
-export const GOODS: Good[] = ['log', 'plank', 'stone', 'fish', 'grain', 'flour', 'bread'];
+export type Good = 'log' | 'plank' | 'stone' | 'fish' | 'grain' | 'flour' | 'bread' | 'water';
+export const GOODS: Good[] = ['log', 'plank', 'stone', 'fish', 'grain', 'flour', 'bread', 'water'];
 export type Bag = Record<Good, number>;
-export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, fish: 0, grain: 0, flour: 0, bread: 0, ...p });
+export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, fish: 0, grain: 0, flour: 0, bread: 0, water: 0, ...p });
 
 export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout'
-  | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner';
+  | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner' | 'drawer';
 export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse'
-  | 'fisher' | 'farm' | 'mill' | 'bakery' | 'mine' | 'house' | 'monument';
+  | 'fisher' | 'farm' | 'well' | 'mill' | 'bakery' | 'mine' | 'house' | 'monument';
 export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant' | 'fish' | 'reap';
 
 // Houses grow your number of settlers.
@@ -36,17 +36,21 @@ export const BDEFS: Record<BType, BDef> = {
   storehouse: { name: 'Storehouse', icon: '📦', desc: 'Stores spare goods close to where they are made and needed.', cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
   fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5 },
   farm: { name: 'Farm', icon: '🌾', desc: 'Sows grain on free grass nearby and harvests it when it is ripe.', cost: { plank: 3, stone: 1 }, buildTime: 8, worker: 'farmer', radius: 3 },
+  well: { name: 'Well', icon: '🪣', desc: 'Draws water from the ground. Build it on any flat grass.', cost: { plank: 2, stone: 1 }, buildTime: 6, worker: 'drawer', radius: 0 },
   mill: { name: 'Mill', icon: '⚙️', desc: 'Grinds grain into flour.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'miller', radius: 0 },
-  bakery: { name: 'Bakery', icon: '🍞', desc: 'Bakes flour into bread.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'baker', radius: 0 },
+  bakery: { name: 'Bakery', icon: '🍞', desc: 'Bakes flour and water into bread.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'baker', radius: 0 },
   house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
   monument: { name: 'Monument', icon: '🗿', desc: 'A tall stone monument to your peaceful island. It does no work, but your settlers are proud of it.', cost: { plank: 10, stone: 16 }, buildTime: 30, worker: null, radius: 0 },
   mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
 };
-export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument'];
+export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well'];
 
-// Workshops turn goods into other goods inside the building. With several inputs, any one of them will do.
+// Workshops turn goods into other goods inside the building. With several inputs in `from`, any one of them
+// will do. The good in `with` is needed as well.
 export interface Recipe {
   from: Good[];
+  with?: Good;
+  lacking?: string; // the status while the `with` good is missing
   to: Good;
   n: number; // goods made from one input
   t: number; // seconds of work
@@ -56,12 +60,13 @@ export interface Recipe {
 export const RECIPES: Partial<Record<BType, Recipe>> = {
   sawmill: { from: ['log'], to: 'plank', n: 1, t: 5, doing: 'Sawing planks', waiting: 'Waiting for logs' },
   mill: { from: ['grain'], to: 'flour', n: 1, t: 5, doing: 'Grinding flour', waiting: 'Waiting for grain' },
-  bakery: { from: ['flour'], to: 'bread', n: 1, t: 6, doing: 'Baking bread', waiting: 'Waiting for flour' },
+  bakery: { from: ['flour'], with: 'water', to: 'bread', n: 1, t: 6, doing: 'Baking bread', waiting: 'Waiting for flour', lacking: 'Waiting for water' },
   mine: { from: ['bread', 'fish'], to: 'stone', n: 2, t: 8, doing: 'Digging stone', waiting: 'Waiting for fish or bread' },
 };
 
 export const SPEED = 1.7; // tiles per second
 export const ROAD_SPEED = 1.5; // multiplier on roads
+export const WELL_DRAW = 5; // seconds to draw one bucket of water
 export const PILE = 4; // max finished goods a hut keeps before its worker pauses
 export const CROP_GROW = 60; // seconds for sown grain to ripen
 export const FARM_FIELDS = 6; // fields every farm keeps for itself

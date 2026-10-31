@@ -34,7 +34,8 @@ Only goods your settlers make count toward a goal, not the goods you start with.
    - A quarry (`3`) next to boulders makes stone.
    - A sawmill (`4`) turns logs into planks. You need planks for every new building.
    - A lookout tower (`5`) expands your land, so you have room for more.
-   - Fishers, farms, mills and bakeries make food. Houses turn food into new settlers.
+   - Fishers, farms, mills and bakeries make food. A bakery also needs water from a well.
+     Houses turn food into new settlers.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
    - Across the water from the bay lies a second island. You can't reach it yet.
 
@@ -187,6 +188,7 @@ Browsers block sound until you click or press a key, so the sound starts then.
 - A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
   eats fish or bread.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
+- A well draws water on any flat grass. The bakery needs 1 flour and 1 water for each loaf.
 - Each farm keeps 6 fields of its own on the grass around it. You can place a farm only where
   they fit, and nothing else can be built on them. Demolishing the farm frees them.
 - A house turns fish or bread into new settlers.

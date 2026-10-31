@@ -56,8 +56,9 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   storehouse: { name: 'Magazyn', desc: 'Przechowuje zapasy blisko miejsc, w których się je wytwarza i zużywa.' },
   fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu.' },
   farm: { name: 'Gospodarstwo', desc: 'Sieje zboże na wolnej trawie w pobliżu i zbiera je, gdy dojrzeje.' },
+  well: { name: 'Studnia', desc: 'Czerpie wodę z ziemi. Zbuduj ją na dowolnej płaskiej trawie.' },
   mill: { name: 'Młyn', desc: 'Miele zboże na mąkę.' },
-  bakery: { name: 'Piekarnia', desc: 'Piecze chleb z mąki.' },
+  bakery: { name: 'Piekarnia', desc: 'Piecze chleb z mąki i wody.' },
   mine: {
     name: 'Kopalnia kamienia',
     desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 kamienie. Zbuduj ją przy górze.',
@@ -77,10 +78,10 @@ export const buildingDesc = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].desc :
 
 // Goods as a label, as in "Planks: 4".
 const GOOD_EN: Record<Good, string> = {
-  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread',
+  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water',
 };
 const GOOD_PL: Record<Good, string> = {
-  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb',
+  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda',
 };
 export const goodName = (g: Good) => (lang === 'pl' ? GOOD_PL : GOOD_EN)[g];
 
@@ -115,6 +116,8 @@ const MESSAGES_PL: Record<string, string> = {
   'Waiting for grain': 'Czeka na zboże',
   'Baking bread': 'Piecze chleb',
   'Waiting for flour': 'Czeka na mąkę',
+  'Waiting for water': 'Czeka na wodę',
+  'Drawing water': 'Czerpie wodę',
   'Digging stone': 'Wydobywa kamień',
   'Waiting for fish or bread': 'Czeka na ryby lub chleb',
   'A settler will be born soon': 'Wkrótce urodzi się osadnik',

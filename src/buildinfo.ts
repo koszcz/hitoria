@@ -1,4 +1,4 @@
-import { Game, BDEFS, BUILDABLE, BType, Good, RECIPES, CROP_GROW, HOUSE_FOOD } from './game';
+import { Game, BDEFS, BUILDABLE, BType, Good, RECIPES, CROP_GROW, HOUSE_FOOD, WELL_DRAW } from './game';
 import { getLang, goodName, buildingName, buildingDesc, join, plural } from './i18n';
 
 const bname = (t: BType) => buildingName(t);
@@ -20,7 +20,7 @@ const GATHER: Partial<Record<BType, Gather>> = {
 
 // One of a good, for the recipe line.
 const ONE_EN: Record<Good, string> = {
-  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread',
+  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water',
 };
 // Polish goods counted one by one: the form after 1, after 2–4, and after 5 or more.
 const COUNT_PL: Record<Good, [string, string, string]> = {
@@ -31,13 +31,15 @@ const COUNT_PL: Record<Good, [string, string, string]> = {
   grain: ['snop zboża', 'snopy zboża', 'snopów zboża'],
   flour: ['worek mąki', 'worki mąki', 'worków mąki'],
   bread: ['bochenek chleba', 'bochenki chleba', 'bochenków chleba'],
+  water: ['wiadro wody', 'wiadra wody', 'wiader wody'],
 };
 // Polish goods whose name is plural ("Kłody zasilają"), not singular ("Kamień zasila").
 const PLURAL_PL: Partial<Record<Good, true>> = { log: true, plank: true, fish: true };
 
 const EN = {
-  recipe: (from: Good[], n: number, to: Good, t: number, perMin: number) =>
-    `Turns 1 ${join(from.map((g) => ONE_EN[g]), 'or')} into ${n} ${n === 1 ? ONE_EN[to] : goodName(to)} every ${t} s. That is up to ${perMin} a minute.`,
+  recipe: (from: Good[], also: Good[], n: number, to: Good, t: number, perMin: number) =>
+    `Turns ${join([join(from.map((g) => ONE_EN[g]), 'or'), ...also.map((g) => ONE_EN[g])].map((s) => `1 ${s}`), 'and')} into ${n} ${n === 1 ? ONE_EN[to] : goodName(to)} every ${t} s. That is up to ${perMin} a minute.`,
+  draw: `Draws 1 Water from the ground every ${WELL_DRAW} s. It needs no other goods.`,
   gather: (g: Gather) => `Brings home ${goodName(g.good)} from ${g.from.en}.`,
   everyNeeds: (g: Good) => `Every building needs ${goodName(g)}.`,
   someNeed: (n: number, all: number, g: Good) => `${n} of ${all} buildings need ${goodName(g)} to be built.`,
@@ -67,8 +69,9 @@ const EN = {
 };
 
 const PL: typeof EN = {
-  recipe: (from, n, to, t, perMin) =>
-    `Zamienia 1 ${join(from.map((g) => COUNT_PL[g][0]), 'lub')} na ${n} ${plural(n, ...COUNT_PL[to])} co ${t} s. To do ${perMin} na minutę.`,
+  recipe: (from, also, n, to, t, perMin) =>
+    `Zamienia ${join([join(from.map((g) => COUNT_PL[g][0]), 'lub'), ...also.map((g) => COUNT_PL[g][0])].map((s) => `1 ${s}`), 'i')} na ${n} ${plural(n, ...COUNT_PL[to])} co ${t} s. To do ${perMin} na minutę.`,
+  draw: `Czerpie z ziemi 1 wiadro wody co ${WELL_DRAW} s. Nie potrzebuje innych towarów.`,
   gather: (g) => `Przynosi ${goodName(g.good).toLowerCase()} ${g.from.pl}.`,
   everyNeeds: (g) => `Każdy budynek wymaga do budowy materiału: ${goodName(g)}.`,
   someNeed: (n, all, g) => `${n} z ${all} budynków wymaga do budowy materiału: ${goodName(g)}.`,
@@ -100,12 +103,19 @@ const text = () => (getLang() === 'pl' ? PL : EN);
 
 // The good a building makes, if any.
 export function makes(type: BType): Good | null {
+  if (type === 'well') return 'water';
   return GATHER[type]?.good ?? RECIPES[type]?.to ?? null;
 }
 
 export const producers = (g: Good) => BUILDABLE.filter((t) => makes(t) === g);
 // The goods a building uses up: a workshop's inputs, or a house's food.
-const eats = (t: BType): Good[] => RECIPES[t]?.from ?? (t === 'house' ? HOUSE_FOOD : []);
+const eats = (t: BType): Good[] => needs(t).flat();
+// What a building uses up, as groups: it needs one good from every group.
+const needs = (t: BType): Good[][] => {
+  const rc = RECIPES[t];
+  if (rc) return rc.with ? [rc.from, [rc.with]] : [rc.from];
+  return t === 'house' ? [HOUSE_FOOD] : [];
+};
 export const consumers = (g: Good) => BUILDABLE.filter((t) => eats(t).includes(g));
 export const buildersOf = (g: Good) => BUILDABLE.filter((t) => BDEFS[t].cost[g]);
 
@@ -124,8 +134,9 @@ export function buildFacts(type: BType): BuildFacts {
   const x = text();
 
   let what = buildingDesc(type);
-  if (rc) what = x.recipe(rc.from, rc.n, rc.to, rc.t, Math.round((60 / rc.t) * rc.n));
+  if (rc) what = x.recipe(rc.from, rc.with ? [rc.with] : [], rc.n, rc.to, rc.t, Math.round((60 / rc.t) * rc.n));
   else if (gather) what = x.gather(gather);
+  else if (type === 'well') what = x.draw;
 
   const worth: string[] = [];
   if (out) {
@@ -163,9 +174,9 @@ export function buildNow(game: Game, type: BType): BuildNow {
   const have = !c.all ? x.none : x.have(c.built, c.planned);
 
   const warn: string[] = [];
-  const from = eats(type);
-  if (from.length && from.every((g) => !game.stored[g] && producers(g).every((t) => !count(t).all)))
-    warn.push(x.noInput(from, [...new Set(from.flatMap(producers))]));
+  for (const from of needs(type))
+    if (from.every((g) => !game.stored[g] && producers(g).every((t) => !count(t).all)))
+      warn.push(x.noInput(from, [...new Set(from.flatMap(producers))]));
   if (type === 'forester' && !count('woodcutter').all) warn.push(x.noWoodcutter);
   if (!game.pool && BDEFS[type].worker) warn.push(x.noIdle);
   return { have, warn };

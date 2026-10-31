@@ -38,8 +38,11 @@ describe('mines and food', () => {
     const g = flatGame();
     const { x, y } = g.hq;
     const farm = placeLinked(g, 'farm', x + 5, y - 4);
-    placeLinked(g, 'mill', x - 4, y);
+    const mill = placeLinked(g, 'mill', x - 4, y);
     placeLinked(g, 'bakery', x + 4, y + 3);
+    // The HQ flag has no room for a fourth road, so the well joins the mill's flag.
+    const well = placeBare(g, 'well', x - 4, y - 4);
+    if (typeof g.buildRoad(well.flag, g.flags.get(mill.flag)!) === 'string') throw new Error('No road to the well');
     runUntil(g, () => farm.built, 120);
     runUntil(g, () => g.world.tiles.some((t) => t.crop > 0), 60);
     runUntil(g, () => g.stored.bread >= 1, 600, () => expectIncomingConsistent(g));

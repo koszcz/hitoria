@@ -1,7 +1,7 @@
 // What a settler does next when they have nothing to do: each worker's job at their hut, and which tile to work on.
 import type { P } from '../path';
 import { W, Tile } from '../world';
-import { BDEFS, Good, PILE, RECIPES } from './defs';
+import { BDEFS, Good, PILE, RECIPES, WELL_DRAW } from './defs';
 import { carry } from './carriers';
 import type { Game } from './game';
 import { near, plantable } from './land';
@@ -123,11 +123,27 @@ export function idle(g: Game, s: Settler) {
       if (home.out[rc.to] >= PILE) return rest(2, 'Full, waiting for a carrier');
       const input = rc.from.find((k) => home.stock[k] > 0);
       if (!input) return rest(1, rc.waiting);
+      if (rc.with && !home.stock[rc.with]) return rest(1, rc.lacking!);
       home.status = rc.doing;
       s.tasks = [
-        { k: 'do', f: () => { home.stock[input]--; home.busy = true; home.using = input; } },
+        { k: 'do', f: () => {
+          home.stock[input]--;
+          if (rc.with) home.stock[rc.with]--;
+          home.busy = true;
+          home.using = input;
+        } },
         { k: 'work', t: rc.t },
         { k: 'do', f: () => { make(rc.to, rc.n); home.busy = false; home.using = null; } },
+      ];
+      return;
+    }
+    case 'drawer': {
+      if (home.out.water >= PILE) return rest(2, 'Full, waiting for a carrier');
+      home.status = 'Drawing water';
+      s.tasks = [
+        { k: 'do', f: () => { home.busy = true; } },
+        { k: 'work', t: WELL_DRAW },
+        { k: 'do', f: () => { make('water'); home.busy = false; } },
       ];
       return;
     }

@@ -1,5 +1,5 @@
 // Saving a game to plain data and restoring it. The map is rebuilt from the seed; only what changes during play is stored.
-import { GOODS, Bag, Good, bag } from './defs';
+import { GOODS, Bag, Good, RECIPES, bag } from './defs';
 import { builtStatus } from './construction';
 import type { Game } from './game';
 import { claimFields } from './fields';
@@ -43,7 +43,11 @@ export function save(g: Game): SaveData {
     const home = bs.get(s.home);
     if (!home) continue;
     if (s.carrying) home.out[s.carrying]++;
-    if (home.busy && home.using) home.stock[home.using]++;
+    if (home.busy && home.using) {
+      home.stock[home.using]++;
+      const also = RECIPES[home.type]?.with;
+      if (also) home.stock[also]++;
+    }
   }
   for (const b of buildings) {
     b.worker = b.builder = 0;

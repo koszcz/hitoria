@@ -2,7 +2,7 @@
 import type { BType } from '../game';
 
 export type Body = 'keep' | 'cabin' | 'steep' | 'stonehut' | 'shed' | 'tower' | 'barn' | 'stilts'
-  | 'longhouse' | 'windmill' | 'brick' | 'mound' | 'cottage' | 'obelisk';
+  | 'longhouse' | 'windmill' | 'brick' | 'mound' | 'cottage' | 'obelisk' | 'wellhead';
 
 export interface Look {
   body: Body;
@@ -21,6 +21,7 @@ export const LOOKS: Record<BType, Look> = {
   storehouse: { body: 'barn', wall: '#c8b48c', roof: '#76542e' },
   fisher: { body: 'stilts', wall: '#a49c8c', roof: '#2f7f86' },
   farm: { body: 'longhouse', wall: '#e0c99a', roof: '#d0aa4a' },
+  well: { body: 'wellhead', wall: '#a8a294', roof: '#c86ab0' },
   mill: { body: 'windmill', wall: '#e6dcc4', roof: '#643258' },
   bakery: { body: 'brick', wall: '#b0624a', roof: '#c4503a' },
   mine: { body: 'mound', wall: '#9a948a', roof: '#2e3034' },
