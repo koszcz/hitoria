@@ -10,7 +10,7 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-- **Start near a mountain and shore**: every map puts a mountain and the shore within early reach of the HQ. *Fun 2 · Effort S*
+*Empty.*
 
 ## Inbox
 
@@ -65,6 +65,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Start near a mountain and shore**: every map puts a mountain and a bay to the open sea in the HQ's land, with room for a stone mine and a fisher. *2026-10-31*
 - **Buildings that look different**: each building has its own shape and colours, so you can tell them apart at a glance. *2026-10-31*
 - **Auto road for new buildings**: a new building gets the shortest road to the nearest joined flag or road. *2026-10-31*
 - **Population**: houses turn fish or bread into new settlers, up to 4 per house. *2026-10-31*

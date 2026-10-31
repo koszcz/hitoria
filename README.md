@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep: huts, a windmill, two lookout towers, a stone mine and grain fields, all joined by roads](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a windmill, two lookout towers and a stone mine, all joined by roads](docs/screenshot.jpg)
 
 ## How to play
 
@@ -24,6 +24,7 @@ economy. Nobody attacks you.
    - A sawmill (`4`) turns logs into planks. You need planks for every new building.
    - A lookout tower (`5`) expands your land, so you have room for more.
    - Fishers, farms, mills and bakeries make food. Houses turn food into new settlers.
+   - Your starting land always has a mountain for a stone mine and a bay for a fisher.
 
 Every building needs a road to the HQ. Without one, no goods arrive and the builder or worker
 waits. A sign with a crossed-out road floats over any building that has no road. Click a building
@@ -140,7 +141,7 @@ Press F3 to see the level, and how much the game draws each frame.
 
 | File | What it does |
 | --- | --- |
-| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains |
+| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, and the mountain and bay every start gets |
 | `src/game/` | Simulation: buildings, roads, settlers, carriers, food and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |

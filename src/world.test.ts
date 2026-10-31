@@ -51,6 +51,39 @@ describe('World', () => {
   }
 });
 
+// The HQ's land reaches 9 tiles.
+const LAND = 9;
+const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
+
+function inLand(w: World, x: number, y: number) {
+  return w.inside(x, y) && Math.hypot(x - w.start.x, y - w.start.y) <= LAND;
+}
+
+// Water in the HQ's land joins the map edge through water, so it is a bay, not a pond.
+function bayJoinsSea(w: World) {
+  const seen = new Set<number>();
+  const todo: [number, number][] = [];
+  for (let y = 0; y < H; y++)
+    for (let x = 0; x < W; x++)
+      if (inLand(w, x, y) && w.at(x, y).t === 'water') todo.push([x, y]);
+  while (todo.length) {
+    const [x, y] = todo.pop()!;
+    if (!w.inside(x, y) || seen.has(y * W + x) || w.at(x, y).t !== 'water') continue;
+    if (x === 0 || y === 0 || x === W - 1 || y === H - 1) return true;
+    seen.add(y * W + x);
+    todo.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+  }
+  return false;
+}
+
+describe('start near a mountain and shore', () => {
+  for (const seed of SEEDS) {
+    test(`seed ${seed} has a bay that joins the open sea`, () => {
+      expect(bayJoinsSea(new World(seed))).toBe(true);
+    });
+  }
+});
+
 describe('isometric projection', () => {
   test('fromIso undoes toIso', () => {
     for (const [x, y] of [[0, 0], [3, 7], [12.5, 0.25], [-4, 9]]) {

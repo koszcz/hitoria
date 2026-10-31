@@ -20,6 +20,15 @@ export interface Tile {
 export const W = 64;
 export const H = 64;
 
+// Natural mountains stay this far from the start, so the HQ always has room around it.
+const OPEN = 7;
+// The guaranteed mountain: how far its centre sits from the start, and how wide it is.
+const PEAK_AWAY = 7.5;
+const PEAK_SIZE = 2.2;
+// The guaranteed bay: how far its head sits from the start, and how wide its water is.
+const BAY_AWAY = 7;
+const BAY_WIDTH = 1.8;
+
 export function rng(seed: number) {
   return () => {
     seed = (seed + 0x6d2b79f5) | 0;
@@ -49,12 +58,15 @@ export class World {
   tiles: Tile[] = [];
   territory = new Uint8Array(W * H);
   start = { x: W / 2, y: H / 2 };
+  private peak = this.start;
 
   constructor(seed: number) {
     const rand = rng(seed);
     const n1 = noise(rand, 16), n2 = noise(rand, 8), n3 = noise(rand, 4);
     const forest = noise(rand, 7), rocks = noise(rand, 5), tint = noise(rand, 3);
     const { x: sx, y: sy } = this.start;
+    const { peak, bay, out } = this.landmarks(seed);
+    this.peak = peak;
 
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
@@ -63,6 +75,14 @@ export class World {
         h = h + 0.2 - d * d * 0.55;
         const near = Math.hypot(x - sx, y - sy);
         if (near < 8) h = h * (near / 8) + 0.5 * (1 - near / 8);
+        if (near < OPEN) h = Math.min(h, 0.66); // room to build, whatever the noise says
+        const toPeak = Math.hypot(x - peak.x, y - peak.y);
+        if (toPeak < PEAK_SIZE) h = Math.max(h, 0.8 - toPeak * 0.03);
+        // The bay runs from its head straight out to the open sea, with a sandy shore.
+        const along = Math.max(0, (x - bay.x) * out.x + (y - bay.y) * out.y);
+        const toBay = Math.hypot(x - bay.x - out.x * along, y - bay.y - out.y * along);
+        if (toBay < BAY_WIDTH) h = Math.min(h, 0.24);
+        else if (toBay < BAY_WIDTH + 1.2) h = Math.min(h, 0.32);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
       }
@@ -78,7 +98,9 @@ export class World {
           tile.t = 'grass';
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
-        if (tile.t !== 'grass' || near < 3.5) continue;
+        // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
+        const foot = Math.hypot(x - this.peak.x, y - this.peak.y) < PEAK_SIZE + 2.5;
+        if (tile.t !== 'grass' || near < 3.5 || foot) continue;
         if (Math.hypot(x - grove.x, y - grove.y) < 2.8 && rand() < 0.8) tile.tree = 1;
         else if (Math.hypot(x - quarry.x, y - quarry.y) < 1.9) tile.rock = 4 + Math.floor(rand() * 3);
         else if ((forest(x, y) > 0.56 && rand() < 0.75) || rand() < 0.025) tile.tree = 1;
@@ -102,6 +124,24 @@ export class World {
       }
     }
     this.sowPlants(seed);
+  }
+
+  // Where the guaranteed mountain and the head of the bay sit, in the HQ's land. They sit on
+  // opposite sides, away from the guaranteed grove and quarry. They take their own random
+  // numbers, so the rest of the map keeps its shape.
+  private landmarks(seed: number) {
+    const rand = rng(seed ^ 0x1a4d);
+    const flip = rand() < 0.5;
+    const side = (centre: number) => ((centre + (rand() - 0.5) * 60) * Math.PI) / 180;
+    const peakAngle = side(flip ? 55 : 235);
+    const bayAngle = side(flip ? 235 : 55);
+    const { x: sx, y: sy } = this.start;
+    const out = { x: Math.cos(bayAngle), y: Math.sin(bayAngle) };
+    return {
+      peak: { x: sx + Math.cos(peakAngle) * PEAK_AWAY, y: sy + Math.sin(peakAngle) * PEAK_AWAY },
+      bay: { x: sx + out.x * BAY_AWAY, y: sy + out.y * BAY_AWAY },
+      out,
+    };
   }
 
   // Plants use their own random numbers, so adding them moves no tree or boulder on a map.
