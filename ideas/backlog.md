@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Survive winter goal**: a goal to get through the winter with no settler going hungry. *Fun 2 · Effort S · Needs: Goals, Winter fields · Approved · Branch: worktree-agent-a5d823e9425cf715f*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Survive winter goal**: a goal to get through the winter with no settler going hungry. *Fun 2 · Effort S · Needs: Goals, Winter fields · Approved*
 - **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M · Approved*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
 
