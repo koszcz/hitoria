@@ -13,6 +13,4 @@
 - Every change needs a changelog entry, in the same commit or the last commit of the branch.
   Follow [changelog/README.md](changelog/README.md):
   1. Add a file to `changelog/entries/`.
-  2. If the change shows in the game, run `bun run changelog:shots <entry>` before you commit.
-     Look at the screenshots and fix the steps until they show the change.
-  3. Run `bun run changelog` to rebuild `changelog.html`.
+  2. Run `bun run changelog` to rebuild `changelog.html`.
