@@ -139,7 +139,8 @@ The save buttons are in the ☰ menu at the top right.
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
 
-The save keeps the map, buildings, roads, flags, worn paths, every good and your goals. It does not keep where settlers are.
+The save keeps the map, buildings, roads, flags, worn paths, every good and your goals. It does not keep where settlers and
+wild animals are. The animals start again from their home spots.
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
 
@@ -172,9 +173,9 @@ Browsers block sound until you click or press a key, so the sound starts then.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, settlers, carriers, farm fields, food, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, settlers, wild animals, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, and the mute setting |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, land, water and trees |
@@ -208,6 +209,10 @@ A building that isn't connected to the HQ by road gets no materials.
 Off the roads, settlers' footsteps wear the grass into dirt paths. Settlers walk up to 1.25×
 faster on a well-worn path, so they keep to the same lines. A path nobody walks for a minute
 fades back to grass over about 3 minutes.
+
+Deer, hares and foxes live on the island. Each one wanders near its own spot and grazes. When a
+settler comes within about 2 tiles, it runs a few steps away. Animals never block settlers and
+leave no paths.
 
 ## Ideas
 
