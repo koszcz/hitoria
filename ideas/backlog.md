@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M · Approved · Branch: worktree-agent-a4bcf8a354bba3932*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M · Approved*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
 
 ## Inbox
