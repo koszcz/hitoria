@@ -7,34 +7,14 @@
 // changes, if the entry is not committed yet. "Before" is the entry's `before` field, or else the
 // commit's parent, or else the point where this branch left main. Each version is built into a temporary folder, served,
 // and opened in headless Chrome on the same island (a fixed seed) with a fresh, empty save store.
-import { existsSync, mkdirSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import puppeteer, { type Browser, type Page } from 'puppeteer-core';
-import { ROOT, SHOTS, readEntries, readEntry, type Entry, type Shot, type Step } from './entries';
+import { mkdirSync, rmSync } from 'node:fs';
+import type { Browser, Page } from 'puppeteer-core';
+import { CACHE, build, git, launchChrome, serve, tryGit } from './builds';
+import { SHOTS, readEntries, readEntry, type Entry, type Shot, type Step } from './entries';
 
 const SEED = 20261030;
 const VIEW = { width: 1280, height: 800 };
 const LOAD_MS = 3000; // time for the island to appear and settlers to start moving
-const CHROME = process.env.CHROME ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const CACHE = `${tmpdir()}/hitoria-builds`;
-
-const git = (...args: string[]) => {
-  const r = Bun.spawnSync(['git', ...args], { cwd: ROOT, stderr: 'pipe' });
-  if (r.exitCode !== 0) throw new Error(`git ${args.join(' ')}: ${r.stderr.toString().trim()}`);
-  return r.stdout.toString().trim();
-};
-const tryGit = (...args: string[]) => {
-  try {
-    return git(...args);
-  } catch {
-    return '';
-  }
-};
-
-function run(cmd: string[], cwd: string) {
-  const r = Bun.spawnSync(cmd, { cwd, stdout: 'pipe', stderr: 'pipe' });
-  if (r.exitCode !== 0) throw new Error(`${cmd.join(' ')} failed in ${cwd}:\n${r.stderr.toString()}`);
-}
 
 // Which versions to compare. null means "this checkout as it is now". undefined means there is no
 // earlier version, as for the very first commit.
@@ -46,44 +26,6 @@ function versions(e: Entry): { before?: string; after: string | null } {
   }
   const before = git('rev-parse', e.before ?? (tryGit('merge-base', 'HEAD', 'main') || 'HEAD'));
   return { before, after: null };
-}
-
-// Builds one version of the game and returns the folder with its index.html.
-function build(commit: string | null): string {
-  const bun = process.execPath;
-  if (commit === null) {
-    const out = `${CACHE}/working-tree`;
-    rmSync(out, { recursive: true, force: true });
-    run([bun, 'build', './index.html', '--outdir', out, '--minify'], ROOT);
-    return out;
-  }
-  const out = `${CACHE}/${commit}`;
-  if (existsSync(`${out}/index.html`)) return out;
-  const src = `${CACHE}/src-${commit}`;
-  rmSync(src, { recursive: true, force: true });
-  tryGit('worktree', 'prune');
-  git('worktree', 'add', '--detach', src, commit);
-  try {
-    run([bun, 'install'], src);
-    run([bun, 'build', './index.html', '--outdir', out, '--minify'], src);
-  } finally {
-    git('worktree', 'remove', '--force', src);
-  }
-  return out;
-}
-
-function serve(dir: string) {
-  return Bun.serve({
-    port: 0,
-    hostname: '127.0.0.1',
-    async fetch(req) {
-      const path = new URL(req.url).pathname;
-      const file = Bun.file(`${dir}${path === '/' ? '/index.html' : path}`);
-      // Old versions post crash and problem reports to the dev server. Accept and drop them.
-      if (req.method !== 'GET') return new Response('ok');
-      return (await file.exists()) ? new Response(file) : new Response('Not found', { status: 404 });
-    },
-  });
 }
 
 async function point(page: Page, target: string | [number, number]): Promise<[number, number] | null> {
@@ -151,11 +93,7 @@ if (!entries.length) {
   process.exit(1);
 }
 mkdirSync(CACHE, { recursive: true });
-const browser = await puppeteer.launch({
-  executablePath: CHROME,
-  headless: true,
-  args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--hide-scrollbars'],
-});
+const browser = await launchChrome();
 try {
   for (const e of entries) await shoot(browser, e);
 } finally {

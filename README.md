@@ -4,16 +4,18 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep: stone-and-timber houses, a windmill, a lookout tower and a stone mine, joined by roads](docs/screenshot.jpg)
+![A village around the HQ keep: huts, a windmill, two lookout towers, a stone mine and grain fields, all joined by roads](docs/screenshot.jpg)
 
 ## How to play
 
 You start with a headquarters (HQ), some goods and 18 settlers. Your goal is to grow a working
 economy. Nobody attacks you.
 
-1. **Place a woodcutter's hut.** Press `1`, then click open grass near trees.
-2. **Connect it with a road.** Press `R`, click the hut's flag, then click the flag in front of the
-   HQ. Right-click to stop drawing.
+1. **Place a woodcutter's hut.** Press `B` to open the build menu and pick the woodcutter's hut.
+   Then click open grass near trees.
+2. **Check its road.** The game lays a road to your nearest flag when one fits. If it can't, press
+   `R`, click the hut's flag, then click a flag that is joined to the HQ. Right-click to stop
+   drawing.
 3. **Watch it get built.** A builder walks to the site. Carriers bring planks from the HQ along the
    road. Once it is built, a woodcutter moves in and starts felling trees.
 4. **Grow your economy.**
@@ -21,6 +23,7 @@ economy. Nobody attacks you.
    - A quarry (`3`) next to boulders makes stone.
    - A sawmill (`4`) turns logs into planks. You need planks for every new building.
    - A lookout tower (`5`) expands your land, so you have room for more.
+   - Fishers, farms, mills and bakeries make food. Houses turn food into new settlers.
 
 Every building needs a road to the HQ. Without one, no goods arrive and the builder or worker
 waits. A sign with a crossed-out road floats over any building that has no road. Click a building
@@ -32,7 +35,8 @@ to see what it is doing and what it is waiting for.
 | --- | --- |
 | Move the map | Drag |
 | Zoom | Scroll |
-| Pick a building | `1`–`5`, or the build bar |
+| Open the build menu | `B`, or the Build button |
+| Pick a building straight away | `1`–`9` |
 | Place several of the same building | Shift-click |
 | Draw roads | `R` |
 | Remove a road or a lone flag | `X` |
@@ -62,6 +66,7 @@ bun run dev      # http://main.localhost:5173  (add ?seed=123 to start a fixed m
 bun run play     # http://play.localhost:5174  (a copy to play on, see below)
 bun run build    # static build in dist/
 bun test         # tests, kept next to the code they test
+bun run readme:shot   # take the screenshot at the top of this README again
 ```
 
 ## Running several copies
@@ -123,17 +128,25 @@ back to their building or flag, so nothing is lost.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains |
-| `src/game.ts` | Simulation: buildings, settlers, task queues, carrier dispatch |
+| `src/game/` | Simulation: buildings, roads, settlers, carriers, food and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render.ts` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle |
+| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, land, water, trees and roofs |
-| `src/ui.ts` | HUD, build bar, info panel |
+| `src/ui.ts` | HUD and info panel |
+| `src/buildmenu/` | The build menu |
+| `src/saves.ts` | Save slots in the browser's local storage |
+| `src/i18n.ts` | Translations |
 | `src/main.ts` | Input, camera, fixed-step game loop |
 
 ## Current economy
 
-Woodcutter → logs → Sawmill → planks. Forester replants trees, Quarry breaks boulders into stone,
-Lookout expands land. Everything is stored at the HQ.
+- Woodcutter → logs → Sawmill → planks. A forester replants trees.
+- A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
+  eats fish or bread.
+- Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
+- A house turns fish or bread into new settlers.
+- A lookout tower expands your land.
+- Goods are stored at the HQ and in storehouses.
 
 Every building has a flag in front of its door. Goods only travel along roads between flags:
 each road section has one carrier who passes goods from flag to flag, and a flag holds at most
