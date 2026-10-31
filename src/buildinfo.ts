@@ -1,4 +1,4 @@
-import { Game, BDEFS, BUILDABLE, BType, Good, RECIPES, CROP_GROW } from './game';
+import { Game, BDEFS, BUILDABLE, BType, Good, RECIPES, CROP_GROW, HOUSE_FOOD } from './game';
 
 export const GOOD_NAME: Record<Good, string> = {
   log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread',
@@ -23,6 +23,7 @@ const WORTH: Partial<Record<BType, string>> = {
   lookout: `Grows your land by ${BDEFS.lookout.radius} tiles around the tower, so you have room for more buildings.`,
   storehouse: 'Carriers take goods to the nearest store, so trips get shorter and goods arrive sooner.',
   mine: 'Never runs dry, unlike the boulders a Quarry breaks.',
+  house: 'More settlers mean more carriers, builders and workers. Build more houses to keep growing.',
 };
 
 const PLACE: Partial<Record<BType, string>> = {
@@ -40,7 +41,9 @@ export function makes(type: BType): Good | null {
 }
 
 export const producers = (g: Good) => BUILDABLE.filter((t) => makes(t) === g);
-export const consumers = (g: Good) => BUILDABLE.filter((t) => RECIPES[t]?.from.includes(g));
+// The goods a building uses up: a workshop's inputs, or a house's food.
+const eats = (t: BType): Good[] => RECIPES[t]?.from ?? (t === 'house' ? HOUSE_FOOD : []);
+export const consumers = (g: Good) => BUILDABLE.filter((t) => eats(t).includes(g));
 export const buildersOf = (g: Good) => BUILDABLE.filter((t) => BDEFS[t].cost[g]);
 
 // The fixed facts about a building type, shown before you place it.
@@ -100,10 +103,10 @@ export function buildNow(game: Game, type: BType): BuildNow {
     : `You have ${c.built} built${c.planned ? ` and ${c.planned} being built` : ''}.`;
 
   const warn: string[] = [];
-  const rc = RECIPES[type];
-  if (rc && rc.from.every((g) => !game.stored[g] && producers(g).every((t) => !count(t).all))) {
-    const src = [...new Set(rc.from.flatMap(producers))].map(bname);
-    warn.push(`You make no ${list(rc.from.map((g) => GOOD_NAME[g]), 'or')} yet. Build a ${list(src, 'or')} first.`);
+  const from = eats(type);
+  if (from.length && from.every((g) => !game.stored[g] && producers(g).every((t) => !count(t).all))) {
+    const src = [...new Set(from.flatMap(producers))].map(bname);
+    warn.push(`You make no ${list(from.map((g) => GOOD_NAME[g]), 'or')} yet. Build a ${list(src, 'or')} first.`);
   }
   if (type === 'forester' && !count('woodcutter').all) warn.push("New trees only help once a Woodcutter's Hut fells them.");
   if (!game.pool && BDEFS[type].worker) warn.push('No idle settlers right now. It will wait for a worker.');

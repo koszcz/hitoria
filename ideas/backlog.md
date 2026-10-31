@@ -10,7 +10,6 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-- **Population**: houses that grow your number of settlers over time. *Fun 3 · Effort M*
 - **Start near a mountain and shore**: every map puts a mountain and the shore within early reach of the HQ. *Fun 2 · Effort S*
 - **Demolish a building**: remove a building you placed in the wrong spot. *Fun 2 · Effort S*
 
@@ -60,6 +59,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Population**: houses turn fish or bread into new settlers, up to 4 per house. *2026-10-31*
 - **Plants and wind**: grass, flowers, bushes, ferns, mushrooms, fallen logs, reeds and pebbles; birches and trees in blossom; wind gusts that bend them. *2026-10-31*
 - **Stone mine and food chain**: fishers, farms, a mill and a bakery feed a stone mine that never runs dry. *2026-10-30*
 - **Storehouse**: a building that stores goods near where they're made, so carriers walk less. *2026-10-30*

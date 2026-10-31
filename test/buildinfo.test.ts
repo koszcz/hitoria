@@ -18,7 +18,7 @@ describe('build card facts', () => {
     expect(makes('woodcutter')).toBe('log');
     expect(makes('lookout')).toBeNull();
     expect(producers('stone')).toEqual(['quarry', 'mine']);
-    expect(consumers('fish')).toEqual(['mine']);
+    expect(consumers('fish')).toEqual(['mine', 'house']);
     expect(consumers('flour')).toEqual(['bakery']);
   });
 
@@ -31,7 +31,8 @@ describe('build card facts', () => {
     expect(buildFacts('sawmill').worth).toContain('Every building needs Planks.');
     expect(buildFacts('woodcutter').worth).toContain('Logs feed the Sawmill.');
     expect(buildFacts('mill').worth).toContain('Flour feeds the Bakery.');
-    expect(buildFacts('fisher').worth).toContain('Fish feeds the Stone Mine.');
+    expect(buildFacts('fisher').worth).toContain('Fish feeds the Stone Mine and House.');
+    expect(buildFacts('bakery').worth).toContain('Bread feeds the Stone Mine and House.');
     expect(buildFacts('quarry').worth[0]).toMatch(/^\d+ of \d+ buildings need Stone to be built\.$/);
   });
 
@@ -78,6 +79,15 @@ describe('build card notes about your game', () => {
     g.hq.stock.fish = 0;
     g.hq.stock.bread = 0;
     expect(buildNow(g, 'mine').warn).toContain("You make no Bread or Fish yet. Build a Bakery or Fisher's Hut first.");
+  });
+
+  test('a house explains how it grows your settlers', () => {
+    expect(buildFacts('house').makes).toBe('A family home. It turns one fish or bread into a new settler every 40 s, up to 4 settlers.');
+    expect(buildFacts('house').worth).toContain('More settlers mean more carriers, builders and workers. Build more houses to keep growing.');
+    const g = flatGame();
+    expect(buildNow(g, 'house').warn).toContain("You make no Fish or Bread yet. Build a Fisher's Hut or Bakery first.");
+    g.hq.stock.fish = 1;
+    expect(buildNow(g, 'house').warn).toEqual([]);
   });
 
   test('a forester without woodcutters gets a warning', () => {

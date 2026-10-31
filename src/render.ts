@@ -1247,6 +1247,21 @@ export class Renderer {
         for (const [x, z] of [[-0.03, 0.42], [0.04, 0.44], [0, 0.4]]) this.add(g, new THREE.DodecahedronGeometry(0.035, 0), '#b0ada4', x, 0.13, z);
         break;
       }
+      case 'house': {
+        // A cottage with a vegetable patch, a picket fence and washing on a line.
+        this.house(g, model, { w: 0.28, d: 0.24, h: 0.4, rh: 0.32, wall, roof, style: 'tile', x: -0.1, z: -0.12, door: 0.3, win: -0.4, shutter: '#6a4a7a' });
+        this.add(g, new THREE.BoxGeometry(0.3, 0.025, 0.2), '#6b4a2c', -0.24, 0.0125, 0.32);
+        for (let i = 0; i < 3; i++)
+          for (const z of [0.27, 0.37]) this.add(g, new THREE.SphereGeometry(0.03, 6, 5), i === 1 ? '#c8503a' : '#5f8a3a', -0.34 + i * 0.1, 0.045, z);
+        for (let i = 0; i < 6; i++) this.add(g, new THREE.BoxGeometry(0.018, 0.09, 0.012), '#efe6d0', -0.4 + i * 0.065, 0.045, 0.45);
+        this.add(g, new THREE.BoxGeometry(0.34, 0.012, 0.01), '#efe6d0', -0.24, 0.07, 0.45);
+        const pole = '#5a3c22';
+        for (const x of [0.22, 0.44]) this.add(g, new THREE.BoxGeometry(0.02, 0.3, 0.02), pole, x, 0.15, 0.36);
+        this.add(g, new THREE.BoxGeometry(0.22, 0.004, 0.004), '#d8d0c0', 0.33, 0.29, 0.36);
+        for (const [x, c] of [[0.27, '#e8e0cc'], [0.33, '#5a7aa8'], [0.39, '#d07a5a']] as const)
+          this.add(g, new THREE.PlaneGeometry(0.045, 0.07), c, x, 0.25, 0.36, { side: THREE.DoubleSide });
+        break;
+      }
       default: {
         const style: Roof = type === 'quarry' ? 'slate' : type === 'bakery' ? 'tile' : 'thatch';
         this.house(g, model, { w: 0.3, d: 0.25, h: 0.42, rh: 0.3, wall, roof, style, x: -0.08, z: -0.08, shutter: '#4f6f5a' });

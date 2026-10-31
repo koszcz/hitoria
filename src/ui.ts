@@ -1,4 +1,4 @@
-import { Game, BDEFS, BUILDABLE, BType, GOODS, Bag } from './game';
+import { Game, BDEFS, BUILDABLE, BType, GOODS, Bag, HOUSE_SIZE, HOUSE_GROW } from './game';
 import { GOOD_NAME, buildFacts, buildNow } from './buildinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -140,6 +140,10 @@ export class UI {
       if (b.type === 'hq') rows.push(`<div>Land radius: ${def.radius} tiles</div>`);
       for (const k of GOODS) rows.push(`<div>Stored: <span class="good ${k}"></span>${b.stock[k]} ${GOOD_NAME[k]}</div>`);
     } else {
+      if (b.type === 'house') {
+        rows.push(`<div>Settlers born here: ${b.born} / ${HOUSE_SIZE}</div>`);
+        if (b.busy) rows.push(`<div class="bar"><i style="width:${Math.round((1 - b.grow / HOUSE_GROW) * 100)}%"></i></div>`);
+      }
       for (const k of GOODS) {
         if (b.stock[k]) rows.push(`<div>In: <span class="good ${k}"></span>${b.stock[k]} ${GOOD_NAME[k]}</div>`);
         if (b.out[k]) rows.push(`<div>Ready: <span class="good ${k}"></span>${b.out[k]} ${GOOD_NAME[k]}</div>`);

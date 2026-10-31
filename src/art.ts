@@ -27,6 +27,6 @@ export const ART = {
   flag: '#c8a030',
   roofs: {
     hq: '#8a3e2a', woodcutter: '#9a8650', forester: '#a08a52', quarry: '#6a645c', sawmill: '#8a4a32', lookout: '#6a5a48',
-    storehouse: '#7a5232', fisher: '#9a8654', farm: '#b0944e', mill: '#7a4a2a', bakery: '#8a3e2a', mine: '#5a524a',
+    storehouse: '#7a5232', fisher: '#9a8654', farm: '#b0944e', mill: '#7a4a2a', bakery: '#8a3e2a', mine: '#5a524a', house: '#9a4a32',
   } as Record<BType, string>,
 };

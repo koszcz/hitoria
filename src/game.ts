@@ -9,8 +9,14 @@ export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0,
 export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout'
   | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner';
 export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse'
-  | 'fisher' | 'farm' | 'mill' | 'bakery' | 'mine';
+  | 'fisher' | 'farm' | 'mill' | 'bakery' | 'mine' | 'house';
 export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant' | 'fish' | 'reap';
+
+// Houses grow your number of settlers.
+export const HOUSE_FOOD: Good[] = ['fish', 'bread'];
+export const HOUSE_PANTRY = 2; // food a house keeps on hand
+export const HOUSE_GROW = 40; // seconds from eating to a new settler
+export const HOUSE_SIZE = 4; // settlers one house adds in all
 
 export interface BDef {
   name: string;
@@ -36,9 +42,10 @@ export const BDEFS: Record<BType, BDef> = {
   farm: { name: 'Farm', icon: '🌾', desc: 'Sows grain on free grass nearby and harvests it when it is ripe.', cost: { plank: 3, stone: 1 }, buildTime: 8, worker: 'farmer', radius: 3, wall: '#e0c99a', roof: '#b5812f' },
   mill: { name: 'Mill', icon: '⚙️', desc: 'Grinds grain into flour.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'miller', radius: 0, wall: '#e6dcc4', roof: '#7a4a2a' },
   bakery: { name: 'Bakery', icon: '🍞', desc: 'Bakes flour into bread.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'baker', radius: 0, wall: '#d9b98c', roof: '#9a3f2a' },
+  house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0, wall: '#e8d6b0', roof: '#b0583a' },
   mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2, wall: '#9a948a', roof: '#4f4a44' },
 };
-export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine'];
+export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house'];
 
 // Workshops turn goods into other goods inside the building. With several inputs, any one of them will do.
 export interface Recipe {
@@ -72,6 +79,8 @@ export interface Building {
   busy: boolean;
   using: Good | null; // the input a workshop is working on right now
   status: string;
+  born: number; // settlers a house has added so far
+  grow: number; // seconds until a house's next settler, while it is eating
 }
 
 // A good lying on a flag, on its way to building `dest` (0 = not decided yet).
@@ -196,6 +205,7 @@ export class Game {
     }
     for (const b of buildings) {
       b.worker = b.builder = 0;
+      if (b.type === 'house') continue; // a house eats without a worker, so its meal is kept
       b.busy = false;
       b.using = null;
       if (b.type !== 'hq') b.status = b.built ? this.builtStatus(b) : 'Waiting for a builder';
@@ -219,6 +229,8 @@ export class Game {
       b.out = bag(b.out);
       b.incoming = bag(b.incoming);
       b.using ??= null;
+      b.born ??= 0; // saves from before houses
+      b.grow ??= 0;
     }
     for (const f of d.flags) f.items = f.items.filter((it) => GOODS.includes(it.g));
     g.buildings = new Map(d.buildings.map((b) => [b.id, b]));
@@ -333,7 +345,10 @@ export class Game {
         if (t.crop > 0 && t.crop < 1) t.crop = Math.min(1, t.crop + 1 / CROP_GROW);
       }
     }
-    for (const b of this.buildings.values()) if (!b.built) this.construct(b, dt);
+    for (const b of this.buildings.values()) {
+      if (!b.built) this.construct(b, dt);
+      else if (b.type === 'house') this.raise(b, dt);
+    }
     for (const s of this.settlers.values()) this.step(s, dt);
   }
 
@@ -523,6 +538,7 @@ export class Game {
 
   private want(b: Building, g: Good) {
     if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
+    if (b.type === 'house') return this.pantry(b, g);
     const rc = RECIPES[b.type];
     if (!rc?.from.includes(g)) return 0;
     // Several inputs share one pile, so a mine keeps PILE food of any kind.
@@ -641,7 +657,7 @@ export class Game {
     const b: Building = {
       id: this.nextId++, type, x, y, flag: 0, built: false, progress: 0,
       stock: bag(), out: bag(), incoming: bag(),
-      worker: 0, builder: 0, busy: false, using: null, status: '',
+      worker: 0, builder: 0, busy: false, using: null, status: '', born: 0, grow: 0,
     };
     this.buildings.set(b.id, b);
     Object.assign(this.world.at(x, y), { b: b.id, crop: 0 });
@@ -683,6 +699,42 @@ export class Game {
     builder.tasks = [{ k: 'walk', x: this.hq.x, y: this.hq.y }, { k: 'do', f: () => this.despawn(builder) }];
     if (b.type === 'lookout') this.computeTerritory();
     this.toasts.push(`${def.icon} ${def.name} finished`);
+  }
+
+  // A house keeps a little food of any kind, but never more than its last settlers need.
+  private pantry(b: Building, g: Good) {
+    if (!HOUSE_FOOD.includes(g)) return 0;
+    let other = 0;
+    for (const o of HOUSE_FOOD) if (o !== g) other += b.stock[o] + b.incoming[o];
+    const left = HOUSE_SIZE - b.born - (b.busy ? 1 : 0);
+    return Math.max(0, Math.min(HOUSE_PANTRY, left) - other);
+  }
+
+  // A house eats one food, and a new settler moves into the HQ once it has grown up.
+  private raise(b: Building, dt: number) {
+    if (b.born >= HOUSE_SIZE) {
+      b.status = 'House is full';
+      return;
+    }
+    if (!b.busy) {
+      const g = HOUSE_FOOD.find((g) => b.stock[g] > 0);
+      if (!g) {
+        b.status = this.linked(b) ? 'Waiting for fish or bread' : 'Needs a road to your HQ';
+        return;
+      }
+      b.stock[g]--;
+      b.busy = true;
+      b.using = g;
+      b.grow = HOUSE_GROW;
+    }
+    b.status = 'A settler will be born soon';
+    b.grow -= dt;
+    if (b.grow > 0) return;
+    b.busy = false;
+    b.using = null;
+    b.born++;
+    this.pool++;
+    this.toasts.push('👶 A new settler was born');
   }
 
   computeTerritory() {
