@@ -10,9 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-- **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
-- **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
-- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
+- **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *Fun 2 · Effort S · Needs: Wild animals · Approved*
+- **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines · Approved*
+- **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *Fun 2 · Effort S · Needs: Sound basics · Approved*
 
 ## Inbox
 
@@ -25,31 +25,31 @@ New ideas go here, not scored yet.
 Triaged, but not next.
 
 - **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
-- **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. *Fun 2 · Effort M*
-- **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look*
-- **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle*
+- **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. A full year takes about 20 minutes of play. *Fun 2 · Effort M · Approved*
+- **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look · Approved*
+- **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle · Approved*
 
-- **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
-- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
-- **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free*
-- **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape*
+- **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *Fun 2 · Effort M · Needs: Well and water · Approved*
+- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M · Approved*
+- **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free · Approved*
+- **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape · Approved*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
-- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
-- **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. *Fun 3 · Effort M · Needs: Sail to settle, Coal and iron mines*
-- **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
-- **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
-- **Faster roads**: busy roads get a donkey that carries two goods at once. *Fun 2 · Effort M*
-- **Trade ship**: a ship that visits to trade goods. *Fun 2 · Effort M · Needs: Harbour*
-- **Model loader, trees and rocks**: load detailed 3D models, such as free CC0 packs from Kenney or Quaternius, starting with trees and rocks. *Fun 2 · Effort M*
-- **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
-- **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
-- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M*
-- **Work sounds**: chopping, sawing and hammering you hear near the camera. *Fun 2 · Effort M · Needs: Sound basics*
+- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *Fun 3 · Effort M · Needs: Harbour, Second island · Approved*
+- **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. Old saves keep the ore they have. *Fun 3 · Effort M · Needs: Sail to settle, Coal and iron mines · Approved*
+- **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
+- **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. A mine on a rich spot works twice as fast. The geologist puts up small signs that show what lies below. *Fun 2 · Effort M · Needs: Coal and iron mines · Approved*
+- **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *Fun 2 · Effort M · Needs: No player roads · Approved*
+- **Trade ship**: a ship that visits the harbour every few minutes. You pick which spare goods to swap for goods you lack, at fixed rates. *Fun 2 · Effort M · Needs: Harbour · Approved*
+- **Model loader, trees and rocks**: load detailed 3D models from free CC0 packs by Kenney, starting with trees and rocks. *Fun 2 · Effort M · Approved*
+- **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
+- **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
+- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved*
+- **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
-- **Survive winter goal**: a goal to get through the winter. *Fun 2 · Effort S · Needs: Goals, Winter fields*
+- **Survive winter goal**: a goal to get through the winter with no settler going hungry. *Fun 2 · Effort S · Needs: Goals, Winter fields · Approved*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
 - **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night light*
