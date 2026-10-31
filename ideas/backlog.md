@@ -12,8 +12,9 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
-- **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths*
+- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *Fun 2 · Effort M*
+- **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
 
 ## Inbox
 
@@ -25,6 +26,7 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
+- **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
 - **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 - **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free*
@@ -33,7 +35,6 @@ Triaged, but not next.
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
 - **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
-- **Birds**: gulls circle over the shore, and small birds fly up from a tree when a woodcutter fells it. *Fun 2 · Effort S*
 - **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons. *Fun 2 · Effort S*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
@@ -42,7 +43,6 @@ Triaged, but not next.
 - **Model loader, trees and rocks**: load detailed 3D models, such as free CC0 packs from Kenney or Quaternius, starting with trees and rocks. *Fun 2 · Effort M*
 - **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
 - **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
-- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. They are only there to watch. *Fun 2 · Effort M*
 - **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M*
 - **Work sounds**: chopping, sawing and hammering you hear near the camera. *Fun 2 · Effort M · Needs: Sound basics*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
@@ -53,7 +53,6 @@ Triaged, but not next.
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
 - **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night*
-- **Hunter**: a hunter catches wild animals that roam the map. *Fun 1 · Effort M*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
 
 ## Done
@@ -86,3 +85,4 @@ Ideas we decided not to build, and why.
 
 - **Fix type errors**: already fixed. The type check passes with no errors.
 - **Shortcuts from footsteps**: Worn paths and Carriers walk free now cover it. Paths form wherever settlers walk, so there is no road route to shortcut.
+- **Birds**: it adds atmosphere only and changes no choices. Wild animals and Hunter add more to play.
