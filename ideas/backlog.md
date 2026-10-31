@@ -10,6 +10,7 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Survive winter goal**: a goal to get through the winter with no settler going hungry. *Fun 2 · Effort S · Needs: Goals, Winter fields · Approved*
 - **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M · Approved*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
 
@@ -44,7 +45,6 @@ Triaged, but not next.
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
-- **Survive winter goal**: a goal to get through the winter with no settler going hungry. *Fun 2 · Effort S · Needs: Goals, Winter fields · Approved*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
 - **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night light*
