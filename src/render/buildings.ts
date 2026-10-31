@@ -6,7 +6,9 @@ import { RIGHT } from './kit';
 import { iconTexture, noRoadTexture, softDot } from './textures';
 import { add, shadeOf } from './kit';
 import { mergeModel } from './merge';
-import { Roof, barrel, crate, house, logPile, sapling } from './props';
+import { barrel, crate, house, logPile } from './props';
+import { hut } from './huts';
+import { LOOKS } from './looks';
 
 let dotTex: THREE.Texture | undefined;
 const dot = () => (dotTex ??= softDot());
@@ -33,7 +35,6 @@ export interface Model {
 
 export function makeBuilding(type: BType, built: boolean): Model {
   const g = new THREE.Group();
-  const def = BDEFS[type];
   const model: Model = { g, key: `${type}:${built}` };
   if (!built) {
     // A building site: a stone footing, scaffolding, and a timber frame that rises as it is built.
@@ -75,7 +76,7 @@ export function makeBuilding(type: BType, built: boolean): Model {
     mergeModel(g, [rise]);
     return model;
   }
-  const wall = def.wall, roof = ART.roofs[type];
+  const { wall, roof } = LOOKS[type];
   switch (type) {
     case 'hq': {
       add(g, new THREE.BoxGeometry(1.02, 0.3, 1.02), '#a39a8c', 0, -0.1, 0);
@@ -210,60 +211,8 @@ export function makeBuilding(type: BType, built: boolean): Model {
         add(g, new THREE.PlaneGeometry(0.045, 0.07), c, x, 0.25, 0.36, { side: THREE.DoubleSide });
       break;
     }
-    default: {
-      const style: Roof = type === 'quarry' ? 'slate' : type === 'bakery' ? 'tile' : 'thatch';
-      house(g, model, { w: 0.3, d: 0.25, h: 0.42, rh: 0.3, wall, roof, style, x: -0.08, z: -0.08, shutter: '#4f6f5a' });
-      if (type === 'woodcutter') {
-        logPile(g, 0.3, 0.32, 5);
-        add(g, new THREE.CylinderGeometry(0.06, 0.07, 0.1, 8), '#7a5530', -0.33, 0.05, 0.33);
-        add(g, new THREE.CylinderGeometry(0.055, 0.055, 0.005, 8), '#e0bf8a', -0.33, 0.1, 0.33);
-        const axe = new THREE.Group();
-        add(axe, new THREE.BoxGeometry(0.012, 0.16, 0.012), '#6a4628', 0, 0.08, 0);
-        add(axe, new THREE.BoxGeometry(0.05, 0.035, 0.012), '#c8ccd0', 0.02, 0.15, 0);
-        axe.position.set(-0.33, 0.09, 0.33);
-        axe.rotation.z = 0.3;
-        g.add(axe);
-      } else if (type === 'forester') {
-        // A little fenced nursery bed of saplings.
-        add(g, new THREE.BoxGeometry(0.22, 0.03, 0.34), '#6b4a2c', 0.36, 0.015, 0.05);
-        for (const [x, z] of [[0.31, -0.06], [0.41, 0.05], [0.31, 0.16], [0.4, -0.08]]) sapling(g, x, z, 0.9);
-        for (const z of [-0.13, 0.23]) add(g, new THREE.BoxGeometry(0.24, 0.02, 0.015), '#8a6238', 0.36, 0.07, z);
-        sapling(g, -0.36, 0.38, 1.3);
-      } else if (type === 'fisher') {
-        // An upturned boat, a drying rack with fish and a net.
-        const boat = add(g, new THREE.SphereGeometry(0.1, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2).scale(1.9, 0.6, 0.75), '#7a5230', 0.26, 0, 0.36);
-        boat.rotation.y = 0.35;
-        for (const x of [0.28, 0.46]) add(g, new THREE.BoxGeometry(0.02, 0.3, 0.02), '#5a3c22', x, 0.15, -0.18);
-        add(g, new THREE.BoxGeometry(0.22, 0.015, 0.015), '#5a3c22', 0.37, 0.29, -0.18);
-        for (const x of [0.32, 0.37, 0.42]) add(g, new THREE.SphereGeometry(0.02, 6, 4).scale(0.6, 2.2, 0.6), '#9cc0d0', x, 0.23, -0.18);
-        add(g, new THREE.PlaneGeometry(0.2, 0.14), '#e8e0c4', -0.36, 0.12, 0.3, { transparent: true, opacity: 0.55, side: THREE.DoubleSide }).rotation.y = 0.8;
-      } else if (type === 'farm') {
-        // A haystack, sacks of grain and a stretch of fence.
-        add(g, new THREE.CylinderGeometry(0.12, 0.13, 0.12, 10), '#d8b84a', 0.33, 0.06, 0.3);
-        add(g, new THREE.ConeGeometry(0.13, 0.16, 10), '#e3c457', 0.33, 0.2, 0.3);
-        for (const [x, z] of [[0.38, 0.04], [0.32, -0.06]]) add(g, new THREE.SphereGeometry(0.05, 8, 6).scale(1, 1.3, 0.9), '#cdb488', x, 0.06, z);
-        for (let i = 0; i < 4; i++) add(g, new THREE.BoxGeometry(0.02, 0.12, 0.02), '#8a6238', -0.44 + i * 0.12, 0.06, 0.42);
-        for (const y of [0.05, 0.1]) add(g, new THREE.BoxGeometry(0.38, 0.015, 0.012), '#8a6238', -0.26, y, 0.42);
-      } else if (type === 'bakery') {
-        // A domed brick oven with its own chimney, where the smoke comes from.
-        add(g, new THREE.SphereGeometry(0.16, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2).scale(1, 0.85, 1), '#b5654a', 0.3, 0, 0.26);
-        add(g, new THREE.BoxGeometry(0.08, 0.07, 0.03), '#1a100a', 0.3, 0.04, 0.41, { emissive: '#ff6a20', emissiveIntensity: 0.8 });
-        add(g, new THREE.BoxGeometry(0.06, 0.18, 0.06), '#9a4f3a', 0.3, 0.2, 0.18);
-        model.chimney = new THREE.Vector3(0.3, 0.33, 0.18);
-        add(g, new THREE.BoxGeometry(0.16, 0.02, 0.1), '#8a6238', -0.36, 0.12, 0.36);
-        for (const s of [-1, 1]) add(g, new THREE.BoxGeometry(0.015, 0.12, 0.015), '#6a4628', -0.36 + s * 0.06, 0.06, 0.36);
-        add(g, new THREE.SphereGeometry(0.035, 8, 6).scale(1.5, 0.7, 1), '#c07a36', -0.36, 0.145, 0.36);
-      } else if (type === 'quarry') {
-        for (const [x, y, z, s] of [[0.33, 0, 0.27, 0.1], [0.42, 0, 0.12, 0.09], [0.37, 0.1, 0.22, 0.08], [0.28, 0, -0.3, 0.09]])
-          add(g, new THREE.BoxGeometry(s * 1.5, s, s * 1.1), '#bdb9ae', x, y + s / 2, z);
-        const pick = new THREE.Group();
-        add(pick, new THREE.BoxGeometry(0.012, 0.17, 0.012), '#6a4628', 0, 0.085, 0);
-        add(pick, new THREE.BoxGeometry(0.12, 0.018, 0.018), '#8c9094', 0, 0.17, 0);
-        pick.position.set(-0.36, 0, 0.36);
-        pick.rotation.z = -0.4;
-        g.add(pick);
-      }
-    }
+    default:
+      hut(g, model, type, wall, roof);
   }
   mergeModel(g, [model.cloth, model.sails, model.spin]);
   const icon = new THREE.Sprite(new THREE.SpriteMaterial({ map: iconTex(type), depthTest: false, transparent: true }));

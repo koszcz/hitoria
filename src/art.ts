@@ -1,6 +1,4 @@
-import type { BType } from './game';
-
-// The game's look in one place: light, land, water, trees and roof colours.
+// The game's look in one place: light, land, water and trees. Building colours are in render/looks.ts.
 // Earthy and muted, like the classic Settlers games, with soft light and speckled ground.
 
 export const ART = {
@@ -25,8 +23,4 @@ export const ART = {
   roads: ['#7e6a48', '#c4ae80'] as const, // verge, then track
   tree: { hue: 0.1, range: 0.12, s: 0.3, l: 0.74 }, // per-tree tint
   flag: '#c8a030',
-  roofs: {
-    hq: '#8a3e2a', woodcutter: '#9a8650', forester: '#a08a52', quarry: '#6a645c', sawmill: '#8a4a32', lookout: '#6a5a48',
-    storehouse: '#7a5232', fisher: '#9a8654', farm: '#b0944e', mill: '#7a4a2a', bakery: '#8a3e2a', mine: '#5a524a', house: '#9a4a32',
-  } as Record<BType, string>,
 };

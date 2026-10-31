@@ -24,24 +24,22 @@ export interface BDef {
   buildTime: number; // seconds of hammering once all materials are on site
   worker: Role | null;
   radius: number; // work radius, or land radius for hq/lookout
-  wall: string;
-  roof: string;
 }
 
 export const BDEFS: Record<BType, BDef> = {
-  hq: { name: 'Headquarters', icon: '🏰', desc: 'Stores all goods and houses idle settlers.', cost: {}, buildTime: 0, worker: null, radius: 9, wall: '#dccaa6', roof: '#a8432f' },
-  woodcutter: { name: "Woodcutter's Hut", icon: '🪓', desc: 'Fells grown trees nearby and produces logs.', cost: { plank: 2 }, buildTime: 6, worker: 'woodcutter', radius: 6, wall: '#c9a87a', roof: '#5f7f34' },
-  forester: { name: "Forester's Hut", icon: '🌱', desc: 'Plants saplings that grow into new trees.', cost: { plank: 2 }, buildTime: 6, worker: 'forester', radius: 5, wall: '#cdb487', roof: '#7fa63a' },
-  quarry: { name: 'Quarry', icon: '⛏️', desc: 'Breaks nearby boulders into stone.', cost: { plank: 2 }, buildTime: 6, worker: 'stonecutter', radius: 6, wall: '#b9b4a8', roof: '#6d6a66' },
-  sawmill: { name: 'Sawmill', icon: '🪚', desc: 'Saws logs into planks.', cost: { plank: 2, stone: 2 }, buildTime: 9, worker: 'sawyer', radius: 0, wall: '#c49a6c', roof: '#8a4b2a' },
-  lookout: { name: 'Lookout Tower', icon: '🔭', desc: 'Expands your land. No soldiers, just a view.', cost: { plank: 3, stone: 3 }, buildTime: 10, worker: 'scout', radius: 7, wall: '#d2c4a4', roof: '#3f5f8a' },
-  storehouse: { name: 'Storehouse', icon: '📦', desc: 'Stores spare goods close to where they are made and needed.', cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0, wall: '#c8b48c', roof: '#7a5a3a' },
-  fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5, wall: '#c8b28a', roof: '#3f6f8a' },
-  farm: { name: 'Farm', icon: '🌾', desc: 'Sows grain on free grass nearby and harvests it when it is ripe.', cost: { plank: 3, stone: 1 }, buildTime: 8, worker: 'farmer', radius: 3, wall: '#e0c99a', roof: '#b5812f' },
-  mill: { name: 'Mill', icon: '⚙️', desc: 'Grinds grain into flour.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'miller', radius: 0, wall: '#e6dcc4', roof: '#7a4a2a' },
-  bakery: { name: 'Bakery', icon: '🍞', desc: 'Bakes flour into bread.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'baker', radius: 0, wall: '#d9b98c', roof: '#9a3f2a' },
-  house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0, wall: '#e8d6b0', roof: '#b0583a' },
-  mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2, wall: '#9a948a', roof: '#4f4a44' },
+  hq: { name: 'Headquarters', icon: '🏰', desc: 'Stores all goods and houses idle settlers.', cost: {}, buildTime: 0, worker: null, radius: 9 },
+  woodcutter: { name: "Woodcutter's Hut", icon: '🪓', desc: 'Fells grown trees nearby and produces logs.', cost: { plank: 2 }, buildTime: 6, worker: 'woodcutter', radius: 6 },
+  forester: { name: "Forester's Hut", icon: '🌱', desc: 'Plants saplings that grow into new trees.', cost: { plank: 2 }, buildTime: 6, worker: 'forester', radius: 5 },
+  quarry: { name: 'Quarry', icon: '⛏️', desc: 'Breaks nearby boulders into stone.', cost: { plank: 2 }, buildTime: 6, worker: 'stonecutter', radius: 6 },
+  sawmill: { name: 'Sawmill', icon: '🪚', desc: 'Saws logs into planks.', cost: { plank: 2, stone: 2 }, buildTime: 9, worker: 'sawyer', radius: 0 },
+  lookout: { name: 'Lookout Tower', icon: '🔭', desc: 'Expands your land. No soldiers, just a view.', cost: { plank: 3, stone: 3 }, buildTime: 10, worker: 'scout', radius: 7 },
+  storehouse: { name: 'Storehouse', icon: '📦', desc: 'Stores spare goods close to where they are made and needed.', cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
+  fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5 },
+  farm: { name: 'Farm', icon: '🌾', desc: 'Sows grain on free grass nearby and harvests it when it is ripe.', cost: { plank: 3, stone: 1 }, buildTime: 8, worker: 'farmer', radius: 3 },
+  mill: { name: 'Mill', icon: '⚙️', desc: 'Grinds grain into flour.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'miller', radius: 0 },
+  bakery: { name: 'Bakery', icon: '🍞', desc: 'Bakes flour into bread.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'baker', radius: 0 },
+  house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
+  mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
 };
 export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house'];
 

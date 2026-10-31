@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { add, shadeOf } from './kit';
 import type { Model } from './buildings';
+import { dressWalls, type Walls } from './walls';
 
 export type Roof = 'tile' | 'thatch' | 'slate';
 
@@ -21,33 +22,28 @@ export interface House {
   win?: number | null; // the same for the front window; null for none
   bigDoor?: boolean;
   shutter?: string;
+  walls?: Walls;
+  lift?: number; // raises the house on posts, as on stilts
 }
 
-// A timber-framed house on a stone footing. The roof ridge runs along X and the door faces +Z.
+// A house on a stone footing, timber-framed unless `walls` says otherwise. The roof ridge runs
+// along X and the door faces +Z.
 // `w` and `d` are half the width (X) and half the depth (Z) of the walls.
 export function house(g: THREE.Group, model: Model, o: House) {
-  const { w, d, h, rh, wall, roof, style = 'tile', chimney = true, door = -0.35, win = 0.45 } = o;
+  const { w, d, h, rh, wall, roof, style = 'tile', chimney = true, door = -0.35, win = 0.45, lift = 0 } = o;
   const e = style === 'thatch' ? 0.09 : 0.07, beam = '#4e3420', top = h + 0.05;
   const at = new THREE.Group();
   at.position.set(o.x ?? 0, 0, o.z ?? 0);
   g.add(at);
-  add(at, new THREE.BoxGeometry(2 * w + 0.08, 0.3, 2 * d + 0.08), '#9d958a', 0, -0.1, 0);
+  if (lift) {
+    // Posts and a plank deck in place of a stone footing.
+    at.position.y = lift;
+    for (const [x, z] of [[-w, -d], [w, -d], [-w, d + 0.12], [w, d + 0.12]])
+      add(g, new THREE.BoxGeometry(0.045, lift + 0.05, 0.045), '#5a3c22', (o.x ?? 0) + x, (lift + 0.05) / 2, (o.z ?? 0) + z);
+    add(at, new THREE.BoxGeometry(2 * w + 0.1, 0.04, 2 * d + 0.26), '#8a7a62', 0, 0.03, 0.06);
+  } else add(at, new THREE.BoxGeometry(2 * w + 0.08, 0.3, 2 * d + 0.08), '#9d958a', 0, -0.1, 0);
   add(at, new THREE.BoxGeometry(2 * w, h, 2 * d), wall, 0, h / 2 + 0.05, 0);
-  // A stone ground floor with lighter corner stones; the timber frame sits on top.
-  const sh = h * 0.5;
-  add(at, new THREE.BoxGeometry(2 * w + 0.03, sh, 2 * d + 0.03), '#a59d8e', 0, 0.05 + sh / 2, 0);
-  for (const [x, z] of [[-w, -d], [w, -d], [-w, d], [w, d]])
-    for (let i = 0; i < 3; i++) add(at, new THREE.BoxGeometry(0.07, sh / 3 - 0.01, 0.07), i % 2 ? '#bdb5a6' : '#c8c0b0', x, 0.05 + (i + 0.5) * (sh / 3), z);
-
-  // Timber frame: corner posts, a sill, a middle rail and a top beam.
-  for (const [x, z] of [[-w, -d], [w, -d], [-w, d], [w, d]]) add(at, new THREE.BoxGeometry(0.045, h, 0.045), beam, x, h / 2 + 0.05, z);
-  for (const y of [0.07, 0.05 + h * 0.55, top - 0.02]) add(at, new THREE.BoxGeometry(2 * w + 0.03, 0.035, 2 * d + 0.03), beam, 0, y, 0);
-  // A cross of braces in the upper half of the side wall.
-  const span = h * 0.45 - 0.03, len = Math.hypot(span, 2 * d);
-  for (const s of [1, -1]) {
-    const b = add(at, new THREE.BoxGeometry(0.02, len, 0.025), beam, w + 0.012, 0.05 + h * 0.775, 0);
-    b.rotation.x = s * Math.atan2(2 * d, span);
-  }
+  dressWalls(at, o.walls ?? 'frame', w, d, h, wall);
 
   // Gable walls and the two roof slopes.
   const shape = new THREE.Shape([new THREE.Vector2(-d, 0), new THREE.Vector2(d, 0), new THREE.Vector2(0, rh)]);
@@ -74,7 +70,7 @@ export function house(g: THREE.Group, model: Model, o: House) {
     const cx = w * 0.55, cz = -d * 0.4, ch = rh + 0.24, cy = top + rh * 0.45 + ch / 2 - 0.1;
     add(at, new THREE.BoxGeometry(0.1, ch, 0.1), '#8c8278', cx, cy, cz);
     add(at, new THREE.BoxGeometry(0.13, 0.035, 0.13), '#6e665e', cx, cy + ch / 2, cz);
-    model.chimney = new THREE.Vector3((o.x ?? 0) + cx, cy + ch / 2 + 0.05, (o.z ?? 0) + cz);
+    model.chimney = new THREE.Vector3((o.x ?? 0) + cx, lift + cy + ch / 2 + 0.05, (o.z ?? 0) + cz);
   }
 
   // Door with a frame and a stone step; a shuttered window beside it and one on the side.
@@ -86,7 +82,7 @@ export function house(g: THREE.Group, model: Model, o: House) {
     const dx = door * w;
     add(at, new THREE.BoxGeometry(0.17, 0.27, 0.02), beam, dx, 0.185, d + 0.008);
     add(at, new THREE.BoxGeometry(0.12, 0.23, 0.025), '#6a4628', dx, 0.165, d + 0.014);
-    add(at, new THREE.BoxGeometry(0.2, 0.04, 0.08), '#a39b8f', dx, 0.03, d + 0.06);
+    if (!lift) add(at, new THREE.BoxGeometry(0.2, 0.04, 0.08), '#a39b8f', dx, 0.03, d + 0.06);
   }
   const glass = { emissive: '#ffa040', emissiveIntensity: 0.35 };
   const shutter = shadeOf(o.shutter ?? roof, 0.85);
