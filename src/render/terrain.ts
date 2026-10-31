@@ -92,10 +92,12 @@ export class Terrain {
   }
 
   // Corner colours blend the four tiles around them; slope and height add rock and snow.
-  paint() {
+  // `wear` turns grass and sand toward dirt where settlers walk.
+  paint(wear: Float32Array) {
     const world = this.world!, C = this.corners;
     const col = this.mesh.geometry.attributes.color as THREE.BufferAttribute;
     const base = new Map<number, THREE.Color>();
+    const path = new THREE.Color(ART.path);
     const tileCol = (x: number, y: number) => {
       const key = y * W + x;
       let c = base.get(key);
@@ -116,13 +118,16 @@ export class Terrain {
       for (let i = 0; i <= W; i++) {
         const k = j * (W + 1) + i;
         const c = this.c.setRGB(0, 0, 0);
-        let n = 0;
+        let n = 0, worn = 0;
         for (const [x, y] of [[i - 1, j - 1], [i, j - 1], [i - 1, j], [i, j]])
           if (world.inside(x, y)) {
             c.add(tileCol(x, y));
             n++;
+            worn = Math.max(worn, wear[y * W + x]);
           }
         c.multiplyScalar(1 / Math.max(1, n));
+        // A worn tile browns all four of its corners, so a path one tile wide still shows clearly.
+        if (worn) c.lerp(path, Math.min(0.85, worn));
         const h = C[k];
         const slope = Math.abs(C[Math.min(k + 1, C.length - 1)] - h) + Math.abs(C[Math.min(k + W + 1, C.length - 1)] - h);
         if (slope > 0.35 && h > 0.3) c.lerp(rock, Math.min(0.8, (slope - 0.35) * 1.5));

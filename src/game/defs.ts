@@ -70,3 +70,7 @@ export const WELL_DRAW = 5; // seconds to draw one bucket of water
 export const PILE = 4; // max finished goods a hut keeps before its worker pauses
 export const CROP_GROW = 60; // seconds for sown grain to ripen
 export const FARM_FIELDS = 6; // fields every farm keeps for itself
+export const PATH_SPEED = 1.25; // multiplier on a fully worn path
+export const WEAR_STEP = 0.2; // wear one footstep adds to a tile, out of 1
+export const FADE_DELAY = 60; // seconds a path stays fully worn after the last footstep
+export const FADE_TIME = 180; // seconds a fully worn path then takes to fade back to grass

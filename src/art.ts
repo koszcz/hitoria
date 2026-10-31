@@ -21,6 +21,7 @@ export const ART = {
   waterOpacity: 0.8,
   deep: '#1f3a38', // sea floor colour far from shore
   roads: ['#7e6a48', '#c4ae80'] as const, // verge, then track
+  path: '#a08a5e', // grass worn down to dirt by footsteps
   tree: { hue: 0.1, range: 0.12, s: 0.3, l: 0.74 }, // per-tree tint
   flag: '#c8a030',
 };

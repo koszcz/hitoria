@@ -1,6 +1,6 @@
 // What the ground allows: where settlers walk, where roads, flags and plants may go, and which land is yours.
 import { W, Tile } from '../world';
-import { BDEFS, ROAD_SPEED } from './defs';
+import { BDEFS, PATH_SPEED, ROAD_SPEED } from './defs';
 import type { Game } from './game';
 
 export function passable(g: Game, x: number, y: number) {
@@ -8,9 +8,15 @@ export function passable(g: Game, x: number, y: number) {
   return t.t !== 'water' && t.t !== 'mountain' && t.tree < 0.5 && t.rock === 0 && t.b === 0;
 }
 
-export function walkCost(g: Game, x: number, y: number) {
+// How fast settlers walk on a tile, as a multiplier. Worn grass is faster the more worn it is.
+export function walkSpeed(g: Game, x: number, y: number) {
   const t = g.world.at(x, y);
-  return t.road || t.flag ? 1 / ROAD_SPEED : 1;
+  if (t.road || t.flag) return ROAD_SPEED;
+  return 1 + (PATH_SPEED - 1) * g.wear[y * W + x];
+}
+
+export function walkCost(g: Game, x: number, y: number) {
+  return 1 / walkSpeed(g, x, y);
 }
 
 export function roadable(g: Game, x: number, y: number) {

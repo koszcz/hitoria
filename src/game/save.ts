@@ -19,7 +19,7 @@ export interface SaveData {
   pool: number;
   nextId: number;
   hq: number;
-  tiles: [tree: number, conifer: number, rock: number, b: number, flag: number, road: number, crop?: number, field?: number][];
+  tiles: [tree: number, conifer: number, rock: number, b: number, flag: number, road: number, crop?: number, field?: number, wear?: number][];
   buildings: Building[];
   flags: Flag[];
   roads: Road[];
@@ -60,7 +60,7 @@ export function save(g: Game): SaveData {
   }
   return {
     v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool: g.population, nextId: g.nextId, hq: g.hq.id,
-    tiles: g.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field]),
+    tiles: g.world.tiles.map((t, i) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field, Math.round(g.wear[i] * 100) / 100]),
     buildings, flags, roads, made: { ...g.made }, goal: g.goal,
   };
 }
@@ -78,8 +78,10 @@ export const mapVersion = (d: SaveData) => d.map ?? (d.v >= 3 ? 2 : 1);
 
 // Put the saved state into `g`, a new game made from the same seed.
 export function restore(g: Game, d: SaveData) {
-  d.tiles.forEach(([tree, conifer, rock, b, flag, road, crop = 0, field = 0], i) =>
-    Object.assign(g.world.tiles[i], { tree, conifer: !!conifer, rock, b, flag, road, crop, field }));
+  d.tiles.forEach(([tree, conifer, rock, b, flag, road, crop = 0, field = 0, wear = 0], i) => {
+    Object.assign(g.world.tiles[i], { tree, conifer: !!conifer, rock, b, flag, road, crop, field });
+    g.wear[i] = wear; // saves from before worn paths have no wear
+  });
   // Saves from version 1 have no food goods yet.
   for (const b of d.buildings) {
     b.stock = bag(b.stock);
@@ -103,6 +105,8 @@ export function restore(g: Game, d: SaveData) {
   g.hq = hq;
   g.pool = d.pool;
   g.time = d.time;
+  g.trod.fill(d.time); // paths wait the full delay before they fade, as if just walked
+  g.worn++;
   g.nextId = d.nextId;
   g.made = bag(d.made);
   g.goal = d.goal ?? 0;

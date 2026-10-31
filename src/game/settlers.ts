@@ -1,9 +1,10 @@
 // Settlers leaving and entering the HQ, and how each one walks through their list of tasks.
 import { findPath } from '../path';
-import { Role, ROAD_SPEED, SPEED } from './defs';
+import { Role, SPEED } from './defs';
 import type { Game } from './game';
-import { passable, walkCost } from './land';
+import { walkCost, walkSpeed } from './land';
 import type { Building, Settler } from './types';
+import { tread } from './wear';
 import { idle } from './work';
 
 export function takeSettler(g: Game, role: Role): Settler | null {
@@ -71,8 +72,7 @@ export function step(g: Game, s: Settler, dt: number) {
     }
     s.walking = true;
     s.anim = '';
-    const here = g.world.at(Math.round(s.x), Math.round(s.y));
-    let left = SPEED * dt * (here.road || here.flag ? ROAD_SPEED : 1);
+    let left = SPEED * dt * walkSpeed(g, Math.round(s.x), Math.round(s.y));
     while (left > 0 && s.path.length) {
       const n = s.path[0];
       const dx = n.x - s.x, dy = n.y - s.y;
@@ -82,6 +82,7 @@ export function step(g: Game, s: Settler, dt: number) {
         s.x = n.x;
         s.y = n.y;
         s.path.shift();
+        tread(g, n.x, n.y);
         left -= d;
       } else {
         s.x += (dx / d) * left;
