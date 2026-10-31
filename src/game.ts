@@ -563,15 +563,10 @@ export class Game {
       s.onAbort = () => { r.carrier = 0; this.despawn(s); };
       s.tasks = [{ k: 'walk', ...r.path[mid] }, { k: 'do', f: () => { s.atWork = true; s.ri = mid; s.since = this.time; s.onAbort = null; } }];
     }
+    // Houses come first, because only they bring in more settlers.
+    for (const b of this.buildings.values()) if (b.type === 'house' && !this.sendBuilder(b)) break;
     for (const b of this.buildings.values()) {
-      if (!b.built && !b.builder) {
-        const s = this.takeSettler('builder');
-        if (!s) break;
-        b.builder = s.id;
-        s.home = b.id;
-        s.onAbort = () => this.giveUp(s, b, 'builder');
-        s.tasks = [{ k: 'walk', x: b.x, y: b.y, adjacent: true }, { k: 'do', f: () => { s.atWork = true; s.onAbort = null; } }];
-      }
+      if (!this.sendBuilder(b)) break;
       const role = BDEFS[b.type].worker;
       if (b.built && role && !b.worker) {
         const s = this.takeSettler(role);
@@ -677,12 +672,18 @@ export class Game {
     }
     const cap = need ? have / need : 1;
     if (!builder?.atWork) {
-      b.status = builder ? 'Builder on the way' : 'Waiting for a free settler';
+      b.status = builder ? 'Builder on the way' : this.linked(b) ? 'Waiting for a free settler' : 'Needs a road to your HQ';
       return;
     }
     if (b.progress >= cap) {
       builder.anim = '';
-      b.status = this.linked(b) ? 'Waiting for materials' : 'Needs a road to your HQ';
+      if (this.linked(b)) b.status = 'Waiting for materials';
+      else {
+        // No materials can reach the site, so the builder goes home to help elsewhere.
+        b.status = 'Needs a road to your HQ';
+        b.builder = 0;
+        this.sendHome(builder);
+      }
       return;
     }
     builder.anim = 'hammer';
@@ -694,9 +695,7 @@ export class Game {
     b.stock = bag();
     b.builder = 0;
     b.status = this.builtStatus(b);
-    builder.atWork = false;
-    builder.anim = '';
-    builder.tasks = [{ k: 'walk', x: this.hq.x, y: this.hq.y }, { k: 'do', f: () => this.despawn(builder) }];
+    this.sendHome(builder);
     if (b.type === 'lookout') this.computeTerritory();
     this.toasts.push(`${def.icon} ${def.name} finished`);
   }
@@ -749,6 +748,19 @@ export class Game {
     }
   }
 
+  // Send a builder to a site that is joined to the HQ and has none yet.
+  // Returns false when the HQ has nobody left to send.
+  private sendBuilder(b: Building) {
+    if (b.built || b.builder || !this.linked(b)) return true;
+    const s = this.takeSettler('builder');
+    if (!s) return false;
+    b.builder = s.id;
+    s.home = b.id;
+    s.onAbort = () => this.giveUp(s, b, 'builder');
+    s.tasks = [{ k: 'walk', x: b.x, y: b.y, adjacent: true }, { k: 'do', f: () => { s.atWork = true; s.onAbort = null; } }];
+    return true;
+  }
+
   // --- settlers ------------------------------------------------------------
 
   private takeSettler(role: Role): Settler | null {
@@ -767,6 +779,12 @@ export class Game {
     b[slot] = 0;
     b.status = 'Unreachable, retrying soon';
     this.despawn(s);
+  }
+
+  private sendHome(s: Settler) {
+    s.atWork = false;
+    s.anim = '';
+    s.tasks = [{ k: 'walk', x: this.hq.x, y: this.hq.y }, { k: 'do', f: () => this.despawn(s) }];
   }
 
   private despawn(s: Settler) {

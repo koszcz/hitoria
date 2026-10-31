@@ -226,6 +226,42 @@ describe('construction', () => {
     runUntil(g, () => b.built, 120);
     runUntil(g, () => ![...g.settlers.values()].some((s) => s.role === 'builder'), 60);
   });
+
+  test('a site with no road to the HQ gets no builder', () => {
+    const g = flatGame();
+    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y);
+    run(g, 10);
+    expect(b.builder).toBe(0);
+    expect(g.pool).toBe(18);
+    expect(b.status).toBe('Needs a road to your HQ');
+  });
+
+  test('a builder goes home when their site loses its road', () => {
+    const g = flatGame();
+    g.hq.stock.plank = 0; // no materials, so the site can't finish before the road goes
+    g.hq.stock.stone = 0;
+    const b = placeLinked(g, 'woodcutter', g.hq.x + 8, g.hq.y);
+    runUntil(g, () => !!g.settlers.get(b.builder)?.atWork, 60);
+    const road = g.roads.get(g.flags.get(b.flag)!.roads[0])!;
+    expect(g.removeAt(road.path[1])).toBeNull();
+    expect(g.linked(b)).toBe(false);
+    runUntil(g, () => ![...g.settlers.values()].some((s) => s.role === 'builder'), 60);
+    expect(b.builder).toBe(0);
+    expect(b.built).toBe(false);
+    expect(b.status).toBe('Needs a road to your HQ');
+    expect(g.population).toBe(18);
+  });
+
+  test('houses get a builder before other sites', () => {
+    const g = flatGame();
+    g.pool = 1;
+    const hut = placeLinked(g, 'woodcutter', g.hq.x + 4, g.hq.y);
+    const house = placeLinked(g, 'house', g.hq.x - 4, g.hq.y);
+    run(g, 0.5);
+    expect(house.builder).not.toBe(0);
+    expect(hut.builder).toBe(0);
+    expect(hut.status).toBe('Waiting for a free settler');
+  });
 });
 
 describe('production', () => {

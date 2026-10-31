@@ -15,6 +15,7 @@ export const LIMITS = {
   buildingWaiting: 180, // a building whose "Waiting…", "Unreachable…" or "Needs a road…" status hasn't changed
   flagFull: 60, // a flag holding as many goods as it can
   itemUnrouted: 60, // a good on a flag that no building wants
+  noSettlers: 30, // buildings wait for a settler while nobody is idle in the HQ
 };
 
 export interface Issue {
@@ -44,6 +45,7 @@ export class Diagnostics {
   private status = new Map<number, { status: string; built: boolean; since: number }>();
   private still = new Map<number, { x: number; y: number; since: number }>();
   private full = new Map<number, number>();
+  private noSettlers = 0; // when the HQ last had someone to send, or nobody was waiting
   private unrouted = new WeakMap<Item, number>();
 
   // Start watching a game. Call again after loading or starting a new one.
@@ -52,6 +54,7 @@ export class Diagnostics {
     this.status.clear();
     this.still.clear();
     this.full.clear();
+    this.noSettlers = game.time;
     this.issues.clear();
     this.checkT = this.sampleT = 0;
     this.event(`Watching island ${game.seed} at game time ${game.time.toFixed(0)} s`);
@@ -116,6 +119,12 @@ export class Diagnostics {
       if (b.type !== 'hq' && /^(Waiting|Unreachable|Needs a road)/.test(b.status))
         flag(`b${b.id}`, since, LIMITS.buildingWaiting, `${name} has said "${b.status}" for ${Math.round(now - since)} s`);
     }
+    // Settlers: buildings that wait for one while the HQ has nobody left to send.
+    const short = [...g.buildings.values()].filter((b) => b.status === 'Waiting for a free settler' || b.status === 'Waiting for a worker');
+    if (g.pool > 0 || !short.length) this.noSettlers = now;
+    else flag('pool', this.noSettlers, LIMITS.noSettlers,
+      `No idle settlers in the HQ for ${Math.round(now - this.noSettlers)} s, and ${short.length} waiting for one: ` +
+      short.map((b) => `${BDEFS[b.type].name} #${b.id}`).join(', ') + '. Build a house and bring it fish or bread.');
     for (const id of this.status.keys())
       if (!g.buildings.has(id)) {
         this.status.delete(id);

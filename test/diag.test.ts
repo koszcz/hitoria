@@ -33,6 +33,21 @@ describe('diagnostics', () => {
     expect(d.issues.get(`b${b.id}`)?.text).toContain('Needs a road to your HQ');
   });
 
+  test('flags a building that waits for a settler while none are idle, and clears it once one is free', () => {
+    const { g, d, run } = watched();
+    g.pool = 0;
+    const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
+    const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
+    if (typeof r === 'string') throw new Error(r);
+    run(LIMITS.noSettlers + 5);
+    expect(d.issues.get('pool')?.text).toContain('No idle settlers in the HQ');
+    expect(d.issues.get('pool')?.text).toContain('Woodcutter');
+
+    g.pool = 5; // carriers take some first, so free a few
+    run(5);
+    expect(d.issues.has('pool')).toBe(false);
+  });
+
   test('reports nothing stuck in a healthy game', () => {
     const { g, d, run } = watched();
     const b = g.place('woodcutter', g.hq.x + 4, g.hq.y + 1);
