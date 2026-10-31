@@ -108,3 +108,27 @@ describe('isometric projection', () => {
     }
   });
 });
+
+describe('mountain shape', () => {
+  test('map version 2 still builds the same land', () => {
+    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(new World(seed, 2).tiles)).toString();
+    expect(fingerprint(1)).toBe('16039032628908514351');
+    expect(fingerprint(12345)).toBe('13263900864715892175');
+  });
+
+  // A step this big between two tiles next to each other draws as a cliff wall.
+  const CLIFF = 0.08;
+  for (const seed of SEEDS) {
+    test(`seed ${seed} has no cliff at the edge of the start mountain`, () => {
+      const w = new World(seed);
+      let step = 0;
+      for (let y = 0; y < H; y++)
+        for (let x = 0; x < W; x++) {
+          if (!inLand(w, x, y)) continue;
+          for (const [nx, ny] of [[x + 1, y], [x, y + 1]])
+            if (inLand(w, nx, ny) && (w.at(x, y).t === 'mountain' || w.at(nx, ny).t === 'mountain')) step = Math.max(step, Math.abs(w.at(x, y).h - w.at(nx, ny).h));
+        }
+      expect(step).toBeLessThan(CLIFF);
+    });
+  }
+});
