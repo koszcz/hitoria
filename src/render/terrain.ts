@@ -1,19 +1,13 @@
 // The island's ground, the sea around it and the dashed border of your land.
 import * as THREE from 'three';
-import { World, Tile, W, H } from '../world';
+import { World, W, H } from '../world';
 import { ART } from '../art';
 import { grade, hash } from './kit';
+import { groundHeight } from './elevation';
 import { grainTexture, rippleNormals } from './textures';
 
 export const SEA = -0.04;
 
-// Ground height of one tile, before corners are averaged.
-function elev(t: Tile, x: number, y: number) {
-  if (t.h < 0.3) return (t.h - 0.3) * 5;
-  let e = (t.h - 0.3) * 1.1;
-  if (t.t === 'mountain') e += 0.4 + (t.h - 0.7) * 16 + hash(x, y) * 0.7;
-  return e;
-}
 
 export class Terrain {
   mesh!: THREE.Mesh;
@@ -48,7 +42,7 @@ export class Terrain {
         let sum = 0, n = 0;
         for (const [x, y] of [[i - 1, j - 1], [i, j - 1], [i - 1, j], [i, j]])
           if (world.inside(x, y)) {
-            sum += elev(world.at(x, y), x, y);
+            sum += groundHeight(world.at(x, y).h);
             n++;
           }
         C[j * (W + 1) + i] = n ? sum / n : -1;

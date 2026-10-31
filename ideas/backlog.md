@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *Fun 2 · Effort S · Branch: claude/build-807501*
+Nothing right now.
 
 ## Next
 
@@ -64,6 +64,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *2026-10-31*
 - **Demolish a building**: remove a building you placed in the wrong spot. Its goods go back to the HQ. *2026-10-31*
 - **Start near a mountain and shore**: every map puts a mountain and a bay to the open sea in the HQ's land, with room for a stone mine and a fisher. *2026-10-31*
 - **Buildings that look different**: each building has its own shape and colours, so you can tell them apart at a glance. *2026-10-31*
