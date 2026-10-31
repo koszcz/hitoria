@@ -148,7 +148,7 @@ export class UI {
     const x = T();
     const stored = g.stored;
     $('res').innerHTML =
-      GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${stored[k]}</b><span class="label">${goodName(k)}</span></div>`).join('') +
+      GOODS.map((k) => `<div class="pill${stored[k] ? '' : ' none'}" title="${goodName(k)}"><span class="good ${k}"></span><b>${stored[k]}</b></div>`).join('') +
       `<div class="pill">🧑‍🌾 ${x.settlers(g.pool, g.settlers.size)}</div>`;
 
     this.drawGoal();
