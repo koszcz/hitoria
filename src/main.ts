@@ -149,7 +149,7 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
     ui.toast(T().newIsland);
   };
 }
-// On a narrow screen the file buttons fold away behind a menu button.
+// The file buttons fold away behind a menu button.
 document.getElementById('menu')!.onclick = () => document.getElementById('file')!.classList.toggle('open');
 window.addEventListener('pagehide', autosave);
 

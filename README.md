@@ -60,10 +60,10 @@ to the HQ, and its flag and roads stay.
 | Cancel | Right-click or Esc |
 | Pause | Space |
 | Save | Ctrl+S (or Cmd+S) |
-| Mute or unmute the sound | `M`, or the Sound button |
+| Mute or unmute the sound | `M`, or **Sound** in the ☰ menu |
 | Show live diagnostics | F3 |
 
-If something looks wrong, click **Report**. It saves a problem report to `reports/`.
+If something looks wrong, open the ☰ menu at the top right and click **Report**. It saves a problem report to `reports/`.
 
 ## Design pillars
 
@@ -127,6 +127,7 @@ stays the same. Saves from other addresses, such as http://main.localhost:5173, 
 ## Saving
 
 Saves live in your browser's local storage. You can keep as many as the storage holds.
+The save buttons are in the ☰ menu at the top right.
 
 - **Save** (or Ctrl+S) stores the game you are playing. The first time, it makes a new save named
   after the island. After that, it writes over that same save.

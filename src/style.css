@@ -61,9 +61,11 @@ canvas {
 }
 .pill { padding: 5px 10px; display: flex; align-items: center; gap: 6px; }
 .pill b { font-variant-numeric: tabular-nums; }
+/* Goods show as picture and number. The name is in the tooltip. Goods you have none of are dimmed. */
+.pill.none { opacity: 0.5; }
 
 #speed, #file { display: flex; padding: 2px; }
-#file { margin-left: auto; }
+#speed { order: 1; margin-left: auto; }
 #file, #speed, #info, .build, .toast, #help {
   background: var(--panel);
   border: 1px solid var(--edge);
@@ -204,7 +206,7 @@ canvas {
   border-radius: 8px;
   cursor: pointer;
 }
-#done[hidden], #menu { display: none; }
+#done[hidden] { display: none; }
 body.touch .build .key, body.touch #buildmenu kbd { display: none; } /* no keyboard on a touch screen */
 body.touch .build { row-gap: 0; }
 
@@ -216,28 +218,30 @@ body.touch .build { row-gap: 0; }
   border: 1px solid var(--edge);
   border-radius: 8px;
   cursor: pointer;
+  order: 2;
 }
+
+/* The file buttons fold away behind the menu button, so the top bar stays one row. */
+#file {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  flex-direction: column;
+  z-index: 20;
+}
+#file.open { display: flex; }
+#file button { padding: 8px 14px; text-align: left; }
 
 /* Phones, upright or on their side: fold the menu away and show goods as icon and number. */
 @media (max-width: 640px), (max-height: 500px) {
   #topbar { gap: 6px; }
   .brand { font-size: 16px; padding: 4px 2px; }
-  #speed { order: 1; margin-left: auto; }
-  #menu { display: block; order: 2; }
   #res { order: 3; width: 100%; gap: 4px; }
   .pill { padding: 3px 7px; gap: 2px; }
-  .pill .label { display: none; }
   #speed button { padding: 5px 8px; }
-  #file {
-    display: none;
-    position: absolute;
-    top: 38px;
-    right: 0;
-    flex-direction: column;
-    z-index: 20;
-  }
-  #file.open { display: flex; }
-  #file button { padding: 10px 14px; text-align: left; }
+  #file { top: 38px; }
+  #file button { padding: 10px 14px; }
   #info {
     top: auto;
     bottom: calc(96px + env(safe-area-inset-bottom));
