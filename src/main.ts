@@ -4,6 +4,7 @@ import { DebugPanel } from './debug';
 import { Game, BUILDABLE, BType } from './game';
 import { Renderer } from './render/renderer';
 import { UI } from './ui';
+import { Gestures, zoomAt } from './input/gestures';
 import { Saves, type Slot } from './saves';
 import { openSaveMenu } from './savemenu';
 import { T, getLang, setLang, startLang } from './i18n';
@@ -107,6 +108,7 @@ function showSaves() {
 
 for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
   btn.onclick = () => {
+    document.getElementById('file')!.classList.remove('open');
     const what = btn.dataset.file;
     if (what === 'report') return reportProblem();
     if (what === 'save') return void save();
@@ -122,45 +124,69 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
     ui.toast(T().newIsland);
   };
 }
+// On a narrow screen the file buttons fold away behind a menu button.
+document.getElementById('menu')!.onclick = () => document.getElementById('file')!.classList.toggle('open');
 window.addEventListener('pagehide', autosave);
 
 let hover: P | null = null;
 let preview: P[] | null = null;
 let previewKey = '';
-let drag: { x: number; y: number; cx: number; cy: number; moved: boolean; button: number } | null = null;
 const keys = new Set<string>();
+const gestures = new Gestures(renderer);
+
+// On a touch screen there is no hover. A first tap aims (shows the ghost or road plan) and a
+// second tap on the same tile builds.
+let touch = matchMedia('(pointer: coarse)').matches;
+function setTouch(on: boolean) {
+  if (on === touch && document.body.classList.contains('touch') === on) return;
+  touch = on;
+  document.body.classList.toggle('touch', on);
+  ui.relabel();
+}
+setTouch(touch);
+window.addEventListener('pointerdown', (e) => setTouch(e.pointerType === 'touch'), true);
 
 canvas.addEventListener('pointerdown', (e) => {
-  drag = { x: e.clientX, y: e.clientY, cx: renderer.cam.x, cy: renderer.cam.y, moved: false, button: e.button };
-  canvas.setPointerCapture(e.pointerId);
+  document.getElementById('file')!.classList.remove('open');
+  gestures.down(e.pointerId, e.clientX, e.clientY, e.button, e.pointerType === 'touch');
+  try {
+    canvas.setPointerCapture(e.pointerId);
+  } catch {} // the pointer may already be gone; the gesture still works without capture
 });
 canvas.addEventListener('pointermove', (e) => {
-  hover = renderer.screenToTile(e.clientX, e.clientY);
-  if (!drag) return;
-  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-  if (Math.hypot(dx, dy) > 5) drag.moved = true;
-  if (drag.moved) {
-    renderer.cam.x = drag.cx - dx / renderer.cam.zoom;
-    renderer.cam.y = drag.cy - dy / renderer.cam.zoom;
-  }
+  if (e.pointerType !== 'touch') hover = renderer.screenToTile(e.clientX, e.clientY);
+  gestures.move(e.pointerId, e.clientX, e.clientY);
 });
 canvas.addEventListener('pointerup', (e) => {
-  if (drag && !drag.moved) {
-    const t = renderer.screenToTile(e.clientX, e.clientY);
-    if (drag.button === 2) cancel();
-    else if (drag.button === 0) click(t, e.shiftKey);
-  }
-  drag = null;
+  const tap = gestures.up(e.pointerId);
+  if (!tap) return;
+  const t = renderer.screenToTile(tap.x, tap.y);
+  if (tap.button === 2) cancel();
+  else if (tap.button === 0 && tap.touch) touchTap(t);
+  else if (tap.button === 0) click(t, e.shiftKey);
 });
+canvas.addEventListener('pointercancel', (e) => gestures.cancel(e.pointerId));
 canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
-  const cam = renderer.cam;
-  const before = { x: (e.clientX - renderer.w / 2) / cam.zoom, y: (e.clientY - renderer.h / 2) / cam.zoom };
-  cam.zoom = Math.max(0.45, Math.min(2.6, cam.zoom * Math.exp(-e.deltaY * 0.0015)));
-  cam.x += before.x - (e.clientX - renderer.w / 2) / cam.zoom;
-  cam.y += before.y - (e.clientY - renderer.h / 2) / cam.zoom;
+  zoomAt(renderer, e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015));
 }, { passive: false });
+
+// The tile a touch player aimed at, and the tool it was aimed with.
+let aim: { tool: typeof ui.placing; t: P } | null = null;
+
+function touchTap(t: P) {
+  ui.hideCard();
+  const aimed = aim && aim.tool === ui.placing && aim.t.x === t.x && aim.t.y === t.y;
+  if (ui.placing && !aimed) {
+    aim = { tool: ui.placing, t };
+    return;
+  }
+  aim = null;
+  click(t, false);
+}
+
+document.getElementById('done')!.onclick = () => ui.setPlacing(null);
 
 window.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
@@ -252,6 +278,7 @@ function frame(now: number) {
   }
   const t1 = performance.now();
 
+  if (touch) hover = aim && aim.tool === ui.placing ? aim.t : null;
   const tool = ui.placing === 'road' || ui.placing === 'remove' ? ui.placing : null;
   const placing = tool ? null : (ui.placing as BType | null);
   const placeOk = !!placing && !!hover && !game.canPlace(placing, hover.x, hover.y);
