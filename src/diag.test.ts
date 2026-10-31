@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { Diagnostics, LIMITS } from '../src/diag';
-import { flatGame, run } from './helpers';
+import { Diagnostics, LIMITS } from './diag';
+import { flatGame, run } from './game/test-helpers';
 
 function watched(seed = 1) {
   const g = flatGame(seed);

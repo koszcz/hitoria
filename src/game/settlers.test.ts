@@ -1,6 +1,6 @@
 // Settlers who cannot walk to where they are sent.
 import { describe, expect, test } from 'bun:test';
-import { flatGame, run, runUntil, placeLinked } from '../helpers';
+import { flatGame, run, runUntil, placeLinked } from './test-helpers';
 
 describe('settlers who cannot get there', () => {
   test('a worker who cannot reach their hut goes back inside and tries again later', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { smoothPath } from '../src/curve';
-import type { P } from '../src/path';
+import { smoothPath } from './curve';
+import type { P } from './path';
 
 // The sharpest turn along a path, in radians. 0 means straight.
 const sharpest = (pts: P[]) => {

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
-import { BUILDABLE } from '../src/game';
-import { buildFacts, buildNow, consumers, makes, producers } from '../src/buildinfo';
-import { flatGame } from './helpers';
+import { BUILDABLE } from './game';
+import { buildFacts, buildNow, consumers, makes, producers } from './buildinfo';
+import { flatGame } from './game/test-helpers';
 
 describe('build card facts', () => {
   test('every buildable building explains what it does and what it needs', () => {

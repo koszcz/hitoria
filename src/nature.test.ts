@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test';
-import { World, W, H, Plant } from '../src/world';
-import { Game } from '../src/game';
-import { wind, flutter } from '../src/wind';
-import { flatGame, run } from './helpers';
+import { World, W, H, Plant } from './world';
+import { Game } from './game';
+import { wind, flutter } from './wind';
+import { flatGame, run } from './game/test-helpers';
 
 const SEEDS = [1, 2, 3, 99, 12345, 987654321];
 

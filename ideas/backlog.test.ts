@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { parseBacklog, parseIdea, readBacklog } from '../ideas/parse';
-import { blockers, render } from '../ideas/build';
+import { parseBacklog, parseIdea, readBacklog } from './parse';
+import { blockers, render } from './build';
 
 describe('backlog dashboard', () => {
   test('reads the title, text, scores and needs of an idea', () => {

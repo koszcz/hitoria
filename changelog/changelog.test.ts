@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { parseEntry, readEntries } from '../changelog/entries';
-import { render } from '../changelog/build';
+import { parseEntry, readEntries } from './entries';
+import { render } from './build';
 
 const entry = (front: string, body = 'What changed.') => `---\n${front}\n---\n${body}\n`;
 
