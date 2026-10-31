@@ -68,9 +68,8 @@ describe('roads and flags', () => {
     expect(g.flags.get(g.hq.flag)!.roads).toEqual([]);
   });
 
-  test("won't remove buildings or a building's flag", () => {
+  test("won't remove a building's flag", () => {
     const g = flatGame();
-    expect(g.removeAt(g.hq)).toBe('Demolishing buildings is not in yet');
     expect(g.removeAt(g.flags.get(g.hq.flag)!)).toBe("A building's own flag can't be removed");
     expect(g.removeAt({ x: g.hq.x + 3, y: g.hq.y - 3 })).toBe('Nothing to remove here');
   });

@@ -30,6 +30,9 @@ Every building needs a road to the HQ. Without one, no goods arrive and the buil
 waits. A sign with a crossed-out road floats over any building that has no road. Click a building
 to see what it is doing and what it is waiting for.
 
+Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
+to the HQ, and its flag and roads stay.
+
 ### Controls
 
 | Action | Input |
@@ -40,7 +43,7 @@ to see what it is doing and what it is waiting for.
 | Pick a building straight away | `1`–`9` |
 | Place several of the same building | Shift-click |
 | Draw roads | `R` |
-| Remove a road or a lone flag | `X` |
+| Remove a road, a lone flag, or a building | `X` |
 | Cancel | Right-click or Esc |
 | Pause | Space |
 | Save | Ctrl+S (or Cmd+S) |
@@ -145,7 +148,7 @@ Press F3 to see the level, and how much the game draws each frame.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, and the mountain and bay every start gets |
-| `src/game/` | Simulation: buildings, roads, settlers, carriers, food and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, settlers, carriers, food and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |

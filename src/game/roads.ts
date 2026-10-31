@@ -1,5 +1,6 @@
 // Building and removing roads and flags.
 import { findPath, P } from '../path';
+import { demolish } from './demolish';
 import type { Game } from './game';
 import { flaggable, roadable } from './land';
 import type { Flag, Road } from './types';
@@ -53,7 +54,7 @@ export function removeAt(g: Game, t: P): string | null {
     removeRoad(g, tile.road);
     return null;
   }
-  if (tile.b) return 'Demolishing buildings is not in yet';
+  if (tile.b) return demolish(g, g.buildings.get(tile.b)!);
   return 'Nothing to remove here';
 }
 
