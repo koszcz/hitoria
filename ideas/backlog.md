@@ -11,8 +11,8 @@ Nothing right now.
 At most 3 ideas, in the order we build them.
 
 - **Auto road for new buildings**: a new building gets the shortest road to the nearest flag, joining existing roads instead of running beside them. *Fun 3 · Effort M*
+- **Buildings that look different**: each building has its own shape and colours, so you can tell them apart at a glance. *Fun 2 · Effort S*
 - **Start near a mountain and shore**: every map puts a mountain and the shore within early reach of the HQ. *Fun 2 · Effort S*
-- **Demolish a building**: remove a building you placed in the wrong spot. *Fun 2 · Effort S*
 
 ## Inbox
 
@@ -24,6 +24,7 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
+- **Demolish a building**: remove a building you placed in the wrong spot. *Fun 2 · Effort S*
 - **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S*
 - **Worn paths**: settlers who walk off-road wear dirt trails into the grass, and unused trails fade back. *Fun 2 · Effort S*
 - **Shortcuts from footsteps**: a busy trail between two flags becomes a road, but only if it is much shorter than the current road route. *Fun 2 · Effort M · Needs: Auto road for new buildings, Worn paths*
