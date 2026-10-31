@@ -12,6 +12,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
+*Empty.*
 
 ## Inbox
 
