@@ -5,7 +5,6 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M · Branch: claude/build-6ab056*
-- **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S · Branch: claude/build-f2bace*
 
 ## Next
 
@@ -60,6 +59,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Well and water**: a well draws water on any flat grass, and the bakery needs 1 flour and 1 water for each loaf. *2026-10-31*
 - **Goals**: five peaceful goals in order, from "make 50 planks" to "build a monument", with a panel that shows your progress. *2026-10-31*
 - **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *2026-10-31*
 - **Sound basics**: soft wind and waves that follow the camera, with a mute button and the M key. The game remembers the choice. *2026-10-31*

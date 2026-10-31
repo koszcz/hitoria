@@ -12,6 +12,7 @@ export function hut(g: THREE.Group, model: Model, type: BType, wall: string, roo
   else if (type === 'fisher') fisher(g, model, wall, roof);
   else if (type === 'farm') farm(g, model, wall, roof);
   else if (type === 'bakery') bakery(g, model, wall, roof);
+  else if (type === 'well') well(g, wall, roof);
 }
 
 // A log cabin with a mossy roof, a pile of logs and a chopping block with an axe in it.
@@ -91,4 +92,23 @@ function bakery(g: THREE.Group, model: Model, wall: string, roof: string) {
   add(g, new THREE.BoxGeometry(0.16, 0.02, 0.1), '#8a6238', -0.36, 0.12, 0.36);
   for (const s of [-1, 1]) add(g, new THREE.BoxGeometry(0.015, 0.12, 0.015), '#6a4628', -0.36 + s * 0.06, 0.06, 0.36);
   add(g, new THREE.SphereGeometry(0.035, 8, 6).scale(1.5, 0.7, 1), '#c07a36', -0.36, 0.145, 0.36);
+}
+
+// A round stone well under a little pitched roof, with a winch, a rope and a bucket, and a trough beside it.
+function well(g: THREE.Group, wall: string, roof: string) {
+  add(g, new THREE.CylinderGeometry(0.2, 0.22, 0.24, 14), wall, 0, 0.12, 0);
+  add(g, new THREE.CylinderGeometry(0.21, 0.21, 0.03, 14), '#8c8678', 0, 0.25, 0);
+  add(g, new THREE.CylinderGeometry(0.15, 0.15, 0.01, 14), '#3a6a8a', 0, 0.22, 0, { emissive: '#2a5a7a', emissiveIntensity: 0.2 });
+  for (const x of [-0.17, 0.17]) add(g, new THREE.BoxGeometry(0.035, 0.42, 0.035), '#6a4628', x, 0.45, 0);
+  add(g, new THREE.CylinderGeometry(0.025, 0.025, 0.38, 8).rotateZ(Math.PI / 2), '#7a5530', 0, 0.56, 0);
+  add(g, new THREE.BoxGeometry(0.008, 0.18, 0.008), '#c8b48a', 0, 0.46, 0);
+  add(g, new THREE.CylinderGeometry(0.035, 0.028, 0.05, 8), '#8a6238', 0, 0.36, 0);
+  add(g, new THREE.BoxGeometry(0.012, 0.08, 0.012), '#5a3c22', 0.21, 0.56, 0.04);
+  for (const s of [-1, 1]) {
+    const side = add(g, new THREE.BoxGeometry(0.48, 0.02, 0.2), roof, 0, 0.7, s * 0.075);
+    side.rotation.x = s * 0.6;
+  }
+  add(g, new THREE.BoxGeometry(0.28, 0.06, 0.1), '#7a5530', 0.3, 0.03, 0.3);
+  add(g, new THREE.BoxGeometry(0.24, 0.01, 0.07), '#3a6a8a', 0.3, 0.06, 0.3);
+  add(g, new THREE.CylinderGeometry(0.035, 0.028, 0.05, 8), '#8a6238', -0.3, 0.025, 0.32);
 }

@@ -11,6 +11,7 @@ function want(b: Building, g: Good) {
   if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
   if (b.type === 'house') return pantry(b, g);
   const rc = RECIPES[b.type];
+  if (rc?.with === g) return PILE;
   if (!rc?.from.includes(g)) return 0;
   // Several inputs share one pile, so a mine keeps PILE food of any kind.
   let other = 0;
