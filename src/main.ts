@@ -11,6 +11,10 @@ import { T, getLang, setLang, startLang } from './i18n';
 import type { P } from './path';
 import { GraphicsSetting } from './quality/setting';
 import { GRAPHICS, LEVELS } from './quality/levels';
+import { Ambience } from './sound/ambience';
+import { MuteChoice } from './sound/mute';
+import { mix, waterShare } from './sound/mix';
+import { wind } from './wind';
 
 setLang(startLang());
 const saves = new Saves();
@@ -41,6 +45,9 @@ const graphics = new GraphicsSetting({ touch: matchMedia('(pointer: coarse)').ma
 renderer.setGraphics(GRAPHICS[graphics.level]);
 const ui = new UI(game);
 ui.graphics = graphics;
+const mute = new MuteChoice();
+const ambience = new Ambience();
+ui.muted = mute.muted;
 ui.relabel();
 watch(() => game);
 diag.attach(game);
@@ -127,6 +134,10 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
       renderer.setGraphics(GRAPHICS[graphics.cycle()]);
       return ui.relabel();
     }
+    if (what === 'sound') {
+      document.getElementById('file')!.classList.add('open');
+      return toggleSound();
+    }
     if (what === 'lang') {
       setLang(getLang() === 'pl' ? 'en' : 'pl');
       return ui.relabel();
@@ -141,6 +152,24 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
 // On a narrow screen the file buttons fold away behind a menu button.
 document.getElementById('menu')!.onclick = () => document.getElementById('file')!.classList.toggle('open');
 window.addEventListener('pagehide', autosave);
+
+function toggleSound() {
+  ui.muted = mute.toggle();
+  if (!ui.muted) ambience.start();
+  ui.relabel();
+}
+// Browsers only allow sound after the player does something, so start it on the first input.
+for (const ev of ['pointerdown', 'keydown'])
+  window.addEventListener(ev, () => { if (!mute.muted) ambience.start(); }, true);
+
+// The sound follows the camera: waves near water, wind as gusts pass, quieter when zoomed out.
+function updateSound(t: number) {
+  const c = renderer.screenToTile(innerWidth / 2, innerHeight / 2);
+  const w = game.world;
+  const water = waterShare((x, y) => !w.inside(x, y) || w.at(x, y).t === 'water', c.x, c.y, 8);
+  const gust = wind(c.x, c.y, t);
+  ambience.set(mix({ water, wind: gust, zoom: renderer.cam.zoom, muted: mute.muted }), gust, t);
+}
 
 let hover: P | null = null;
 let preview: P[] | null = null;
@@ -210,6 +239,7 @@ window.addEventListener('keydown', (e) => {
   }
   keys.add(e.key.toLowerCase());
   if (e.key === 'Escape') cancel();
+  if (e.key === 'm' || e.key === 'M') toggleSound();
   if (e.key === 'F3') {
     e.preventDefault();
     debug.toggle();
@@ -306,6 +336,7 @@ function frame(now: number) {
     fields = placeOk ? game.planFields(placing!, hover!.x, hover!.y) : [];
   }
   renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, fields, selected: ui.selected }, now / 1000);
+  updateSound(now / 1000);
   diag.frame(dt * 1000, t1 - t0, performance.now() - t1);
   // On auto, the graphics level follows how fast frames are. Tell the player when it drops.
   const was = graphics.level, changed = graphics.frame(frameMs);
@@ -331,4 +362,4 @@ function frame(now: number) {
 }
 requestAnimationFrame(frame);
 
-Object.assign(window, { game, diag, renderer }); // handy for poking at state from the console
+Object.assign(window, { game, diag, renderer, ambience }); // handy for poking at state from the console
