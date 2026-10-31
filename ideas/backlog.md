@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M · Branch: claude/coal-iron-mines-1c5792*
+Nothing right now.
 
 ## Next
 
@@ -63,6 +63,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *2026-10-31*
 - **Worn paths**: settlers' footsteps wear the grass into dirt paths. Worn tiles are faster to walk on, so settlers keep to the same lines. Unused paths slowly fade back to grass over several minutes, and busy paths never fade. *2026-10-31*
 - **Well and water**: a well draws water on any flat grass, and the bakery needs 1 flour and 1 water for each loaf. *2026-10-31*
 - **Second island**: a wooded island with a sandy beach sits across the water from the mouth of the bay. Water at least 3 tiles wide cuts it off from the home island. *2026-10-31*

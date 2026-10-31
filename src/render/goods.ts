@@ -42,6 +42,15 @@ function goodGeometry(): Record<Good, THREE.BufferGeometry> {
       piece(new THREE.BoxGeometry(0.012, 0.01, 0.06), '#e8c080', -0.03, 0.035, 0),
       piece(new THREE.BoxGeometry(0.012, 0.01, 0.06), '#e8c080', 0.03, 0.035, 0),
     ]),
+    coal: mergeGeometries([
+      piece(new THREE.DodecahedronGeometry(0.04, 0), '#242222', -0.025, 0, 0),
+      piece(new THREE.DodecahedronGeometry(0.035, 0), '#1a1818', 0.03, 0, 0.01),
+      piece(new THREE.DodecahedronGeometry(0.03, 0), '#2e2b2a', 0, 0.04, -0.005),
+    ]),
+    ore: mergeGeometries([
+      piece(new THREE.DodecahedronGeometry(0.055, 0), '#8a4a30', 0, 0, 0),
+      piece(new THREE.DodecahedronGeometry(0.02, 0), '#c8763e', 0.035, 0.03, 0.02),
+    ]),
   };
 }
 

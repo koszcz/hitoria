@@ -1,13 +1,13 @@
 // Goods, roles and building types, with the costs, recipes and timings that tune the game.
-export type Good = 'log' | 'plank' | 'stone' | 'fish' | 'grain' | 'flour' | 'bread' | 'water';
-export const GOODS: Good[] = ['log', 'plank', 'stone', 'fish', 'grain', 'flour', 'bread', 'water'];
+export type Good = 'log' | 'plank' | 'stone' | 'fish' | 'grain' | 'flour' | 'bread' | 'water' | 'coal' | 'ore';
+export const GOODS: Good[] = ['log', 'plank', 'stone', 'fish', 'grain', 'flour', 'bread', 'water', 'coal', 'ore'];
 export type Bag = Record<Good, number>;
-export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, fish: 0, grain: 0, flour: 0, bread: 0, water: 0, ...p });
+export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0, fish: 0, grain: 0, flour: 0, bread: 0, water: 0, coal: 0, ore: 0, ...p });
 
 export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout'
   | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner' | 'drawer';
 export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse'
-  | 'fisher' | 'farm' | 'well' | 'mill' | 'bakery' | 'mine' | 'house' | 'monument';
+  | 'fisher' | 'farm' | 'well' | 'mill' | 'bakery' | 'mine' | 'coalmine' | 'ironmine' | 'house' | 'monument';
 export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant' | 'fish' | 'reap';
 
 // Houses grow your number of settlers.
@@ -42,8 +42,12 @@ export const BDEFS: Record<BType, BDef> = {
   house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
   monument: { name: 'Monument', icon: '🗿', desc: 'A tall stone monument to your peaceful island. It does no work, but your settlers are proud of it.', cost: { plank: 10, stone: 16 }, buildTime: 30, worker: null, radius: 0 },
   mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
+  coalmine: { name: 'Coal Mine', icon: '⚫', desc: 'Digs coal out of a mountain and never runs dry. The miner eats one fish or bread for every 2 coal. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
+  ironmine: { name: 'Iron Mine', icon: '🪨', desc: 'Digs iron ore out of a mountain and never runs dry. The miner eats one fish or bread for every 2 iron ore. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
 };
-export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well'];
+// Mines dig into a mountain, so they go next to one.
+export const MINES: BType[] = ['mine', 'coalmine', 'ironmine'];
+export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well', 'coalmine', 'ironmine'];
 
 // Workshops turn goods into other goods inside the building. With several inputs in `from`, any one of them
 // will do. The good in `with` is needed as well.
@@ -62,6 +66,8 @@ export const RECIPES: Partial<Record<BType, Recipe>> = {
   mill: { from: ['grain'], to: 'flour', n: 1, t: 5, doing: 'Grinding flour', waiting: 'Waiting for grain' },
   bakery: { from: ['flour'], with: 'water', to: 'bread', n: 1, t: 6, doing: 'Baking bread', waiting: 'Waiting for flour', lacking: 'Waiting for water' },
   mine: { from: ['bread', 'fish'], to: 'stone', n: 2, t: 8, doing: 'Digging stone', waiting: 'Waiting for fish or bread' },
+  coalmine: { from: ['bread', 'fish'], to: 'coal', n: 2, t: 8, doing: 'Digging coal', waiting: 'Waiting for fish or bread' },
+  ironmine: { from: ['bread', 'fish'], to: 'ore', n: 2, t: 8, doing: 'Digging iron ore', waiting: 'Waiting for fish or bread' },
 };
 
 export const SPEED = 1.7; // tiles per second

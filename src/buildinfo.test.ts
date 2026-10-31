@@ -18,7 +18,10 @@ describe('build card facts', () => {
     expect(makes('woodcutter')).toBe('log');
     expect(makes('lookout')).toBeNull();
     expect(producers('stone')).toEqual(['quarry', 'mine']);
-    expect(consumers('fish')).toEqual(['mine', 'house']);
+    expect(consumers('fish')).toEqual(['mine', 'house', 'coalmine', 'ironmine']);
+    expect(producers('coal')).toEqual(['coalmine']);
+    expect(producers('ore')).toEqual(['ironmine']);
+    expect(consumers('coal')).toEqual([]);
     expect(consumers('flour')).toEqual(['bakery']);
     expect(makes('well')).toBe('water');
     expect(producers('water')).toEqual(['well']);
@@ -28,6 +31,8 @@ describe('build card facts', () => {
   test('workshops show their speed', () => {
     expect(buildFacts('sawmill').makes).toBe('Turns 1 Log into 1 Plank every 5 s. That is up to 12 a minute.');
     expect(buildFacts('mine').makes).toBe('Turns 1 Bread or Fish into 2 Stone every 8 s. That is up to 15 a minute.');
+    expect(buildFacts('coalmine').makes).toBe('Turns 1 Bread or Fish into 2 Coal every 8 s. That is up to 15 a minute.');
+    expect(buildFacts('ironmine').makes).toBe('Turns 1 Bread or Fish into 2 Iron Ore every 8 s. That is up to 15 a minute.');
     expect(buildFacts('bakery').makes).toBe('Turns 1 Flour and 1 Water into 1 Bread every 6 s. That is up to 10 a minute.');
     expect(buildFacts('well').makes).toBe('Draws 1 Water from the ground every 5 s. It needs no other goods.');
     expect(buildFacts('well').worth).toContain('Water feeds the Bakery.');
@@ -37,18 +42,23 @@ describe('build card facts', () => {
     expect(buildFacts('sawmill').worth).toContain('Every building needs Planks.');
     expect(buildFacts('woodcutter').worth).toContain('Logs feed the Sawmill.');
     expect(buildFacts('mill').worth).toContain('Flour feeds the Bakery.');
-    expect(buildFacts('fisher').worth).toContain('Fish feeds the Stone Mine and House.');
-    expect(buildFacts('bakery').worth).toContain('Bread feeds the Stone Mine and House.');
+    expect(buildFacts('fisher').worth).toContain('Fish feeds the Stone Mine, House, Coal Mine and Iron Mine.');
+    expect(buildFacts('bakery').worth).toContain('Bread feeds the Stone Mine, House, Coal Mine and Iron Mine.');
     expect(buildFacts('quarry').worth[0]).toMatch(/^\d+ of \d+ buildings need Stone to be built\.$/);
   });
 
+  test('coal and iron ore say nothing uses them yet', () => {
+    expect(buildFacts('coalmine').worth).toContain('Nothing uses Coal yet. It waits in your stores.');
+    expect(buildFacts('ironmine').worth).toContain('Nothing uses Iron Ore yet. It waits in your stores.');
+  });
+
   test('placement rules and workers are listed', () => {
-    expect(buildFacts('mine').needs).toContain('Build it next to a mountain.');
+    for (const t of ['mine', 'coalmine', 'ironmine'] as const) expect(buildFacts(t).needs).toContain('Build it next to a mountain.');
     expect(buildFacts('mill').worth).toContain('Flour feeds the Bakery.');
     expect(buildFacts('fisher').needs).toContain('Build it near water.');
     expect(buildFacts('storehouse').needs).toContain('Needs no worker.');
     expect(buildFacts('woodcutter').needs).toContain('Works up to 6 tiles away.');
-    for (const t of ['lookout', 'mine'] as const) expect(buildFacts(t).needs.some((n) => n.startsWith('Works up to'))).toBe(false);
+    for (const t of ['lookout', 'mine', 'coalmine', 'ironmine'] as const) expect(buildFacts(t).needs.some((n) => n.startsWith('Works up to'))).toBe(false);
   });
 });
 

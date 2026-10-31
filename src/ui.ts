@@ -141,6 +141,13 @@ export class UI {
     if (el.innerHTML !== html) el.innerHTML = html;
   }
 
+  // When the goods wrap onto more rows than the title's, the panels below the top bar move down by as much.
+  private dropPanels() {
+    const drop = Math.max(0, $('res').getBoundingClientRect().bottom - document.querySelector('.brand')!.getBoundingClientRect().bottom);
+    const root = document.documentElement.style;
+    if (root.getPropertyValue('--bar-drop') !== `${drop}px`) root.setProperty('--bar-drop', `${drop}px`);
+  }
+
   refresh() {
     const g = this.game;
     while (g.toasts.length) this.toast(g.toasts.shift()!);
@@ -152,6 +159,7 @@ export class UI {
       `<div class="pill">🧑‍🌾 ${x.settlers(g.pool, g.settlers.size)}</div>`;
 
     this.drawGoal();
+    this.dropPanels();
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);
     $('done').hidden = !this.placing;
