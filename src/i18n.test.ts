@@ -100,6 +100,8 @@ describe('build card in Polish', () => {
     setLang('pl');
     expect(buildFacts('sawmill').makes).toBe('Zamienia 1 kłodę na 1 deskę co 5 s. To do 12 na minutę.');
     expect(buildFacts('mine').makes).toBe('Zamienia 1 bochenek chleba lub rybę na 2 kamienie co 8 s. To do 15 na minutę.');
+    expect(buildFacts('coalmine').makes).toBe('Zamienia 1 bochenek chleba lub rybę na 2 worki węgla co 8 s. To do 15 na minutę.');
+    expect(buildFacts('ironmine').makes).toBe('Zamienia 1 bochenek chleba lub rybę na 2 bryły rudy żelaza co 8 s. To do 15 na minutę.');
   });
 
   test('gathering huts say where the goods come from', () => {

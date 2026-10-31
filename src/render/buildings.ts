@@ -9,6 +9,7 @@ import { mergeModel } from './merge';
 import { barrel, crate, house, logPile } from './props';
 import { hut } from './huts';
 import { LOOKS } from './looks';
+import { mine } from './mines';
 
 let dotTex: THREE.Texture | undefined;
 const dot = () => (dotTex ??= softDot());
@@ -179,23 +180,11 @@ export function makeBuilding(type: BType, built: boolean): Model {
       for (const [x, z] of [[0.32, 0.22], [0.38, 0.1]]) add(g, new THREE.SphereGeometry(0.06, 8, 6).scale(1, 1.15, 1), '#efe6d0', x, 0.06, z);
       break;
     }
-    case 'mine': {
-      add(g, new THREE.BoxGeometry(0.9, 0.3, 0.9), '#8a8378', 0, -0.1, 0);
-      // A rocky mound with a timbered tunnel mouth, rails and a cart of stone.
-      add(g, new THREE.DodecahedronGeometry(0.5, 0).scale(1, 0.8, 0.8), '#948d80', 0, 0.22, -0.18, { flatShading: true });
-      add(g, new THREE.DodecahedronGeometry(0.28, 0).scale(1, 0.9, 1), '#857e72', -0.3, 0.16, 0.05, { flatShading: true });
-      add(g, new THREE.DodecahedronGeometry(0.22, 0), '#9c9588', 0.32, 0.12, -0.12, { flatShading: true });
-      add(g, new THREE.BoxGeometry(0.3, 0.34, 0.12), '#16120e', 0, 0.17, 0.22);
-      const beam = '#5a3c22';
-      for (const x of [-0.17, 0.17]) add(g, new THREE.BoxGeometry(0.055, 0.42, 0.06), beam, x, 0.21, 0.29);
-      add(g, new THREE.BoxGeometry(0.46, 0.06, 0.08), beam, 0, 0.44, 0.29);
-      add(g, new THREE.BoxGeometry(0.03, 0.06, 0.03), '#ffcf6a', 0.2, 0.36, 0.33, { emissive: '#ffa040', emissiveIntensity: 0.9 });
-      for (const x of [-0.06, 0.06]) add(g, new THREE.BoxGeometry(0.015, 0.012, 0.3), '#6a6460', x, 0.01, 0.42);
-      for (let i = 0; i < 4; i++) add(g, new THREE.BoxGeometry(0.18, 0.012, 0.03), '#6a4628', 0, 0.005, 0.3 + i * 0.07);
-      add(g, new THREE.BoxGeometry(0.16, 0.08, 0.12), '#5d5248', 0, 0.07, 0.43);
-      for (const [x, z] of [[-0.03, 0.42], [0.04, 0.44], [0, 0.4]]) add(g, new THREE.DodecahedronGeometry(0.035, 0), '#b0ada4', x, 0.13, z);
+    case 'mine':
+    case 'coalmine':
+    case 'ironmine':
+      mine(g, type, roof);
       break;
-    }
     case 'house': {
       // A cottage with a vegetable patch, a picket fence and washing on a line.
       house(g, model, { w: 0.28, d: 0.24, h: 0.4, rh: 0.32, wall, roof, style: 'tile', x: -0.1, z: -0.12, door: 0.3, win: -0.4, shutter: '#6a4a7a' });

@@ -63,6 +63,14 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
     name: 'Kopalnia kamienia',
     desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 kamienie. Zbuduj ją przy górze.',
   },
+  coalmine: {
+    name: 'Kopalnia węgla',
+    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 worki węgla. Zbuduj ją przy górze.',
+  },
+  ironmine: {
+    name: 'Kopalnia żelaza',
+    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 bryły rudy. Zbuduj ją przy górze.',
+  },
   monument: {
     name: 'Pomnik',
     desc: 'Wysoki kamienny pomnik twojej spokojnej wyspy. Nie wykonuje żadnej pracy, ale osadnicy są z niego dumni.',
@@ -78,10 +86,10 @@ export const buildingDesc = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].desc :
 
 // Goods as a label, as in "Planks: 4".
 const GOOD_EN: Record<Good, string> = {
-  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water',
+  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore',
 };
 const GOOD_PL: Record<Good, string> = {
-  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda',
+  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza',
 };
 export const goodName = (g: Good) => (lang === 'pl' ? GOOD_PL : GOOD_EN)[g];
 
@@ -119,6 +127,8 @@ const MESSAGES_PL: Record<string, string> = {
   'Waiting for water': 'Czeka na wodę',
   'Drawing water': 'Czerpie wodę',
   'Digging stone': 'Wydobywa kamień',
+  'Digging coal': 'Wydobywa węgiel',
+  'Digging iron ore': 'Wydobywa rudę żelaza',
   'Waiting for fish or bread': 'Czeka na ryby lub chleb',
   'A settler will be born soon': 'Wkrótce urodzi się osadnik',
   'House is full': 'Dom jest pełny',
@@ -199,7 +209,7 @@ const EN = {
   buildMenu: 'Build',
   buildIt: (name: string) => `🔨 Build ${name}`,
   close: 'Close (Esc)',
-  groups: { wood: 'Wood', stone: 'Stone', food: 'Food', town: 'Town' },
+  groups: { wood: 'Wood', stone: 'Stone and ore', food: 'Food', town: 'Town' },
   road: 'Road',
   roadDesc: 'Click a flag or building, then where the road should go. Keeps going from the new end until you right-click.',
   remove: 'Remove',
@@ -285,7 +295,7 @@ const PL: typeof EN = {
   buildMenu: 'Budowa',
   buildIt: (name: string) => `🔨 Postaw: ${name}`,
   close: 'Zamknij (Esc)',
-  groups: { wood: 'Drewno', stone: 'Kamień', food: 'Żywność', town: 'Osada' },
+  groups: { wood: 'Drewno', stone: 'Kamień i rudy', food: 'Żywność', town: 'Osada' },
   road: 'Droga',
   roadDesc: 'Kliknij flagę lub budynek, a potem miejsce, do którego ma biec droga. Droga biegnie dalej od nowego końca, aż klikniesz prawym przyciskiem.',
   remove: 'Usuń',

@@ -2,7 +2,7 @@
 import { findPath } from '../path';
 import { W } from '../world';
 import { autoRoad } from './autoroad';
-import { BDEFS, BType, FARM_FIELDS, GOODS, bag } from './defs';
+import { BDEFS, BType, FARM_FIELDS, GOODS, MINES, bag } from './defs';
 import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory, flaggable, near, roadable } from './land';
@@ -20,7 +20,7 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   if (t.tree) return 'A tree is in the way';
   if (t.rock) return 'A boulder is in the way';
   if (t.field) return 'This is a farm field';
-  if (type === 'mine' && !near(g, x, y, BDEFS.mine.radius, (n) => n.t === 'mountain')) return 'Must be next to a mountain';
+  if (MINES.includes(type) && !near(g, x, y, BDEFS[type].radius, (n) => n.t === 'mountain')) return 'Must be next to a mountain';
   if (type === 'fisher' && !near(g, x, y, BDEFS.fisher.radius, (n) => n.t === 'water')) return 'Must be near water';
   const fields = type === 'farm' ? pickFields(g, x, y) : [];
   if (type === 'farm' && fields.length < FARM_FIELDS) return 'No room for its fields';
