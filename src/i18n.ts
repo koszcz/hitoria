@@ -127,6 +127,8 @@ const MESSAGES_PL: Record<string, string> = {
   'Must be near water': 'Musi stać blisko wody',
   'No room for its flag in front': 'Brak miejsca na flagę przed budynkiem',
   'No road can reach it': 'Żadna droga tu nie dotrze',
+  'No room for its fields': 'Brak miejsca na pola',
+  'This is a farm field': 'Tu jest pole farmy',
   'Unknown building': 'Nieznany budynek',
   // Roads and removing
   'Roads start at a flag, a building, or free ground away from other flags':

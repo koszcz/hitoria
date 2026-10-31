@@ -10,6 +10,7 @@ export interface Tile {
   conifer: boolean;
   rock: number; // stone left in the boulder, 0 = none
   crop: number; // 0 = none, (0, 1) = growing grain, 1 = ripe
+  field: number; // id of the farm whose field this is, 0 = none
   plant: Plant;
   b: number; // id of the building on this tile, 0 = none
   flag: number; // id of the flag on this tile, 0 = none
@@ -93,7 +94,7 @@ export class World {
           else if (toBay < BAY_WIDTH + 1.2) h = Math.min(h, 0.32);
         }
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
-        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
+        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
       }
     }
 

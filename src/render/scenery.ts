@@ -77,7 +77,7 @@ export class Scenery {
     const [leafy, pine, birch, bloom] = this.trees;
     const nt = [0, 0, 0, 0];
     const np = Object.fromEntries(KINDS.map((k) => [k, 0])) as Record<Kind, number>;
-    let nr = 0, nc = 0, nf = 0;
+    let nr = 0, nc = 0, nf = 0, ns = 0;
     for (let y = 0; y < H; y++)
       for (let x = 0; x < W; x++) {
         const t = world.at(x, y);
@@ -95,10 +95,13 @@ export class Scenery {
           // A little warmer or cooler, lighter or darker, so a forest is not one flat green.
           mesh.setColorAt(n, this.c.setHSL(ART.tree.hue + (hash(y, x * 5) - 0.5) * ART.tree.range, ART.tree.s, ART.tree.l + hash(x, y * 3) * 0.22));
         }
+        // A farm's field is tilled soil from the day the farm is placed. Grain grows on it.
+        if (t.field || t.crop > 0) {
+          this.m4.compose(this.v.set(x + 0.5, height(x + 0.5, y + 0.5) + 0.015, y + 0.5), this.q.identity(), this.s.setScalar(1));
+          this.fields.setMatrixAt(ns++, this.m4);
+        }
         if (t.crop > 0) {
           const px = x + 0.5, pz = y + 0.5, gy = height(px, pz);
-          this.m4.compose(this.v.set(px, gy + 0.015, pz), this.q.identity(), this.s.setScalar(1));
-          this.fields.setMatrixAt(nc, this.m4);
           const bend = (gust * 0.16 + flutter(x, y, now, 1.3) * 0.03) * t.crop;
           const q = this.bent(0, bend);
           this.m4.compose(this.v.set(px, gy, pz), q, this.s.set(1, 0.08 + 0.92 * t.crop, 1));
@@ -107,7 +110,7 @@ export class Scenery {
           this.crops.setColorAt(nc++, t.crop >= 1 ? this.c.set('#e0b84a') : this.c.setHSL(0.25 - 0.1 * t.crop, 0.55, 0.36 + 0.1 * t.crop));
         }
         // A plant hides under anything else on its tile, and comes back when that is gone.
-        if (t.plant && !t.tree && !t.crop && !t.rock && !t.b && !t.flag && !t.road) {
+        if (t.plant && !t.tree && !t.crop && !t.field && !t.rock && !t.b && !t.flag && !t.road) {
           const p = PLANTS[t.plant], mesh = this.plants[t.plant], n = np[t.plant]++;
           const px = x + 0.5 + (hash(x * 5, y) - 0.5) * 0.2, pz = y + 0.5 + (hash(x, y * 5) - 0.5) * 0.2;
           const bend = p.bend * (gust + flutter(x, y, now, 1.6) * 0.25);
@@ -139,7 +142,7 @@ export class Scenery {
       m.instanceMatrix.needsUpdate = true;
       if (m.instanceColor) m.instanceColor.needsUpdate = true;
     }
-    for (const [m, n] of [[leafy, nt[0]], [pine, nt[1]], [birch, nt[2]], [bloom, nt[3]], [this.petals, nf], [this.rocks, nr], [this.crops, nc], [this.fields, nc]] as const) {
+    for (const [m, n] of [[leafy, nt[0]], [pine, nt[1]], [birch, nt[2]], [bloom, nt[3]], [this.petals, nf], [this.rocks, nr], [this.crops, nc], [this.fields, ns]] as const) {
       m.count = n;
       m.instanceMatrix.needsUpdate = true;
       if (m.instanceColor) m.instanceColor.needsUpdate = true;

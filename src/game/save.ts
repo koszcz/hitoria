@@ -2,6 +2,7 @@
 import { GOODS, Good, bag } from './defs';
 import { builtStatus } from './construction';
 import type { Game } from './game';
+import { claimFields } from './fields';
 import { computeTerritory } from './land';
 import { isStore } from './stores';
 import type { Building, Flag, Road } from './types';
@@ -18,7 +19,7 @@ export interface SaveData {
   pool: number;
   nextId: number;
   hq: number;
-  tiles: [tree: number, conifer: number, rock: number, b: number, flag: number, road: number, crop?: number][];
+  tiles: [tree: number, conifer: number, rock: number, b: number, flag: number, road: number, crop?: number, field?: number][];
   buildings: Building[];
   flags: Flag[];
   roads: Road[];
@@ -53,7 +54,7 @@ export function save(g: Game): SaveData {
   }
   return {
     v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool: g.population, nextId: g.nextId, hq: g.hq.id,
-    tiles: g.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop]),
+    tiles: g.world.tiles.map((t) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field]),
     buildings, flags, roads,
   };
 }
@@ -71,8 +72,8 @@ export const mapVersion = (d: SaveData) => d.map ?? (d.v >= 3 ? 2 : 1);
 
 // Put the saved state into `g`, a new game made from the same seed.
 export function restore(g: Game, d: SaveData) {
-  d.tiles.forEach(([tree, conifer, rock, b, flag, road, crop = 0], i) =>
-    Object.assign(g.world.tiles[i], { tree, conifer: !!conifer, rock, b, flag, road, crop }));
+  d.tiles.forEach(([tree, conifer, rock, b, flag, road, crop = 0, field = 0], i) =>
+    Object.assign(g.world.tiles[i], { tree, conifer: !!conifer, rock, b, flag, road, crop, field }));
   // Saves from version 1 have no food goods yet.
   for (const b of d.buildings) {
     b.stock = bag(b.stock);
@@ -99,4 +100,7 @@ export function restore(g: Game, d: SaveData) {
   g.nextId = d.nextId;
   g.net++;
   computeTerritory(g);
+  // Farms from saves made before fields take theirs now, keeping the grain already growing.
+  const owned = new Set(g.world.tiles.map((t) => t.field));
+  for (const b of g.buildings.values()) if (b.type === 'farm' && !owned.has(b.id)) claimFields(g, b, true);
 }

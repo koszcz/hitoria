@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a windmill, two lookout towers and a stone mine, all joined by roads](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers and a stone mine, all joined by roads](docs/screenshot.jpg)
 
 ## How to play
 
@@ -145,7 +145,7 @@ Press F3 to see the level, and how much the game draws each frame.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, and the mountain and bay every start gets |
-| `src/game/` | Simulation: buildings, roads, settlers, carriers, food and saving |
+| `src/game/` | Simulation: buildings, roads, settlers, carriers, farm fields, food and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
@@ -162,6 +162,8 @@ Press F3 to see the level, and how much the game draws each frame.
 - A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
   eats fish or bread.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
+- Each farm keeps 6 fields of its own on the grass around it. You can place a farm only where
+  they fit, and nothing else can be built on them.
 - A house turns fish or bread into new settlers.
 - A lookout tower expands your land.
 - Goods are stored at the HQ and in storehouses.

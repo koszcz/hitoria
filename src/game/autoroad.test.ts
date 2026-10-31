@@ -75,7 +75,7 @@ describe('auto road for new buildings', () => {
     const g = flatGame();
     const { x, y } = g.hq;
     g.buildRoad(g.hq.flag, { x: x + 8, y: y + 1 });
-    const plan = g.planAutoRoad(x + 6, y - 4);
+    const plan = g.planAutoRoad('woodcutter', x + 6, y - 4);
     expect(plan?.length).toBeGreaterThan(1);
     const b = g.place('woodcutter', x + 6, y - 4);
     const flags = new Set([...g.flags.values()].map((f) => `${f.x},${f.y}`));
