@@ -1,6 +1,7 @@
 // Saving a game and loading it back.
 import { describe, expect, test } from 'bun:test';
 import { Game, SAVE_VERSION, bag } from '.';
+import { MAP_VERSION, World } from '../world';
 import { flatGame, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
 
 describe('save and load', () => {
@@ -80,6 +81,17 @@ describe('save and load', () => {
     expect([...l.flags.values()].some((f) => 'items' in f)).toBe(false);
     expect([...l.roads.values()].some((r) => 'carrier' in r)).toBe(false);
     runUntil(l, () => l.buildings.get(site.id)!.built, 300);
+  });
+
+  test('records the map version, and a save from before map versions loads on the old map', () => {
+    const d = new Game(1).save();
+    expect(d.map).toBe(MAP_VERSION);
+    const old = { ...d, v: 2, map: undefined };
+    expect(Game.load(old).world.tiles.map((t) => t.t)).toEqual(new World(1, 1).tiles.map((t) => t.t));
+    // Version 3 saves came after the map changed, so they load on map 2.
+    const v3 = { ...d, v: 3, map: undefined };
+    expect(Game.load(v3).world.tiles.map((t) => t.t)).toEqual(new World(1, 2).tiles.map((t) => t.t));
+    expect(Game.load(d).world.tiles.map((t) => t.t)).toEqual(new World(1).tiles.map((t) => t.t));
   });
 
   test('refuses a save from another version', () => {

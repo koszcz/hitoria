@@ -124,6 +124,9 @@ The save keeps the map, buildings, roads, flags and every good. It does not keep
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
 
+Each save records which version of the map it was made on. A save from before a map change loads
+on the same land it was saved on, even though new games get the new map.
+
 ## Graphics
 
 The **Graphics** button in the menu sets how the game is drawn. Click it to go through the choices.
