@@ -10,6 +10,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
+- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
 
 ## Inbox
@@ -22,7 +23,6 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
-- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S*
 - **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
 - **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. *Fun 2 · Effort M*
 - **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look*
@@ -37,7 +37,6 @@ Triaged, but not next.
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
 - **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
-- **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons. *Fun 2 · Effort S*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
 - **Faster roads**: busy roads get a donkey that carries two goods at once. *Fun 2 · Effort M*
@@ -91,4 +90,5 @@ Ideas we decided not to build, and why.
 - **Fix type errors**: already fixed. The type check passes with no errors.
 - **Shortcuts from footsteps**: Worn paths and Carriers walk free now cover it. Paths form wherever settlers walk, so there is no road route to shortcut.
 - **Birds**: it adds atmosphere only and changes no choices. Wild animals and Hunter add more to play.
+- **Clouds**: you decided not to build it.
 - **Forests spread**: dropped after a first build. Trees regrew in other forests' gaps instead of the felled patch, and we decided not to pursue it.
