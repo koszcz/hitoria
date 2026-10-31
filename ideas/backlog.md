@@ -10,7 +10,9 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
-*Empty.*
+- **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M*
+- **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S*
+- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 
 ## Inbox
 
@@ -26,9 +28,7 @@ Triaged, but not next.
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Worn paths**: settlers who walk off-road wear dirt trails into the grass, and unused trails fade back. *Fun 2 · Effort S*
 - **Shortcuts from footsteps**: a busy trail between two flags becomes a road, but only if it is much shorter than the current road route. *Fun 2 · Effort M · Needs: Auto road for new buildings, Worn paths*
-- **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
-- **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
 - **Birds**: gulls circle over the shore, and small birds fly up from a tree when a woodcutter fells it. *Fun 2 · Effort S*
 - **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free. *Fun 2 · Effort S*
@@ -46,7 +46,6 @@ Triaged, but not next.
 - **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. They are only there to watch. *Fun 2 · Effort M*
 - **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M*
 - **Work sounds**: chopping, sawing and hammering you hear near the camera. *Fun 2 · Effort M · Needs: Sound basics*
-- **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
