@@ -11,6 +11,8 @@ How to add and triage ideas: see [README.md](README.md).
 At most 3 ideas, in the order we build them.
 
 - **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
+- **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M*
+- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
 
 ## Inbox
 
@@ -27,16 +29,15 @@ Triaged, but not next.
 - **Worn paths**: settlers who walk off-road wear dirt trails into the grass, and unused trails fade back. *Fun 2 · Effort S*
 - **Shortcuts from footsteps**: a busy trail between two flags becomes a road, but only if it is much shorter than the current road route. *Fun 2 · Effort M · Needs: Auto road for new buildings, Worn paths*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
+- **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
 - **Birds**: gulls circle over the shore, and small birds fly up from a tree when a woodcutter fells it. *Fun 2 · Effort S*
 - **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free. *Fun 2 · Effort S*
 - **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons. *Fun 2 · Effort S*
 - **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
-- **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
 - **Faster roads**: busy roads get a donkey that carries two goods at once. *Fun 2 · Effort M*
-- **Harbour**: a harbour building on the shore, where ships can dock. *Fun 2 · Effort M*
 - **Trade ship**: a ship that visits to trade goods. *Fun 2 · Effort M · Needs: Harbour*
 - **Model loader, trees and rocks**: load detailed 3D models, such as free CC0 packs from Kenney or Quaternius, starting with trees and rocks. *Fun 2 · Effort M*
 - **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
