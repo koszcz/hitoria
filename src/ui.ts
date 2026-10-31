@@ -1,5 +1,6 @@
 import { Game, BDEFS, BUILDABLE, BType, GOODS, Bag } from './game';
-import { GOOD_NAME, buildFacts, buildNow } from './buildinfo';
+import { buildFacts, buildNow } from './buildinfo';
+import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -8,9 +9,9 @@ const costText = (cost: Partial<Bag>) =>
 
 export type Tool = BType | 'road' | 'remove';
 
-const TOOLS: { tool: Tool; key: string; icon: string; name: string; desc: string }[] = [
-  { tool: 'road', key: 'R', icon: '🛤️', name: 'Road', desc: 'Click a flag or building, then where the road should go. Keeps going from the new end until you right-click.' },
-  { tool: 'remove', key: 'X', icon: '✖️', name: 'Remove', desc: 'Remove a road or a lone flag.' },
+const TOOLS: { tool: Tool; key: string; icon: string; name: () => string; desc: () => string }[] = [
+  { tool: 'road', key: 'R', icon: '🛤️', name: () => T().road, desc: () => T().roadDesc },
+  { tool: 'remove', key: 'X', icon: '✖️', name: () => T().remove, desc: () => T().removeDesc },
 ];
 
 export class UI {
@@ -23,28 +24,7 @@ export class UI {
   private hover: BType | null = null;
 
   constructor(public game: Game) {
-    const bar = $('buildbar');
-    BUILDABLE.forEach((type, i) => {
-      const def = BDEFS[type];
-      const btn = document.createElement('button');
-      btn.className = 'build';
-      btn.dataset.key = i < 9 ? String(i + 1) : '';
-      btn.innerHTML = `<span class="icon">${def.icon}</span><span class="name">${def.name}</span><span class="cost">${costText(def.cost)}</span>`;
-      btn.onclick = () => this.setPlacing(this.placing === type ? null : type);
-      btn.onmouseenter = btn.onfocus = () => this.showCard(type, btn);
-      btn.onmouseleave = btn.onblur = () => this.showCard(null, btn);
-      bar.appendChild(btn);
-      this.buttons.set(type, btn);
-    });
-    for (const t of TOOLS) {
-      const btn = document.createElement('button');
-      btn.className = 'build tool';
-      btn.title = `${t.desc} (key ${t.key})`;
-      btn.innerHTML = `<span class="icon">${t.icon}</span><span class="name">${t.name}</span><span class="cost">key ${t.key}</span>`;
-      btn.onclick = () => this.setPlacing(this.placing === t.tool ? null : t.tool);
-      bar.appendChild(btn);
-      this.buttons.set(t.tool, btn);
-    }
+    this.drawBar();
     for (const btn of document.querySelectorAll<HTMLButtonElement>('#speed button')) {
       btn.onclick = () => {
         const v = btn.dataset.speed!;
@@ -55,6 +35,51 @@ export class UI {
         }
         this.refresh();
       };
+    }
+  }
+
+  // Put all text in the current language: the build bar and the fixed labels in the page.
+  relabel() {
+    this.drawBar();
+    const x = T();
+    const file: Record<string, [string, string]> = {
+      save: [x.save, x.saveTitle], saves: [x.saves, x.savesTitle], new: [x.newGame, x.newTitle],
+      report: [x.report, x.reportTitle], lang: [x.langButton, x.langTitle],
+    };
+    for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
+      const [label, title] = file[btn.dataset.file!] ?? [btn.textContent!, btn.title];
+      btn.textContent = label;
+      btn.title = title;
+    }
+    $('help').textContent = x.help;
+    document.querySelector<HTMLButtonElement>('#speed [data-speed=pause]')!.title = x.pause;
+    this.refresh();
+  }
+
+  private drawBar() {
+    const bar = $('buildbar');
+    bar.replaceChildren();
+    this.buttons.clear();
+    BUILDABLE.forEach((type, i) => {
+      const def = BDEFS[type];
+      const btn = document.createElement('button');
+      btn.className = 'build';
+      btn.dataset.key = i < 9 ? String(i + 1) : '';
+      btn.innerHTML = `<span class="icon">${def.icon}</span><span class="name">${buildingName(type)}</span><span class="cost">${costText(def.cost)}</span>`;
+      btn.onclick = () => this.setPlacing(this.placing === type ? null : type);
+      btn.onmouseenter = btn.onfocus = () => this.showCard(type, btn);
+      btn.onmouseleave = btn.onblur = () => this.showCard(null, btn);
+      bar.appendChild(btn);
+      this.buttons.set(type, btn);
+    });
+    for (const t of TOOLS) {
+      const btn = document.createElement('button');
+      btn.className = 'build tool';
+      btn.title = `${t.desc()} (${T().key(t.key)})`;
+      btn.innerHTML = `<span class="icon">${t.icon}</span><span class="name">${t.name()}</span><span class="cost">${T().key(t.key)}</span>`;
+      btn.onclick = () => this.setPlacing(this.placing === t.tool ? null : t.tool);
+      bar.appendChild(btn);
+      this.buttons.set(t.tool, btn);
     }
   }
 
@@ -71,12 +96,13 @@ export class UI {
     const now = buildNow(this.game, type);
     const key = btn.dataset.key ? `<kbd>${btn.dataset.key}</kbd>` : '';
     const items = (xs: string[]) => xs.map((x) => `<li>${x}</li>`).join('');
+    const x = T();
     card.innerHTML =
-      `<h3><span class="icon">${def.icon}</span>${def.name}${key}</h3>` +
+      `<h3><span class="icon">${def.icon}</span>${buildingName(type)}${key}</h3>` +
       `<p class="makes">${facts.makes}</p>` +
-      (facts.worth.length ? `<h4>Why build it</h4><ul>${items(facts.worth)}</ul>` : '') +
-      `<h4>What it needs</h4><ul>${items(facts.needs)}</ul>` +
-      `<p class="costline">Costs ${costText(def.cost)}</p>` +
+      (facts.worth.length ? `<h4>${x.whyBuild}</h4><ul>${items(facts.worth)}</ul>` : '') +
+      `<h4>${x.whatNeeds}</h4><ul>${items(facts.needs)}</ul>` +
+      `<p class="costline">${x.costs} ${costText(def.cost)}</p>` +
       `<p class="have">${now.have}</p>` +
       now.warn.map((w) => `<p class="warn">⚠ ${w}</p>`).join('');
     card.hidden = false;
@@ -102,7 +128,7 @@ export class UI {
   toast(msg: string) {
     const el = document.createElement('div');
     el.className = 'toast';
-    el.textContent = msg;
+    el.textContent = tr(msg);
     $('toasts').appendChild(el);
     setTimeout(() => el.remove(), 3200);
   }
@@ -111,11 +137,11 @@ export class UI {
     const g = this.game;
     while (g.toasts.length) this.toast(g.toasts.shift()!);
 
-    const busy = g.settlers.size;
+    const x = T();
     const stored = g.stored;
     $('res').innerHTML =
-      GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${stored[k]}</b> ${GOOD_NAME[k]}</div>`).join('') +
-      `<div class="pill">🧑‍🌾 <b>${g.pool}</b> idle / ${busy} busy</div>`;
+      GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${stored[k]}</b> ${goodName(k)}</div>`).join('') +
+      `<div class="pill">🧑‍🌾 ${x.settlers(g.pool, g.settlers.size)}</div>`;
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);
     if (this.hover) this.showCard(this.hover, this.buttons.get(this.hover)!);
@@ -135,19 +161,19 @@ export class UI {
     if (!b.built) {
       rows.push(`<div class="bar"><i style="width:${Math.round(b.progress * 100)}%"></i></div>`);
       for (const k of GOODS)
-        if (def.cost[k]) rows.push(`<div><span class="good ${k}"></span>${GOOD_NAME[k]}: ${b.stock[k]} / ${def.cost[k]}</div>`);
+        if (def.cost[k]) rows.push(`<div><span class="good ${k}"></span>${goodName(k)}: ${b.stock[k]} / ${def.cost[k]}</div>`);
     } else if (g.isStore(b)) {
-      if (b.type === 'hq') rows.push(`<div>Land radius: ${def.radius} tiles</div>`);
-      for (const k of GOODS) rows.push(`<div>Stored: <span class="good ${k}"></span>${b.stock[k]} ${GOOD_NAME[k]}</div>`);
+      if (b.type === 'hq') rows.push(`<div>${x.landRadius(def.radius)}</div>`);
+      for (const k of GOODS) rows.push(`<div>${x.stored} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
     } else {
       for (const k of GOODS) {
-        if (b.stock[k]) rows.push(`<div>In: <span class="good ${k}"></span>${b.stock[k]} ${GOOD_NAME[k]}</div>`);
-        if (b.out[k]) rows.push(`<div>Ready: <span class="good ${k}"></span>${b.out[k]} ${GOOD_NAME[k]}</div>`);
+        if (b.stock[k]) rows.push(`<div>${x.input} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
+        if (b.out[k]) rows.push(`<div>${x.ready} <span class="good ${k}"></span>${b.out[k]} ${goodName(k)}</div>`);
       }
     }
     info.hidden = false;
-    const warn = b.type !== 'hq' && !g.linked(b) ? '<p class="warn">⚠ Not connected to your HQ by road</p>' : '';
-    info.innerHTML = `<h3>${def.icon} ${def.name}</h3><p class="desc">${def.desc}</p>${warn}` +
-      (b.type === 'hq' ? '' : `<p class="status">${b.status}</p>`) + rows.join('');
+    const warn = b.type !== 'hq' && !g.linked(b) ? `<p class="warn">⚠ ${x.notLinked}</p>` : '';
+    info.innerHTML = `<h3>${def.icon} ${buildingName(b.type)}</h3><p class="desc">${buildingDesc(b.type)}</p>${warn}` +
+      (b.type === 'hq' ? '' : `<p class="status">${tr(b.status)}</p>`) + rows.join('');
   }
 }
