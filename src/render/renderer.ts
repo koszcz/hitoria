@@ -11,6 +11,7 @@ import { CARRY_Y, Person, makePerson } from './people';
 import { Terrain } from './terrain';
 import { Scenery } from './scenery';
 import { Goods } from './goods';
+import { Animals } from './animals';
 import { drawRoads } from './roads';
 import { Overlays, View } from './overlays';
 import { disposeModel } from './merge';
@@ -42,6 +43,7 @@ export class Renderer {
   private ground: Terrain;
   private scenery: Scenery;
   private goods: Goods;
+  private animals: Animals;
   private overlays: Overlays;
 
   private roads = new THREE.Group();
@@ -69,6 +71,7 @@ export class Renderer {
     this.ground = new Terrain(scene);
     this.scenery = new Scenery(scene, this.ground);
     this.goods = new Goods(scene);
+    this.animals = new Animals(scene, this.ground);
     scene.add(this.roads);
     this.overlays = new Overlays(scene, this.ground);
     this.setGraphics(this.graphics);
@@ -160,6 +163,7 @@ export class Renderer {
     this.buildings(game, now);
     this.flagsAndGoods(game, now);
     this.settlers(game, now);
+    this.animals.draw(game, now);
     this.overlays.draw(game, view);
     this.goods.finish();
 
@@ -198,6 +202,7 @@ export class Renderer {
     this.models.clear();
     this.flags.clear();
     this.people.clear();
+    this.animals.clear();
     this.ground.build(world);
   }
 

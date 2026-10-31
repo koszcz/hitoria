@@ -70,3 +70,18 @@ export interface Settler {
   facing: 1 | -1;
   onAbort: (() => void) | null;
 }
+
+export type AnimalKind = 'deer' | 'hare' | 'fox';
+
+// A wild animal. It roams near its home spot, grazes, and steps aside when a settler comes close.
+export interface Animal {
+  id: number;
+  kind: AnimalKind;
+  x: number;
+  y: number;
+  home: P; // the spot it roams around
+  path: P[] | null;
+  wait: number; // seconds left grazing or resting before it moves on
+  fleeing: boolean; // stepping aside from a settler
+  facing: 1 | -1;
+}

@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S · Branch: claude/build-73858d*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *Fun 2 · Effort M*
+- **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
 
 ## Inbox
@@ -23,7 +23,6 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
-- **Day and night light**: the light slowly turns from morning to evening to night and back. *Fun 2 · Effort S*
 - **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
 - **Seasons look**: the island moves through spring, summer, autumn and winter. Trees change colour, and snow falls in winter. *Fun 2 · Effort M*
 - **Winter fields**: grain grows only in the warm months, so you store food for winter. *Fun 3 · Effort S · Needs: Seasons look*
@@ -36,9 +35,7 @@ Triaged, but not next.
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
-- **Island riches**: coal and iron ore lie only in the second island's mountains, and the home island has stone only. *Fun 3 · Effort S · Needs: Second island, Coal and iron mines*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
-- **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons. *Fun 2 · Effort S*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. *Fun 2 · Effort M · Needs: Coal and iron mines*
 - **Faster roads**: busy roads get a donkey that carries two goods at once. *Fun 2 · Effort M*
@@ -63,6 +60,7 @@ Triaged, but not next.
 Newest first, with the date it was merged.
 
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *2026-10-31*
+- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *2026-10-31*
 - **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *2026-10-31*
 - **Worn paths**: settlers' footsteps wear the grass into dirt paths. Worn tiles are faster to walk on, so settlers keep to the same lines. Unused paths slowly fade back to grass over several minutes, and busy paths never fade. *2026-10-31*
 - **Well and water**: a well draws water on any flat grass, and the bakery needs 1 flour and 1 water for each loaf. *2026-10-31*
@@ -92,4 +90,5 @@ Ideas we decided not to build, and why.
 - **Fix type errors**: already fixed. The type check passes with no errors.
 - **Shortcuts from footsteps**: Worn paths and Carriers walk free now cover it. Paths form wherever settlers walk, so there is no road route to shortcut.
 - **Birds**: it adds atmosphere only and changes no choices. Wild animals and Hunter add more to play.
+- **Clouds**: you decided not to build it.
 - **Forests spread**: dropped after a first build. Trees regrew in other forests' gaps instead of the felled patch, and we decided not to pursue it.
