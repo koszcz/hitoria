@@ -92,7 +92,7 @@ const MESSAGES_PL: Record<string, string> = {
   'Unreachable, retrying soon': 'Nie da się tu dojść, wkrótce kolejna próba',
   'Waiting for a worker': 'Czeka na pracownika',
   'Storing goods': 'Przechowuje towary',
-  'Flag is full, waiting for a carrier': 'Flaga jest pełna, czeka na tragarza',
+  'Full, waiting for a carrier': 'Pełno, czeka na tragarza',
   'No grown trees in range': 'Brak dorosłych drzew w zasięgu',
   'No boulders in range': 'Brak głazów w zasięgu',
   'Felling a tree': 'Ścina drzewo',

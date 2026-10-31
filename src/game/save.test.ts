@@ -1,6 +1,6 @@
 // Saving a game and loading it back.
 import { describe, expect, test } from 'bun:test';
-import { Game, SAVE_VERSION } from '.';
+import { Game, SAVE_VERSION, bag } from '.';
 import { flatGame, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
 
 describe('save and load', () => {
@@ -8,7 +8,7 @@ describe('save and load', () => {
     const g = flatGame();
     const before = totalGoods(g);
     const b = placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
-    runUntil(g, () => [...g.settlers.values()].some((s) => s.item), 120);
+    runUntil(g, () => [...g.settlers.values()].some((s) => s.role === 'carrier' && s.carrying), 120);
     const g2 = Game.load(JSON.parse(JSON.stringify(g.save())));
     expect(totalGoods(g2)).toEqual(before);
     expect(g2.population).toBe(18);
@@ -35,7 +35,7 @@ describe('save and load', () => {
   test('saving does not change the running game', () => {
     const g = flatGame();
     placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
-    runUntil(g, () => [...g.settlers.values()].some((s) => s.item), 120);
+    runUntil(g, () => [...g.settlers.values()].some((s) => s.role === 'carrier' && s.carrying), 120);
     const goods = totalGoods(g), settlers = g.settlers.size;
     g.save();
     expect(totalGoods(g)).toEqual(goods);
@@ -50,6 +50,36 @@ describe('save and load', () => {
     const g2 = Game.load(JSON.parse(JSON.stringify(g.save())));
     expect(g2.world.at(t.x, t.y).tree).toBe(1);
     expect(g2.world.at(t.x + 1, t.y).rock).toBe(2);
+  });
+
+  test('a carrier\'s good goes back to where it came from on save', () => {
+    const g = flatGame();
+    const before = totalGoods(g);
+    placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
+    runUntil(g, () => [...g.settlers.values()].some((s) => s.role === 'carrier' && s.carrying), 120);
+    const d = g.save();
+    const hq = d.buildings.find((b) => b.id === g.hq.id)!;
+    expect(hq.stock.plank + hq.stock.stone).toBeGreaterThan(g.hq.stock.plank + g.hq.stock.stone);
+    for (const b of d.buildings) expect(b.incoming).toEqual(bag());
+    expect(totalGoods(Game.load(d))).toEqual(before);
+  });
+
+  test('a version 2 save puts goods lying on flags into the HQ', () => {
+    const g = flatGame();
+    const site = placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
+    const d = JSON.parse(JSON.stringify(g.save()));
+    d.v = 2;
+    const end = d.flags.find((f: { id: number }) => f.id !== g.hq.flag && f.id !== site.flag) ?? d.flags[0];
+    end.items = [{ g: 'plank', dest: site.id }, { g: 'stone', dest: 0 }];
+    for (const r of d.roads) r.carrier = 0;
+    d.buildings.find((b: { id: number }) => b.id === site.id).incoming.plank = 1;
+    const l = Game.load(d);
+    expect(l.hq.stock.plank).toBe(g.hq.stock.plank + 1);
+    expect(l.hq.stock.stone).toBe(g.hq.stock.stone + 1);
+    expect(l.buildings.get(site.id)!.incoming.plank).toBe(0);
+    expect([...l.flags.values()].some((f) => 'items' in f)).toBe(false);
+    expect([...l.roads.values()].some((r) => 'carrier' in r)).toBe(false);
+    runUntil(l, () => l.buildings.get(site.id)!.built, 300);
   });
 
   test('refuses a save from another version', () => {

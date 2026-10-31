@@ -62,7 +62,4 @@ export const RECIPES: Partial<Record<BType, Recipe>> = {
 export const SPEED = 1.7; // tiles per second
 export const ROAD_SPEED = 1.5; // multiplier on roads
 export const PILE = 4; // max finished goods a hut keeps before its worker pauses
-export const FLAG_CAP = 8;
-export const FLAG_SPACING = 4; // new roads get a flag about this often
-export const CARRIER_REST = 12; // seconds a carrier waits on an empty road before going home
 export const CROP_GROW = 60; // seconds for sown grain to ripen

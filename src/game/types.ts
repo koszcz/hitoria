@@ -1,4 +1,4 @@
-// The things the game keeps track of: buildings, flags, roads, the goods on them, and settlers.
+// The things the game keeps track of: buildings, flags, roads, settlers, and the goods carriers move.
 import type { P } from '../path';
 import type { Anim, Bag, BType, Good, Role } from './defs';
 
@@ -11,8 +11,9 @@ export interface Building {
   built: boolean;
   progress: number; // construction 0..1
   stock: Bag; // construction materials, production inputs, or stored goods (HQ and storehouses)
-  out: Bag; // finished goods waiting for room on the flag
-  incoming: Bag; // goods already routed here
+  out: Bag; // finished goods waiting for a carrier
+  incoming: Bag; // goods a carrier is bringing here
+  sending: Bag; // goods in `out` (or a store's `stock`) that a carrier is coming to fetch
   worker: number;
   builder: number;
   busy: boolean;
@@ -22,28 +23,28 @@ export interface Building {
   grow: number; // seconds until a house's next settler, while it is eating
 }
 
-// A good lying on a flag, on its way to building `dest` (0 = not decided yet).
-export interface Item {
+// One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.
+export interface Job {
+  from: number;
+  to: number;
   g: Good;
-  dest: number;
 }
 
+// Flags mark the ends of roads and the places where roads meet. Goods never wait on them.
 export interface Flag {
   id: number;
   x: number;
   y: number;
-  items: Item[];
   roads: number[];
   building: number;
 }
 
-// A road runs between two flags; `path` includes both flag tiles. One carrier works each road.
+// A road runs between two flags; `path` includes both flag tiles.
 export interface Road {
   id: number;
   a: number;
   b: number;
   path: P[];
-  carrier: number;
 }
 
 export type Task =
@@ -59,10 +60,8 @@ export interface Settler {
   path: P[] | null;
   tasks: Task[];
   carrying: Good | null;
-  item: Item | null; // what a road carrier holds
-  ri: number; // a road carrier's index along its road
-  since: number; // game time a road carrier last had something to do
-  home: number; // building, or road for carriers
+  job: Job | null; // a carrier's current trip
+  home: number; // building a worker or builder belongs to
   inside: boolean;
   atWork: boolean;
   returning: boolean;

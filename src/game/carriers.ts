@@ -1,66 +1,83 @@
-// Road carriers: each one moves goods, one at a time, between the two flags of their road.
-import { CARRIER_REST, FLAG_CAP } from './defs';
+// Carriers: each one fetches a good from a building and walks it along the roads to the building
+// that needs it. With no trip to make, a carrier walks back to the HQ and can be sent out again on the way.
 import type { Game } from './game';
-import { nextRoad } from './routes';
-import { despawn } from './settlers';
-import type { Road, Settler } from './types';
+import { roadWay } from './routes';
+import { despawn, takeSettler } from './settlers';
+import { isStore } from './stores';
+import type { Building, Job, Settler, Task } from './types';
 
-// A good waiting at one end of road `r` (0 = flag a, 1 = flag b) that this road should take.
-export function cargo(g: Game, r: Road, end: 0 | 1) {
-  const from = g.flags.get(end ? r.b : r.a)!, to = g.flags.get(end ? r.a : r.b)!;
-  return from.items.find((it) => {
-    const d = g.buildings.get(it.dest);
-    if (!d || d.flag === from.id) return false; // arrived; the dispatcher takes it inside
-    return nextRoad(g, from, d.flag) === r.id && (to.items.length < FLAG_CAP || d.flag === to.id);
-  });
+const carriers = (g: Game) => [...g.settlers.values()].filter((s) => s.role === 'carrier');
+
+// Send a carrier on trip `job`. Returns false when there is nobody to send.
+// At most one carrier per building is out at a time, so carriers never use up every settler.
+export function hire(g: Game, job: Job): boolean {
+  const from = g.buildings.get(job.from)!, to = g.buildings.get(job.to)!;
+  const all = carriers(g);
+  const s = nearestFree(all, from) ?? (all.length < g.buildings.size ? takeSettler(g, 'carrier') : null);
+  if (!s) return false;
+  from.sending[job.g]++;
+  to.incoming[job.g]++;
+  s.job = job;
+  s.path = null;
+  s.walking = false;
+  s.onAbort = () => { cancel(g, s); despawn(g, s); };
+  s.tasks = [
+    { k: 'do', f: () => { s.tasks.unshift(wayTo(g, s, from)); } },
+    { k: 'do', f: () => {
+      from.sending[job.g]--;
+      if (isStore(from)) from.stock[job.g]--;
+      else from.out[job.g]--;
+      s.carrying = job.g;
+    } },
+    { k: 'do', f: () => { s.tasks.unshift(wayTo(g, s, to)); } },
+    { k: 'do', f: () => {
+      to.incoming[job.g]--;
+      to.stock[job.g]++;
+      s.carrying = null;
+      s.job = null;
+      s.onAbort = null;
+    } },
+  ];
+  return true;
 }
 
-// A road carrier takes one good at a time from one end of their road to the other.
+// A carrier with no trip goes back to the HQ.
 export function carry(g: Game, s: Settler) {
-  const r = g.roads.get(s.home);
-  if (!r || !s.atWork) return;
-  const last = r.path.length - 1;
-  for (const end of [0, 1] as const) {
-    const item = cargo(g, r, end);
-    if (!item) continue;
-    const from = g.flags.get(end ? r.b : r.a)!, to = g.flags.get(end ? r.a : r.b)!;
-    const i = end ? last : 0, j = end ? 0 : last;
-    s.tasks = [
-      { k: 'walk', ...r.path[i], via: along(r, s.ri, i) },
-      { k: 'do', f: () => {
-        s.ri = i;
-        const k = from.items.indexOf(item);
-        if (k < 0 || !item.dest) return false;
-        from.items.splice(k, 1);
-        s.item = item;
-        s.carrying = item.g;
-      } },
-      { k: 'walk', ...r.path[j], via: along(r, i, j) },
-      { k: 'do', f: () => {
-        s.ri = j;
-        s.since = g.time;
-        to.items.push(item);
-        s.item = null;
-        s.carrying = null;
-      } },
-    ];
-    return;
-  }
-  // Nothing to carry for a while: free the road and go home, so the settler can take other work.
-  if (g.time - s.since >= CARRIER_REST) {
-    r.carrier = 0;
-    s.home = 0;
-    s.atWork = false;
-    s.onAbort = () => despawn(g, s);
-    s.tasks = [{ k: 'walk', x: g.hq.x, y: g.hq.y }, { k: 'do', f: () => despawn(g, s) }];
-    return;
-  }
-  const mid = r.path.length >> 1;
-  s.tasks = s.ri === mid
-    ? [{ k: 'work', t: 0.3 }]
-    : [{ k: 'walk', ...r.path[mid], via: along(r, s.ri, mid) }, { k: 'do', f: () => { s.ri = mid; } }];
+  if (s.job) return;
+  s.onAbort = () => despawn(g, s);
+  s.tasks = [wayTo(g, s, g.hq), { k: 'do', f: () => despawn(g, s) }];
 }
 
-function along(r: Road, i: number, j: number) {
-  return i <= j ? r.path.slice(i + 1, j + 1) : r.path.slice(j, i).reverse();
+// Undo a trip that can't be finished. A good already picked up goes into the HQ's stock.
+export function cancel(g: Game, s: Settler) {
+  const job = s.job;
+  if (!job) return;
+  const from = g.buildings.get(job.from), to = g.buildings.get(job.to);
+  if (to) to.incoming[job.g]--;
+  if (s.carrying) g.hq.stock[s.carrying]++;
+  else if (from) from.sending[job.g]--;
+  s.carrying = null;
+  s.job = null;
+}
+
+// The free carrier closest to building `b`.
+function nearestFree(all: Settler[], b: Building) {
+  let best: Settler | null = null, bd = Infinity;
+  for (const s of all) {
+    if (s.job) continue;
+    const d = Math.hypot(s.x - b.x, s.y - b.y);
+    if (d < bd) { bd = d; best = s; }
+  }
+  return best;
+}
+
+// Walk to building `b`: along the roads when standing at a building or a flag, else the shortest way.
+function wayTo(g: Game, s: Settler, b: Building): Task {
+  const tile = g.world.at(Math.round(s.x), Math.round(s.y));
+  const at = tile.b ? g.buildings.get(tile.b) : undefined;
+  const start = at ? at.flag : tile.flag;
+  const way = start ? roadWay(g, start, b.flag) : null;
+  if (!way) return { k: 'walk', x: b.x, y: b.y };
+  if (!at) way.shift(); // already standing on the first flag
+  return { k: 'walk', x: b.x, y: b.y, via: [...way, { x: b.x, y: b.y }] };
 }

@@ -36,35 +36,36 @@ export function runUntil(g: Game, done: () => boolean, limit = 300, check?: () =
   throw new Error(`Condition not met within ${limit}s of game time`);
 }
 
-// Every good in the game, wherever it is: in buildings, on flags, or in someone's hands.
+// Every good in the game, wherever it is: in buildings or in someone's hands.
 export function totalGoods(g: Game): Bag {
   const sum = bag();
   for (const b of g.buildings.values())
     for (const k of GOODS) sum[k] += b.stock[k] + b.out[k];
-  for (const f of g.flags.values()) for (const it of f.items) sum[it.g]++;
-  for (const s of g.settlers.values()) {
-    if (s.item) sum[s.item.g]++;
-    else if (s.carrying) sum[s.carrying]++;
-  }
+  for (const s of g.settlers.values()) if (s.carrying) sum[s.carrying]++;
   return sum;
 }
 
-// `incoming` counts goods routed to a building. It must match the goods actually on their way.
+// `incoming` and `sending` count the goods of carrier trips. They must match the trips under way.
 export function expectIncomingConsistent(g: Game) {
-  const routed = new Map<number, Bag>();
-  const add = (dest: number, k: keyof Bag) => {
-    if (!dest) return;
-    const r = routed.get(dest) ?? bag();
+  const coming = new Map<number, Bag>(), going = new Map<number, Bag>();
+  const add = (m: Map<number, Bag>, id: number, k: keyof Bag) => {
+    const r = m.get(id) ?? bag();
     r[k]++;
-    routed.set(dest, r);
+    m.set(id, r);
   };
-  for (const f of g.flags.values()) for (const it of f.items) add(it.dest, it.g);
-  for (const s of g.settlers.values()) if (s.item) add(s.item.dest, s.item.g);
+  for (const s of g.settlers.values()) {
+    if (!s.job) continue;
+    add(coming, s.job.to, s.job.g);
+    if (!s.carrying) add(going, s.job.from, s.job.g);
+  }
   for (const b of g.buildings.values()) {
-    const r = routed.get(b.id) ?? bag();
-    for (const k of GOODS)
-      if (b.incoming[k] !== r[k])
-        throw new Error(`${b.type} #${b.id} expects ${b.incoming[k]} ${k} but ${r[k]} are on the way`);
+    const c = coming.get(b.id) ?? bag(), o = going.get(b.id) ?? bag();
+    for (const k of GOODS) {
+      if (b.incoming[k] !== c[k])
+        throw new Error(`${b.type} #${b.id} expects ${b.incoming[k]} ${k} but ${c[k]} are on the way`);
+      if (b.sending[k] !== o[k])
+        throw new Error(`${b.type} #${b.id} is sending ${b.sending[k]} ${k} but ${o[k]} carriers are coming for them`);
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 // Watches a running game from the outside and keeps what is needed to explain odd behaviour:
 // what happened recently, what looks stuck, how fast frames are, and how goods changed over time.
 // It never changes the game. It has no DOM code, so tests can use it too.
-import { Game, BDEFS, GOODS, Item } from './game';
+import { Game, BDEFS, GOODS } from './game';
 
 const EVENTS = 300; // recent events kept
 const SAMPLES = 120; // timeline samples kept (20 minutes at one every 10 s)
@@ -13,8 +13,6 @@ const SLOW_FRAME = 50; // ms
 export const LIMITS = {
   settlerStill: 20, // a settler with a walk planned who hasn't moved
   buildingWaiting: 180, // a building whose "Waiting…", "Unreachable…" or "Needs a road…" status hasn't changed
-  flagFull: 60, // a flag holding as many goods as it can
-  itemUnrouted: 60, // a good on a flag that no building wants
   noSettlers: 30, // buildings wait for a settler while nobody is idle in the HQ
 };
 
@@ -29,7 +27,7 @@ interface Sample {
   hq: string;
   pool: number;
   busy: number;
-  onFlags: number;
+  carried: number;
   buildings: number;
 }
 
@@ -44,16 +42,13 @@ export class Diagnostics {
   private sampleT = 0;
   private status = new Map<number, { status: string; built: boolean; since: number }>();
   private still = new Map<number, { x: number; y: number; since: number }>();
-  private full = new Map<number, number>();
   private noSettlers = 0; // when the HQ last had someone to send, or nobody was waiting
-  private unrouted = new WeakMap<Item, number>();
 
   // Start watching a game. Call again after loading or starting a new one.
   attach(game: Game) {
     this.game = game;
     this.status.clear();
     this.still.clear();
-    this.full.clear();
     this.noSettlers = game.time;
     this.issues.clear();
     this.checkT = this.sampleT = 0;
@@ -144,23 +139,6 @@ export class Diagnostics {
     }
     for (const id of this.still.keys()) if (!g.settlers.has(id)) this.still.delete(id);
 
-    // Flags: full flags and goods nobody wants.
-    for (const f of g.flags.values()) {
-      if (f.items.length >= 8) {
-        if (!this.full.has(f.id)) this.full.set(f.id, now);
-        flag(`f${f.id}`, this.full.get(f.id)!, LIMITS.flagFull, `Flag #${f.id} at ${f.x},${f.y} has been full for ${Math.round(now - this.full.get(f.id)!)} s`);
-      } else this.full.delete(f.id);
-      for (const it of f.items) {
-        if (it.dest) {
-          this.unrouted.delete(it);
-          continue;
-        }
-        if (!this.unrouted.has(it)) this.unrouted.set(it, now);
-        const since = this.unrouted.get(it)!;
-        flag(`i${f.id}:${it.g}`, since, LIMITS.itemUnrouted, `A ${it.g} on flag #${f.id} at ${f.x},${f.y} has had no destination for ${Math.round(now - since)} s`);
-      }
-    }
-
     for (const [key, issue] of this.issues)
       if (!seen.has(key)) {
         this.issues.delete(key);
@@ -169,14 +147,14 @@ export class Diagnostics {
   }
 
   private sample(g: Game) {
-    let onFlags = 0;
-    for (const f of g.flags.values()) onFlags += f.items.length;
+    let carried = 0;
+    for (const s of g.settlers.values()) if (s.role === 'carrier' && s.carrying) carried++;
     this.samples.push({
       t: Math.round(g.time),
       hq: GOODS.map((k) => `${k} ${g.hq.stock[k]}`).join(', '),
       pool: g.pool,
       busy: g.settlers.size,
-      onFlags,
+      carried,
       buildings: g.buildings.size,
     });
     if (this.samples.length > SAMPLES) this.samples.shift();
@@ -228,25 +206,19 @@ export class Diagnostics {
 
     lines.push('', '### Settlers out of the HQ', 'settler | at | home | doing | carrying');
     for (const s of g.settlers.values()) {
-      const road = g.roads.get(s.home);
-      const home = s.role === 'carrier' ? (road ? `road #${road.id} (flags #${road.a}-#${road.b})` : '-') : name(s.home);
+      const home = s.role === 'carrier' ? (s.job ? `${s.job.g}: ${name(s.job.from)} → ${name(s.job.to)}` : 'going home') : name(s.home);
       const doing = s.tasks.map((t) => (t.k === 'walk' ? `walk to ${t.x},${t.y}` : t.k === 'work' ? `work ${t.t.toFixed(0)} s` : 'act')).join(' → ')
         || (s.inside ? 'inside' : s.atWork ? 'at work' : 'idle');
-      lines.push(`${s.role} #${s.id} | ${s.x.toFixed(1)},${s.y.toFixed(1)} | ${home} | ${doing} | ${s.carrying ?? s.item?.g ?? '-'}`);
+      lines.push(`${s.role} #${s.id} | ${s.x.toFixed(1)},${s.y.toFixed(1)} | ${home} | ${doing} | ${s.carrying ?? '-'}`);
     }
 
-    lines.push('', '### Flags with goods', 'flag | at | goods (→ where to)');
-    for (const f of g.flags.values())
-      if (f.items.length)
-        lines.push(`#${f.id} | ${f.x},${f.y} | ${f.items.map((it) => `${it.g} → ${it.dest ? name(it.dest) : 'nowhere'}`).join(', ')}`);
-
-    lines.push('', '### Roads', 'road | flags | length | carrier');
-    for (const r of g.roads.values()) lines.push(`#${r.id} | #${r.a}-#${r.b} | ${r.path.length - 1} | ${r.carrier ? `#${r.carrier}` : 'none'}`);
+    lines.push('', '### Roads', 'road | flags | length');
+    for (const r of g.roads.values()) lines.push(`#${r.id} | #${r.a}-#${r.b} | ${r.path.length - 1}`);
 
     lines.push(
       '', '### Timeline (every 10 s of game time, last 2 minutes)',
-      'time | HQ stock | idle | busy | goods on flags | buildings',
-      ...this.samples.slice(-12).map((s) => `${s.t}s | ${s.hq} | ${s.pool} | ${s.busy} | ${s.onFlags} | ${s.buildings}`),
+      'time | HQ stock | idle | busy | goods carried | buildings',
+      ...this.samples.slice(-12).map((s) => `${s.t}s | ${s.hq} | ${s.pool} | ${s.busy} | ${s.carried} | ${s.buildings}`),
       '', '### Recent events', this.events.slice(-60).join('\n') || '(none)',
     );
     return lines.join('\n');
@@ -283,8 +255,8 @@ export class Diagnostics {
       this.settlers(),
       '',
       '### Timeline (every 10 s of game time)',
-      'time | HQ stock | idle | busy | goods on flags | buildings',
-      ...this.samples.map((s) => `${s.t}s | ${s.hq} | ${s.pool} | ${s.busy} | ${s.onFlags} | ${s.buildings}`),
+      'time | HQ stock | idle | busy | goods carried | buildings',
+      ...this.samples.map((s) => `${s.t}s | ${s.hq} | ${s.pool} | ${s.busy} | ${s.carried} | ${s.buildings}`),
       '',
       '### Recent events',
       this.events.join('\n') || '(none)',

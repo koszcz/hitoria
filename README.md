@@ -122,7 +122,7 @@ Saves live in your browser's local storage. You can keep as many as the storage 
 
 The save keeps the map, buildings, roads, flags and every good. It does not keep where settlers are.
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
-back to their building or flag, so nothing is lost.
+back to their building, so nothing is lost.
 
 ## Graphics
 
@@ -163,11 +163,10 @@ Press F3 to see the level, and how much the game draws each frame.
 - A lookout tower expands your land.
 - Goods are stored at the HQ and in storehouses.
 
-Every building has a flag in front of its door. Goods only travel along roads between flags:
-each road section has one carrier who passes goods from flag to flag, and a flag holds at most
-8 goods, so busy roads back up. Long roads get extra flags every few tiles so more carriers share
-the load. Settlers walk 1.5× faster on roads. A building that isn't connected to the HQ by road
-gets no materials.
+Every building has a flag in front of its door. Flags mark where roads end and where they meet.
+A carrier takes one good from the building that has it and walks it along the roads, all the way
+to the building that needs it. Goods never wait on flags. Settlers walk 1.5× faster on roads.
+A building that isn't connected to the HQ by road gets no materials.
 
 ## Ideas
 

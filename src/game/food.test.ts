@@ -146,8 +146,9 @@ describe('mines and food', () => {
     const g = flatGame();
     const d = g.save();
     d.v = 1;
-    d.flags.find((f) => f.id === g.hq.flag)!.items.push({ g: 'cheese' as Good, dest: 0 }, { g: 'log', dest: 0 });
+    Object.assign(d.flags.find((f) => f.id === g.hq.flag)!, { items: [{ g: 'cheese' as Good, dest: 0 }, { g: 'log', dest: 0 }] });
     const l = Game.load(d);
-    expect(l.flags.get(g.hq.flag)!.items.map((it) => it.g)).toEqual(['log']);
+    expect(l.hq.stock.log).toBe(g.hq.stock.log + 1);
+    expect('cheese' in l.hq.stock).toBe(false);
   });
 });
