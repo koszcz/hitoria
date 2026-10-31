@@ -67,11 +67,25 @@ export function shadeOf(hex: string, k: number) {
   return '#' + new THREE.Color(hex).multiplyScalar(k).getHexString();
 }
 
+// Each material from `mat()` remembers its settings other than colour under this key, so
+// `mergeModel` knows which parts can share one material.
+export const EXTRA = 'extra';
 const mats = new Map<string, THREE.Material>();
 export function mat(color: string, extra: THREE.MeshStandardMaterialParameters = {}) {
   const key = color + JSON.stringify(extra);
   let m = mats.get(key);
-  if (!m) mats.set(key, (m = new THREE.MeshStandardMaterial({ color: grade(color), roughness: 0.85, ...extra })));
+  if (!m) {
+    mats.set(key, (m = new THREE.MeshStandardMaterial({ color: grade(color), roughness: 0.85, ...extra })));
+    m.userData[EXTRA] = JSON.stringify(extra);
+  }
+  return m;
+}
+
+// The material for merged parts: the same settings, with the colour taken from the vertices.
+const vertexMats = new Map<string, THREE.Material>();
+export function vertexMat(extra: string) {
+  let m = vertexMats.get(extra);
+  if (!m) vertexMats.set(extra, (m = new THREE.MeshStandardMaterial({ roughness: 0.85, ...JSON.parse(extra), vertexColors: true })));
   return m;
 }
 

@@ -5,6 +5,7 @@ import { ART } from '../art';
 import { RIGHT } from './kit';
 import { iconTexture, noRoadTexture, softDot } from './textures';
 import { add, shadeOf } from './kit';
+import { mergeModel } from './merge';
 import { Roof, barrel, crate, house, logPile, sapling } from './props';
 
 let dotTex: THREE.Texture | undefined;
@@ -71,6 +72,7 @@ export function makeBuilding(type: BType, built: boolean): Model {
     bar.position.copy(bg.position).addScaledVector(RIGHT, -0.3);
     g.add(bg, bar);
     model.bar = bar;
+    mergeModel(g, [rise]);
     return model;
   }
   const wall = def.wall, roof = ART.roofs[type];
@@ -263,6 +265,7 @@ export function makeBuilding(type: BType, built: boolean): Model {
       }
     }
   }
+  mergeModel(g, [model.cloth, model.sails, model.spin]);
   const icon = new THREE.Sprite(new THREE.SpriteMaterial({ map: iconTex(type), depthTest: false, transparent: true }));
   icon.scale.setScalar(0.3);
   icon.renderOrder = 12;
@@ -312,5 +315,6 @@ export function makeFlag(): Model {
   const pennant = new THREE.Shape([new THREE.Vector2(0, 0.075), new THREE.Vector2(0.25, 0.075), new THREE.Vector2(0.19, 0), new THREE.Vector2(0.25, -0.075), new THREE.Vector2(0, -0.075)]);
   const cloth = add(g, new THREE.ShapeGeometry(pennant), ART.flag, 0, 0.49, 0, { side: THREE.DoubleSide });
   add(cloth, new THREE.PlaneGeometry(0.25, 0.022).translate(0.1, 0.06, 0.001), '#f0c030', 0, 0, 0, { side: THREE.DoubleSide });
+  mergeModel(g, [cloth]);
   return { g, key: 'flag', cloth };
 }

@@ -13,6 +13,8 @@ import { Scenery } from './scenery';
 import { Goods } from './goods';
 import { drawRoads } from './roads';
 import { Overlays, View } from './overlays';
+import { disposeModel } from './merge';
+import { GRAPHICS, type Graphics } from '../quality/levels';
 
 export type { View } from './overlays';
 
@@ -47,11 +49,10 @@ export class Renderer {
   private models = new Map<number, Model>();
   private flags = new Map<number, Model>();
   private people = new Map<number, Person>();
+  private graphics: Graphics = GRAPHICS.high;
 
   constructor(public canvas: HTMLCanvasElement) {
     this.gl = new THREE.WebGLRenderer({ canvas, antialias: true });
-    this.gl.shadowMap.enabled = true;
-    this.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     this.gl.toneMapping = THREE.NeutralToneMapping;
     this.gl.toneMappingExposure = ART.exposure;
     this.resize();
@@ -60,8 +61,6 @@ export class Renderer {
     const { scene, sun } = this;
     scene.background = new THREE.Color(ART.sky);
     scene.add(new THREE.HemisphereLight(ART.hemiSky, ART.hemiGround, ART.hemi));
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
     sun.shadow.bias = -0.0004;
     sun.shadow.normalBias = 0.02;
     scene.add(sun, sun.target);
@@ -71,12 +70,40 @@ export class Renderer {
     this.goods = new Goods(scene);
     scene.add(this.roads);
     this.overlays = new Overlays(scene, this.ground);
+    this.setGraphics(this.graphics);
+  }
+
+  // Changes how sharp the picture is and how shadows are drawn. Safe to call while playing.
+  setGraphics(g: Graphics) {
+    const shadowsBefore = this.gl.shadowMap.enabled && this.gl.shadowMap.type;
+    this.graphics = g;
+    const { gl, sun } = this;
+    gl.shadowMap.enabled = sun.castShadow = g.shadows !== 'off';
+    gl.shadowMap.type = g.shadows === 'soft' ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap;
+    if (sun.shadow.mapSize.x !== g.shadowSize) {
+      sun.shadow.mapSize.set(g.shadowSize, g.shadowSize);
+      sun.shadow.map?.dispose();
+      sun.shadow.map = null; // three makes a new one at the new size
+    }
+    // Shaders are built for one kind of shadow, so they must be built again.
+    if (shadowsBefore !== (gl.shadowMap.enabled && gl.shadowMap.type))
+      this.scene.traverse((o) => {
+        const m = (o as THREE.Mesh).material;
+        if (m) for (const x of Array.isArray(m) ? m : [m]) x.needsUpdate = true;
+      });
+    this.resize();
+  }
+
+  // Draw calls and triangles in the last frame, shadows included. Shown with F3.
+  stats() {
+    const { calls, triangles } = this.gl.info.render;
+    return { calls, triangles, pixelRatio: this.gl.getPixelRatio() };
   }
 
   resize() {
     this.w = innerWidth;
     this.h = innerHeight;
-    this.gl.setPixelRatio(Math.min(2, devicePixelRatio || 1)); // phones go to 3, which costs a lot of speed
+    this.gl.setPixelRatio(Math.min(this.graphics?.maxPixelRatio ?? 2, devicePixelRatio || 1)); // phones go to 3, which costs a lot of speed
     this.gl.setSize(this.w, this.h, false);
   }
 
@@ -161,12 +188,17 @@ export class Renderer {
     this.world = world;
     this.terrKey = -1;
     this.roadNet = -1;
-    for (const m of [...this.models.values(), ...this.flags.values()]) this.scene.remove(m.g);
-    for (const p of this.people.values()) this.scene.remove(p.g);
+    for (const m of [...this.models.values(), ...this.flags.values()]) this.drop(m.g);
+    for (const p of this.people.values()) this.drop(p.g);
     this.models.clear();
     this.flags.clear();
     this.people.clear();
     this.ground.build(world);
+  }
+
+  private drop(g: THREE.Object3D) {
+    this.scene.remove(g);
+    disposeModel(g);
   }
 
   // --- buildings -----------------------------------------------------------
@@ -178,7 +210,7 @@ export class Renderer {
       const key = `${b.type}:${b.built}`;
       let m = this.models.get(b.id);
       if (!m || m.key !== key) {
-        if (m) this.scene.remove(m.g);
+        if (m) this.drop(m.g);
         m = makeBuilding(b.type, b.built);
         if (b.type !== 'hq') m.g.add((m.noRoad = noRoadSign()));
         m.g.position.set(b.x + 0.5, this.heightAt(b.x + 0.5, b.y + 0.5), b.y + 0.5);
@@ -193,7 +225,7 @@ export class Renderer {
     }
     for (const [id, m] of this.models)
       if (!seen.has(id)) {
-        this.scene.remove(m.g);
+        this.drop(m.g);
         this.models.delete(id);
       }
   }
@@ -248,7 +280,7 @@ export class Renderer {
     }
     for (const [id, m] of this.flags)
       if (!seen.has(id)) {
-        this.scene.remove(m.g);
+        this.drop(m.g);
         this.flags.delete(id);
       }
   }
@@ -268,7 +300,7 @@ export class Renderer {
     }
     for (const [id, p] of this.people)
       if (!seen.has(id)) {
-        this.scene.remove(p.g);
+        this.drop(p.g);
         this.people.delete(id);
       }
   }

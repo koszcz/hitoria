@@ -9,6 +9,8 @@ import { Saves, type Slot } from './saves';
 import { openSaveMenu } from './savemenu';
 import { T, getLang, setLang, startLang } from './i18n';
 import type { P } from './path';
+import { GraphicsSetting } from './quality/setting';
+import { GRAPHICS, LEVELS } from './quality/levels';
 
 setLang(startLang());
 const saves = new Saves();
@@ -34,11 +36,18 @@ let game = saved ?? new Game(seed || Math.floor(Math.random() * 1e9));
 let slotId = saved && first && !first.auto ? first.id : null;
 const canvas = document.getElementById('game') as HTMLCanvasElement;
 const renderer = new Renderer(canvas);
+const nav = navigator as Navigator & { deviceMemory?: number };
+const graphics = new GraphicsSetting({ touch: matchMedia('(pointer: coarse)').matches, cores: nav.hardwareConcurrency, memory: nav.deviceMemory });
+renderer.setGraphics(GRAPHICS[graphics.level]);
 const ui = new UI(game);
+ui.graphics = graphics;
 ui.relabel();
 watch(() => game);
 diag.attach(game);
-const debug = new DebugPanel(() => game);
+const debug = new DebugPanel(() => game, () => {
+  const s = renderer.stats();
+  return `graphics ${graphics.choice} (${graphics.level}) · ${s.calls} draw calls · ${(s.triangles / 1000).toFixed(0)}k triangles · ${s.pixelRatio}× pixels`;
+});
 renderer.centerOn(game.hq.x, game.hq.y);
 ui.toast(saved ? T().welcomeBack(first!.name) : T().welcome);
 
@@ -113,6 +122,11 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
     if (what === 'report') return reportProblem();
     if (what === 'save') return void save();
     if (what === 'saves') return showSaves();
+    if (what === 'graphics') {
+      document.getElementById('file')!.classList.add('open'); // keep the menu open while cycling
+      renderer.setGraphics(GRAPHICS[graphics.cycle()]);
+      return ui.relabel();
+    }
     if (what === 'lang') {
       setLang(getLang() === 'pl' ? 'en' : 'pl');
       return ui.relabel();
@@ -253,7 +267,8 @@ let saveT: number = saves.autosaveEvery;
 
 function frame(now: number) {
   if (crashed()) return;
-  const dt = Math.min(0.25, (now - last) / 1000);
+  const frameMs = now - last; // unclamped, so auto graphics sees how slow a slow device really is
+  const dt = Math.min(0.25, frameMs / 1000);
   last = now;
 
   const pan = (700 / renderer.cam.zoom) * dt;
@@ -290,6 +305,14 @@ function frame(now: number) {
   }
   renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, selected: ui.selected }, now / 1000);
   diag.frame(dt * 1000, t1 - t0, performance.now() - t1);
+  // On auto, the graphics level follows how fast frames are. Tell the player when it drops.
+  const was = graphics.level, changed = graphics.frame(frameMs);
+  if (changed) {
+    renderer.setGraphics(GRAPHICS[changed]);
+    diag.event(`Graphics set to ${changed} automatically (was ${was})`);
+    ui.relabel();
+    if (LEVELS.indexOf(changed) < LEVELS.indexOf(was)) ui.toast(T().graphicsLowered(T().levels[changed]));
+  }
 
   uiT -= dt;
   if (uiT <= 0) {

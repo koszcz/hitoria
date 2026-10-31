@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { Role } from '../game';
 import { add } from './kit';
+import { mergeModel } from './merge';
 
 // Settlers are drawn a third larger than true scale so you can follow them, and a load
 // sits on top of their big heads.
@@ -71,6 +72,7 @@ export function makePerson(role: Role): Person {
       c.scale.multiplyScalar(1.6);
     }
   body.scale.setScalar(PERSON_SCALE);
+  mergeModel(g, [body, ...legs, ...arms, tool]);
   return { g, legs, arms, tool, body, px: NaN, py: NaN, heading: 0 };
 }
 

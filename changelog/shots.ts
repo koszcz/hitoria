@@ -75,6 +75,8 @@ async function capture(browser: Browser, url: string, shot: Shot, file: string, 
       });
     }
     if (shot.languages) await useLanguages(page, shot.languages);
+    // Headless Chrome draws slowly, and auto graphics would drop to Low. Pin High for every shot.
+    await page.evaluateOnNewDocument(() => localStorage.setItem('hitoria.graphics', 'high'));
     await page.goto(`${url}/?seed=${SEED}`, { waitUntil: 'load' });
     await Bun.sleep(LOAD_MS);
     for (const step of shot.steps ?? []) await runStep(page, view, step, log);

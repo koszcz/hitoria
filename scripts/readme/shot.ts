@@ -22,6 +22,7 @@ const saves = new Saves({
   removeItem: (k) => void store.delete(k),
 });
 saves.write(growVillage().save(), 'README village');
+store.set('hitoria.graphics', 'high'); // headless Chrome is slow, and auto graphics would drop to Low
 
 mkdirSync(CACHE, { recursive: true });
 const server = serve(build(null));

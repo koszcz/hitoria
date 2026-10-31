@@ -123,6 +123,19 @@ The save keeps the map, buildings, roads, flags and every good. It does not keep
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
 back to their building or flag, so nothing is lost.
 
+## Graphics
+
+The **Graphics** button in the menu sets how the game is drawn. Click it to go through the choices.
+
+- **Auto** is the default. It starts on a level that suits your device: High on a computer, Medium
+  on a phone or tablet. If the game runs slowly, it lowers the level while you play and tells you.
+  If the game then runs smoothly for a while, it tries one level higher, but never one that was
+  already too slow. The browser remembers the level it settled on.
+- **Low**, **Medium** and **High** stay as you set them. Low turns off shadows and draws fewer
+  pixels. High draws soft shadows at full sharpness.
+
+Press F3 to see the level, and how much the game draws each frame.
+
 ## Code map
 
 | File | What it does |
@@ -131,6 +144,7 @@ back to their building or flag, so nothing is lost.
 | `src/game/` | Simulation: buildings, roads, settlers, carriers, food and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle |
+| `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, land, water, trees and roofs |
 | `src/ui.ts` | HUD and info panel |
 | `src/buildmenu/` | The build menu |
