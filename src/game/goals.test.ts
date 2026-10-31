@@ -60,6 +60,7 @@ describe('goals', () => {
   test('the goals come in a fixed order', () => {
     expect(GOALS.map((x) => x.text)).toEqual([
       'Make 50 planks', 'Bake 20 bread', 'Grow to 30 settlers', 'Build 3 houses', 'Build a monument',
+      'Get through a winter with no one hungry',
     ]);
   });
 
@@ -112,14 +113,14 @@ describe('monument', () => {
     expect(m.worker).toBe(0);
   });
 
-  test('finishing a monument reaches the last goal', () => {
+  test('finishing a monument reaches its goal, and the winter goal starts', () => {
     const g = flatGame();
-    g.goal = GOALS.length - 1;
+    g.goal = GOALS.findIndex((x) => x.id === 'monument');
     g.hq.stock.stone = 30;
     const m = placeLinked(g, 'monument', g.hq.x + 5, g.hq.y - 3);
     runUntil(g, () => m.built, 400);
     run(g, 1);
-    expect(g.goalNow()).toBeNull();
+    expect(g.goalNow()?.id).toBe('winter');
     expect(g.toasts).toContain('🏆 Goal reached: Build a monument');
   });
 });

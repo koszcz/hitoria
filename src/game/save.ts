@@ -6,6 +6,7 @@ import { claimFields } from './fields';
 import { computeTerritory } from './land';
 import { isStore } from './stores';
 import type { Building, Flag, Road } from './types';
+import type { WinterState } from './survive';
 import { MAP_VERSION } from '../world';
 
 export const SAVE_VERSION = 4;
@@ -25,6 +26,7 @@ export interface SaveData {
   roads: Road[];
   made?: Bag; // goods made since the game began; saves from before goals have none
   goal?: number; // index of the goal the player is on
+  winter?: WinterState; // how the survive winter goal is going; older saves wait for the next winter
 }
 
 export function save(g: Game): SaveData {
@@ -61,7 +63,7 @@ export function save(g: Game): SaveData {
   return {
     v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool: g.population, nextId: g.nextId, hq: g.hq.id,
     tiles: g.world.tiles.map((t, i) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field, Math.round(g.wear[i] * 100) / 100]),
-    buildings, flags, roads, made: { ...g.made }, goal: g.goal,
+    buildings, flags, roads, made: { ...g.made }, goal: g.goal, winter: g.winter.state,
   };
 }
 
@@ -110,6 +112,7 @@ export function restore(g: Game, d: SaveData) {
   g.nextId = d.nextId;
   g.made = bag(d.made);
   g.goal = d.goal ?? 0;
+  g.winter.state = d.winter ?? 'late';
   g.net++;
   computeTerritory(g);
   // Farms from saves made before fields take theirs now, keeping the grain already growing.

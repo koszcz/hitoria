@@ -4,5 +4,6 @@ export * from './types';
 export { Game } from './game';
 export { SAVE_VERSION, type SaveData } from './save';
 export { GOALS } from './goals';
+export { HUNGRY_AFTER } from './survive';
 export { ROAM, ANIMAL } from './animals';
 export { HUNT_RANGE, ANIMAL_RETURN } from './hunting';

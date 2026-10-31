@@ -19,8 +19,12 @@ reach a goal, the next one starts:
 3. Grow to 30 settlers.
 4. Build 3 houses.
 5. Build a monument.
+6. Get through a winter with no one hungry.
 
 Only goods your settlers make count toward a goal, not the goods you start with.
+
+The winter goal counts one whole winter, from the first snow to spring. A settler goes hungry
+when a house or mine waits more than 20 seconds for food. If that happens, try again next winter.
 
 1. **Place a woodcutter's hut.** Press `B` to open the build menu and pick the woodcutter's hut.
    Then click open grass near trees.
@@ -218,7 +222,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   spring.
 - A house turns fish, meat or bread into new settlers.
 - A lookout tower expands your land.
-- A monument does no work. Building one is your last goal.
+- A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ and in storehouses.
 
 Every building has a flag in front of its door. Flags mark where roads end and where they meet.

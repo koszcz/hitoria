@@ -147,6 +147,13 @@ const MESSAGES_PL: Record<string, string> = {
   'Grow to 30 settlers': 'Dojdź do 30 osadników',
   'Build 3 houses': 'Zbuduj 3 domy',
   'Build a monument': 'Zbuduj pomnik',
+  'Get through a winter with no one hungry': 'Przetrwaj zimę tak, by nikt nie głodował',
+  'Winter has begun. Get ready for the next one': 'Zima już trwa. Przygotuj się na następną',
+  'Store food before winter comes': 'Zgromadź jedzenie, zanim przyjdzie zima',
+  'Winter: no one has gone hungry yet': 'Zima: na razie nikt nie głoduje',
+  'Someone went hungry. Try again next winter': 'Ktoś głodował. Spróbuj następnej zimy',
+  'You got through the winter': 'Zima przetrwana',
+  '🥶 A settler went hungry this winter': '🥶 Osadnik głodował tej zimy',
   // Why a building can't go here
   'Outside the map': 'Poza mapą',
   Occupied: 'Zajęte',

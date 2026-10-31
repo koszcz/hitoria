@@ -138,7 +138,7 @@ export class UI {
     const now = this.game.goalNow();
     const html = now
       ? `<div class="head">🏆 ${x.goal}</div><div class="text">${tr(now.text)}</div>` +
-        `<div class="bar"><i style="width:${Math.round((now.have / now.need) * 100)}%"></i></div><div class="count">${now.have} / ${now.need}</div>`
+        `<div class="bar"><i style="width:${Math.round((now.have / now.need) * 100)}%"></i></div><div class="count">${now.note ? tr(now.note) : `${now.have} / ${now.need}`}</div>`
       : `<div class="head">🏆 ${x.goalsDone}</div>`;
     const el = $('goal');
     if (el.innerHTML !== html) el.innerHTML = html;
