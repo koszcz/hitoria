@@ -6,12 +6,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 - **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *Fun 2 · Effort S · Branch: claude/build-807501*
 - **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S · Branch: claude/build-e4bb48*
+- **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M · Branch: claude/build-5facc8*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M*
 
 ## Inbox
 
