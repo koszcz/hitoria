@@ -1,11 +1,9 @@
-import { Game, BDEFS, BUILDABLE, BType, GOODS, Bag, HOUSE_SIZE, HOUSE_GROW } from './game';
-import { buildFacts, buildNow } from './buildinfo';
+import { Game, BDEFS, BType, GOODS, HOUSE_SIZE, HOUSE_GROW } from './game';
 import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
+import { openBuildMenu } from './buildmenu/menu';
+import { costText } from './buildmenu/card';
 
 const $ = (id: string) => document.getElementById(id)!;
-
-const costText = (cost: Partial<Bag>) =>
-  GOODS.filter((g) => cost[g]).map((g) => `<span class="good ${g}"></span>${cost[g]}`).join(' ');
 
 export type Tool = BType | 'road' | 'remove';
 
@@ -21,7 +19,7 @@ export class UI {
   speed = 1;
   paused = false;
   private buttons = new Map<Tool, HTMLButtonElement>();
-  private hover: BType | null = null;
+  private buildBtn!: HTMLButtonElement;
 
   constructor(public game: Game) {
     this.drawBar();
@@ -58,64 +56,48 @@ export class UI {
     this.refresh();
   }
 
+  // The bar at the bottom: one button that opens the build menu, then the road and remove tools.
   private drawBar() {
     const bar = $('buildbar');
     bar.replaceChildren();
     this.buttons.clear();
-    BUILDABLE.forEach((type, i) => {
-      const def = BDEFS[type];
-      const btn = document.createElement('button');
-      btn.className = 'build';
-      btn.dataset.key = i < 9 ? String(i + 1) : '';
-      btn.innerHTML = `<span class="icon">${def.icon}</span><span class="name">${buildingName(type)}</span><span class="cost">${costText(def.cost)}</span>`;
-      btn.onclick = () => this.setPlacing(this.placing === type ? null : type);
-      btn.onmouseenter = btn.onfocus = () => this.showCard(type, btn);
-      btn.onmouseleave = btn.onblur = () => this.showCard(null, btn);
-      bar.appendChild(btn);
-      this.buttons.set(type, btn);
-    });
+    const x = T();
+    this.buildBtn = document.createElement('button');
+    this.buildBtn.className = 'build open';
+    this.buildBtn.title = x.buildTitle;
+    this.buildBtn.onclick = () => this.openBuild();
+    bar.appendChild(this.buildBtn);
     for (const t of TOOLS) {
       const btn = document.createElement('button');
       btn.className = 'build tool';
-      btn.title = `${t.desc()} (${T().key(t.key)})`;
-      btn.innerHTML = `<span class="icon">${t.icon}</span><span class="name">${t.name()}</span><span class="cost">${T().key(t.key)}</span>`;
+      btn.title = `${t.desc()} (${x.key(t.key)})`;
+      btn.innerHTML = `<span class="icon">${t.icon}</span><span class="name">${t.name()}</span><span class="cost key">${x.key(t.key)}</span>`;
       btn.onclick = () => this.setPlacing(this.placing === t.tool ? null : t.tool);
       bar.appendChild(btn);
       this.buttons.set(t.tool, btn);
     }
   }
 
-  // A card above the build bar that explains what a building is worth.
-  private showCard(type: BType | null, btn: HTMLButtonElement | null) {
-    this.hover = type;
-    const card = $('buildcard');
-    if (!type || !btn) {
-      card.hidden = true;
-      return;
-    }
-    const def = BDEFS[type];
-    const facts = buildFacts(type);
-    const now = buildNow(this.game, type);
-    const key = btn.dataset.key ? `<kbd>${btn.dataset.key}</kbd>` : '';
-    const items = (xs: string[]) => xs.map((x) => `<li>${x}</li>`).join('');
-    const x = T();
-    card.innerHTML =
-      `<h3><span class="icon">${def.icon}</span>${buildingName(type)}${key}</h3>` +
-      `<p class="makes">${facts.makes}</p>` +
-      (facts.worth.length ? `<h4>${x.whyBuild}</h4><ul>${items(facts.worth)}</ul>` : '') +
-      `<h4>${x.whatNeeds}</h4><ul>${items(facts.needs)}</ul>` +
-      `<p class="costline">${x.costs} ${costText(def.cost)}</p>` +
-      `<p class="have">${now.have}</p>` +
-      now.warn.map((w) => `<p class="warn">⚠ ${w}</p>`).join('');
-    card.hidden = false;
-    const r = btn.getBoundingClientRect();
-    const w = card.offsetWidth;
-    card.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2))}px`;
-    card.style.bottom = `${innerHeight - r.top + 8}px`;
+  openBuild() {
+    const current = this.placing && this.placing !== 'road' && this.placing !== 'remove' ? this.placing : null;
+    openBuildMenu({
+      game: this.game,
+      current,
+      touch: document.body.classList.contains('touch'),
+      pick: (type) => this.setPlacing(type),
+    });
   }
 
-  hideCard() {
-    this.showCard(null, null);
+  // The build button shows the building being placed, so you can see what a tap will put down.
+  private labelBuild() {
+    const x = T();
+    const p = this.placing;
+    const type = p && p !== 'road' && p !== 'remove' ? p : null;
+    const html = type
+      ? `<span class="icon">${BDEFS[type].icon}</span><span class="name">${buildingName(type)}</span><span class="cost">${costText(BDEFS[type].cost)}</span>`
+      : `<span class="icon">🔨</span><span class="name">${x.build}</span><span class="cost key">${x.key('B')}</span>`;
+    if (this.buildBtn.innerHTML !== html) this.buildBtn.innerHTML = html;
+    this.buildBtn.classList.toggle('active', !!type);
   }
 
   setPlacing(type: Tool | null) {
@@ -151,7 +133,7 @@ export class UI {
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);
     $('done').hidden = !this.placing;
-    if (this.hover) this.showCard(this.hover, this.buttons.get(this.hover)!);
+    this.labelBuild();
     for (const btn of document.querySelectorAll<HTMLButtonElement>('#speed button')) {
       const v = btn.dataset.speed;
       btn.classList.toggle('active', v === 'pause' ? this.paused : !this.paused && Number(v) === this.speed);

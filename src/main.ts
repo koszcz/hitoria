@@ -176,7 +176,6 @@ canvas.addEventListener('wheel', (e) => {
 let aim: { tool: typeof ui.placing; t: P } | null = null;
 
 function touchTap(t: P) {
-  ui.hideCard();
   const aimed = aim && aim.tool === ui.placing && aim.t.x === t.x && aim.t.y === t.y;
   if (ui.placing && !aimed) {
     aim = { tool: ui.placing, t };
@@ -200,6 +199,7 @@ window.addEventListener('keydown', (e) => {
     e.preventDefault();
     debug.toggle();
   }
+  if (e.key === 'b' || e.key === 'B') ui.openBuild();
   if (e.key === 'r' || e.key === 'R') ui.setPlacing(ui.placing === 'road' ? null : 'road');
   if (e.key === 'x' || e.key === 'X') ui.setPlacing(ui.placing === 'remove' ? null : 'remove');
   const n = Number(e.key);

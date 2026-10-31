@@ -53,7 +53,7 @@ canvas {
 
 #res { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.pill, #speed, #info, #buildcard, .build, .toast, #help {
+.pill, #speed, #info, .build, .toast, #help {
   background: var(--panel);
   border: 1px solid var(--edge);
   border-radius: 8px;
@@ -64,7 +64,7 @@ canvas {
 
 #speed, #file { display: flex; padding: 2px; }
 #file { margin-left: auto; }
-#file, #speed, #info, #buildcard, .build, .toast, #help {
+#file, #speed, #info, .build, .toast, #help {
   background: var(--panel);
   border: 1px solid var(--edge);
   border-radius: 8px;
@@ -141,24 +141,6 @@ canvas {
 #info .warn { margin: 0 0 8px; color: #ffb36b; font-weight: 600; }
 .build.tool { margin-left: 4px; }
 
-#buildcard {
-  position: fixed;
-  width: 300px;
-  padding: 12px 14px;
-  pointer-events: none;
-  z-index: 5;
-}
-#buildcard h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font: 700 15px Georgia, serif; color: var(--gold); }
-#buildcard h3 .icon { font-size: 20px; }
-#buildcard kbd { margin-left: auto; padding: 1px 6px; border: 1px solid var(--edge); border-radius: 4px; font: 600 11px system-ui, sans-serif; color: var(--muted); }
-#buildcard h4 { margin: 8px 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
-#buildcard ul { margin: 0; padding-left: 18px; }
-#buildcard li { margin: 1px 0; }
-#buildcard p { margin: 0; }
-#buildcard .makes { font-weight: 600; }
-#buildcard .costline { margin-top: 8px; display: flex; align-items: center; gap: 4px; }
-#buildcard .have { margin-top: 6px; font-style: italic; color: var(--muted); }
-#buildcard .warn { margin-top: 4px; color: #ffb36b; font-weight: 600; }
 #info .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
 #info .bar i { display: block; height: 100%; background: var(--gold); }
 
@@ -209,6 +191,8 @@ canvas {
   cursor: pointer;
 }
 #done[hidden], #menu { display: none; }
+body.touch .build .key, body.touch #buildmenu kbd { display: none; } /* no keyboard on a touch screen */
+body.touch .build { row-gap: 0; }
 
 #menu {
   font: 18px/1 system-ui, sans-serif;
@@ -249,11 +233,9 @@ canvas {
     max-height: 40vh;
     overflow-y: auto;
   }
-  #buildcard { max-width: calc(100vw - 16px); max-height: 55vh; overflow-y: auto; }
   #toasts { top: 100px; width: calc(100vw - 32px); }
   .toast { text-align: center; }
   .build { padding: 8px 10px 8px 8px; }
-  .build .name { display: none; }
   #debug { width: auto; right: 10px; }
 }
 @media (max-height: 500px) {
@@ -349,3 +331,90 @@ canvas {
 #saves .what b, #saves .what small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #saves .what small { color: var(--muted); }
 #saves .actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+/* The build menu: buildings in groups on the left, details for one of them on the right. */
+#buildmenu {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 80;
+}
+#buildmenu .panel {
+  width: min(760px, calc(100vw - 24px));
+  max-height: calc(100% - 24px);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px 16px;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+#buildmenu header { display: flex; align-items: center; justify-content: space-between; }
+#buildmenu h2 { margin: 0; color: var(--gold); font-family: Georgia, serif; }
+#buildmenu button { font: inherit; color: inherit; cursor: pointer; }
+#buildmenu .close { background: none; border: 0; font-size: 18px; padding: 4px 8px; }
+#buildmenu .body { display: flex; gap: 16px; min-height: 0; }
+#buildmenu .list { flex: 1; overflow-y: auto; }
+#buildmenu .list h4 { margin: 10px 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+#buildmenu .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+#buildmenu .tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  text-align: center;
+}
+#buildmenu .tile:hover, #buildmenu .tile.shown { border-color: var(--gold); background: rgba(80, 60, 25, 0.9); }
+#buildmenu .tile.short .cost { color: #ffb36b; }
+#buildmenu .tile .icon { font-size: 26px; line-height: 1.1; }
+#buildmenu .tile .name { font-weight: 600; font-size: 12px; line-height: 1.2; }
+#buildmenu .tile .cost { color: var(--muted); font-size: 11px; }
+#buildmenu .details { width: 280px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-top: 10px; }
+#buildmenu .go {
+  padding: 9px 12px;
+  font-weight: 600;
+  background: rgba(255, 210, 74, 0.2);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+}
+#buildmenu .go:hover { background: rgba(255, 210, 74, 0.35); }
+#buildmenu .card h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font: 700 15px Georgia, serif; color: var(--gold); }
+#buildmenu .card h3 .icon { font-size: 20px; }
+#buildmenu .card kbd { margin-left: auto; padding: 1px 6px; border: 1px solid var(--edge); border-radius: 4px; font: 600 11px system-ui, sans-serif; color: var(--muted); }
+#buildmenu .card h4 { margin: 8px 0 2px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+#buildmenu .card ul { margin: 0; padding-left: 18px; }
+#buildmenu .card li { margin: 1px 0; }
+#buildmenu .card p { margin: 0; }
+#buildmenu .card .makes { font-weight: 600; }
+#buildmenu .card .costline { margin-top: 8px; display: flex; align-items: center; gap: 4px; }
+#buildmenu .card .have { margin-top: 6px; font-style: italic; color: var(--muted); }
+#buildmenu .card .warn { margin-top: 4px; color: #ffb36b; font-weight: 600; }
+
+@media (max-width: 640px), (max-height: 500px) {
+  #buildmenu { place-items: end center; }
+  #buildmenu .panel {
+    width: 100%;
+    max-height: 88%;
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    border-radius: 14px 14px 0 0;
+    overflow-y: auto;
+  }
+  #buildmenu .body { flex-direction: column; gap: 6px; }
+  #buildmenu .list { overflow: visible; }
+  #buildmenu .tiles { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); }
+  #buildmenu .details { width: auto; overflow: visible; }
+  #buildmenu .go { position: sticky; bottom: 0; background: #4a3a1c; box-shadow: 0 14px 0 14px #2a221a; }
+}
+@media (max-height: 500px) {
+  #buildmenu .body { flex-direction: row; }
+  #buildmenu .list { overflow-y: auto; }
+  #buildmenu .details { width: 260px; overflow-y: auto; position: static; }
+  #buildmenu .panel { max-height: 100%; border-radius: 10px 10px 0 0; }
+}
