@@ -5,10 +5,7 @@
 import { Glob } from 'bun';
 
 const LIMIT = 400;
-const OVERSIZE: Record<string, number> = {
-  'src/game.ts': 1083,
-  'test/game.test.ts': 539,
-};
+const OVERSIZE: Record<string, number> = {};
 
 const problems: string[] = [];
 for (const pattern of ['src/**/*.ts', 'test/**/*.ts', '*.ts', 'changelog/**/*.ts', 'scripts/**/*.ts']) {

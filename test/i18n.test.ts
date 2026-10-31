@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { BDEFS, BUILDABLE, RECIPES, type BType } from '../src/game';
 import { buildFacts, buildNow } from '../src/buildinfo';
 import { T, buildingName, getLang, goodName, join, knownMessages, plural, setLang, startLang, tr } from '../src/i18n';
@@ -24,7 +24,8 @@ describe('Polish plurals', () => {
 
 describe('game messages in Polish', () => {
   // Every fixed message the game shows a player: statuses, recipe states and refusals.
-  const source = readFileSync(new URL('../src/game.ts', import.meta.url), 'utf8');
+  const dir = new URL('../src/game/', import.meta.url);
+  const source = readdirSync(dir).map((f) => readFileSync(new URL(f, dir), 'utf8')).join('\n');
   const shown = new Set<string>();
   for (const line of source.split('\n')) {
     if (!/status|rest\(|return '|\? '|: '/.test(line) || /throw|^\s*\/\//.test(line)) continue;

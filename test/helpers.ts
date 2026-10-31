@@ -1,4 +1,6 @@
+import { expect } from 'bun:test';
 import { Game, GOODS, Bag, bag } from '../src/game';
+import { W } from '../src/world';
 
 // A game whose land around the HQ is flat grass with no trees or boulders, so tests can
 // place things where they want without depending on how the map generator lays out a seed.
@@ -64,3 +66,16 @@ export function expectIncomingConsistent(g: Game) {
         throw new Error(`${b.type} #${b.id} expects ${b.incoming[k]} ${k} but ${r[k]} are on the way`);
   }
 }
+
+// Place a building and join its flag to the HQ's flag with a road.
+export function placeLinked(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
+  expect(g.canPlace(type, x, y)).toBeNull();
+  const b = g.place(type, x, y);
+  const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
+  if (typeof r === 'string') throw new Error(r);
+  expect(g.linked(b)).toBe(true);
+  return b;
+}
+
+// Is the tile at (x, y) part of your land?
+export const inside = (g: Game, x: number, y: number) => !!g.world.territory[y * W + x];
