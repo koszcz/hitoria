@@ -4,12 +4,23 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers and a stone mine, all joined by roads](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers and a stone mine, all joined by roads. The current goal shows at the top left](docs/screenshot.jpg)
 
 ## How to play
 
 You start with a headquarters (HQ), some goods and 18 settlers. Your goal is to grow a working
 economy. Nobody attacks you.
+
+The panel at the top left gives you one goal at a time, and shows how close you are. When you
+reach a goal, the next one starts:
+
+1. Make 50 planks.
+2. Bake 20 bread.
+3. Grow to 30 settlers.
+4. Build 3 houses.
+5. Build a monument.
+
+Only goods your settlers make count toward a goal, not the goods you start with.
 
 1. **Place a woodcutter's hut.** Press `B` to open the build menu and pick the woodcutter's hut.
    Then click open grass near trees.
@@ -123,7 +134,7 @@ Saves live in your browser's local storage. You can keep as many as the storage 
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
 
-The save keeps the map, buildings, roads, flags and every good. It does not keep where settlers are.
+The save keeps the map, buildings, roads, flags, every good and your goals. It does not keep where settlers are.
 After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
 
@@ -148,12 +159,12 @@ Press F3 to see the level, and how much the game draws each frame.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, and the mountain and bay every start gets |
-| `src/game/` | Simulation: buildings, demolishing, roads, settlers, carriers, farm fields, food and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, settlers, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, land, water and trees |
-| `src/ui.ts` | HUD and info panel |
+| `src/ui.ts` | HUD, goal panel and info panel |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/i18n.ts` | Translations |
@@ -169,6 +180,7 @@ Press F3 to see the level, and how much the game draws each frame.
   they fit, and nothing else can be built on them. Demolishing the farm frees them.
 - A house turns fish or bread into new settlers.
 - A lookout tower expands your land.
+- A monument does no work. Building one is your last goal.
 - Goods are stored at the HQ and in storehouses.
 
 Every building has a flag in front of its door. Flags mark where roads end and where they meet.

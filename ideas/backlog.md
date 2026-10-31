@@ -6,7 +6,6 @@ How to add and triage ideas: see [README.md](README.md).
 
 - **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *Fun 2 · Effort S · Branch: claude/build-807501*
 - **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S · Branch: claude/build-e4bb48*
-- **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M · Branch: claude/build-5facc8*
 
 ## Next
 
@@ -64,6 +63,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Goals**: five peaceful goals in order, from "make 50 planks" to "build a monument", with a panel that shows your progress. *2026-10-31*
 - **Farms keep their fields**: you can place a farm only where it has room for 6 fields. The farm marks them as tilled soil when placed, and no buildings, flags, roads or trees can go on them. *2026-10-31*
 - **Demolish a building**: remove a building you placed in the wrong spot. Its goods go back to the HQ. *2026-10-31*
 - **Start near a mountain and shore**: every map puts a mountain and a bay to the open sea in the HQ's land, with room for a stone mine and a fisher. *2026-10-31*

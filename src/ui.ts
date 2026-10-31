@@ -126,6 +126,18 @@ export class UI {
     setTimeout(() => el.remove(), 3200);
   }
 
+  // The panel at the top left: the goal the player is on now, and how close they are.
+  private drawGoal() {
+    const x = T();
+    const now = this.game.goalNow();
+    const html = now
+      ? `<div class="head">🏆 ${x.goal}</div><div class="text">${tr(now.text)}</div>` +
+        `<div class="bar"><i style="width:${Math.round((now.have / now.need) * 100)}%"></i></div><div class="count">${now.have} / ${now.need}</div>`
+      : `<div class="head">🏆 ${x.goalsDone}</div>`;
+    const el = $('goal');
+    if (el.innerHTML !== html) el.innerHTML = html;
+  }
+
   refresh() {
     const g = this.game;
     while (g.toasts.length) this.toast(g.toasts.shift()!);
@@ -135,6 +147,8 @@ export class UI {
     $('res').innerHTML =
       GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${stored[k]}</b><span class="label">${goodName(k)}</span></div>`).join('') +
       `<div class="pill">🧑‍🌾 ${x.settlers(g.pool, g.settlers.size)}</div>`;
+
+    this.drawGoal();
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);
     $('done').hidden = !this.placing;

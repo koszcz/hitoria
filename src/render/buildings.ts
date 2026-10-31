@@ -17,7 +17,7 @@ const noRoadTex = () => (noRoadTexture_ ??= noRoadTexture());
 const icons = new Map<BType, THREE.Texture>();
 
 // How high a building's sign floats.
-export const iconY = (type: BType) => (type === 'lookout' ? 2.45 : type === 'mill' ? 1.95 : 1.3);
+export const iconY = (type: BType) => (type === 'lookout' ? 2.45 : type === 'mill' || type === 'monument' ? 1.95 : 1.3);
 
 export interface Model {
   g: THREE.Group;
@@ -209,6 +209,19 @@ export function makeBuilding(type: BType, built: boolean): Model {
       add(g, new THREE.BoxGeometry(0.22, 0.004, 0.004), '#d8d0c0', 0.33, 0.29, 0.36);
       for (const [x, c] of [[0.27, '#e8e0cc'], [0.33, '#5a7aa8'], [0.39, '#d07a5a']] as const)
         add(g, new THREE.PlaneGeometry(0.045, 0.07), c, x, 0.25, 0.36, { side: THREE.DoubleSide });
+      break;
+    }
+    case 'monument': {
+      // A stone obelisk on stepped plinths, with a gilded tip and flower beds at its foot.
+      add(g, new THREE.BoxGeometry(0.8, 0.08, 0.8), shadeOf(wall, 0.82), 0, 0.04, 0);
+      add(g, new THREE.BoxGeometry(0.6, 0.1, 0.6), shadeOf(wall, 0.92), 0, 0.13, 0);
+      add(g, new THREE.BoxGeometry(0.42, 0.12, 0.42), wall, 0, 0.24, 0);
+      add(g, new THREE.CylinderGeometry(0.1, 0.16, 1.1, 4, 1).rotateY(Math.PI / 4), wall, 0, 0.85, 0);
+      add(g, new THREE.ConeGeometry(0.1, 0.18, 4).rotateY(Math.PI / 4), roof, 0, 1.49, 0, { emissive: roof, emissiveIntensity: 0.25 });
+      for (const [x, z] of [[-0.33, 0.33], [0.33, 0.33], [-0.33, -0.33], [0.33, -0.33]]) {
+        add(g, new THREE.BoxGeometry(0.12, 0.04, 0.12), '#5f8a3a', x, 0.1, z);
+        add(g, new THREE.SphereGeometry(0.03, 6, 5), '#e07a8a', x, 0.13, z);
+      }
       break;
     }
     default:

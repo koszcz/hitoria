@@ -184,3 +184,10 @@ describe('starting language', () => {
     expect(startLang()).toBe('pl');
   });
 });
+
+describe('goal toasts in Polish', () => {
+  test('a reached goal is announced in Polish', () => {
+    setLang('pl');
+    expect(tr('🏆 Goal reached: Make 50 planks')).toBe('🏆 Cel osiągnięty: Zrób 50 desek');
+  });
+});

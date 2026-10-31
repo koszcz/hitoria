@@ -53,7 +53,7 @@ canvas {
 
 #res { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.pill, #speed, #info, .build, .toast, #help {
+.pill, #speed, #info, #goal, .build, .toast, #help {
   background: var(--panel);
   border: 1px solid var(--edge);
   border-radius: 8px;
@@ -143,6 +143,19 @@ canvas {
 
 #info .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
 #info .bar i { display: block; height: 100%; background: var(--gold); }
+
+#goal {
+  position: fixed;
+  top: 60px;
+  left: 10px;
+  width: 210px;
+  padding: 8px 12px;
+}
+#goal .head { color: var(--gold); font: 700 13px Georgia, serif; }
+#goal .text { margin: 2px 0 6px; font-weight: 600; }
+#goal .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; overflow: hidden; }
+#goal .bar i { display: block; height: 100%; background: var(--gold); }
+#goal .count { margin-top: 3px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
 
 #toasts {
   position: fixed;
@@ -234,6 +247,10 @@ body.touch .build { row-gap: 0; }
     overflow-y: auto;
   }
   #toasts { top: 100px; width: calc(100vw - 32px); }
+  #goal { position: static; order: 4; width: 100%; display: flex; align-items: center; gap: 8px; padding: 4px 10px; }
+  #goal .text { margin: 0; }
+  #goal .bar { flex: 1; }
+  #goal .count { margin: 0; }
   .toast { text-align: center; }
   .build { padding: 8px 10px 8px 8px; }
   #debug { width: auto; right: 10px; }
