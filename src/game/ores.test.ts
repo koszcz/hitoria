@@ -53,7 +53,7 @@ describe('coal and iron mines', () => {
       mountain(g, x + 7, y - 1, x + 8, y + 1);
       const mine = placeLinked(g, type, x + 5, y);
       runUntil(g, () => mine.built, 120);
-      runUntil(g, () => mine.status === 'Waiting for fish or bread', 30);
+      runUntil(g, () => mine.status === 'Waiting for food', 30);
       expect(g.stored[good]).toBe(0);
       g.hq.stock.bread = 2;
       runUntil(g, () => g.stored[good] >= 4, 300, () => expectIncomingConsistent(g));

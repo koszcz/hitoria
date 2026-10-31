@@ -1,4 +1,5 @@
 // Wild animals: where they live when a game starts, how they roam, and how they step aside for settlers.
+// Hunters catch them; see hunting.ts.
 import { findPath } from '../path';
 import { rng, W, H } from '../world';
 import type { Game } from './game';
@@ -11,36 +12,46 @@ const AWAY = 6; // animals start at least this far from the HQ
 
 export function spawnAnimals(g: Game) {
   const rand = rng(g.seed ^ 0xa11a);
-  const pick = (ok: (x: number, y: number) => boolean) => {
-    for (let i = 0; i < 400; i++) {
-      const x = Math.floor(rand() * W), y = Math.floor(rand() * H);
-      if (open(g, x, y) && ok(x, y)) return { x, y };
-    }
-    return null;
-  };
-  const add = (kind: AnimalKind, x: number, y: number) => {
-    const a: Animal = { id: g.animals.size + 1, kind, x, y, home: { x, y }, path: null, wait: rand() * 4, fleeing: false, facing: 1 };
-    g.animals.set(a.id, a);
-  };
   for (let i = 0; i < HERDS; i++) {
-    const c = pick((x, y) => treesNear(g, x, y, 2) === 0);
+    const c = openSpot(g, 'deer', rand);
     if (!c) continue;
     const size = 2 + Math.floor(rand() * 2);
     for (let k = 0, n = 0; k < 20 && n < size; k++) {
       const x = c.x + Math.floor(rand() * 3) - 1, y = c.y + Math.floor(rand() * 3) - 1;
       if (!open(g, x, y) || [...g.animals.values()].some((a) => a.x === x && a.y === y)) continue;
-      add('deer', x, y);
+      addAnimal(g, 'deer', x, y, rand);
       n++;
     }
   }
   for (let i = 0; i < HARES; i++) {
-    const c = pick(() => true);
-    if (c) add('hare', c.x, c.y);
+    const c = openSpot(g, 'hare', rand);
+    if (c) addAnimal(g, 'hare', c.x, c.y, rand);
   }
   for (let i = 0; i < FOXES; i++) {
-    const c = pick((x, y) => treesNear(g, x, y, 1) > 0);
-    if (c) add('fox', c.x, c.y);
+    const c = openSpot(g, 'fox', rand);
+    if (c) addAnimal(g, 'fox', c.x, c.y, rand);
   }
+  g.wildCount = { deer: 0, hare: 0, fox: 0 };
+  for (const a of g.animals.values()) g.wildCount[a.kind]++;
+}
+
+// A random spot where this kind of animal likes to live: deer in the open, foxes at the forest edge.
+export function openSpot(g: Game, kind: AnimalKind, rand: () => number) {
+  const ok = kind === 'deer' ? (x: number, y: number) => treesNear(g, x, y, 2) === 0
+    : kind === 'fox' ? (x: number, y: number) => treesNear(g, x, y, 1) > 0
+    : () => true;
+  for (let i = 0; i < 400; i++) {
+    const x = Math.floor(rand() * W), y = Math.floor(rand() * H);
+    if (open(g, x, y) && ok(x, y)) return { x, y };
+  }
+  return null;
+}
+
+export function addAnimal(g: Game, kind: AnimalKind, x: number, y: number, rand: () => number) {
+  const id = g.nextAnimal++;
+  const a: Animal = { id, kind, x, y, home: { x, y }, path: null, wait: rand() * 4, fleeing: false, facing: 1, hunter: 0 };
+  g.animals.set(id, a);
+  return a;
 }
 
 // Open grass an animal can stand on, away from the HQ.
@@ -69,6 +80,9 @@ const FLEE_SPEED = 2.2; // multiplier while stepping aside
 const FLEE = 3; // how far an animal steps aside, in tiles
 
 export function stepAnimal(g: Game, a: Animal, dt: number) {
+  // An animal a hunter is stalking stands still, until the hunt ends.
+  if (a.hunter && g.settlers.has(a.hunter)) return;
+  a.hunter = 0;
   const s = closeSettler(g, a);
   if (s && !a.fleeing) flee(g, a, s);
   if (!a.path) {

@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *Fun 2 · Effort S · Needs: Wild animals · Approved · Branch: worktree-agent-aff6afd7cec57cafb*
+Nothing right now.
 
 ## Next
 
@@ -58,6 +58,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. Animals slowly come back, so the meadows never empty. *2026-10-31*
 - **Day and night light**: the light slowly turns from morning to evening to night and back. *2026-10-31*
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *2026-10-31*
 - **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *2026-10-31*

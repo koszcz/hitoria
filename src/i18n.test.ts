@@ -99,9 +99,9 @@ describe('build card in Polish', () => {
   test('workshops show their speed with the right noun forms', () => {
     setLang('pl');
     expect(buildFacts('sawmill').makes).toBe('Zamienia 1 kłodę na 1 deskę co 5 s. To do 12 na minutę.');
-    expect(buildFacts('mine').makes).toBe('Zamienia 1 bochenek chleba lub rybę na 2 kamienie co 8 s. To do 15 na minutę.');
-    expect(buildFacts('coalmine').makes).toBe('Zamienia 1 bochenek chleba lub rybę na 2 worki węgla co 8 s. To do 15 na minutę.');
-    expect(buildFacts('ironmine').makes).toBe('Zamienia 1 bochenek chleba lub rybę na 2 bryły rudy żelaza co 8 s. To do 15 na minutę.');
+    expect(buildFacts('mine').makes).toBe('Zamienia 1 bochenek chleba, rybę lub porcję mięsa na 2 kamienie co 8 s. To do 15 na minutę.');
+    expect(buildFacts('coalmine').makes).toBe('Zamienia 1 bochenek chleba, rybę lub porcję mięsa na 2 worki węgla co 8 s. To do 15 na minutę.');
+    expect(buildFacts('ironmine').makes).toBe('Zamienia 1 bochenek chleba, rybę lub porcję mięsa na 2 bryły rudy żelaza co 8 s. To do 15 na minutę.');
   });
 
   test('gathering huts say where the goods come from', () => {
@@ -138,7 +138,7 @@ describe('build card in Polish', () => {
     expect(buildNow(g, 'woodcutter').have).toBe('Gotowe: 0, w budowie: 1.');
     g.hq.stock.fish = 0;
     g.hq.stock.bread = 0;
-    expect(buildNow(g, 'mine').warn).toContain('Nic jeszcze nie wytwarza: Chleb lub Ryby. Najpierw zbuduj: Piekarnia lub Chata rybaka.');
+    expect(buildNow(g, 'mine').warn).toContain('Nic jeszcze nie wytwarza: Chleb, Ryby lub Mięso. Najpierw zbuduj: Piekarnia, Chata rybaka lub Chata myśliwego.');
   });
 });
 

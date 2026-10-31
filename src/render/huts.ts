@@ -10,6 +10,7 @@ export function hut(g: THREE.Group, model: Model, type: BType, wall: string, roo
   else if (type === 'forester') forester(g, model, wall, roof);
   else if (type === 'quarry') quarry(g, model, wall, roof);
   else if (type === 'fisher') fisher(g, model, wall, roof);
+  else if (type === 'hunter') hunter(g, model, wall, roof);
   else if (type === 'farm') farm(g, model, wall, roof);
   else if (type === 'bakery') bakery(g, model, wall, roof);
   else if (type === 'well') well(g, wall, roof);
@@ -69,6 +70,25 @@ function fisher(g: THREE.Group, model: Model, wall: string, roof: string) {
   add(g, new THREE.BoxGeometry(0.22, 0.015, 0.015), '#5a3c22', 0.37, 0.29, -0.18);
   for (const x of [0.32, 0.37, 0.42]) add(g, new THREE.SphereGeometry(0.02, 6, 4).scale(0.6, 2.2, 0.6), '#9cc0d0', x, 0.23, -0.18);
   add(g, new THREE.PlaneGeometry(0.2, 0.14), '#e8e0c4', -0.36, 0.12, 0.32, { transparent: true, opacity: 0.55, side: THREE.DoubleSide }).rotation.y = 0.8;
+}
+
+// A dark timber lodge with antlers over the door, a hide stretched on a frame and meat hanging to dry.
+function hunter(g: THREE.Group, model: Model, wall: string, roof: string) {
+  house(g, model, { w: 0.28, d: 0.22, h: 0.3, rh: 0.26, wall, roof, walls: 'logs', x: -0.1, z: -0.12, shutter: '#3a2a1a' });
+  for (const s of [-1, 1]) {
+    const antler = add(g, new THREE.BoxGeometry(0.012, 0.09, 0.012), '#e8dcc0', -0.1 + s * 0.035, 0.42, 0.0);
+    antler.rotation.z = -s * 0.6;
+    add(g, new THREE.BoxGeometry(0.01, 0.04, 0.01), '#e8dcc0', -0.1 + s * 0.06, 0.45, 0.0).rotation.z = s * 0.3;
+  }
+  // A hide on a wooden frame.
+  for (const x of [0.22, 0.44]) add(g, new THREE.BoxGeometry(0.02, 0.3, 0.02), '#5a3c22', x, 0.15, 0.3);
+  add(g, new THREE.BoxGeometry(0.24, 0.015, 0.015), '#5a3c22', 0.33, 0.29, 0.3);
+  add(g, new THREE.PlaneGeometry(0.17, 0.2), '#a87848', 0.33, 0.17, 0.3, { side: THREE.DoubleSide });
+  // A drying rack with meat.
+  for (const z of [-0.3, -0.06]) add(g, new THREE.BoxGeometry(0.02, 0.26, 0.02), '#5a3c22', 0.36, 0.13, z);
+  add(g, new THREE.BoxGeometry(0.015, 0.015, 0.26), '#5a3c22', 0.36, 0.25, -0.18);
+  for (const z of [-0.25, -0.18, -0.11]) add(g, new THREE.SphereGeometry(0.025, 6, 4).scale(0.8, 1.6, 0.8), '#9a3e30', 0.36, 0.19, z);
+  add(g, new THREE.CylinderGeometry(0.06, 0.07, 0.1, 8), '#7a5530', -0.33, 0.05, 0.33);
 }
 
 // A long farmhouse under golden thatch, with a haystack, sacks of grain and a stretch of fence.

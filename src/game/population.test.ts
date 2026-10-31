@@ -34,7 +34,7 @@ describe('population', () => {
     const before = g.population;
     run(g, 200);
     expect(g.population).toBe(before);
-    expect(house.status).toBe('Waiting for fish or bread');
+    expect(house.status).toBe('Waiting for food');
   });
 
   test('a house adds 4 settlers, then stops taking food', () => {

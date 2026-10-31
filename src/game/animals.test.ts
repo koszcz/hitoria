@@ -50,7 +50,7 @@ describe('wild animals', () => {
     const g = flatGame();
     g.animals.clear();
     const x = g.hq.x + 8, y = g.hq.y;
-    g.animals.set(1, { id: 1, kind: 'hare', x, y, home: { x, y }, path: null, wait: 999, fleeing: false, facing: 1 });
+    g.animals.set(1, { id: 1, kind: 'hare', x, y, home: { x, y }, path: null, wait: 999, fleeing: false, facing: 1, hunter: 0 });
     g.pool = 1;
     const s = takeSettler(g, 'carrier')!;
     Object.assign(s, { x: x - 1, y, tasks: [{ k: 'work', t: 999 }] });

@@ -55,21 +55,22 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   lookout: { name: 'Wieża widokowa', desc: 'Poszerza twoje ziemie. Żadnych żołnierzy, tylko widok.' },
   storehouse: { name: 'Magazyn', desc: 'Przechowuje zapasy blisko miejsc, w których się je wytwarza i zużywa.' },
   fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu.' },
+  hunter: { name: 'Chata myśliwego', desc: 'Poluje na jelenie i zające w pobliżu i przynosi mięso. Zwierzęta powoli wracają.' },
   farm: { name: 'Gospodarstwo', desc: 'Sieje zboże na wolnej trawie w pobliżu i zbiera je, gdy dojrzeje.' },
   well: { name: 'Studnia', desc: 'Czerpie wodę z ziemi. Zbuduj ją na dowolnej płaskiej trawie.' },
   mill: { name: 'Młyn', desc: 'Miele zboże na mąkę.' },
   bakery: { name: 'Piekarnia', desc: 'Piecze chleb z mąki i wody.' },
   mine: {
     name: 'Kopalnia kamienia',
-    desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 kamienie. Zbuduj ją przy górze.',
+    desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 kamienie. Zbuduj ją przy górze.',
   },
   coalmine: {
     name: 'Kopalnia węgla',
-    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 worki węgla. Zbuduj ją przy górze.',
+    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 worki węgla. Zbuduj ją przy górze.',
   },
   ironmine: {
     name: 'Kopalnia żelaza',
-    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę lub bochenek chleba na każde 2 bryły rudy. Zbuduj ją przy górze.',
+    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 bryły rudy. Zbuduj ją przy górze.',
   },
   monument: {
     name: 'Pomnik',
@@ -77,7 +78,7 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   },
   house: {
     name: 'Dom',
-    desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników.`,
+    desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę, porcję mięsa lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników.`,
   },
 };
 
@@ -86,10 +87,10 @@ export const buildingDesc = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].desc :
 
 // Goods as a label, as in "Planks: 4".
 const GOOD_EN: Record<Good, string> = {
-  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore',
+  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat',
 };
 const GOOD_PL: Record<Good, string> = {
-  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza',
+  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza', meat: 'Mięso',
 };
 export const goodName = (g: Good) => (lang === 'pl' ? GOOD_PL : GOOD_EN)[g];
 
@@ -129,7 +130,9 @@ const MESSAGES_PL: Record<string, string> = {
   'Digging stone': 'Wydobywa kamień',
   'Digging coal': 'Wydobywa węgiel',
   'Digging iron ore': 'Wydobywa rudę żelaza',
-  'Waiting for fish or bread': 'Czeka na ryby lub chleb',
+  'Waiting for food': 'Czeka na jedzenie',
+  Hunting: 'Poluje',
+  'No animals in range': 'Brak zwierzyny w zasięgu',
   'A settler will be born soon': 'Wkrótce urodzi się osadnik',
   'House is full': 'Dom jest pełny',
   '👶 A new settler was born': '👶 Urodził się nowy osadnik',

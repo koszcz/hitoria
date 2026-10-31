@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers and a stone mine, all joined by roads. The current goal shows at the top left](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge and a stone mine, all joined by roads. The current goal shows at the top left](docs/screenshot.jpg)
 
 ## How to play
 
@@ -34,8 +34,8 @@ Only goods your settlers make count toward a goal, not the goods you start with.
    - A quarry (`3`) next to boulders makes stone.
    - A sawmill (`4`) turns logs into planks. You need planks for every new building.
    - A lookout tower (`5`) expands your land, so you have room for more.
-   - Fishers, farms, mills and bakeries make food. A bakery also needs water from a well.
-     Houses turn food into new settlers.
+   - Fishers, hunters, farms, mills and bakeries make food. A bakery also needs water from a
+     well. Houses turn food into new settlers.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
    - Coal and iron mines also go next to a mountain. Nothing uses their coal and iron ore yet.
    - Across the water from the bay lies a second island. You can't reach it yet.
@@ -176,7 +176,7 @@ Browsers block sound until you click or press a key, so the sound starts then.
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, carriers, farm fields, food, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays and the light for each time of day (`daylight.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
@@ -192,14 +192,16 @@ Browsers block sound until you click or press a key, so the sound starts then.
 
 - Woodcutter → logs → Sawmill → planks. A forester replants trees.
 - A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
-  eats fish or bread.
+  eats fish, meat or bread.
 - A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way. Nothing
   uses coal or iron ore yet.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
+- A hunter catches deer and hares up to 7 tiles from the Hunter's Lodge and brings home meat.
+  Foxes are left alone.
 - A well draws water on any flat grass. The bakery needs 1 flour and 1 water for each loaf.
 - Each farm keeps 6 fields of its own on the grass around it. You can place a farm only where
   they fit, and nothing else can be built on them. Demolishing the farm frees them.
-- A house turns fish or bread into new settlers.
+- A house turns fish, meat or bread into new settlers.
 - A lookout tower expands your land.
 - A monument does no work. Building one is your last goal.
 - Goods are stored at the HQ and in storehouses.
@@ -216,7 +218,9 @@ fades back to grass over about 3 minutes.
 
 Deer, hares and foxes live on the island. Each one wanders near its own spot and grazes. When a
 settler comes within about 2 tiles, it runs a few steps away. Animals never block settlers and
-leave no paths.
+leave no paths. The animal a hunter creeps up on stays still until it is caught. When the island
+has fewer animals than it started with, a new one appears about once a minute, where a caught
+animal used to live.
 
 ## Ideas
 

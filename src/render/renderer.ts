@@ -352,6 +352,7 @@ export class Renderer {
     if (s.anim) armR.rotation.x = s.anim === 'plant' ? -0.5 + Math.sin(now * 6) * 0.35
       : s.anim === 'fish' ? -1.2 + Math.sin(now * 1.5) * 0.08
       : s.anim === 'reap' ? -0.6 + Math.sin(now * 6) * 0.7
+      : s.anim === 'hunt' ? -1.5 + Math.sin(now * 2) * 0.05
       : -1.2 + Math.sin(now * 9) * 0.9;
     if (s.carrying) this.goods.put(s.carrying, x, y + CARRY_Y, z, p.heading + Math.PI / 2);
   }

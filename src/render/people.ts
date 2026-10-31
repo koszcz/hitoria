@@ -14,17 +14,17 @@ export const ROLE_COLOR: Record<Role, string> = {
   carrier: '#d8c08a', builder: '#e0883a', woodcutter: '#b0402e', forester: '#5f9a3a',
   stonecutter: '#8a8f96', sawyer: '#a8763e', scout: '#3f6fc0',
   fisher: '#3f7a96', farmer: '#c8a040', miller: '#efe8d6', baker: '#d9894a', miner: '#5a5048',
-  drawer: '#4f8fb0',
+  drawer: '#4f8fb0', hunter: '#5a6a3a',
 };
 export const HAT: Record<Role, string> = {
   carrier: '', builder: '#f2c23a', woodcutter: '#3f6a34', forester: '#4a6a2c', stonecutter: '#6a6e72',
   sawyer: '#6b4a28', scout: '#2c4a8a', fisher: '#e8c84a', farmer: '#ead48a', miller: '#ffffff', baker: '#ffffff', miner: '#4a4440',
-  drawer: '#2f5f7a',
+  drawer: '#2f5f7a', hunter: '#6a4a2a',
 };
 export const HAIR: Record<Role, string> = {
   carrier: '#6a4a2a', builder: '#3a2618', woodcutter: '#8a4a22', forester: '#4a3020', stonecutter: '#2a2420',
   sawyer: '#b0803a', scout: '#d8b060', fisher: '#5a5048', farmer: '#9a6a32', miller: '#c8c0b0', baker: '#4a3020', miner: '#2a2420',
-  drawer: '#6a4a2a',
+  drawer: '#6a4a2a', hunter: '#3a2618',
 };
 
 export interface Person {
@@ -97,6 +97,11 @@ export function hat(body: THREE.Group, role: Role) {
       add(body, new THREE.ConeGeometry(0.048, 0.1, 10), HAT[role], 0, y + 0.04, -0.008).rotation.x = -0.35;
       if (role === 'scout') add(body, new THREE.BoxGeometry(0.008, 0.07, 0.02), '#e84a3a', 0.03, y + 0.06, -0.02).rotation.z = -0.4;
       break;
+    case 'hunter':
+      // A soft cap with a red feather.
+      add(body, new THREE.SphereGeometry(0.047, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2).scale(1, 0.8, 1.15), HAT[role], 0, y - 0.005, 0);
+      add(body, new THREE.BoxGeometry(0.008, 0.08, 0.02), '#c8402e', 0.035, y + 0.04, -0.02).rotation.z = -0.5;
+      break;
     case 'baker':
       add(body, new THREE.CylinderGeometry(0.05, 0.04, 0.07, 10), HAT[role], 0, y + 0.03, 0);
       break;
@@ -143,6 +148,13 @@ export function makeTool(role: Role) {
     case 'fisher':
       add(t, new THREE.CylinderGeometry(0.004, 0.007, 0.4, 4).rotateX(Math.PI / 2), wood, 0, 0, 0.17);
       break;
+    case 'hunter': {
+      // A bow held upright, with its string.
+      const bow = add(t, new THREE.TorusGeometry(0.11, 0.007, 4, 12, Math.PI * 0.8), wood, 0, 0, 0.06);
+      bow.rotation.set(0, Math.PI / 2, Math.PI * 0.6);
+      add(t, new THREE.BoxGeometry(0.003, 0.003, 0.2), '#e8e0c4', 0, 0, 0.0);
+      break;
+    }
     default:
       handle(0.14);
       add(t, new THREE.BoxGeometry(0.02, 0.05, 0.03), '#8c9094', 0, 0, 0.11);

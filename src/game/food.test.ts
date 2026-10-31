@@ -56,7 +56,7 @@ describe('mines and food', () => {
     runUntil(g, () => mine.built, 120);
     const stone = g.stored.stone;
     // No food, no stone.
-    runUntil(g, () => mine.status === 'Waiting for fish or bread', 30);
+    runUntil(g, () => mine.status === 'Waiting for food', 30);
     g.hq.stock.fish = 3;
     runUntil(g, () => g.stored.stone >= stone + 6, 300, () => expectIncomingConsistent(g));
     expect(g.stored.fish + mine.stock.fish).toBe(0);

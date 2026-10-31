@@ -74,6 +74,7 @@ export interface Settler {
 export type AnimalKind = 'deer' | 'hare' | 'fox';
 
 // A wild animal. It roams near its home spot, grazes, and steps aside when a settler comes close.
+// A hunter can catch deer and hares.
 export interface Animal {
   id: number;
   kind: AnimalKind;
@@ -84,4 +85,5 @@ export interface Animal {
   wait: number; // seconds left grazing or resting before it moves on
   fleeing: boolean; // stepping aside from a settler
   facing: 1 | -1;
+  hunter: number; // the settler stalking it, or 0
 }

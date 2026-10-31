@@ -119,7 +119,7 @@ export class Diagnostics {
     if (g.pool > 0 || !short.length) this.noSettlers = now;
     else flag('pool', this.noSettlers, LIMITS.noSettlers,
       `No idle settlers in the HQ for ${Math.round(now - this.noSettlers)} s, and ${short.length} waiting for one: ` +
-      short.map((b) => `${BDEFS[b.type].name} #${b.id}`).join(', ') + '. Build a house and bring it fish or bread.');
+      short.map((b) => `${BDEFS[b.type].name} #${b.id}`).join(', ') + '. Build a house and bring it fish, meat or bread.');
     for (const id of this.status.keys())
       if (!g.buildings.has(id)) {
         this.status.delete(id);

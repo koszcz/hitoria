@@ -4,6 +4,7 @@ import type { P } from '../path';
 import { MAP_VERSION, World, W, H } from '../world';
 import { BType, CROP_GROW, bag } from './defs';
 import { spawnAnimals, stepAnimal } from './animals';
+import { regrow } from './hunting';
 import { planAutoRoad } from './autoroad';
 import { pickFields } from './fields';
 import { checkGoals, goalNow } from './goals';
@@ -17,7 +18,7 @@ import { step } from './settlers';
 import { staff } from './staff';
 import { fade } from './wear';
 import { isStore, stored } from './stores';
-import type { Animal, Building, Flag, Road, Settler } from './types';
+import type { Animal, AnimalKind, Building, Flag, Road, Settler } from './types';
 
 export class Game {
   world: World;
@@ -45,6 +46,10 @@ export class Game {
   walks = new Map<number, { t: number; d: Float32Array }>(); // walking distances from each building
   ground: { t: number; kind: Uint8Array; cost: Float32Array } | null = null; // what each tile is to a walker
   trod = new Float32Array(W * H); // game time of the last footstep on each tile
+  wildCount: Record<AnimalKind, number> = { deer: 0, hare: 0, fox: 0 }; // animals of each kind the game began with
+  wildT = 0; // seconds the island has been short of animals
+  caught: { kind: AnimalKind; home: P }[] = []; // where caught animals lived, oldest first
+  nextAnimal = 1; // id for the next wild animal, never reused, so a new animal gets a new model
   private dispatchT = 0;
   private growT = 0;
 
@@ -160,5 +165,6 @@ export class Game {
     }
     for (const s of this.settlers.values()) step(this, s, dt);
     for (const a of this.animals.values()) stepAnimal(this, a, dt);
+    regrow(this, dt);
   }
 }

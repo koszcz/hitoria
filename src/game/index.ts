@@ -5,3 +5,4 @@ export { Game } from './game';
 export { SAVE_VERSION, type SaveData } from './save';
 export { GOALS } from './goals';
 export { ROAM, ANIMAL } from './animals';
+export { HUNT_RANGE, ANIMAL_RETURN } from './hunting';

@@ -4,6 +4,7 @@ import { W, Tile } from '../world';
 import { BDEFS, Good, PILE, RECIPES, WELL_DRAW } from './defs';
 import { carry } from './carriers';
 import type { Game } from './game';
+import { hunt } from './hunting';
 import { near, plantable } from './land';
 import type { Building, Settler } from './types';
 
@@ -113,6 +114,14 @@ export function idle(g: Game, s: Settler) {
         } },
         { k: 'work', t: 1.5 },
       ];
+      return;
+    }
+    case 'hunter': {
+      if (home.out.meat >= PILE) return rest(2, 'Full, waiting for a carrier');
+      const tasks = hunt(g, s, home, make);
+      if (!tasks) return rest(3, 'No animals in range');
+      home.status = 'Hunting';
+      s.tasks = tasks;
       return;
     }
     case 'sawyer':

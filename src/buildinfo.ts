@@ -9,6 +9,7 @@ const GATHER: Partial<Record<BType, Gather>> = {
   woodcutter: { good: 'log', from: { en: 'grown trees', pl: 'z dorosłych drzew' } },
   quarry: { good: 'stone', from: { en: 'boulders', pl: 'z głazów' } },
   fisher: { good: 'fish', from: { en: 'the shore', pl: 'z brzegu' } },
+  hunter: { good: 'meat', from: { en: `deer and hares up to ${BDEFS.hunter.radius} tiles away`, pl: `z polowań na jelenie i zające do ${BDEFS.hunter.radius} pól od chaty` } },
   farm: {
     good: 'grain',
     from: {
@@ -20,7 +21,7 @@ const GATHER: Partial<Record<BType, Gather>> = {
 
 // One of a good, for the recipe line.
 const ONE_EN: Record<Good, string> = {
-  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore',
+  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat',
 };
 // Polish goods counted one by one: the form after 1, after 2–4, and after 5 or more.
 const COUNT_PL: Record<Good, [string, string, string]> = {
@@ -34,6 +35,7 @@ const COUNT_PL: Record<Good, [string, string, string]> = {
   water: ['wiadro wody', 'wiadra wody', 'wiader wody'],
   coal: ['worek węgla', 'worki węgla', 'worków węgla'],
   ore: ['bryłę rudy żelaza', 'bryły rudy żelaza', 'brył rudy żelaza'],
+  meat: ['porcję mięsa', 'porcje mięsa', 'porcji mięsa'],
 };
 // Polish goods whose name is plural ("Kłody zasilają"), not singular ("Kamień zasila").
 const PLURAL_PL: Partial<Record<Good, true>> = { log: true, plank: true, fish: true };

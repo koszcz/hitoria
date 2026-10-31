@@ -47,6 +47,11 @@ function goodGeometry(): Record<Good, THREE.BufferGeometry> {
       piece(new THREE.DodecahedronGeometry(0.035, 0), '#1a1818', 0.03, 0, 0.01),
       piece(new THREE.DodecahedronGeometry(0.03, 0), '#2e2b2a', 0, 0.04, -0.005),
     ]),
+    meat: mergeGeometries([
+      piece(new THREE.SphereGeometry(0.05, 8, 6).scale(1.3, 0.8, 1), '#a8483a', 0, 0, 0),
+      piece(new THREE.SphereGeometry(0.045, 8, 6).scale(1.2, 0.7, 0.9), '#e8c8b0', -0.012, 0.012, 0),
+      piece(new THREE.CylinderGeometry(0.012, 0.012, 0.08, 6).rotateZ(Math.PI / 2), '#f2ece0', 0.08, 0, 0),
+    ]),
     ore: mergeGeometries([
       piece(new THREE.DodecahedronGeometry(0.055, 0), '#8a4a30', 0, 0, 0),
       piece(new THREE.DodecahedronGeometry(0.02, 0), '#c8763e', 0.035, 0.03, 0.02),

@@ -30,9 +30,9 @@ describe('build card facts', () => {
 
   test('workshops show their speed', () => {
     expect(buildFacts('sawmill').makes).toBe('Turns 1 Log into 1 Plank every 5 s. That is up to 12 a minute.');
-    expect(buildFacts('mine').makes).toBe('Turns 1 Bread or Fish into 2 Stone every 8 s. That is up to 15 a minute.');
-    expect(buildFacts('coalmine').makes).toBe('Turns 1 Bread or Fish into 2 Coal every 8 s. That is up to 15 a minute.');
-    expect(buildFacts('ironmine').makes).toBe('Turns 1 Bread or Fish into 2 Iron Ore every 8 s. That is up to 15 a minute.');
+    expect(buildFacts('mine').makes).toBe('Turns 1 Bread, Fish or Meat into 2 Stone every 8 s. That is up to 15 a minute.');
+    expect(buildFacts('coalmine').makes).toBe('Turns 1 Bread, Fish or Meat into 2 Coal every 8 s. That is up to 15 a minute.');
+    expect(buildFacts('ironmine').makes).toBe('Turns 1 Bread, Fish or Meat into 2 Iron Ore every 8 s. That is up to 15 a minute.');
     expect(buildFacts('bakery').makes).toBe('Turns 1 Flour and 1 Water into 1 Bread every 6 s. That is up to 10 a minute.');
     expect(buildFacts('well').makes).toBe('Draws 1 Water from the ground every 5 s. It needs no other goods.');
     expect(buildFacts('well').worth).toContain('Water feeds the Bakery.');
@@ -107,14 +107,14 @@ describe('build card notes about your game', () => {
     const g = flatGame();
     g.hq.stock.fish = 0;
     g.hq.stock.bread = 0;
-    expect(buildNow(g, 'mine').warn).toContain("You make no Bread or Fish yet. Build a Bakery or Fisher's Hut first.");
+    expect(buildNow(g, 'mine').warn).toContain("You make no Bread, Fish or Meat yet. Build a Bakery, Fisher's Hut or Hunter's Lodge first.");
   });
 
   test('a house explains how it grows your settlers', () => {
-    expect(buildFacts('house').makes).toBe('A family home. It turns one fish or bread into a new settler every 40 s, up to 4 settlers.');
+    expect(buildFacts('house').makes).toBe('A family home. It turns one fish, meat or bread into a new settler every 40 s, up to 4 settlers.');
     expect(buildFacts('house').worth).toContain('More settlers mean more carriers, builders and workers. Build more houses to keep growing.');
     const g = flatGame();
-    expect(buildNow(g, 'house').warn).toContain("You make no Fish or Bread yet. Build a Fisher's Hut or Bakery first.");
+    expect(buildNow(g, 'house').warn).toContain("You make no Fish, Bread or Meat yet. Build a Fisher's Hut, Bakery or Hunter's Lodge first.");
     g.hq.stock.fish = 1;
     expect(buildNow(g, 'house').warn).toEqual([]);
   });
