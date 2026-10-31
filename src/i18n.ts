@@ -17,15 +17,22 @@ export function setLang(l: Lang) {
   if (typeof document !== 'undefined') document.documentElement.lang = l;
 }
 
-// The language to start in: the one the player picked last time, or the browser's.
+// The language to start in: the one the player picked last time, or else the first language in
+// the browser's list that the game speaks, or else English.
 export function startLang(): Lang {
   let saved: string | null = null;
   try {
     saved = localStorage.getItem(KEY);
   } catch {}
   if (saved === 'en' || saved === 'pl') return saved;
-  const browser = typeof navigator !== 'undefined' ? navigator.language ?? '' : '';
-  return browser.toLowerCase().startsWith('pl') ? 'pl' : 'en';
+  const nav = typeof navigator !== 'undefined' ? navigator : undefined;
+  const browser = nav?.languages?.length ? nav.languages : [nav?.language ?? ''];
+  for (const tag of browser) {
+    const base = tag.toLowerCase().split('-')[0];
+    const found = LANGS.find((l) => l === base);
+    if (found) return found;
+  }
+  return 'en';
 }
 
 // Polish nouns take one of three forms after a number: 1 dom, 2 domy, 5 domów.

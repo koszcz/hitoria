@@ -143,18 +143,32 @@ describe('starting language', () => {
     Object.defineProperty(g, 'localStorage', { value: real.localStorage, configurable: true });
     Object.defineProperty(g, 'navigator', { value: real.navigator, configurable: true });
   });
-  const fake = (language: string) => {
+  const fake = (language: string, languages?: string[]) => {
     Object.defineProperty(g, 'localStorage', {
       value: { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v) },
       configurable: true,
     });
-    Object.defineProperty(g, 'navigator', { value: { language }, configurable: true });
+    Object.defineProperty(g, 'navigator', { value: { language, languages }, configurable: true });
   };
 
   test('follows the browser until the player picks a language', () => {
     fake('pl-PL');
     expect(startLang()).toBe('pl');
     fake('en-GB');
+    expect(startLang()).toBe('en');
+  });
+
+  test('takes the first language in the browser list that the game speaks', () => {
+    fake('de-DE', ['de-DE', 'pl', 'en-US']);
+    expect(startLang()).toBe('pl');
+    fake('de-DE', ['de-DE', 'en-US', 'pl']);
+    expect(startLang()).toBe('en');
+    fake('PL', []);
+    expect(startLang()).toBe('pl');
+  });
+
+  test('falls back to English when the browser speaks nothing the game knows', () => {
+    fake('de-DE', ['de-DE', 'fr']);
     expect(startLang()).toBe('en');
   });
 
