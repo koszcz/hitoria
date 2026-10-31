@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-*Empty.*
+- **Demolish a building**: remove a building you placed in the wrong spot. *Fun 2 · Effort S*
+- **Goals**: peaceful goals such as "make 50 planks" or "build a monument". *Fun 3 · Effort M*
+- **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S*
 
 ## Inbox
 
@@ -22,12 +24,8 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
-- **Demolish a building**: remove a building you placed in the wrong spot. *Fun 2 · Effort S*
-- **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S*
 - **Worn paths**: settlers who walk off-road wear dirt trails into the grass, and unused trails fade back. *Fun 2 · Effort S*
 - **Shortcuts from footsteps**: a busy trail between two flags becomes a road, but only if it is much shorter than the current road route. *Fun 2 · Effort M · Needs: Auto road for new buildings, Worn paths*
-
-- **Goals**: peaceful goals such as "make 50 planks", "build a monument" or "survive winter". "Survive winter" needs seasons, which the game doesn't have yet. *Fun 3 · Effort M*
 - **Second island**: the map has a nearby island across the water. *Fun 3 · Effort M*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
 - **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S*
@@ -51,10 +49,10 @@ Triaged, but not next.
 - **Music**: a calm background tune with its own volume. *Fun 2 · Effort S · Needs: Sound basics*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
-- **Build menu groups**: the build bar groups buildings by type, and every building gets a hotkey. *Fun 1 · Effort S*
+- **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
 - **Field limits**: you choose how many fields a farm sows, or where it sows them. *Fun 1 · Effort S*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
-- **Fix type errors**: clear the 16 old type errors in `src/main.ts` and `src/report.ts`. *Fun 1 · Effort S*
+- **Survive winter goal**: a goal to get through the winter. *Fun 2 · Effort S · Needs: Goals, Seasons*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
 - **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night*
@@ -82,4 +80,4 @@ Newest first, with the date it was merged.
 
 Ideas we decided not to build, and why.
 
-*Empty.*
+- **Fix type errors**: already fixed. The type check passes with no errors.
