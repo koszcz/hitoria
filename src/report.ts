@@ -3,6 +3,7 @@
 import type { Game } from './game';
 import { diag } from './diag';
 import { T } from './i18n';
+import { isForeignError } from './foreign';
 
 const CRASH_KEY = 'hitoria.crash';
 
@@ -26,7 +27,11 @@ for (const level of ['warn', 'error'] as const) {
   };
 }
 
-window.addEventListener('error', (e) => crash(e.error ?? e.message));
+window.addEventListener('error', (e) => {
+  // Another site's script, such as a browser extension, failed. The game is fine, so keep playing.
+  if (isForeignError(e.message, e.error)) return diag.event(`Ignored an error from another site's script: ${e.message}`);
+  crash(e.error ?? e.message);
+});
 window.addEventListener('unhandledrejection', (e) => crash(e.reason));
 
 function text(v: unknown): string {
