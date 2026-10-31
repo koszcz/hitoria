@@ -5,12 +5,12 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Carriers walk free**: carriers walk across the grass straight to buildings, and goods go to the nearest store by walking distance instead of road distance. *Fun 3 · Effort M · Needs: Worn paths · Branch: claude/build-2ef03a*
+- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *Fun 2 · Effort M · Branch: claude/build-106919*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. *Fun 2 · Effort M*
 - **Hunter**: a hunter catches wild animals that roam the map and brings back meat as food. *Fun 2 · Effort S · Needs: Wild animals*
 
 ## Inbox
