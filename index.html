@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#21486a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <title>Hitoria</title>
     <link rel="stylesheet" href="./src/style.css" />
   </head>
@@ -11,6 +14,7 @@
     <header id="topbar">
       <div class="brand">Hitoria</div>
       <div id="res"></div>
+      <button id="menu">☰</button>
       <div id="file">
         <button data-file="save" title="Save the game you are playing (Ctrl+S)">💾 Save</button>
         <button data-file="saves" title="Load, save as new, delete saves, or change the autosave">📂 Saves</button>
@@ -28,6 +32,7 @@
     <aside id="info" hidden></aside>
     <div id="toasts"></div>
     <aside id="buildcard" hidden></aside>
+    <button id="done" hidden></button>
     <nav id="buildbar"></nav>
     <div id="help">Drag to pan · Scroll to zoom · 1–5 to build · R road · X remove · Right-click to cancel · Ctrl+S save · F3 diagnostics</div>
     <script type="module" src="./src/main.ts"></script>

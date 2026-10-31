@@ -76,7 +76,7 @@ export class Renderer {
   resize() {
     this.w = innerWidth;
     this.h = innerHeight;
-    this.gl.setPixelRatio(devicePixelRatio || 1);
+    this.gl.setPixelRatio(Math.min(2, devicePixelRatio || 1)); // phones go to 3, which costs a lot of speed
     this.gl.setSize(this.w, this.h, false);
   }
 

@@ -16,22 +16,25 @@ html, body {
   color: var(--ink);
   font: 13px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
+button { touch-action: manipulation; }
 
 canvas {
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: block;
   touch-action: none;
 }
 
 #topbar {
   position: fixed;
-  top: 10px;
-  left: 10px;
-  right: 10px;
+  top: calc(10px + env(safe-area-inset-top));
+  left: calc(10px + env(safe-area-inset-left));
+  right: calc(10px + env(safe-area-inset-right));
   display: flex;
   gap: 10px;
   align-items: center;
@@ -99,13 +102,14 @@ canvas {
 
 #buildbar {
   position: fixed;
-  bottom: 34px;
+  bottom: calc(34px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
   max-width: calc(100vw - 32px);
   overflow-x: auto;
+  scrollbar-width: none;
 }
 .build {
   display: grid;
@@ -178,7 +182,7 @@ canvas {
 
 #help {
   position: fixed;
-  bottom: 6px;
+  bottom: calc(6px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   padding: 3px 10px;
@@ -190,9 +194,73 @@ canvas {
   text-overflow: ellipsis;
 }
 
-@media (max-width: 640px) {
-  #info { top: auto; bottom: 110px; left: 16px; right: 16px; width: auto; }
+/* Shows while a building or tool is picked, so touch players can put it down without Escape. */
+#done {
+  position: fixed;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 14px;
+  font: 600 13px system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  cursor: pointer;
+}
+#done[hidden], #menu { display: none; }
+
+#menu {
+  font: 18px/1 system-ui, sans-serif;
+  color: inherit;
+  padding: 5px 10px;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Phones, upright or on their side: fold the menu away and show goods as icon and number. */
+@media (max-width: 640px), (max-height: 500px) {
+  #topbar { gap: 6px; }
+  .brand { font-size: 16px; padding: 4px 2px; }
+  #speed { order: 1; margin-left: auto; }
+  #menu { display: block; order: 2; }
+  #res { order: 3; width: 100%; gap: 4px; }
+  .pill { padding: 3px 7px; gap: 2px; }
+  .pill .label { display: none; }
+  #speed button { padding: 5px 8px; }
+  #file {
+    display: none;
+    position: absolute;
+    top: 38px;
+    right: 0;
+    flex-direction: column;
+    z-index: 20;
+  }
+  #file.open { display: flex; }
+  #file button { padding: 10px 14px; text-align: left; }
+  #info {
+    top: auto;
+    bottom: calc(96px + env(safe-area-inset-bottom));
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+  #buildcard { max-width: calc(100vw - 16px); max-height: 55vh; overflow-y: auto; }
+  #toasts { top: 100px; width: calc(100vw - 32px); }
+  .toast { text-align: center; }
+  .build { padding: 8px 10px 8px 8px; }
   .build .name { display: none; }
+  #debug { width: auto; right: 10px; }
+}
+@media (max-height: 500px) {
+  #res { width: auto; order: 0; }
+  #help { display: none; }
+  #buildbar { bottom: calc(8px + env(safe-area-inset-bottom)); }
+  #done, #info { bottom: calc(70px + env(safe-area-inset-bottom)); }
 }
 
 #report {
@@ -228,7 +296,7 @@ canvas {
   position: fixed;
   top: 60px;
   left: 10px;
-  width: 340px;
+  width: min(340px, calc(100vw - 20px));
   max-height: calc(100vh - 140px);
   overflow: auto;
   padding: 8px 10px;

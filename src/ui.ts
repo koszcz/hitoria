@@ -51,7 +51,9 @@ export class UI {
       btn.textContent = label;
       btn.title = title;
     }
-    $('help').textContent = x.help;
+    $('help').textContent = document.body.classList.contains('touch') ? x.helpTouch : x.help;
+    $('menu').title = x.menu;
+    $('done').textContent = x.done;
     document.querySelector<HTMLButtonElement>('#speed [data-speed=pause]')!.title = x.pause;
     this.refresh();
   }
@@ -84,10 +86,10 @@ export class UI {
   }
 
   // A card above the build bar that explains what a building is worth.
-  private showCard(type: BType | null, btn: HTMLButtonElement) {
+  private showCard(type: BType | null, btn: HTMLButtonElement | null) {
     this.hover = type;
     const card = $('buildcard');
-    if (!type) {
+    if (!type || !btn) {
       card.hidden = true;
       return;
     }
@@ -110,6 +112,10 @@ export class UI {
     const w = card.offsetWidth;
     card.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2))}px`;
     card.style.bottom = `${innerHeight - r.top + 8}px`;
+  }
+
+  hideCard() {
+    this.showCard(null, null);
   }
 
   setPlacing(type: Tool | null) {
@@ -140,10 +146,11 @@ export class UI {
     const x = T();
     const stored = g.stored;
     $('res').innerHTML =
-      GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${stored[k]}</b> ${goodName(k)}</div>`).join('') +
+      GOODS.map((k) => `<div class="pill"><span class="good ${k}"></span><b>${stored[k]}</b><span class="label">${goodName(k)}</span></div>`).join('') +
       `<div class="pill">🧑‍🌾 ${x.settlers(g.pool, g.settlers.size)}</div>`;
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);
+    $('done').hidden = !this.placing;
     if (this.hover) this.showCard(this.hover, this.buttons.get(this.hover)!);
     for (const btn of document.querySelectorAll<HTMLButtonElement>('#speed button')) {
       const v = btn.dataset.speed;
