@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *Fun 2 · Effort S · Branch: claude/build-807501*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Mountain shape**: hills rise smoothly into peaks, with no cliff wall at the mountain's edge and no random spikes. *Fun 2 · Effort S*
 - **Sound basics**: soft wind and waves, with a mute button the game remembers. *Fun 2 · Effort S*
 
 ## Inbox
