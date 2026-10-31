@@ -18,12 +18,7 @@ At most 3 ideas, in the order we build them.
 
 New ideas go here, not scored yet.
 
-- **Birds**: gulls circle over the shore, and small birds fly up from a tree when a woodcutter fells it.
-- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. They are only there to watch.
-- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water.
-- **Butterflies and fireflies**: butterflies float over flower meadows, and fireflies glow at the forest edge.
-- **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free.
-- **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons.
+*Empty.*
 
 ## Later
 
@@ -34,6 +29,9 @@ Triaged, but not next.
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. *Fun 3 · Effort M · Needs: Harbour, Second island*
 - **Well and water**: a well draws water, and the bakery needs water to bake bread. *Fun 2 · Effort S*
 - **Smelter**: a smelter turns iron ore and coal into iron. *Fun 2 · Effort S · Needs: Coal and iron mines*
+- **Birds**: gulls circle over the shore, and small birds fly up from a tree when a woodcutter fells it. *Fun 2 · Effort S*
+- **Forests spread**: grown trees slowly drop saplings next to them, so a felled forest grows back without a forester. Needs a limit, so wood doesn't become free. *Fun 2 · Effort S*
+- **Clouds**: cloud shadows drift across the island. A first step toward day, night and seasons. *Fun 2 · Effort S*
 - **Hungry workers**: all workers need food, not just miners. *Fun 2 · Effort M · Needs: Well and water*
 - **Coal and iron mines**: mines that dig coal and iron ore out of mountains. *Fun 2 · Effort M*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. *Fun 2 · Effort M · Needs: Population, Smelter*
@@ -44,6 +42,8 @@ Triaged, but not next.
 - **Model loader, trees and rocks**: load detailed 3D models, such as free CC0 packs from Kenney or Quaternius, starting with trees and rocks. *Fun 2 · Effort M*
 - **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
 - **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks*
+- **Wild animals**: deer, hares and foxes roam the meadows and step aside for settlers. They are only there to watch. *Fun 2 · Effort M*
+- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Build menu groups**: the build bar groups buildings by type, and every building gets a hotkey. *Fun 1 · Effort S*
@@ -51,6 +51,8 @@ Triaged, but not next.
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 - **Fix type errors**: clear the 16 old type errors in `src/main.ts` and `src/report.ts`. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
+- **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
+- **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night*
 - **Hunter**: a hunter catches wild animals that roam the map. *Fun 1 · Effort M*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
 
