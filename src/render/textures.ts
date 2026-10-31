@@ -93,6 +93,8 @@ export function iconTexture(icon: string) {
   cx.font = '40px system-ui, "Apple Color Emoji", sans-serif';
   cx.textAlign = 'center';
   cx.textBaseline = 'middle';
+  // A plain colour, not the wood gradient. Safari paints emoji in the fill, so they vanished into the wood.
+  cx.fillStyle = '#000';
   cx.fillText(icon, 48, 48);
   const t = new THREE.CanvasTexture(cv);
   t.colorSpace = THREE.SRGBColorSpace;
