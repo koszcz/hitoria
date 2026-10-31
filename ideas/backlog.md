@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *Fun 2 · Effort S · Needs: Sound basics · Approved · Branch: worktree-agent-ade68e139ffca3e07*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Music**: a calm background tune with its own volume. The game makes the tune in code, so it needs no sound files. *Fun 2 · Effort S · Needs: Sound basics · Approved*
+*Empty.*
 
 ## Inbox
 
