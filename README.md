@@ -37,6 +37,7 @@ Only goods your settlers make count toward a goal, not the goods you start with.
    - Fishers, farms, mills and bakeries make food. A bakery also needs water from a well.
      Houses turn food into new settlers.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
+   - Coal and iron mines also go next to a mountain. Nothing uses their coal and iron ore yet.
    - Across the water from the bay lies a second island. You can't reach it yet.
 
 Every building needs a road to the HQ. Without one, no goods arrive and the builder or worker
@@ -187,6 +188,8 @@ Browsers block sound until you click or press a key, so the sound starts then.
 - Woodcutter → logs → Sawmill → planks. A forester replants trees.
 - A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
   eats fish or bread.
+- A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way. Nothing
+  uses coal or iron ore yet.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
 - A well draws water on any flat grass. The bakery needs 1 flour and 1 water for each loaf.
 - Each farm keeps 6 fields of its own on the grass around it. You can place a farm only where
