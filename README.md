@@ -36,6 +36,7 @@ Only goods your settlers make count toward a goal, not the goods you start with.
    - A lookout tower (`5`) expands your land, so you have room for more.
    - Fishers, farms, mills and bakeries make food. Houses turn food into new settlers.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
+   - Across the water from the bay lies a second island. You can't reach it yet.
 
 Every building needs a road to the HQ. Without one, no goods arrive and the builder or worker
 waits. A sign with a crossed-out road floats over any building that has no road. Click a building
@@ -167,7 +168,7 @@ Browsers block sound until you click or press a key, so the sound starts then.
 
 | File | What it does |
 | --- | --- |
-| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, and the mountain and bay every start gets |
+| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
 | `src/game/` | Simulation: buildings, demolishing, roads, settlers, carriers, farm fields, food, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, overlays. Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |

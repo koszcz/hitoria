@@ -116,6 +116,12 @@ describe('mountain shape', () => {
     expect(fingerprint(12345)).toBe('13263900864715892175');
   });
 
+  test('map version 3 still builds the same land', () => {
+    const fingerprint = (seed: number) => Bun.hash(JSON.stringify(new World(seed, 3).tiles)).toString();
+    expect(fingerprint(1)).toBe('3212099056026993538');
+    expect(fingerprint(12345)).toBe('15624742147733716703');
+  });
+
   // A step this big between two tiles next to each other draws as a cliff wall.
   const CLIFF = 0.08;
   for (const seed of SEEDS) {

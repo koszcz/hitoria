@@ -71,6 +71,7 @@ each shot's steps:
 | `click: '#buildbar button'` | Clicks the middle of the first element that matches a CSS selector. |
 | `click: [80, -100]` | Clicks this many pixels right and down from the middle of the screen. Negative numbers go left and up. |
 | `hover: ...` | Moves the mouse there, without clicking. Takes a selector or pixels, like `click`. |
+| `wheel: 5` | Turns the mouse wheel this many notches. A positive number zooms out, a negative number zooms in. |
 
 If the before version has no element for a selector, the tool skips that step.
 If an element is off screen, such as a button at the end of a long bar, the tool scrolls it into
