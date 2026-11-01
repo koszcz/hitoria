@@ -10,7 +10,8 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-*Empty.*
+- **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape · Approved*
+- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved*
 
 ## Inbox
 
@@ -24,12 +25,10 @@ Triaged, but not next.
 
 - **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
 
-- **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape · Approved*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Model loader, trees and rocks**: load detailed 3D models from free CC0 packs by Kenney, starting with trees and rocks. *Fun 2 · Effort M · Approved*
 - **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
 - **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
-- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
