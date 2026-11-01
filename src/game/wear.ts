@@ -1,11 +1,14 @@
 // Worn paths: each footstep wears the grass toward dirt, and paths nobody walks fade back to grass.
 import { W } from '../world';
-import { FADE_DELAY, FADE_TIME, WEAR_STEP } from './defs';
+import { FADE_DELAY, FADE_TIME, WEAR_FULL, WEAR_SHOWS, WEAR_STEP } from './defs';
 import type { Game } from './game';
 
 // How many shades of wear the ground shows. The look counter changes only when a tile changes shade.
 const SHADES = 6;
-const shade = (w: number) => Math.round(w * SHADES);
+const shade = (w: number) => Math.round(wornLook(w) * SHADES);
+
+// How worn a tile looks, from 0 to 1. A few footsteps leave no mark, so only busy routes show.
+export const wornLook = (w: number) => Math.min(1, Math.max(0, (w - WEAR_SHOWS) / (WEAR_FULL - WEAR_SHOWS)));
 
 // Only open ground wears. Fields have their own look, and buildings stand on theirs.
 function wearable(g: Game, x: number, y: number) {

@@ -5,10 +5,13 @@ import { W } from '../world';
 import { findPath } from '../path';
 import { walkCost, walkSpeed } from './land';
 import { takeSettler, step } from './settlers';
-import { tread } from './wear';
+import { tread, wornLook } from './wear';
 import { flatGame, run } from './test-helpers';
 
 const wearAt = (g: Game, x: number, y: number) => g.wear[y * W + x];
+// Enough footsteps to wear a tile right down to dirt.
+const FULL = Math.ceil(1 / WEAR_STEP);
+const wearOut = (g: Game, x: number, y: number) => { for (let i = 0; i < FULL; i++) tread(g, x, y); };
 
 // Send one settler from the HQ on a walk to (x, y), and run until they get there.
 function walkTo(g: Game, x: number, y: number) {
@@ -36,8 +39,15 @@ describe('worn paths', () => {
     tread(g, x, y);
     tread(g, x, y);
     expect(wearAt(g, x, y)).toBeCloseTo(2 * WEAR_STEP);
-    for (let i = 0; i < 20; i++) tread(g, x, y);
+    wearOut(g, x, y);
     expect(wearAt(g, x, y)).toBe(1);
+  });
+
+  test('a few footsteps leave no mark, and a busy route turns to dirt', () => {
+    expect(wornLook(3 * WEAR_STEP)).toBe(0);
+    expect(wornLook(0.4)).toBeGreaterThan(0);
+    expect(wornLook(0.4)).toBeLessThan(1);
+    expect(wornLook(1)).toBe(1);
   });
 
   test('fields, buildings, water and mountains never wear', () => {
@@ -99,7 +109,7 @@ describe('worn paths', () => {
     const g = flatGame();
     const x = g.hq.x + 4, y = g.hq.y + 4;
     g.world.at(x, y).plant = '';
-    for (let i = 0; i < 10; i++) tread(g, x, y);
+    wearOut(g, x, y);
     run(g, FADE_DELAY - 2, undefined, 0.5);
     expect(wearAt(g, x, y)).toBe(1);
     run(g, FADE_TIME / 2, undefined, 0.5);
@@ -113,7 +123,7 @@ describe('worn paths', () => {
   test('a busy path never fades', () => {
     const g = flatGame();
     const x = g.hq.x + 4, y = g.hq.y + 4;
-    for (let i = 0; i < 10; i++) tread(g, x, y);
+    wearOut(g, x, y);
     for (let i = 0; i < 20; i++) {
       run(g, FADE_DELAY - 5, undefined, 0.5);
       tread(g, x, y);
@@ -126,8 +136,10 @@ describe('worn paths', () => {
     const x = g.hq.x + 4, y = g.hq.y + 4;
     const before = g.worn;
     tread(g, x, y);
-    expect(g.worn).toBeGreaterThan(before);
-    for (let i = 0; i < 20; i++) tread(g, x, y);
+    expect(g.worn).toBe(before);
+    while (g.worn === before) tread(g, x, y);
+    expect(wornLook(wearAt(g, x, y))).toBeGreaterThan(0);
+    wearOut(g, x, y);
     const full = g.worn;
     tread(g, x, y);
     expect(g.worn).toBe(full);

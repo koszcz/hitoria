@@ -7,6 +7,7 @@ import { groundHeight } from './elevation';
 import { FINE, Relief } from './relief';
 import { grainTexture, rippleNormals } from './textures';
 import { seasonGround } from './seasonal';
+import { wornLook } from '../game/wear';
 
 export const SEA = -0.04;
 
@@ -129,18 +130,20 @@ export class Terrain {
       for (let i = 0; i <= W; i++) {
         const k = j * (W + 1) + i;
         const c = this.c.setRGB(0, 0, 0);
-        let n = 0, worn = 0;
+        let n = 0;
         for (const [x, y] of [[i - 1, j - 1], [i, j - 1], [i - 1, j], [i, j]])
           if (world.inside(x, y)) {
             c.add(tileCol(x, y));
             n++;
-            worn = Math.max(worn, wear[y * W + x]);
           }
         c.multiplyScalar(1 / Math.max(1, n));
-        // A worn tile browns all four of its corners, so a path one tile wide still shows clearly.
-        if (worn) c.lerp(path, Math.min(0.85, worn));
         CC.set([c.r, c.g, c.b], k * 3);
       }
+    // How worn each tile looks. Fine points blend the tile centres around them,
+    // so a path one tile wide stays one tile wide instead of spreading onto its neighbours.
+    const look = new Float32Array(W * H);
+    for (let k = 0; k < look.length; k++) look[k] = wornLook(wear[k]);
+    const lookAt = (x: number, y: number) => (x < 0 || y < 0 || x >= W || y >= H ? 0 : look[y * W + x]);
     const r = this.relief, n = r.n, rock = new THREE.Color(ART.rock), snow = new THREE.Color(ART.snow);
     for (let k = 0; k < r.heights.length; k++) {
       const fx = (k % n) / FINE, fy = Math.floor(k / n) / FINE;
@@ -152,6 +155,10 @@ export class Terrain {
         CC[a + 1] * w0 + CC[b + 1] * w1 + CC[d + 1] * w2 + CC[e + 1] * w3,
         CC[a + 2] * w0 + CC[b + 2] * w1 + CC[d + 2] * w2 + CC[e + 2] * w3,
       );
+      const u = fx - 0.5, v = fy - 0.5, ci = Math.floor(u), cj = Math.floor(v), su = u - ci, sv = v - cj;
+      const worn = (lookAt(ci, cj) * (1 - su) + lookAt(ci + 1, cj) * su) * (1 - sv)
+        + (lookAt(ci, cj + 1) * (1 - su) + lookAt(ci + 1, cj + 1) * su) * sv;
+      if (worn) c.lerp(path, Math.min(0.85, worn));
       if (r.rock[k]) c.lerp(rock, r.rock[k]);
       if (r.snow[k]) c.lerp(snow, r.snow[k]);
       if (r.deep[k]) c.lerp(this.deep, r.deep[k]);

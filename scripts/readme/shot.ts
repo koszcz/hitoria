@@ -35,6 +35,9 @@ try {
   }, [...store]);
   await page.goto(`http://127.0.0.1:${server.port}/`, { waitUntil: 'load' });
   await Bun.sleep(LOAD_MS);
+  // Loading a save opens the island chronicle. Close it so the village shows.
+  await page.keyboard.press('Escape');
+  await Bun.sleep(500);
   await page.screenshot({ path: FILE as `${string}.jpeg`, type: 'jpeg', quality: 80 });
   console.log(`Saved ${FILE}`);
 } finally {

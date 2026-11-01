@@ -385,7 +385,8 @@ one kind at once, one in each basket. You get one donkey for every 4 buildings, 
 Donkeys are not settlers, so they never take a worker from you. They go back to the HQ when the
 work is done.
 
-Settlers' footsteps wear the grass into dirt paths. Settlers walk up to 1.25×
+Settlers' footsteps wear the grass into dirt paths. A few footsteps leave no mark. About 4
+footsteps on a tile start to show, and about 15 turn it fully to dirt. Settlers walk up to 1.25×
 faster on a well-worn path, so they keep to the same lines. A path nobody walks for a minute
 fades back to grass over about 3 minutes.
 
