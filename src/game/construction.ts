@@ -1,6 +1,7 @@
 // Placing buildings and building them: where they may go, and how builders turn materials into a building.
 import { findPath } from '../path';
 import { W } from '../world';
+import { noteBuilt } from './chronicle';
 import { BDEFS, BType, FARM_FIELDS, GOODS, MINES, ORE_MINES, bag } from './defs';
 import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
@@ -109,4 +110,5 @@ export function construct(g: Game, b: Building, dt: number) {
   sendHome(g, builder);
   if (b.type === 'lookout') computeTerritory(g);
   g.toasts.push(`${def.icon} ${def.name} finished`);
+  noteBuilt(g, b.type);
 }

@@ -7,6 +7,7 @@ import { UI } from './ui';
 import { Gestures, zoomAt } from './input/gestures';
 import { Saves, type Slot } from './saves';
 import { openSaveMenu } from './savemenu';
+import { openChronicle } from './chronicle/panel';
 import { T, getLang, setLang, startLang } from './i18n';
 import type { P } from './path';
 import { GraphicsSetting } from './quality/setting';
@@ -65,6 +66,7 @@ const debug = new DebugPanel(() => game, () => {
 });
 renderer.centerOn(game.hq.x, game.hq.y);
 ui.toast(saved ? T().welcomeBack(first!.name) : T().welcome);
+if (saved) showChronicle();
 
 const islandName = (g: Game) => T().island(g.seed);
 
@@ -112,6 +114,19 @@ function load(slot: Slot) {
   slotId = slot.auto ? null : slot.id;
   saveT = saves.autosaveEvery;
   ui.toast(T().loaded(slot.name));
+  showChronicle();
+}
+
+// The loaded island's milestones, with the game paused until the player closes them.
+function showChronicle() {
+  if (!game.chronicle.length) return;
+  const wasPaused = ui.paused;
+  ui.paused = true;
+  ui.refresh();
+  openChronicle(game.chronicle, () => {
+    ui.paused = wasPaused;
+    ui.refresh();
+  });
 }
 
 function showSaves() {

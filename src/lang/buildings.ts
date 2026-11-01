@@ -13,7 +13,7 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
     name: 'Port',
     desc: 'Drewniane molo na brzegu, przy którym mogą cumować statki. Przechowuje towary jak magazyn. Zbuduj go przy otwartej wodzie.',
   },
-  fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu.' },
+  fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu. Zimą łowi mniej więcej o połowę mniej.' },
   hunter: { name: 'Chata myśliwego', desc: 'Poluje na jelenie i zające w pobliżu i przynosi mięso. Zwierzęta powoli wracają.' },
   farm: { name: 'Gospodarstwo', desc: 'Sieje zboże na wolnej trawie w pobliżu i zbiera je, gdy dojrzeje.' },
   well: { name: 'Studnia', desc: 'Czerpie wodę z ziemi. Zbuduj ją na dowolnej płaskiej trawie.' },
@@ -21,11 +21,11 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   bakery: { name: 'Piekarnia', desc: 'Piecze chleb z mąki i wody.' },
   mine: {
     name: 'Kopalnia kamienia',
-    desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 kamienie. Zbuduj ją przy górze.',
+    desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 kamienie, a na 3, gdy je inne jedzenie niż poprzednio. Zbuduj ją przy górze.',
   },
   coalmine: {
     name: 'Kopalnia węgla',
-    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 worki węgla. Węgiel jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
+    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 worki węgla, a na 3, gdy je inne jedzenie niż poprzednio. Węgiel jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
   },
   toolmaker: {
     name: 'Warsztat narzędziarza',
@@ -38,7 +38,7 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   smelter: { name: 'Huta', desc: 'Wytapia żelazo z rudy żelaza i węgla. Na każdą sztabkę żelaza zużywa 1 bryłę rudy i 1 worek węgla.' },
   ironmine: {
     name: 'Kopalnia żelaza',
-    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 bryły rudy. Ruda żelaza jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
+    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 bryły rudy, a na 3, gdy je inne jedzenie niż poprzednio. Ruda żelaza jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
   },
   monument: {
     name: 'Pomnik',
@@ -46,6 +46,6 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   },
   house: {
     name: 'Dom',
-    desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę, porcję mięsa lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników.`,
+    desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę, porcję mięsa lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników. Inne jedzenie niż poprzednio szybciej daje osadnika.`,
   },
 };

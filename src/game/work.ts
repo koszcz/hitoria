@@ -1,16 +1,17 @@
 // What a settler does next when they have nothing to do: each worker's job at their hut, and which tile to work on.
 import type { P } from '../path';
 import { W, Tile } from '../world';
-import { BDEFS, Good, PILE, RECIPES, WELL_DRAW } from './defs';
+import { BDEFS, Good, HOUSE_FOOD, PILE, RECIPES, WELL_DRAW, WINTER_FISHING } from './defs';
 import { carry } from './carriers';
 import type { Game } from './game';
 import { hunt } from './hunting';
 import { digSpeed, survey, surveyable } from './geology';
-import { fieldsGrow } from '../seasons/year';
+import { fieldsGrow, isWinter } from '../seasons/year';
 import { near, plantable } from './land';
 import { eats, feed } from './meals';
 import { bedtime } from './sleep';
 import type { Building, Settler } from './types';
+import { MIXED_DIG, pickFood, tasteNew } from './variety';
 
 export function idle(g: Game, s: Settler) {
   if (s.role === 'carrier') return carry(g, s);
@@ -86,11 +87,13 @@ function plan(g: Game, s: Settler, home: Building): true | void {
       if (home.out.fish >= PILE) return rest(2, 'Full, waiting for a carrier');
       const at = findTile(g, home, r, (t, x, y) => t.t !== 'water' && g.passable(x, y) && near(g, x, y, 1, (n) => n.t === 'water'));
       if (!at) return rest(3, 'No shore in range');
-      home.status = 'Fishing';
+      // Fish bite slowly in the cold, so a fisher catches half as many in winter.
+      const cold = isWinter(g.time);
+      home.status = cold ? 'Fishing, slowly in the cold' : 'Fishing';
       const i = claim(g, s, at);
       s.tasks = [
         { k: 'walk', ...at },
-        { k: 'work', t: 6, anim: 'fish' },
+        { k: 'work', t: cold ? 6 * WINTER_FISHING : 6, anim: 'fish' },
         { k: 'do', f: () => { g.claimed.delete(i); s.carrying = 'fish'; } },
         { k: 'walk', x: home.x, y: home.y },
         { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; make('fish'); } },
@@ -145,19 +148,21 @@ function plan(g: Game, s: Settler, home: Building): true | void {
     case 'miner': {
       const rc = RECIPES[home.type]!;
       if (home.out[rc.to] >= PILE) return rest(2, 'Full, waiting for a carrier');
-      const input = rc.from.find((k) => home.stock[k] > 0);
+      const input = pickFood(home, (k) => home.stock[k] > 0, rc.from);
       if (!input) return rest(1, rc.waiting);
       if (rc.with && !home.stock[rc.with]) return rest(1, rc.lacking!);
       home.status = rc.doing;
+      let extra = 0; // a miner digs more from a new kind of food
       s.tasks = [
         { k: 'do', f: () => {
+          if (HOUSE_FOOD.includes(input) && tasteNew(home, input)) extra = MIXED_DIG;
           home.stock[input]--;
           if (rc.with) home.stock[rc.with]--;
           home.busy = true;
           home.using = input;
         } },
         { k: 'work', t: rc.t / digSpeed(g, home) },
-        { k: 'do', f: () => { make(rc.to, rc.n); home.busy = false; home.using = null; } },
+        { k: 'do', f: () => { make(rc.to, rc.n + extra); home.busy = false; home.using = null; } },
       ];
       return;
     }

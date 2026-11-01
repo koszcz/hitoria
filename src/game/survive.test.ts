@@ -1,4 +1,4 @@
-// The last goal: get through a whole winter with no house or mine left waiting for food.
+// The last goal: get through a whole winter with no hut worker or miner going hungry.
 import { describe, expect, test } from 'bun:test';
 import { Game, GOALS, HUNGRY_AFTER } from '.';
 import { seasonAt, yearAt } from '../seasons/year';
@@ -44,12 +44,23 @@ describe('survive winter goal', () => {
     expect(g.toasts).toContain('🏆 Goal reached: Get through a winter with no one hungry');
   });
 
-  test('a house waiting for food too long in winter spoils that winter', () => {
+  test('a house waiting for food in winter does not spoil it, because no one in it goes hungry', () => {
     const { g, house } = onWinterGoal();
     skipTo(g, 'winter');
     for (const k of ['fish', 'bread', 'meat'] as const) g.hq.stock[k] = 0;
     run(g, HUNGRY_AFTER + 2);
     expect(house.status).toBe('Waiting for food');
+    expect(g.goalNow()?.note).toBe('Winter: no one has gone hungry yet');
+  });
+
+  test('a hut worker with no food for too long in winter spoils that winter', () => {
+    const { g, house } = onWinterGoal();
+    house.born = 4;
+    for (const k of ['fish', 'bread', 'meat'] as const) g.hq.stock[k] = 0;
+    const hut = placeLinked(g, 'forester', g.hq.x - 4, g.hq.y + 3);
+    runUntil(g, () => hut.built && !!hut.hungry, 300);
+    skipTo(g, 'winter');
+    run(g, HUNGRY_AFTER + 2);
     expect(g.goalNow()?.note).toBe('Someone went hungry. Try again next winter');
     expect(g.toasts).toContain('🥶 A settler went hungry this winter');
     skipTo(g, 'spring');
@@ -102,9 +113,10 @@ describe('survive winter goal', () => {
   });
 
   test('a saved game keeps how the winter is going', () => {
-    const { g } = onWinterGoal();
+    const { g, house } = onWinterGoal();
     skipTo(g, 'winter');
-    for (const k of ['fish', 'bread', 'meat'] as const) g.hq.stock[k] = 0;
+    house.type = 'mine';
+    house.status = 'Waiting for food';
     run(g, HUNGRY_AFTER + 2);
     const g2 = Game.load(JSON.parse(JSON.stringify(g.save())));
     expect(g2.goalNow()?.note).toBe('Someone went hungry. Try again next winter');

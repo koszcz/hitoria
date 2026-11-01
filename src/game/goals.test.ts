@@ -59,7 +59,7 @@ describe('goals', () => {
 
   test('the goals come in a fixed order', () => {
     expect(GOALS.map((x) => x.text)).toEqual([
-      'Make 50 planks', 'Bake 20 bread', 'Grow to 30 settlers', 'Build 3 houses', 'Build a monument',
+      'Make 50 planks', 'Bake 20 bread', 'Grow to 30 settlers', 'Store 30 fish, meat or bread', 'Build a monument',
       'Get through a winter with no one hungry',
       'Settle the other island', 'Mine 20 coal', 'Mine 20 iron ore', 'Make 10 iron',
     ]);
@@ -71,16 +71,20 @@ describe('goals', () => {
     expect(g.goalNow()?.have).toBe(18);
     g.pool = 30;
     run(g, 1);
-    expect(g.goalNow()?.id).toBe('houses');
+    expect(g.goalNow()?.id).toBe('food');
   });
 
-  test('only finished houses count', () => {
+  test('the food goal counts fish, meat and bread kept in stores, of any mix', () => {
     const g = flatGame();
     g.goal = 3;
-    const h = placeLinked(g, 'house', g.hq.x + 4, g.hq.y - 3);
     expect(g.goalNow()?.have).toBe(0);
-    runUntil(g, () => h.built, 200);
-    expect(g.goalNow()?.have).toBe(1);
+    g.hq.stock.fish = 10;
+    g.hq.stock.meat = 5;
+    g.hq.stock.grain = 40; // grain is not food yet
+    expect(g.goalNow()?.have).toBe(15);
+    g.hq.stock.bread = 15;
+    run(g, 0.2);
+    expect(g.goalNow()?.id).toBe('monument');
   });
 
   test('several goals reached at once are passed one after the other', () => {

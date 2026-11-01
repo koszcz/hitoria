@@ -25,6 +25,7 @@ export interface Building {
   tooled?: boolean; // a worker brought this hut its tool, which stays here
   fed?: number; // seconds of work the worker's last meal is still good for
   hungry?: boolean; // the worker had no food for their last piece of work, so they work at half speed
+  ate?: Good; // the kind of food the house, worker or miner ate last, for the mixed food bonus
 }
 
 // One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.

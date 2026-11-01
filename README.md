@@ -20,7 +20,7 @@ reach a goal, the next one starts:
 1. Make 50 planks.
 2. Bake 20 bread.
 3. Grow to 30 settlers.
-4. Build 3 houses.
+4. Store 30 fish, meat or bread.
 5. Build a monument.
 6. Get through a winter with no one hungry.
 7. Settle the other island.
@@ -31,7 +31,8 @@ reach a goal, the next one starts:
 Only goods your settlers make count toward a goal, not the goods you start with.
 
 The winter goal counts one whole winter, from the first snow to spring. A settler goes hungry
-when a house or mine waits more than 20 seconds for food. If that happens, try again next winter.
+when a hut worker has no food, or a mine waits for food, for more than 20 seconds. A house that
+waits for food does not count, because no one in it goes hungry. If that happens, try again next winter.
 
 Goals 7 to 10 send you to the other island, because coal and iron ore lie only in its mountains.
 The settle goal is reached when your settlers' ship lands there and they build their harbour.
@@ -51,6 +52,9 @@ The settle goal is reached when your settlers' ship lands there and they build t
      well. Houses turn food into new settlers.
    - Every worker in a hut eats fish, meat or bread now and then. A hungry worker works at half
      speed, and a bowl floats over their hut. Carriers and builders need no food.
+   - Mix your food. When a house or worker gets a different food from last time, the house grows
+     its settler faster, the worker's meal lasts longer, and a miner digs 3 goods instead of 2.
+   - Fishers catch about half as many fish in winter, so store bread and meat too.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher. Beyond it,
      mountains run in long ridges, with grassy valleys between them.
    - Coal and iron ore lie only in the mountain on the second island. The mountains on your home
@@ -58,6 +62,8 @@ The settle goal is reached when your settlers' ship lands there and they build t
      rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
    - Every new worker in a hut needs a tool. The HQ starts with 20 tools. When they run out, a
      toolmaker's workshop makes more from iron and planks. Until then, a new hut waits for a tool.
+     Iron comes only from the other island, so the game warns you when 8 tools are left before
+     you settle it. The ship needs 6.
    - Some mountain tiles are rich spots. A mine next to a rich spot digs twice as fast. Build a
      geologist's hut near a mountain, and its geologist puts up a sign on each mountain tile
      nearby. A gold sign marks a rich spot. The lumps on a sign show what lies below: grey stone,
@@ -222,8 +228,10 @@ The save buttons are in the ☰ menu at the top right.
   every 5 minutes, or turn it off. The game keeps the 3 newest autosaves and writes over the oldest.
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
+- When you load a save, the island chronicle opens. It lists the island's milestones by day, such
+  as the first birth, the first of each building, each goal and every tenth trade ship.
 
-The save keeps the map, buildings, worn paths, every good, your goals and the time of day and year. It does not keep where settlers and
+The save keeps the map, buildings, worn paths, every good, your goals, the chronicle and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
 Saves from when the game still had roads load too. Their roads and flags become worn paths.
 After a load, everyone starts in their home, the HQ or the harbour on the second island, and walks back to their post. Goods a settler was holding go
@@ -269,7 +277,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals, the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -282,6 +290,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/tradeinfo.ts` | The harbour panel's "Trade ship" part |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
+| `src/chronicle/` | The island chronicle panel and how its lines read |
 | `src/i18n.ts` | Translations. The Polish building names are in `src/lang/` |
 | `src/main.ts` | Input, camera, fixed-step game loop |
 
@@ -302,7 +311,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - When a hut gets its worker, the worker takes 1 tool from the nearest store, and the hut keeps
   it. Scouts, builders and carriers need no tool. Demolishing a hut puts its tool back in your
   stores.
-- Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
+- Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish, but only about half as
+  many in winter.
 - A hunter catches deer and hares up to 7 tiles from the Hunter's Lodge and brings home meat.
   Foxes are left alone.
 - A well draws water on any flat grass. The bakery needs 1 flour and 1 water for each loaf.
@@ -310,11 +320,13 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   they fit, and nothing else can be built on them. Demolishing the farm frees them.
 - Grain grows only from spring to autumn. In winter the fields rest, and sown grain waits for
   spring.
-- A house turns fish, meat or bread into new settlers.
+- A house turns fish, meat or bread into new settlers. A different food from last time grows the
+  settler 25% faster.
 - Every worker in a hut eats 1 fish, meat or bread for every 60 seconds of work. Carriers bring
   each hut up to 2 food. With no food, the worker works at half speed. Fishers, hunters and
   bakers eat from what their own hut makes. Miners eat as they dig instead, and scouts, builders
-  and carriers never eat.
+  and carriers never eat. A meal of a different food from last time lasts 1.5 times as long.
+- A miner digs 2 goods for each fish, meat or bread, or 3 when the food differs from last time.
 - A lookout tower expands your land.
 - A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ, in storehouses and in harbours.

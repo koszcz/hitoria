@@ -23,7 +23,8 @@ import { isStore, stored } from './stores';
 import { dockOf } from './harbour';
 import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
-import { START_TOOLS } from './tools';
+import { START_TOOLS, watchTools } from './tools';
+import type { Entry } from './chronicle';
 import { stepTrader, trade, TRADE_EVERY } from './trade';
 import { richAt, richSpots } from './geology';
 import type { Animal, AnimalKind, Building, Settler, Ship, Trader } from './types';
@@ -42,6 +43,9 @@ export class Game {
   traderT = TRADE_EVERY; // seconds until the next trade ship sets out, counted while you have a harbour
   time = 0;
   toasts: string[] = [];
+  chronicle: Entry[] = []; // the island's milestones, oldest first
+  tradeVisits = 0; // trade ships that have tied up since the game began
+  toolsLow = false; // the low tools warning was shown, and tools have not risen since
   made = bag(); // every good the settlement has made since the game began
   goal = 0; // index in GOALS of the goal the player is on
   winter = { state: 'late' as WinterState, since: new Map<number, number>() }; // the survive winter goal; `since` is when each house or mine began waiting for food
@@ -184,6 +188,7 @@ export class Game {
       moveGoods(this);
       staff(this);
       checkGoals(this);
+      watchTools(this);
     }
     this.growT -= dt;
     if (this.growT <= 0) {

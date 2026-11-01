@@ -510,3 +510,39 @@ body.touch .build { row-gap: 0; }
   #buildmenu .details { width: 260px; overflow-y: auto; position: static; }
   #buildmenu .panel { max-height: 100%; border-radius: 10px 10px 0 0; }
 }
+
+#chronicle {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 90;
+}
+#chronicle .panel {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+}
+#chronicle h2 { margin: 0 0 10px; color: var(--gold); font-family: Georgia, serif; }
+#chronicle ul { list-style: none; margin: 0 0 12px; padding: 0; overflow-y: auto; }
+#chronicle li { display: flex; gap: 12px; padding: 6px 8px; border-radius: 6px; }
+#chronicle li:nth-child(odd) { background: rgba(0, 0, 0, 0.18); }
+#chronicle li b { flex: none; width: 5.5em; color: var(--gold); font-weight: normal; }
+#chronicle li.empty { color: var(--muted); }
+#chronicle .actions { display: flex; justify-content: flex-end; }
+#chronicle button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--edge);
+  border-radius: 6px;
+  padding: 5px 9px;
+}
+#chronicle button:hover { border-color: var(--gold); }

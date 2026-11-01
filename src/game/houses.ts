@@ -2,8 +2,10 @@
 import { Good, HOUSE_FOOD, HOUSE_GROW, HOUSE_PANTRY, HOUSE_SIZE } from './defs';
 import { linked } from './construction';
 import type { Game } from './game';
+import { noteBirth } from './chronicle';
 import { addPool, homeOf } from './homes';
 import type { Building } from './types';
+import { MIXED_GROW, pickFood, tasteNew } from './variety';
 
 // A house keeps a little food of any kind, but never more than its last settlers need.
 export function pantry(b: Building, g: Good) {
@@ -21,7 +23,7 @@ export function raise(g: Game, b: Building, dt: number) {
     return;
   }
   if (!b.busy) {
-    const food = HOUSE_FOOD.find((k) => b.stock[k] > 0);
+    const food = pickFood(b, (k) => b.stock[k] > 0);
     if (!food) {
       b.status = linked(g, b) ? 'Waiting for food' : 'No way to walk to your HQ';
       return;
@@ -29,7 +31,7 @@ export function raise(g: Game, b: Building, dt: number) {
     b.stock[food]--;
     b.busy = true;
     b.using = food;
-    b.grow = HOUSE_GROW;
+    b.grow = HOUSE_GROW * (tasteNew(b, food) ? MIXED_GROW : 1);
   }
   b.status = 'A settler will be born soon';
   b.grow -= dt;
@@ -39,4 +41,5 @@ export function raise(g: Game, b: Building, dt: number) {
   b.born++;
   addPool(g, homeOf(g, b) ?? g.hq, 1);
   g.toasts.push('👶 A new settler was born');
+  noteBirth(g);
 }

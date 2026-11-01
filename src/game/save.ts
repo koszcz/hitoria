@@ -1,4 +1,5 @@
 // Saving a game to plain data and restoring it. The map is rebuilt from the seed; only what changes during play is stored.
+import type { Entry } from './chronicle';
 import { GOODS, Bag, Good, RECIPES, bag } from './defs';
 import { builtStatus } from './construction';
 import type { Game } from './game';
@@ -35,6 +36,8 @@ export interface SaveData {
   trader?: Trader | null; // the trade ship, if it is visiting; older saves have none
   traderT?: number; // seconds until the next trade ship
   signs?: number[]; // the tiles with a geologist's sign; older saves have none
+  chronicle?: Entry[]; // the island's milestones; older saves have none
+  tradeVisits?: number; // trade ships that have tied up; older saves have none
 }
 
 export function save(g: Game): SaveData {
@@ -84,6 +87,7 @@ export function save(g: Game): SaveData {
     buildings, made: { ...g.made }, goal: g.goal, winter: g.winter.state, ships: structuredClone(g.ships),
     trader: structuredClone(g.trader), traderT: g.traderT,
     signs: [...g.signs.keys()].filter((i) => g.signs[i]),
+    chronicle: structuredClone(g.chronicle), tradeVisits: g.tradeVisits,
   };
 }
 
@@ -136,6 +140,8 @@ export function restore(g: Game, d: SaveData) {
   g.ships = d.ships ?? [];
   g.trader = d.trader ?? null;
   g.traderT = d.traderT ?? TRADE_EVERY;
+  g.chronicle = d.chronicle ?? [];
+  g.tradeVisits = d.tradeVisits ?? 0;
   for (const i of d.signs ?? []) g.signs[i] = 1;
   g.signed++;
   if (d.v < 5) grantTools(g);
