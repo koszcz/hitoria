@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, with worn dirt paths between them. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, with worn dirt paths between them. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left, and a message says a pack donkey has joined the carriers](docs/screenshot.jpg)
 
 ## How to play
 
@@ -239,9 +239,9 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
@@ -291,6 +291,11 @@ There are no roads. A carrier takes one good from the building that has it and w
 quickest way across the grass, all the way to the building that needs it. Spare goods go to the
 store that is nearest on foot. The tile in front of each door stays open, so nothing can be
 built there, and settlers can always get in.
+
+When at least 8 goods wait to move, pack donkeys join the carriers. A donkey carries 2 goods of
+one kind at once, one in each basket. You get one donkey for every 4 buildings, counting the HQ.
+Donkeys are not settlers, so they never take a worker from you. They go back to the HQ when the
+work is done.
 
 Settlers' footsteps wear the grass into dirt paths. Settlers walk up to 1.25×
 faster on a well-worn path, so they keep to the same lines. A path nobody walks for a minute

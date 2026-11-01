@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *Fun 2 · Effort M · Needs: No player roads · Approved · Branch: worktree-agent-a503c56e41ab41409*
+Nothing right now.
 
 ## Next
 
@@ -44,6 +44,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *2026-11-01*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *2026-11-01*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. A mine on a rich spot works twice as fast. The geologist puts up small signs that show what lies below. *2026-11-01*
 - **Trade ship**: a trade ship visits your harbour every few minutes. While it is tied up, you swap spare goods for goods you lack, at fixed rates. *2026-11-01*

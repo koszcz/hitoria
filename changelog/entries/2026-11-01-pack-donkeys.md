@@ -3,15 +3,15 @@ title: Pack donkeys
 date: '2026-11-01 18:00'
 shots:
   - name: donkey
-    caption: A pack donkey carries two planks to a monument site.
+    caption: A grey pack donkey, next to the builder, helps bring goods to a new monument site.
     steps:
       - key: b
       - click: '#buildmenu .tile[data-type="monument"]'
       - click: [160, 40]
       - key: Escape
-      - wait: 9000
-      - wheel: -4
-      - wait: 500
+      - hover: [80, 0]
+      - wheel: -6
+      - wait: 300
 ---
 When many goods wait to move, pack donkeys now join your carriers. A donkey carries two goods at
 once, one in each basket on its back, and walks the same worn paths as your settlers.
