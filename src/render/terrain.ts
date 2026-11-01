@@ -4,6 +4,7 @@ import { World, W, H } from '../world';
 import { ART } from '../art';
 import { grade, hash } from './kit';
 import { groundHeight } from './elevation';
+import { FINE, Relief } from './relief';
 import { grainTexture, rippleNormals } from './textures';
 import { seasonGround } from './seasonal';
 
@@ -16,6 +17,8 @@ export class Terrain {
 
   private world: World | null = null;
   private corners = new Float32Array((W + 1) * (H + 1));
+  private relief!: Relief;
+  private cornerCol = new Float32Array((W + 1) * (H + 1) * 3);
   private water!: THREE.Mesh;
   private border = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: '#ffeaa0', dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.9 }));
   private c = new THREE.Color();
@@ -28,11 +31,13 @@ export class Terrain {
 
   // Height of the ground at a point in tile coordinates.
   heightAt(x: number, y: number) {
-    const cx = Math.max(0, Math.min(W - 0.001, x)), cy = Math.max(0, Math.min(H - 0.001, y));
-    const i = Math.floor(cx), j = Math.floor(cy), tx = cx - i, ty = cy - j;
-    const C = this.corners, k = j * (W + 1) + i;
-    const a = C[k], b = C[k + 1], c = C[k + W + 1], d = C[k + W + 2];
-    return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
+    return this.relief.at(x, y);
+  }
+
+  // Where a ray from the camera meets the ground, in tile coordinates.
+  pick(ray: THREE.Ray) {
+    const p = this.relief?.hit(ray.origin, ray.direction);
+    return p && { x: p.x, y: p.z };
   }
 
   build(world: World) {
@@ -53,24 +58,27 @@ export class Terrain {
       this.scene.remove(this.mesh, this.water);
       this.mesh.geometry.dispose();
     }
-    const pos = new Float32Array((W + 1) * (H + 1) * 3), uv = new Float32Array((W + 1) * (H + 1) * 2);
-    for (let j = 0; j <= H; j++)
-      for (let i = 0; i <= W; i++) {
-        const k = j * (W + 1) + i;
-        pos.set([i, C[k], j], k * 3);
-        uv.set([i / 5, j / 5], k * 2);
-      }
-    const idx: number[] = [];
-    for (let j = 0; j < H; j++)
-      for (let i = 0; i < W; i++) {
-        const a = j * (W + 1) + i, b = a + 1, c = a + W + 1, d = c + 1;
-        idx.push(a, c, b, b, c, d);
+    // The mesh has FINE points along each tile side, so mountains show crags and ledges.
+    const r = (this.relief = new Relief(C, W, H, { snowLine: ART.snowLine, sea: SEA, home: { x: world.start.x + 0.5, y: world.start.y + 0.5 } })), n = r.n;
+    const pos = new Float32Array(r.heights.length * 3), uv = new Float32Array(r.heights.length * 2);
+    for (let k = 0; k < r.heights.length; k++) {
+      const x = (k % n) / FINE, z = Math.floor(k / n) / FINE;
+      pos.set([x, r.heights[k], z], k * 3);
+      uv.set([x / 5, z / 5], k * 2);
+    }
+    const idx = new Uint32Array((n - 1) * (n - 1) * 6);
+    let q = 0;
+    for (let j = 0; j < n - 1; j++)
+      for (let i = 0; i < n - 1; i++) {
+        const a = j * n + i, b = a + 1, c = a + n, d = c + 1;
+        idx.set([a, c, b, b, c, d], q);
+        q += 6;
       }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(pos.length), 3));
-    geo.setIndex(idx);
+    geo.setIndex(new THREE.BufferAttribute(idx, 1));
     geo.computeVertexNormals();
     const mat = new THREE.MeshStandardMaterial({ vertexColors: true, map: this.grain, roughness: 0.95 });
     seasonGround(mat);
@@ -94,10 +102,10 @@ export class Terrain {
     water.normalMap!.offset.set(now * 0.012, now * 0.007);
   }
 
-  // Corner colours blend the four tiles around them; slope and height add rock and snow.
-  // `wear` turns grass and sand toward dirt where settlers walk.
+  // Corner colours blend the four tiles around them, and each fine point blends its corners.
+  // Slope and height then add rock and snow. `wear` turns grass and sand toward dirt.
   paint(wear: Float32Array) {
-    const world = this.world!, C = this.corners;
+    const world = this.world!, CC = this.cornerCol;
     const col = this.mesh.geometry.attributes.color as THREE.BufferAttribute;
     const base = new Map<number, THREE.Color>();
     const path = new THREE.Color(ART.path);
@@ -117,7 +125,6 @@ export class Terrain {
       base.set(key, c);
       return c;
     };
-    const rock = new THREE.Color(ART.rock), snow = new THREE.Color(ART.snow), line = ART.snowLine;
     for (let j = 0; j <= H; j++)
       for (let i = 0; i <= W; i++) {
         const k = j * (W + 1) + i;
@@ -132,13 +139,24 @@ export class Terrain {
         c.multiplyScalar(1 / Math.max(1, n));
         // A worn tile browns all four of its corners, so a path one tile wide still shows clearly.
         if (worn) c.lerp(path, Math.min(0.85, worn));
-        const h = C[k];
-        const slope = Math.abs(C[Math.min(k + 1, C.length - 1)] - h) + Math.abs(C[Math.min(k + W + 1, C.length - 1)] - h);
-        if (slope > 0.35 && h > 0.3) c.lerp(rock, Math.min(0.8, (slope - 0.35) * 1.5));
-        if (h > line) c.lerp(snow, Math.min(1, (h - line) * 1.2));
-        if (h < SEA) c.lerp(this.deep, Math.min(0.85, -h * 0.5));
-        col.setXYZ(k, c.r, c.g, c.b);
+        CC.set([c.r, c.g, c.b], k * 3);
       }
+    const r = this.relief, n = r.n, rock = new THREE.Color(ART.rock), snow = new THREE.Color(ART.snow);
+    for (let k = 0; k < r.heights.length; k++) {
+      const fx = (k % n) / FINE, fy = Math.floor(k / n) / FINE;
+      const i = Math.min(W - 1, Math.floor(fx)), j = Math.min(H - 1, Math.floor(fy)), tx = fx - i, ty = fy - j;
+      const a = (j * (W + 1) + i) * 3, b = a + 3, d = a + (W + 1) * 3, e = d + 3;
+      const w0 = (1 - tx) * (1 - ty), w1 = tx * (1 - ty), w2 = (1 - tx) * ty, w3 = tx * ty;
+      const c = this.c.setRGB(
+        CC[a] * w0 + CC[b] * w1 + CC[d] * w2 + CC[e] * w3,
+        CC[a + 1] * w0 + CC[b + 1] * w1 + CC[d + 1] * w2 + CC[e + 1] * w3,
+        CC[a + 2] * w0 + CC[b + 2] * w1 + CC[d + 2] * w2 + CC[e + 2] * w3,
+      );
+      if (r.rock[k]) c.lerp(rock, r.rock[k]);
+      if (r.snow[k]) c.lerp(snow, r.snow[k]);
+      if (r.deep[k]) c.lerp(this.deep, r.deep[k]);
+      col.setXYZ(k, c.r, c.g, c.b);
+    }
     col.needsUpdate = true;
   }
 

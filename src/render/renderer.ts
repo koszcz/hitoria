@@ -139,8 +139,8 @@ export class Renderer {
   // Ground point under a screen pixel, in tile coordinates.
   toWorld(px: number, py: number) {
     this.ray.setFromCamera(new THREE.Vector2((px / this.w) * 2 - 1, -(py / this.h) * 2 + 1), this.camera);
-    const hit = this.ground.mesh && this.ray.intersectObject(this.ground.mesh, false)[0];
-    if (hit) return { x: hit.point.x, y: hit.point.z };
+    const hit = this.ground.pick(this.ray.ray);
+    if (hit) return hit;
     const p = new THREE.Vector3();
     this.ray.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), p);
     return { x: p.x, y: p.z };
