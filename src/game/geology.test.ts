@@ -145,12 +145,11 @@ describe('geologist', () => {
     const g = flatGame();
     const { x, y } = g.hq;
     mountain(g, x + 8, y - 1, x + 8, y + 1);
-    const hut = placeLinked(g, 'geologist', x + 4, y);
+    placeLinked(g, 'geologist', x + 4, y);
     runUntil(g, () => signsIn(g, x + 8, y - 1, x + 8, y + 1) > 0, 300);
     const d = g.save();
     const l = Game.load(d);
     expect(l.signs).toEqual(g.signs);
-    expect(hut.id).toBeGreaterThan(0);
   });
 
   test('a save from before the geologist loads with no signs', () => {

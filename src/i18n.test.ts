@@ -145,47 +145,32 @@ describe('build card in Polish', () => {
 });
 
 describe('starting language', () => {
-  const store = new Map<string, string>();
-  const g = globalThis as any;
-  const real = { localStorage: g.localStorage, navigator: g.navigator };
-  afterEach(() => {
-    store.clear();
-    Object.defineProperty(g, 'localStorage', { value: real.localStorage, configurable: true });
-    Object.defineProperty(g, 'navigator', { value: real.navigator, configurable: true });
-  });
-  const fake = (language: string, languages?: string[]) => {
-    Object.defineProperty(g, 'localStorage', {
-      value: { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v) },
-      configurable: true,
-    });
-    Object.defineProperty(g, 'navigator', { value: { language, languages }, configurable: true });
+  // A browser store that keeps values in memory.
+  const memory = () => {
+    const m = new Map<string, string>();
+    return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) };
   };
+  const browser = (language: string, languages?: string[]) => ({ language, languages });
 
   test('follows the browser until the player picks a language', () => {
-    fake('pl-PL');
-    expect(startLang()).toBe('pl');
-    fake('en-GB');
-    expect(startLang()).toBe('en');
+    expect(startLang(memory(), browser('pl-PL'))).toBe('pl');
+    expect(startLang(memory(), browser('en-GB'))).toBe('en');
   });
 
   test('takes the first language in the browser list that the game speaks', () => {
-    fake('de-DE', ['de-DE', 'pl', 'en-US']);
-    expect(startLang()).toBe('pl');
-    fake('de-DE', ['de-DE', 'en-US', 'pl']);
-    expect(startLang()).toBe('en');
-    fake('PL', []);
-    expect(startLang()).toBe('pl');
+    expect(startLang(memory(), browser('de-DE', ['de-DE', 'pl', 'en-US']))).toBe('pl');
+    expect(startLang(memory(), browser('de-DE', ['de-DE', 'en-US', 'pl']))).toBe('en');
+    expect(startLang(memory(), browser('PL', []))).toBe('pl');
   });
 
   test('falls back to English when the browser speaks nothing the game knows', () => {
-    fake('de-DE', ['de-DE', 'fr']);
-    expect(startLang()).toBe('en');
+    expect(startLang(memory(), browser('de-DE', ['de-DE', 'fr']))).toBe('en');
   });
 
   test('remembers the language the player picked', () => {
-    fake('en-GB');
-    setLang('pl');
-    expect(startLang()).toBe('pl');
+    const store = memory();
+    setLang('pl', store);
+    expect(startLang(store, browser('en-GB'))).toBe('pl');
   });
 });
 

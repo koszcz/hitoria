@@ -34,7 +34,7 @@ describe('tools', () => {
     const hut = finished(g, 'woodcutter');
     runUntil(g, () => !!hut.tooled, 60);
     expect(g.hq.stock.tool).toBe(START_TOOLS - 1);
-    expect(hut.worker).toBeTruthy();
+    expect(g.settlers.get(hut.worker)?.role).toBe('woodcutter');
   });
 
   test('a hut waits for a tool when the stores have none', () => {
