@@ -12,6 +12,7 @@ import { canPlace, construct, linked, place, addBuilding } from './construction'
 import { removeAt } from './demolish';
 import { raise } from './houses';
 import type { WinterState } from './survive';
+import { checkWishes, wishNow, type WishState } from './wishes';
 import { computeTerritory, passable } from './land';
 import { moveGoods } from './logistics';
 import { checkVersion, mapVersion, restore, save, SaveData } from './save';
@@ -48,6 +49,8 @@ export class Game {
   toolsLow = false; // the low tools warning was shown, and tools have not risen since
   made = bag(); // every good the settlement has made since the game began
   goal = 0; // index in GOALS of the goal the player is on
+  wish: WishState | null = null; // the village wish, once every goal is reached
+  wishesGranted = 0; // village wishes the player has met
   winter = { state: 'late' as WinterState, since: new Map<number, number>() }; // the survive winter goal; `since` is when each house or mine began waiting for food
   wear = new Float32Array(W * H); // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
   worn = 0; // bumped whenever a tile's wear changes enough to see
@@ -170,6 +173,11 @@ export class Game {
     return goalNow(this);
   }
 
+  // The village wish now, with its progress, or null while goals remain.
+  wishNow() {
+    return wishNow(this);
+  }
+
   // Is it night, with every worker and builder in bed? Carriers and donkeys don't count.
   allAsleep() {
     return allAsleep(this);
@@ -188,6 +196,7 @@ export class Game {
       moveGoods(this);
       staff(this);
       checkGoals(this);
+      checkWishes(this);
       watchTools(this);
     }
     this.growT -= dt;

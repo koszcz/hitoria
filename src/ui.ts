@@ -7,6 +7,7 @@ import { sailRows } from './sailinfo';
 import { tradeRows, type TradePick } from './tradeinfo';
 import { drawClock } from './seasons/hud';
 import { FastNights, nightSpeed } from './seasons/fastnight';
+import { wishHtml, wishTitle } from './wishes/panel';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -179,12 +180,16 @@ export class UI {
   private drawGoal() {
     const x = T();
     const now = this.game.goalNow();
+    const wish = now ? null : this.game.wishNow();
     const html = now
       ? `<div class="head">🏆 ${x.goal}</div><div class="text">${tr(now.text)}</div>` +
         `<div class="bar"><i style="width:${Math.round((now.have / now.need) * 100)}%"></i></div><div class="count">${now.note ? tr(now.note) : `${now.have} / ${now.need}`}</div>`
+      : wish ? wishHtml(wish)
       : `<div class="head">🏆 ${x.goalsDone}</div>`;
     const el = $('goal');
     if (el.innerHTML !== html) el.innerHTML = html;
+    const title = wish ? wishTitle() : '';
+    if (el.title !== title) el.title = title;
   }
 
   // When the goods wrap onto more rows than the title's, the panels below the top bar move down by as much.

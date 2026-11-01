@@ -37,6 +37,11 @@ waits for food does not count, because no one in it goes hungry. If that happens
 Goals 7 to 10 send you to the other island, because coal and iron ore lie only in its mountains.
 The settle goal is reached when your settlers' ship lands there and they build their harbour.
 
+After the last goal, your village makes wishes, one at a time, such as "Store 40 stone". The
+panel shows how close you are, and the season to meet the wish by, such as "before the first
+snow". When you meet a wish, it counts as granted, and a new wish comes. If the season comes
+first, the wish just passes, with no penalty, and a new one comes.
+
 1. **Place a woodcutter's hut.** Press `B` to open the build menu and pick the woodcutter's hut.
    Then click open grass near trees.
 2. **Watch it get built.** A builder walks to the site. Carriers walk planks over from the HQ.
@@ -232,7 +237,7 @@ The save buttons are in the ☰ menu at the top right.
 - When you load a save, the island chronicle opens. It lists the island's milestones by day, such
   as the first birth, the first of each building, each goal and every tenth trade ship.
 
-The save keeps the map, buildings, worn paths, every good, your goals, the chronicle and the time of day and year. It does not keep where settlers and
+The save keeps the map, buildings, worn paths, every good, your goals, the village wish, the chronicle and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
 Saves from when the game still had roads load too. Their roads and flags become worn paths.
 After a load, everyone starts in their home, the HQ or the harbour on the second island, and walks back to their post. Goods a settler was holding go
@@ -278,7 +283,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals, the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -292,7 +297,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/chronicle/` | The island chronicle panel and how its lines read |
-| `src/i18n.ts` | Translations. The Polish building names are in `src/lang/` |
+| `src/wishes/` | The goal panel once every goal is reached: the village wish, its progress and its season |
+| `src/i18n.ts` | Translations. The Polish building names and village wishes are in `src/lang/` |
 | `src/main.ts` | Input, camera, fixed-step game loop |
 
 ## Current economy

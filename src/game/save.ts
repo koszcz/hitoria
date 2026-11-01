@@ -11,6 +11,7 @@ import { SAIL_CARGO } from './voyage';
 import type { Building, Ship, Trader } from './types';
 import { TRADE_EVERY } from './trade';
 import type { WinterState } from './survive';
+import type { WishState } from './wishes';
 import { MAP_VERSION } from '../world';
 
 export const SAVE_VERSION = 6;
@@ -38,6 +39,8 @@ export interface SaveData {
   signs?: number[]; // the tiles with a geologist's sign; older saves have none
   chronicle?: Entry[]; // the island's milestones; older saves have none
   tradeVisits?: number; // trade ships that have tied up; older saves have none
+  wish?: WishState | null; // the village wish; older saves start a new one once every goal is reached
+  wishesGranted?: number; // village wishes met; older saves have none
 }
 
 export function save(g: Game): SaveData {
@@ -88,6 +91,7 @@ export function save(g: Game): SaveData {
     trader: structuredClone(g.trader), traderT: g.traderT,
     signs: [...g.signs.keys()].filter((i) => g.signs[i]),
     chronicle: structuredClone(g.chronicle), tradeVisits: g.tradeVisits,
+    wish: structuredClone(g.wish), wishesGranted: g.wishesGranted,
   };
 }
 
@@ -142,6 +146,8 @@ export function restore(g: Game, d: SaveData) {
   g.traderT = d.traderT ?? TRADE_EVERY;
   g.chronicle = d.chronicle ?? [];
   g.tradeVisits = d.tradeVisits ?? 0;
+  g.wish = d.wish ?? null;
+  g.wishesGranted = d.wishesGranted ?? 0;
   for (const i of d.signs ?? []) g.signs[i] = 1;
   g.signed++;
   if (d.v < 5) grantTools(g);

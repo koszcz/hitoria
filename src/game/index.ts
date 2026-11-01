@@ -4,6 +4,7 @@ export * from './types';
 export { Game } from './game';
 export { SAVE_VERSION, type SaveData } from './save';
 export { GOALS } from './goals';
+export { WISHES, WISH_MIN_TIME } from './wishes';
 export type { Entry } from './chronicle';
 export { HUNGRY_AFTER } from './survive';
 export { SAIL_CARGO, SAIL_CREW, lacking } from './voyage';
