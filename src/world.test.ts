@@ -138,6 +138,21 @@ describe('mountain shape', () => {
     expect(land(12345)).toBe('13456480345537670572');
   });
 
+  test('map version 4 still builds the same land', () => {
+    const land = (seed: number) => fingerprint(new World(seed, 4).tiles);
+    expect(land(1)).toBe('12155284176671312177');
+    expect(land(12345)).toBe('9688297468954901124');
+  });
+
+  test('map version 5 still builds the same land and ore', () => {
+    const land = (seed: number) => fingerprint(new World(seed, 5).tiles);
+    const ore = (seed: number) => Bun.hash(new World(seed, 5).ore.join('')).toString();
+    expect(land(1)).toBe('18201182863337033041');
+    expect(land(12345)).toBe('12051109971977075717');
+    expect(ore(1)).toBe('17753270535079694825');
+    expect(ore(12345)).toBe('9918151921065226337');
+  });
+
   // A step this big between two tiles next to each other draws as a cliff wall.
   const CLIFF = 0.08;
   for (const seed of SEEDS) {

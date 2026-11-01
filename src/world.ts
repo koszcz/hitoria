@@ -1,4 +1,9 @@
-export type Terrain = 'water' | 'sand' | 'grass' | 'mountain';
+import { rng, noise } from './land/noise';
+import { ranges, toRidge } from './land/ranges';
+
+export { rng };
+
+export type Terrain ='water' | 'sand' | 'grass' | 'mountain';
 // Small plants and stones that are only there to look at. They never block anything, and they
 // hide while something else stands on their tile.
 export type Plant = '' | 'grass' | 'flowers' | 'bush' | 'fern' | 'mushrooms' | 'log' | 'reeds' | 'pebbles';
@@ -26,7 +31,8 @@ export const H = 64;
 // 3: mountains rise smoothly from the land around them, with no cliff at their edge.
 // 4: a second island sits off the mouth of the bay.
 // 5: the second island gets a mountain, and coal and iron ore lie only there.
-export const MAP_VERSION = 5;
+// 6: mountains form ranges, with ridges and valleys instead of round peaks.
+export const MAP_VERSION = 6;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -52,36 +58,23 @@ const STRAIT = 3.5;
 const ISLE_PEAK_AWAY = 1.5;
 const ISLE_PEAK = 0.98;
 const ISLE_PEAK_SLOPE = 0.12;
+// From map version 6, natural ridges are flat this close to the start, and full height
+// CALM_FADE tiles further out.
+const CALM = 6;
+const CALM_FADE = 10;
+// From map version 6, how many tiles the start mountain's ridge runs on away from the start, and
+// how many tiles the second island's ridge runs each way from its top.
+const PEAK_RIDGE = 4;
+const ISLE_RIDGE = 1.5;
+// From map version 6, no trees or boulders grow on the bay's bank this far past its water, up to
+// BANK_NEAR tiles from the start.
+const BANK = 2.8;
+const BANK_NEAR = 11;
 // No trees or boulders grow this close to the top of the second island's mountain, so mines fit at its foot.
 const ISLE_FOOT = 4;
 // The guaranteed grove and quarry near the start: how wide they are.
 const GROVE = 2.8;
 const QUARRY = 1.9;
-
-export function rng(seed: number) {
-  return () => {
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-// Smooth value noise over a lattice of `cell`-sized squares.
-function noise(rand: () => number, cell: number) {
-  const gw = Math.ceil(W / cell) + 2;
-  const gh = Math.ceil(H / cell) + 2;
-  const g = Array.from({ length: gw * gh }, rand);
-  const s = (t: number) => t * t * (3 - 2 * t);
-  return (x: number, y: number) => {
-    const fx = x / cell, fy = y / cell;
-    const ix = Math.floor(fx), iy = Math.floor(fy);
-    const tx = s(fx - ix), ty = s(fy - iy);
-    const a = g[iy * gw + ix], b = g[iy * gw + ix + 1];
-    const c = g[(iy + 1) * gw + ix], d = g[(iy + 1) * gw + ix + 1];
-    return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
-  };
-}
 
 export class World {
   tiles: Tile[] = [];
@@ -89,7 +82,6 @@ export class World {
   // 1 where coal and iron ore lie in a mountain tile. The generator lays it down, so saves don't store it.
   ore = new Uint8Array(W * H);
   start = { x: W / 2, y: H / 2 };
-  private peak = this.start;
 
   constructor(seed: number, readonly map = MAP_VERSION) {
     const rand = rng(seed);
@@ -101,16 +93,30 @@ export class World {
     const { peak, bay, out } = this.landmarks(seed);
     const isle = { x: bay.x + out.x * ISLE_AWAY, y: bay.y + out.y * ISLE_AWAY };
     const islePeak = { x: isle.x + out.x * ISLE_PEAK_AWAY, y: isle.y + out.y * ISLE_PEAK_AWAY };
-    this.peak = peak;
+    // From map version 6, natural mountains fold into ranges, and both guaranteed mountains are
+    // short ridges. The start mountain's ridge runs on away from the start. The second island's
+    // ridge runs across the island, along its far side.
+    const lay = (x: number, y: number) => {
+      const d = Math.hypot(x - sx, y - sy) / (W / 2);
+      return n1(x, y) * 0.55 + n2(x, y) * 0.3 + n3(x, y) * 0.15 + 0.2 - d * d * 0.55;
+    };
+    // Ridges fade out towards the start, so the HQ's land stays gentle.
+    const calm = (x: number, y: number) => Math.min(1, Math.max(0, (Math.hypot(x - sx, y - sy) - CALM) / CALM_FADE));
+    const ranged = map >= 6, shape = ranged ? ranges(seed, lay, calm) : null;
+    const away = { x: (peak.x - sx) / PEAK_AWAY, y: (peak.y - sy) / PEAK_AWAY };
+    const peakEnd = { x: peak.x + away.x * PEAK_RIDGE, y: peak.y + away.y * PEAK_RIDGE };
+    const isleEnds = [-1, 1].map((k) => ({ x: islePeak.x - out.y * ISLE_RIDGE * k, y: islePeak.y + out.x * ISLE_RIDGE * k }));
+    const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
+    const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : Math.hypot(x - peak.x, y - peak.y));
+    const toIslePeakAt = (x: number, y: number) =>
+      ranged ? toRidge(x, y, isleEnds[0], isleEnds[1]) : Math.hypot(x - islePeak.x, y - islePeak.y);
 
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
-        const d = Math.hypot(x - sx, y - sy) / (W / 2);
-        let h = n1(x, y) * 0.55 + n2(x, y) * 0.3 + n3(x, y) * 0.15;
-        h = h + 0.2 - d * d * 0.55;
+        let h = shape ? shape(x, y) : lay(x, y);
         const near = Math.hypot(x - sx, y - sy);
         if (near < 8) h = h * (near / 8) + 0.5 * (1 - near / 8);
-        const toPeak = Math.hypot(x - peak.x, y - peak.y);
+        const toPeak = toPeakAt(x, y);
         // The bay runs from its head straight out to the open sea, with a sandy shore.
         const along = Math.max(0, (x - bay.x) * out.x + (y - bay.y) * out.y);
         const toBay = Math.hypot(x - bay.x - out.x * along, y - bay.y - out.y * along);
@@ -130,7 +136,7 @@ export class World {
         }
         if (map >= 4) h = this.island(h, x - isle.x, y - isle.y, out, n3(x, y));
         // The second island's mountain rises past its middle, so the near shore stays free for a harbour.
-        if (map >= 5) h = Math.max(h, ISLE_PEAK - Math.hypot(x - islePeak.x, y - islePeak.y) * ISLE_PEAK_SLOPE);
+        if (map >= 5) h = Math.max(h, ISLE_PEAK - toIslePeakAt(x, y) * ISLE_PEAK_SLOPE);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, col: '' });
         // Older maps have ore in every mountain. From map 5, only the second island's mountain holds it.
@@ -149,9 +155,10 @@ export class World {
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
         // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
-        const foot = (landmarks && Math.hypot(x - this.peak.x, y - this.peak.y) < PEAK_SIZE + 2.5)
-          || (map >= 5 && Math.hypot(x - islePeak.x, y - islePeak.y) < ISLE_FOOT);
-        if (tile.t !== 'grass' || near < 3.5 || foot) continue;
+        const foot = (landmarks && toPeakAt(x, y) < PEAK_SIZE + 2.5) || (map >= 5 && toIslePeakAt(x, y) < ISLE_FOOT);
+        // From map version 6, the bank of the bay near the start stays clear too, so a harbour fits there.
+        const bank = ranged && near < BANK_NEAR && toRidge(x, y, bay, bayEnd) < BAY_WIDTH + BANK;
+        if (tile.t !== 'grass' || near < 3.5 || foot || bank) continue;
         if (Math.hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
         else if (Math.hypot(x - quarry.x, y - quarry.y) < QUARRY) tile.rock = 4 + Math.floor(rand() * 3);
         else if ((forest(x, y) > 0.56 && rand() < 0.75) || rand() < 0.025) tile.tree = 1;
