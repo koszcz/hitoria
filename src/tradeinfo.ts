@@ -68,13 +68,19 @@ const wantRows = (t: Trader) =>
   (t.offers.length ? `<p class="desc">${text().rare(names(t.offers))}</p>` : '') +
   `<p class="desc">${text().limit(SELL_LIMIT.tool, SELL_LIMIT.iron)}</p>`;
 
+// Is the trade ship tied up at harbour `b`, ready to trade?
+export function tradeOpen(g: Game, b: Building) {
+  const t = g.trader;
+  return tradeHarbour(g) === b && !!t && t.harbour === b.id && t.leg === 'docked';
+}
+
 // The rows for the harbour the trade ship visits, as HTML. Other harbours show none.
 export function tradeRows(g: Game, b: Building, pick: TradePick): string {
   if (tradeHarbour(g) !== b) return '';
   const x = text(), t = g.trader;
   const head = `<h4>${x.head}</h4>`;
   if (!t) return `${head}<p class="status">${x.coming(about(g.traderT))}</p>`;
-  if (t.harbour !== b.id || t.leg !== 'docked') return `${head}<p class="status">${t.leg === 'in' ? x.sailing : x.gone}</p>`;
+  if (!tradeOpen(g, b)) return `${head}<p class="status">${t.leg === 'in' ? x.sailing : x.gone}</p>`;
   const have = GOODS.filter((k) => spare(g, b, k) > 0);
   const give = pick.give && have.includes(pick.give) ? pick.give : null;
   const rows = [

@@ -4,7 +4,7 @@ import { openBuildMenu } from './buildmenu/menu';
 import { costText } from './buildmenu/card';
 import type { Level } from './quality/levels';
 import { sailRows } from './sailinfo';
-import { tradeRows, type TradePick } from './tradeinfo';
+import { tradeOpen, tradeRows, type TradePick } from './tradeinfo';
 import { drawClock } from './seasons/hud';
 import { FastNights, nightSpeed } from './seasons/fastnight';
 import { wishHtml, wishTitle } from './wishes/panel';
@@ -235,14 +235,21 @@ export class UI {
     }
     const def = BDEFS[b.type];
     const rows: string[] = [];
+    let side = ''; // the second column, shown only while the trade ship is tied up here
     if (!b.built) {
       rows.push(`<div class="bar"><i style="width:${Math.round(b.progress * 100)}%"></i></div>`);
       for (const k of GOODS)
         if (def.cost[k]) rows.push(`<div><span class="good ${k}"></span>${goodName(k)}: ${b.stock[k]} / ${def.cost[k]}</div>`);
     } else if (g.isStore(b)) {
       if (b.type === 'hq') rows.push(`<div>${x.landRadius(def.radius)}</div>`);
-      if (b.type === 'harbour') rows.push(sailRows(g, b), tradeRows(g, b, this.pick));
-      for (const k of GOODS) rows.push(`<div>${x.stored} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
+      if (b.type === 'harbour') {
+        rows.push(sailRows(g, b));
+        if (tradeOpen(g, b)) side = tradeRows(g, b, this.pick);
+        else rows.push(tradeRows(g, b, this.pick));
+      }
+      // Stored goods as picture and number, a few to a row. The name is in the tooltip.
+      rows.push(`<div class="trade-label">${x.stored}</div><div class="stock">` +
+        GOODS.map((k) => `<span class="${b.stock[k] ? '' : 'none'}" title="${goodName(k)}"><span class="good ${k}"></span>${b.stock[k]}</span>`).join('') + '</div>');
     } else {
       if (b.type === 'house') {
         rows.push(`<div>${x.born(b.born, houseSize(b))}</div>`);
@@ -258,8 +265,11 @@ export class UI {
     }
     info.hidden = false;
     const warn = b.type !== 'hq' && !g.linked(b) ? `<p class="warn">⚠ ${x.notLinked}</p>` : '';
-    const html = `<h3>${def.icon} ${buildingName(b.type)}</h3><p class="desc">${buildingDesc(b.type)}</p>${warn}` +
+    const main = `<h3>${def.icon} ${buildingName(b.type)}</h3><p class="desc">${buildingDesc(b.type)}</p>${warn}` +
       (b.type === 'hq' ? '' : `<p class="status">${tr(b.status)}</p>`) + rows.join('');
+    // With the trade ship in, the panel grows a second column, so it fits on the screen.
+    info.classList.toggle('wide', !!side);
+    const html = side ? `<div class="cols"><div>${main}</div><div>${side}</div></div>` : main;
     // Only when it changes, so a button is not swapped out between press and release.
     if (this.infoHtml !== html) info.innerHTML = this.infoHtml = html;
   }

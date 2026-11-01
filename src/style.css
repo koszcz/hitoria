@@ -169,7 +169,15 @@ canvas {
   right: 10px;
   width: 250px;
   padding: 12px 14px;
+  /* A last resort on very short screens. Normal screens fit the whole panel. */
+  max-height: calc(100vh - var(--bar-bottom, 50px) - 68px);
+  overflow-y: auto;
 }
+#info.wide { width: 540px; }
+#info .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+#info .cols > div > h4:first-child { margin-top: 0; }
+#info .stock { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 6px; font-variant-numeric: tabular-nums; }
+#info .stock .none { opacity: 0.5; }
 #info h3 { margin: 0 0 4px; font: 700 15px Georgia, serif; color: var(--gold); }
 #info .desc { margin: 0 0 8px; color: var(--muted); }
 #info .status { margin: 0 0 8px; font-style: italic; }
@@ -323,6 +331,8 @@ body.touch .build { row-gap: 0; }
     max-height: 40vh;
     overflow-y: auto;
   }
+  #info.wide { width: auto; }
+  #info .cols { grid-template-columns: 1fr; gap: 0; }
   #toasts { top: 100px; width: calc(100vw - 32px); }
   #goal { position: static; order: 4; width: 100%; display: flex; align-items: center; gap: 8px; padding: 4px 10px; }
   #goal .text { margin: 0; }
