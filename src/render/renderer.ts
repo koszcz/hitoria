@@ -24,6 +24,8 @@ import { setSeason } from './seasonal';
 import { Snowfall } from './snowfall';
 import { Signs } from './signs';
 import { HungerMarks } from './hunger';
+import { Foam } from './foam';
+import { Waterlife } from './waterlife';
 
 export type { View } from './overlays';
 
@@ -60,6 +62,8 @@ export class Renderer {
   private snowfall: Snowfall;
   private signs: Signs;
   private hunger: HungerMarks;
+  private foam: Foam;
+  private waterlife: Waterlife;
   private season: SeasonLook = seasonLook(0);
   private reach = 20; // half the width of the ground in view
 
@@ -92,6 +96,8 @@ export class Renderer {
     this.snowfall = new Snowfall(scene);
     this.signs = new Signs(scene, this.ground);
     this.hunger = new HungerMarks(scene, this.ground);
+    this.foam = new Foam(scene);
+    this.waterlife = new Waterlife(scene);
     this.setGraphics(this.graphics);
   }
 
@@ -182,12 +188,14 @@ export class Renderer {
     this.animals.draw(game, now);
     this.donkeys.draw(game, now, (g, x, y, z, rot) => this.goods.put(g, x, y, z, rot));
     this.ships.draw(game, now);
+    this.waterlife.draw(now, this.season.snow);
     this.signs.draw(game);
     this.hunger.draw(game, now);
     this.overlays.draw(game, view);
     this.goods.finish();
 
     this.ground.animate(now);
+    this.foam.animate(now);
     this.gl.render(this.scene, this.camera);
   }
 
@@ -236,6 +244,8 @@ export class Renderer {
     this.donkeys.clear();
     this.ships.clear();
     this.ground.build(world);
+    this.foam.build(world, this.ground);
+    this.waterlife.build(world);
   }
 
   private drop(g: THREE.Object3D) {
