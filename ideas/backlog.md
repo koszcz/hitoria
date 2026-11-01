@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *Fun 2 · Effort M · Branch: worktree-agent-a602b73cdaa453675*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *Fun 2 · Effort M*
 - **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *Fun 2 · Effort M*
 
 ## Inbox
