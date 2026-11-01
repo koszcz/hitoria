@@ -10,22 +10,24 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
-- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
+- **Village wishes**: after the last goal, the village asks for one gentle wish at a time, such as "store 40 food before the first snow", and a missed wish just moves on. *Fun 2 · Effort M*
+- **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *Fun 2 · Effort M*
+- **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *Fun 2 · Effort M*
 
 ## Inbox
 
 New ideas go here, not scored yet.
 
-- **Village wishes**: after the last goal, the village asks for one gentle wish at a time, such as "store 40 food before the first snow", and a missed wish just moves on.
-- **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal.
-- **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells.
-- **More voyages**: you sail again to new islands, or start a fresh island that keeps one reward from the last.
+Empty.
 
 ## Later
 
 Triaged, but not next.
 
+- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
+- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
+- **Far island**: a third island with its own riches lies farther out, and you sail to settle it. *Fun 2 · Effort M*
+- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
