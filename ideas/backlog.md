@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Trade ship**: a ship that visits the harbour every few minutes. You pick which spare goods to swap for goods you lack, at fixed rates. *Fun 2 · Effort M · Needs: Harbour · Approved · Branch: worktree-agent-af3a862343a02ee32*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Trade ship**: a ship that visits the harbour every few minutes. You pick which spare goods to swap for goods you lack, at fixed rates. *Fun 2 · Effort M · Needs: Harbour · Approved*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. A mine on a rich spot works twice as fast. The geologist puts up small signs that show what lies below. *Fun 2 · Effort M · Needs: Coal and iron mines · Approved*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free · Approved*
 
