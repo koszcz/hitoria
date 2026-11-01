@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved · Branch: worktree-agent-a8704c1540054bdae*
+Nothing right now.
 
 ## Next
 
@@ -41,6 +41,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *2026-11-01*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. New maps only. Old saves keep their land. *2026-11-01*
 - **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *2026-11-01*
 - **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *2026-11-01*
