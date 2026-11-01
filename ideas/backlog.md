@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved · Branch: worktree-agent-ad0ead3c553b27ebb*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
+*Empty.*
 
 ## Inbox
 
