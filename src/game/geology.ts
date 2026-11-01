@@ -14,6 +14,7 @@ const HOME_REACH = 12; // the mountain near the HQ always has a rich spot this c
 // Where the rich spots lie. They come from the seed, so saves don't store them, and they use their
 // own random numbers, so the rest of the map keeps its shape. Rich ground lies in small patches on
 // the mountain tiles a mine can reach. The mountain by the HQ and the ore mountain each get one.
+// On the far island, every ore tile is a rich spot.
 export function richSpots(world: World, seed: number) {
   const rich = new Uint8Array(W * H);
   const rand = rng(seed ^ 0x6e01);
@@ -35,6 +36,8 @@ export function richSpots(world: World, seed: number) {
   };
   sure((i) => Math.hypot((i % W) - sx, ((i / W) | 0) - sy) < HOME_REACH);
   sure((i) => world.ore[i] === 1);
+  // All the ore on the far island is rich.
+  for (let i = 0; i < W * H; i++) if (world.ore[i] && world.isleAt(i % W, (i / W) | 0) === 'far') rich[i] = 1;
   return rich;
 }
 

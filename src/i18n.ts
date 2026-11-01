@@ -4,6 +4,7 @@ import { BDEFS, SAIL_CARGO, TOOLS_LOW, TOOLS_LOW_NOTE, type BType, type Good } f
 import { BUILDING_PL } from './lang/buildings';
 import { WISHES_PL, wishToastPl } from './lang/wishes';
 import { UPGRADES_PL } from './lang/upgrades';
+import { ISLES_PL } from './lang/isles';
 
 export type Lang = 'en' | 'pl';
 export const LANGS: Lang[] = ['en', 'pl'];
@@ -182,6 +183,7 @@ const MESSAGES_PL: Record<string, string> = {
   'The trader has no more of this good': 'Kupiec nie ma już tego towaru',
   ...WISHES_PL,
   ...UPGRADES_PL,
+  ...ISLES_PL,
   [TOOLS_LOW_NOTE]: `⚠️ Zostało tylko ${TOOLS_LOW} narzędzi. Statek potrzebuje ${SAIL_CARGO.tool}, by zasiedlić drugą wyspę`,
 };
 

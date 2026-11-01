@@ -63,8 +63,8 @@ first, the wish just passes, with no penalty, and a new one comes.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher. Beyond it,
      mountains run in long ridges, with grassy valleys between them. They rise into sharp,
      snowy peaks, like the Alps. Mountains near the HQ stay lower, so they never hide it.
-   - Coal and iron ore lie only in the mountain on the second island. The mountains on your home
-     island hold stone only. Coal and iron mines go next to the island's mountain, which has
+   - Coal and iron ore lie only in the mountains of the second island and the far island. The
+     mountains on your home island hold stone only. Coal and iron mines go next to the island's mountain, which has
      rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
    - Every new worker in a hut needs a tool. The HQ starts with 20 tools. When they run out, a
      toolmaker's workshop makes more from iron and planks. Until then, a new hut waits for a tool.
@@ -74,8 +74,9 @@ first, the wish just passes, with no penalty, and a new one comes.
      geologist's hut near a mountain, and its geologist puts up a sign on each mountain tile
      nearby. A gold sign marks a rich spot. The lumps on a sign show what lies below: grey stone,
      or coal and iron ore. A mine's panel says when it sits next to a rich spot.
-   - Across the water from the bay lies a second island. To settle it, build a harbour, click it
-     and press **Set sail**. See "Settling the second island" below.
+   - Across the water from the bay lies a second island. Farther out, to one side of the bay, lies
+     the far island. To settle them, build a harbour, click it and press **Set sail**. See
+     "Settling the second island" below.
 
 Settlers must be able to walk from the HQ, or from a harbour they built on the second island, to
 every building. If water, mountains or trees cut a
@@ -119,7 +120,12 @@ ducks paddle near the shore. The ducks fly south for the winter. They are only t
 
 The new harbour is the island's home, like the HQ. Its idle settlers wait there and go out from it
 to build, work and carry goods. Buildings on the island get their goods from it and bring what
-they make back to it. Settlers never cross the sea on foot. You can sail only once.
+they make back to it. Settlers never cross the sea on foot.
+
+Once the ship is back, you can sail a second time, to the far island. It takes another 5
+settlers and the same goods. The far island has a mountain with coal and iron ore too, and all of
+its ore is rich, so every mine there digs twice as fast. Each island gets one crew, so you can
+sail twice in all.
 
 The second island has a mountain with coal and iron ore in it. Build your coal and iron mines at
 its foot.
@@ -264,7 +270,8 @@ back to their building, so nothing is lost.
 Each save records which version of the map it was made on. A save from before a map change loads
 on the same land it was saved on, even though new games get the new map. On maps from before the
 second island's mountain, every mountain still holds coal and iron ore. Maps from before mountain ranges
-keep their round mountains.
+keep their round mountains. Maps from before the far island have no far island, so their settlers
+sail only once.
 
 ## Graphics
 
@@ -299,9 +306,9 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 
 | File | What it does |
 | --- | --- |
-| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
+| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -326,10 +333,10 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
   eats fish, meat or bread.
 - A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way. Only the
-  second island's mountain holds coal and iron ore.
+  mountains of the second island and the far island hold coal and iron ore.
 - A mine next to a rich spot digs twice as fast. A geologist surveys the mountains up to 6 tiles
   from the Geologist's Hut and marks rich spots with gold signs. The mountain by the HQ and the
-  second island's mountain always have one.
+  second island's mountain always have one. All the ore on the far island is rich.
 - Iron mine → iron ore, and coal mine → coal → Smelter → iron. The smelter needs 1 iron ore and
   1 coal for each bar of iron.
 - Iron and planks → Toolmaker's Workshop → tools. The toolmaker needs 1 iron and 1 plank for
@@ -359,7 +366,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ, in storehouses and in harbours.
 - A harbour stands on the shore, up to 4 tiles from open water. A wooden pier runs out to its dock.
-  A ship sails from it once, to settle the second island. A trade ship visits it every few
+  A ship sails from it to settle the second island, and later the far island. A trade ship visits it every few
   minutes.
 
 There are no roads. A carrier takes one good from the building that has it and walks it the

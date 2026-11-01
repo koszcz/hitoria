@@ -32,7 +32,8 @@ export const H = 64;
 // 4: a second island sits off the mouth of the bay.
 // 5: the second island gets a mountain, and coal and iron ore lie only there.
 // 6: mountains form ranges, with ridges and valleys instead of round peaks.
-export const MAP_VERSION = 6;
+// 7: a far island lies farther out, to one side of the bay, with rich coal and iron in its mountain.
+export const MAP_VERSION = 7;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -72,6 +73,21 @@ const BANK = 2.8;
 const BANK_NEAR = 11;
 // No trees or boulders grow this close to the top of the second island's mountain, so mines fit at its foot.
 const ISLE_FOOT = 4;
+// From map version 7, the far island: how far its centre sits from the start, to one side of the
+// bay. It is the same size as the second island and has a mountain like it.
+const FAR_AWAY = 24;
+// From map version 7, how far the far island may turn from the bay's direction, in degrees, and how
+// far its centre stays from the second island's centre.
+const FAR_TURN = [50, 130];
+const FAR_APART = 21;
+// From map version 7, a grove on the far island, so it always has trees: how far it sits towards the
+// home side of the island's centre and off to one side, and how wide it is.
+const FAR_GROVE_IN = 2.5;
+const FAR_GROVE_SIDE = 3.5;
+const FAR_GROVE = 2;
+// From map version 7, open sea runs this many tiles wide around the edge of the map, so a ship can
+// sail around the home island to the far island.
+const EDGE_SEA = 3;
 // The guaranteed grove and quarry near the start: how wide they are.
 const GROVE = 2.8;
 const QUARRY = 1.9;
@@ -82,6 +98,10 @@ export class World {
   // 1 where coal and iron ore lie in a mountain tile. The generator lays it down, so saves don't store it.
   ore = new Uint8Array(W * H);
   start = { x: W / 2, y: H / 2 };
+  // From map version 4, the centre of the second island. Null on older maps.
+  isle: { x: number; y: number } | null = null;
+  // From map version 7, the centre of the far island, and the way it faces out to sea. Null on older maps.
+  far: { x: number; y: number; out: { x: number; y: number } } | null = null;
 
   constructor(seed: number, readonly map = MAP_VERSION) {
     const rand = rng(seed);
@@ -92,6 +112,7 @@ export class World {
     const grove = { x: sx + 6, y: sy - 4 }, quarry = { x: sx - 5, y: sy + 5 };
     const { peak, bay, out } = this.landmarks(seed);
     const isle = { x: bay.x + out.x * ISLE_AWAY, y: bay.y + out.y * ISLE_AWAY };
+    if (map >= 4) this.isle = isle;
     const islePeak = { x: isle.x + out.x * ISLE_PEAK_AWAY, y: isle.y + out.y * ISLE_PEAK_AWAY };
     // From map version 6, natural mountains fold into ranges, and both guaranteed mountains are
     // short ridges. The start mountain's ridge runs on away from the start. The second island's
@@ -106,6 +127,14 @@ export class World {
     const away = { x: (peak.x - sx) / PEAK_AWAY, y: (peak.y - sy) / PEAK_AWAY };
     const peakEnd = { x: peak.x + away.x * PEAK_RIDGE, y: peak.y + away.y * PEAK_RIDGE };
     const isleEnds = [-1, 1].map((k) => ({ x: islePeak.x - out.y * ISLE_RIDGE * k, y: islePeak.y + out.x * ISLE_RIDGE * k }));
+    const far = (this.far = map >= 7 ? this.farPlace(seed, out, isle) : null);
+    const farPeak = far && { x: far.x + far.out.x * ISLE_PEAK_AWAY, y: far.y + far.out.y * ISLE_PEAK_AWAY };
+    const farEnds = far && [-1, 1].map((k) => ({ x: farPeak!.x - far.out.y * ISLE_RIDGE * k, y: farPeak!.y + far.out.x * ISLE_RIDGE * k }));
+    const toFarPeakAt = (x: number, y: number) => (farEnds ? toRidge(x, y, farEnds[0], farEnds[1]) : Infinity);
+    const farGrove = far && {
+      x: far.x - far.out.x * FAR_GROVE_IN - far.out.y * FAR_GROVE_SIDE,
+      y: far.y - far.out.y * FAR_GROVE_IN + far.out.x * FAR_GROVE_SIDE,
+    };
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
     const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : Math.hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
@@ -137,10 +166,16 @@ export class World {
         if (map >= 4) h = this.island(h, x - isle.x, y - isle.y, out, n3(x, y));
         // The second island's mountain rises past its middle, so the near shore stays free for a harbour.
         if (map >= 5) h = Math.max(h, ISLE_PEAK - toIslePeakAt(x, y) * ISLE_PEAK_SLOPE);
+        if (far) {
+          h = this.island(h, x - far.x, y - far.y, far.out, n2(x, y));
+          h = Math.max(h, ISLE_PEAK - toFarPeakAt(x, y) * ISLE_PEAK_SLOPE);
+          const edge = Math.min(x, y, W - 1 - x, H - 1 - y);
+          h = Math.min(h, 0.22 + Math.max(0, edge - EDGE_SEA + 1) * 0.08);
+        }
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, col: '' });
         // Older maps have ore in every mountain. From map 5, only the second island's mountain holds it.
-        const rich = map < 5 || Math.hypot(x - isle.x, y - isle.y) < ISLE_SIZE;
+        const rich = map < 5 || this.isleAt(x, y, ISLE_SIZE) !== null;
         if (t === 'mountain' && rich) this.ore[y * W + x] = 1;
       }
     }
@@ -155,11 +190,13 @@ export class World {
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
         // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
-        const foot = (landmarks && toPeakAt(x, y) < PEAK_SIZE + 2.5) || (map >= 5 && toIslePeakAt(x, y) < ISLE_FOOT);
+        const foot = (landmarks && toPeakAt(x, y) < PEAK_SIZE + 2.5) || (map >= 5 && toIslePeakAt(x, y) < ISLE_FOOT) ||
+          toFarPeakAt(x, y) < ISLE_FOOT;
         // From map version 6, the bank of the bay near the start stays clear too, so a harbour fits there.
         const bank = ranged && near < BANK_NEAR && toRidge(x, y, bay, bayEnd) < BAY_WIDTH + BANK;
         if (tile.t !== 'grass' || near < 3.5 || foot || bank) continue;
-        if (Math.hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
+        if (farGrove && Math.hypot(x - farGrove.x, y - farGrove.y) < FAR_GROVE) tile.tree = rand() < 0.8 ? 1 : 0;
+        else if (Math.hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
         else if (Math.hypot(x - quarry.x, y - quarry.y) < QUARRY) tile.rock = 4 + Math.floor(rand() * 3);
         else if ((forest(x, y) > 0.56 && rand() < 0.75) || rand() < 0.025) tile.tree = 1;
         else if ((rocks(x, y) > 0.74 && rand() < 0.5) || (this.nearMountain(x, y) && rand() < 0.3))
@@ -200,6 +237,35 @@ export class World {
       bay: { x: sx + out.x * BAY_AWAY, y: sy + out.y * BAY_AWAY },
       out,
     };
+  }
+
+  // Where the far island sits: to the left or right of the bay, as seen from the start, facing away
+  // from the start. Of the spots that fit inside the sea at the map's edge and keep clear of the
+  // second island, it takes the one farthest from the start. It takes its own random numbers, so
+  // the rest of the map keeps its shape.
+  private farPlace(seed: number, bay: { x: number; y: number }, isle: { x: number; y: number }) {
+    const k = rng(seed ^ 0xfa12)() < 0.5 ? 1 : -1;
+    const room = ISLE_SIZE + EDGE_SEA + 2;
+    const fit = (v: number) => Math.max(room, Math.min(W - 1 - room, v));
+    const { x: sx, y: sy } = this.start;
+    let best = null, bd = -1;
+    for (let deg = FAR_TURN[0]; deg <= FAR_TURN[1]; deg += 5) {
+      const a = Math.atan2(bay.y, bay.x) + (k * deg * Math.PI) / 180;
+      const out = { x: Math.cos(a), y: Math.sin(a) };
+      const x = fit(sx + out.x * FAR_AWAY), y = fit(sy + out.y * FAR_AWAY), d = Math.hypot(x - sx, y - sy);
+      if (Math.hypot(x - isle.x, y - isle.y) < FAR_APART || d <= bd) continue;
+      best = { x, y, out };
+      bd = d;
+    }
+    return best!;
+  }
+
+  // Which island the tile at (x, y) is on: 'other' for the second island, 'far' for the far
+  // island, or null for neither. A tile counts if it lies within `reach` of the island's centre.
+  isleAt(x: number, y: number, reach = ISLE_SIZE + 2): 'other' | 'far' | null {
+    if (this.isle && Math.hypot(x - this.isle.x, y - this.isle.y) < reach) return 'other';
+    if (this.far && Math.hypot(x - this.far.x, y - this.far.y) < reach) return 'far';
+    return null;
   }
 
   // The height of land near the second island, which is `dx, dy` from the island's centre. The
