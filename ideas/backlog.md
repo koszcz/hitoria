@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *Fun 2 · Effort S · Needs: Workers sleep at night · Branch: worktree-agent-a31401674bb6cc6f3*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *Fun 2 · Effort S · Needs: Workers sleep at night*
+*Empty.*
 
 ## Inbox
 
