@@ -4,6 +4,7 @@ import { rng, W, H, type World } from '../world';
 import { BDEFS, MINES } from './defs';
 import type { Game } from './game';
 import type { Building } from './types';
+import type { P } from '../path';
 
 export const RICH_SPEED = 2; // how many times faster a mine next to a rich spot digs
 const REACH = 2; // a mountain tile this close to grass can have a mine beside it
@@ -22,9 +23,9 @@ export function richSpots(world: World, seed: number) {
       if (world.at(x, y).t === 'mountain' && byGrass(world, x, y)) edge.push(y * W + x);
   const patch = (i: number) => {
     const x = i % W, y = (i / W) | 0;
-    for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++)
-        if (world.inside(x + dx, y + dy) && world.at(x + dx, y + dy).t === 'mountain') rich[(y + dy) * W + x + dx] = 1;
+    // The tile and the 4 tiles beside it, in a small cross.
+    for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]])
+      if (world.inside(x + dx, y + dy) && world.at(x + dx, y + dy).t === 'mountain') rich[(y + dy) * W + x + dx] = 1;
   };
   for (const i of edge) if (rand() < PATCH_CHANCE) patch(i);
   const { x: sx, y: sy } = world.start;
@@ -71,16 +72,23 @@ export function surveyable(g: Game, x: number, y: number) {
 }
 
 // The geologist surveys the tile at (x, y) and the mountain tiles around it, and puts up a sign on
-// each one. Returns true if they found a rich spot that had no sign before.
+// each one. Returns true if they found a new patch of rich ground: a rich spot with no signed rich
+// spot beside it. Only a new patch is announced, so one patch gives one message.
 export function survey(g: Game, x: number, y: number) {
-  let found = false;
+  const fresh: P[] = [];
   for (let dy = -1; dy <= 1; dy++)
     for (let dx = -1; dx <= 1; dx++) {
-      const tx = x + dx, ty = y + dy, i = ty * W + tx;
-      if (!g.world.inside(tx, ty) || g.world.at(tx, ty).t !== 'mountain' || g.signs[i]) continue;
-      g.signs[i] = 1;
-      if (isRich(g, tx, ty)) found = true;
+      const tx = x + dx, ty = y + dy;
+      if (g.world.inside(tx, ty) && g.world.at(tx, ty).t === 'mountain' && !g.signs[ty * W + tx]) fresh.push({ x: tx, y: ty });
     }
+  const known = (p: P) => {
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++)
+        if (g.world.inside(p.x + dx, p.y + dy) && g.signs[(p.y + dy) * W + p.x + dx] && isRich(g, p.x + dx, p.y + dy)) return true;
+    return false;
+  };
+  const found = fresh.some((p) => isRich(g, p.x, p.y) && !known(p));
+  for (const p of fresh) g.signs[p.y * W + p.x] = 1;
   g.signed++;
   if (found) g.toasts.push('⭐ Your geologist found a rich spot');
   return found;

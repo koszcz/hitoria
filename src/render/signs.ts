@@ -32,11 +32,12 @@ export class Signs {
       const sign = new THREE.Group();
       sign.position.set(x + 0.5, this.ground.heightAt(x + 0.5, y + 0.5), y + 0.5);
       sign.rotation.y = Math.PI / 4; // face the camera
-      add(sign, new THREE.BoxGeometry(0.02, 0.26, 0.02), '#6b4a28', 0, 0.13, 0);
-      add(sign, new THREE.BoxGeometry(0.16, 0.1, 0.015), rich ? '#f0c030' : '#d8c8a0', 0, 0.24, 0.012);
-      const lumps: [string, number][] = ore ? [['#262424', -0.035], ['#9a4a28', 0.035]] : [['#9a968c', 0]];
-      for (const [c, dx] of lumps) add(sign, new THREE.DodecahedronGeometry(0.022, 0), c, dx, 0.24, 0.03);
-      if (rich) add(sign, new THREE.OctahedronGeometry(0.035, 0), '#ffd84a', 0, 0.33, 0, { emissive: '#a07010', emissiveIntensity: 0.6 });
+      add(sign, new THREE.BoxGeometry(0.03, 0.4, 0.03), '#6b4a28', 0, 0.2, 0);
+      if (rich) add(sign, new THREE.BoxGeometry(0.28, 0.17, 0.02), '#ffc820', 0, 0.36, 0.016, { emissive: '#c08000', emissiveIntensity: 0.5 });
+      else add(sign, new THREE.BoxGeometry(0.24, 0.14, 0.02), '#e8e0cc', 0, 0.36, 0.016);
+      const lumps: [string, number][] = ore ? [['#1a1818', -0.05], ['#b0502a', 0.05]] : [['#7a766c', 0]];
+      for (const [c, dx] of lumps) add(sign, new THREE.DodecahedronGeometry(0.035, 0), c, dx, 0.36, 0.04);
+      if (rich) add(sign, new THREE.OctahedronGeometry(0.06, 0), '#ffd84a', 0, 0.52, 0, { emissive: '#c08000', emissiveIntensity: 0.8 });
       g.add(sign);
     });
     mergeModel(g, []);

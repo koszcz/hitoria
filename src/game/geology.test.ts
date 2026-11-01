@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
 import { BDEFS, BUILDABLE } from './defs';
-import { RICH_SPEED, richSpots } from './geology';
+import { RICH_SPEED, richSpots, survey } from './geology';
 import { W } from '../world';
 import { flatGame, placeLinked, run, runUntil } from './test-helpers';
 
@@ -119,6 +119,16 @@ describe('geologist', () => {
     runUntil(g, () => hut.status === 'Every mountain nearby is surveyed', 600);
     expect(signsIn(g, x + 8, y - 2, x + 9, y + 2)).toBe(10);
     expect(g.toasts).toContain('⭐ Your geologist found a rich spot');
+  });
+
+  test('one patch of rich ground gives one message, a second patch another', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    mountain(g, x + 8, y - 4, x + 8, y + 4);
+    for (const dy of [-4, -3, -2, 3, 4]) g.rich[(y + dy) * W + x + 8] = 1; // two patches, apart
+    g.toasts.length = 0;
+    for (let dy = -4; dy <= 4; dy++) survey(g, x + 8, y + dy);
+    expect(g.toasts.filter((t) => t.includes('found a rich spot'))).toHaveLength(2);
   });
 
   test('signs go only on mountain tiles', () => {
