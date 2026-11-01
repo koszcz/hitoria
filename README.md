@@ -4,6 +4,9 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
+- **Changelog:** https://koszcz.github.io/hitoria/changelog.html shows what changed, with screenshots.
+- **Backlog dashboard:** https://koszcz.github.io/hitoria/backlog.html shows the ideas and what is being built.
+
 ![A village around the HQ keep, beside a bay and between mountain ridges. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left, and a message says a pack donkey has joined the carriers](docs/screenshot.jpg)
 
 ## How to play
