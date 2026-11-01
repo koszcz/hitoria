@@ -10,15 +10,16 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Design review round 2 fixes**: seven small fixes from the second gameplay review, built together. (1) A worker who rests or sleeps is no longer marked hungry, and the winter goal does not check for hunger at night. (2) Every wish can be granted, and none is granted for free: "Welcome 2 trade ships" asks for 1 ship, and the two "Store 40" wishes ask you to store more than you have when the wish starts. (3) New wishes point you at the late-game systems: upgrade 2 buildings, make 10 iron, sell the trader 8 of the goods it wants, and land on the far island. (4) The chronicle records more milestones: the first wish granted and every 5th after it, the first upgrade, each landing on an island, each winter with no one hungry, and 50 and 100 settlers. (5) You can upgrade a building only after you have made iron yourself, as the README says. (6) Foresters do not plant on worn paths. (7) The HQ keeps 6 tools back until every voyage on the map has sailed, not only the first. *Fun 2 · Effort M*
 - **Feast Square and wedding feast**: you build a Feast Square and order a wedding feast there. Carriers bring 10 fish, 10 bread and 10 meat. At the next dusk every worker gathers at the square to feast until midnight, then goes to sleep, and 2 new settlers arrive at dawn. You can hold one feast each season. *Fun 3 · Effort M*
-- **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 
 ## Inbox
 
 New ideas go here, not scored yet.
 
-Empty.
+- **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them.
+- **Choose where the ship sails**: when you send a ship to settle, you pick which island it sails to, instead of the ship always landing on the nearest shore.
 
 ## Needs thought
 
@@ -30,6 +31,7 @@ Empty.
 
 Triaged and ready to build, but not next.
 
+- **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
 - **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *Fun 1 · Effort M*
 - **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
 - **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
