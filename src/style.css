@@ -148,6 +148,23 @@ canvas {
 #info .warn { margin: 0 0 8px; color: #ffb36b; font-weight: 600; }
 .build.tool { margin-left: 4px; }
 
+#info h4 { margin: 10px 0 4px; font: 700 13px Georgia, serif; color: var(--gold); }
+#info button.sail {
+  display: block;
+  width: 100%;
+  margin: 8px 0 4px;
+  padding: 7px;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  background: rgba(40, 60, 110, 0.9);
+  border: 1px solid rgba(255, 226, 160, 0.5);
+  border-radius: 6px;
+  cursor: pointer;
+}
+#info button.sail:hover:not(:disabled) { border-color: var(--gold); }
+#info button.sail:disabled { opacity: 0.5; cursor: default; }
+
 #info .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
 #info .bar i { display: block; height: 100%; background: var(--gold); }
 

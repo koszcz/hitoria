@@ -3,6 +3,7 @@ import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
 import { openBuildMenu } from './buildmenu/menu';
 import { costText } from './buildmenu/card';
 import type { Level } from './quality/levels';
+import { sailRows } from './sailinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -21,6 +22,7 @@ export class UI {
   paused = false;
   private buttons = new Map<Tool, HTMLButtonElement>();
   private buildBtn!: HTMLButtonElement;
+  private infoHtml = ''; // what the building panel shows now
 
   // The graphics setting, shown on its menu button. main.ts sets it.
   graphics: { choice: string; level: Level } = { choice: 'auto', level: 'high' };
@@ -42,6 +44,14 @@ export class UI {
         this.refresh();
       };
     }
+    // The panel is drawn again as the game runs, so its buttons are handled here.
+    $('info').addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('[data-act="sail"]')) return;
+      const b = this.game.buildings.get(this.selected);
+      const why = b && this.game.sail(b);
+      if (why) this.toast(why);
+      this.refresh();
+    });
   }
 
   // Put all text in the current language: the build bar and the fixed labels in the page.
@@ -159,7 +169,7 @@ export class UI {
     const stored = g.stored;
     $('res').innerHTML =
       GOODS.map((k) => `<div class="pill${stored[k] ? '' : ' none'}" title="${goodName(k)}"><span class="good ${k}"></span><b>${stored[k]}</b></div>`).join('') +
-      `<div class="pill">🧑‍🌾 ${x.settlers(g.pool, g.settlers.size)}</div>`;
+      `<div class="pill">🧑‍🌾 ${x.settlers(g.idle, g.settlers.size)}</div>`;
 
     this.drawGoal();
     this.dropPanels();
@@ -186,6 +196,7 @@ export class UI {
         if (def.cost[k]) rows.push(`<div><span class="good ${k}"></span>${goodName(k)}: ${b.stock[k]} / ${def.cost[k]}</div>`);
     } else if (g.isStore(b)) {
       if (b.type === 'hq') rows.push(`<div>${x.landRadius(def.radius)}</div>`);
+      if (b.type === 'harbour') rows.push(sailRows(g, b));
       for (const k of GOODS) rows.push(`<div>${x.stored} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
     } else {
       if (b.type === 'house') {
@@ -199,7 +210,9 @@ export class UI {
     }
     info.hidden = false;
     const warn = b.type !== 'hq' && !g.linked(b) ? `<p class="warn">⚠ ${x.notLinked}</p>` : '';
-    info.innerHTML = `<h3>${def.icon} ${buildingName(b.type)}</h3><p class="desc">${buildingDesc(b.type)}</p>${warn}` +
+    const html = `<h3>${def.icon} ${buildingName(b.type)}</h3><p class="desc">${buildingDesc(b.type)}</p>${warn}` +
       (b.type === 'hq' ? '' : `<p class="status">${tr(b.status)}</p>`) + rows.join('');
+    // Only when it changes, so a button is not swapped out between press and release.
+    if (this.infoHtml !== html) info.innerHTML = this.infoHtml = html;
   }
 }

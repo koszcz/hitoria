@@ -110,7 +110,7 @@ describe('the voyage', () => {
     const around: { tree: number; rock: number }[] = [];
     for (let dy = -2; dy <= 2; dy++)
       for (let dx = -2; dx <= 2; dx++) if (Math.hypot(dx, dy) <= 2.5) around.push(g.world.at(spot.x + dx, spot.y + dy));
-    const trees = around.filter((t) => t.tree >= 1).length, rocks = around.reduce((n, t) => n + t.rock, 0);
+    const trees = around.filter((t) => t.tree >= 1).length, rocks = around.filter((t) => t.rock).length;
     expect(trees).toBeGreaterThan(0);
     g.sail(h);
     runUntil(g, () => !!landed(g), 200);
@@ -137,6 +137,22 @@ describe('the voyage', () => {
     g.sail(h);
     expect(g.canSail(h)).toBe('Your settlers have already sailed');
     expect(g.sail(h)).toBe('Your settlers have already sailed');
+    expect(g.ships.length).toBe(1);
+  });
+
+  test('brings everyone and everything home if the landing spot is taken, ready to try again', () => {
+    const { g, h } = harbourGame();
+    const pool = g.pool;
+    g.sail(h);
+    const ship = g.ships[0];
+    g.world.at(ship.land.x, ship.land.y).field = 999;
+    runUntil(g, () => ship.leg === 'moored', 300);
+    expect(landed(g)).toBeUndefined();
+    expect(g.pool).toBe(pool);
+    expect(h.stock.plank).toBe(SAIL_CARGO.plank!);
+    expect(ship.crew).toBe(0);
+    // The settlers may try again, and land somewhere else.
+    expect(g.sail(h)).toBeNull();
     expect(g.ships.length).toBe(1);
   });
 

@@ -15,7 +15,7 @@ import { walkDist } from './walking';
 // Who and what the ship takes. The settlers build their harbour from part of the goods.
 export const SAIL_CREW = 5;
 export const SAIL_CARGO: Partial<Bag> = { plank: 12, stone: 8 };
-export const SHIP_SPEED = 2; // tiles per second
+export const SHIP_SPEED = 1.2; // tiles per second
 const ROOM = 24; // open tiles the settlers need to reach from their harbour's flag
 const CLEAR = 2.5; // how far around their harbour the settlers fell trees and break boulders when they land
 
@@ -105,8 +105,8 @@ export function lacking(g: Game, h: Building): Partial<Bag> {
   return short;
 }
 
-// Settlers sail once, to settle the other island.
-export const sailed = (g: Game) => g.ships.length > 0 || [...g.buildings.values()].some((b) => b.landed);
+// Settlers sail once, to settle the other island. If they could not land, they may try again.
+export const sailed = (g: Game) => g.ships.some((s) => s.leg !== 'moored') || [...g.buildings.values()].some((b) => b.landed);
 
 // Why the ship can't sail from harbour `h` now, or null if it can.
 export function canSail(g: Game, h: Building): string | null {
@@ -142,6 +142,7 @@ export function sail(g: Game, h: Building): string | null {
     }
   }
   addPool(g, homeOf(g, h) ?? g.hq, -SAIL_CREW);
+  g.ships = g.ships.filter((s) => s.harbour !== h.id); // the ship tied up here sets off again
   g.ships.push({ id: g.nextId++, harbour: h.id, ...from, path: seaPath(g, from, to.dock), leg: 'out', crew: SAIL_CREW, cargo, land: to.land });
   g.toasts.push('⛵ A ship sets sail for the other island');
   return null;
@@ -151,14 +152,14 @@ export function sail(g: Game, h: Building): string | null {
 function land(g: Game, ship: Ship) {
   const { x, y } = ship.land;
   if (!freeShore(g, x, y)) return false;
-  // Trees and boulders around the landing spot become the settlers' first logs and stone.
+  // Each tree around the landing spot becomes a log, and each boulder a stone.
   const found = bag();
   for (let ny = y - 3; ny <= y + 3; ny++)
     for (let nx = x - 3; nx <= x + 3; nx++) {
       const t = g.world.inside(nx, ny) && g.world.at(nx, ny);
       if (!t || !cleared(x, y, nx, ny)) continue;
       if (t.tree >= 1) found.log++;
-      found.stone += t.rock;
+      if (t.rock) found.stone++;
       Object.assign(t, { tree: 0, rock: 0 });
     }
   const b = addBuilding(g, 'harbour', x, y);
