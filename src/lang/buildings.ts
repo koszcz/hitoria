@@ -21,7 +21,7 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   bakery: { name: 'Piekarnia', desc: 'Piecze chleb z mąki i wody.' },
   mine: {
     name: 'Kopalnia kamienia',
-    desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 kamienie, a na 3, gdy je inne jedzenie niż poprzednio. Zbuduj ją przy górze.',
+    desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 kamienie, a na 3, gdy je inne jedzenie niż poprzednio. Zbuduj ją przy górze albo na jej skraju, z trawą przed wejściem.',
   },
   coalmine: {
     name: 'Kopalnia węgla',

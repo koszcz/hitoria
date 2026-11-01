@@ -73,7 +73,9 @@ first, the wish just passes, with no penalty, and a new one comes.
    - Some mountain tiles are rich spots. A mine next to a rich spot digs twice as fast. Build a
      geologist's hut near a mountain, and its geologist puts up a sign on each mountain tile
      nearby. A gold sign marks a rich spot. The lumps on a sign show what lies below: grey stone,
-     or coal and iron ore. A mine's panel says when it sits next to a rich spot.
+     or coal and iron ore. A mine's panel says when it sits next to a rich spot. A mine can
+     also stand on the edge of a mountain, if there is open grass in front of its door. From
+     there it reaches rich spots deeper in the mountain.
    - Across the water from the bay lies a second island. Farther out, to one side of the bay, lies
      the far island. To settle them, build a harbour, click it and press **Set sail**. See
      "Settling the second island" below.
@@ -337,6 +339,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A mine next to a rich spot digs twice as fast. A geologist surveys the mountains up to 6 tiles
   from the Geologist's Hut and marks rich spots with gold signs. The mountain by the HQ and the
   second island's mountain always have one. All the ore on the far island is rich.
+- A mine goes on grass next to a mountain, or on a mountain tile at its edge. Either way, the tile
+  in front of its door must be open ground.
 - Iron mine → iron ore, and coal mine → coal → Smelter → iron. The smelter needs 1 iron ore and
   1 coal for each bar of iron.
 - Iron and planks → Toolmaker's Workshop → tools. The toolmaker needs 1 iron and 1 plank for

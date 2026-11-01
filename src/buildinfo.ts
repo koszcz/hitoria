@@ -66,7 +66,7 @@ const EN = {
   } as Partial<Record<BType, string>>,
   place: {
     fisher: 'Build it near water.',
-    mine: 'Build it next to a mountain.',
+    mine: 'Build it next to a mountain, or on its edge with grass in front.',
     geologist: 'Build it near a mountain.',
     harbour: `Build it on the shore, up to ${DOCK_REACH} tiles from open water.`,
   } as Partial<Record<'fisher' | 'mine' | 'harbour' | 'geologist', string>>,
@@ -108,7 +108,7 @@ const PL: typeof EN = {
     toolmaker: 'Każdy nowy pracownik potrzebuje 1 narzędzia. Gdy skończą się narzędzia z początku gry, nowe budynki czekają na nowe.',
     geologist: 'Pokazuje, gdzie stawiać kopalnie. Kopalnia obok złotego znaku wydobywa dwa razy szybciej.',
   },
-  place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.', geologist: 'Zbuduj ją blisko góry.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
+  place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze albo na jej skraju, z trawą przed wejściem.', geologist: 'Zbuduj ją blisko góry.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
   worker: 'Zatrudnia 1 wolnego osadnika.',
   eats: `Pracownik zjada 1 rybę, porcję mięsa lub bochenek chleba co ${MEAL} s pracy. Bez jedzenia pracuje o połowę wolniej.`,
   eatsOwn: `Pracownik je to, co wytwarza budynek: 1 sztukę co ${MEAL} s pracy.`,

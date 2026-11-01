@@ -2,7 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, BDEFS, bag } from '.';
 import { W } from '../world';
-import { flatGame, inside, placeBare } from './test-helpers';
+import { flatGame, inside, placeBare, placeLinked, runUntil } from './test-helpers';
 import { START_TOOLS } from './tools';
 
 describe('a new game', () => {
@@ -104,5 +104,56 @@ describe('canPlace', () => {
     expect(g.canPlace('woodcutter', bx, by)).toBeNull();
     const b = g.place('woodcutter', bx, by);
     expect(g.linked(b)).toBe(true);
+  });
+});
+
+describe("mines on the mountain's edge", () => {
+  // A block of mountain from (x0, y0) to (x1, y1).
+  const mountain = (g: ReturnType<typeof flatGame>, x0: number, y0: number, x1: number, y1: number) => {
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) g.world.at(x, y).t = 'mountain';
+  };
+
+  test('a mine may stand on a mountain tile with open ground in front of its door', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    mountain(g, x + 4, y - 4, x + 6, y - 2);
+    expect(g.canPlace('mine', x + 5, y - 2)).toBeNull();
+  });
+
+  test('other buildings still need flat grass', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    mountain(g, x + 4, y - 4, x + 6, y - 2);
+    expect(g.canPlace('woodcutter', x + 5, y - 2)).toBe('Needs flat grass');
+    expect(g.canPlace('geologist', x + 5, y - 2)).toBe('Needs flat grass');
+  });
+
+  test('a mine deeper in the mountain has no room in front of its door', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    mountain(g, x + 4, y - 4, x + 6, y - 2);
+    expect(g.canPlace('mine', x + 5, y - 3)).toBe('No room in front of its door');
+  });
+
+  test('a mine on the edge reaches a rich spot that no mine on grass can reach', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    g.rich.fill(0);
+    mountain(g, x + 2, y - 7, x + 8, y - 2);
+    g.rich[(y - 4) * W + x + 5] = 1; // 3 tiles from the nearest grass
+    expect(g.richAt('mine', x + 5, y - 1)).toBe(false);
+    expect(g.richAt('mine', x + 5, y - 2)).toBe(true);
+  });
+
+  test('a mine on the edge gets built, and its miner digs stone', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    mountain(g, x + 4, y - 4, x + 6, y - 2);
+    const mine = placeLinked(g, 'mine', x + 5, y - 2);
+    runUntil(g, () => mine.built, 150);
+    g.hq.stock.bread = 20;
+    const start = g.made.stone;
+    runUntil(g, () => g.made.stone > start, 300);
+    expect(g.world.at(x + 5, y - 2).t).toBe('mountain');
   });
 });
