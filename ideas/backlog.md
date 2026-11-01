@@ -25,9 +25,6 @@ Triaged, but not next.
 - **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
 
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
-- **Model loader, trees and rocks**: load detailed 3D models from free CC0 packs by Kenney, starting with trees and rocks. *Fun 2 · Effort M · Approved*
-- **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
-- **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
@@ -94,3 +91,6 @@ Ideas we decided not to build, and why.
 - **Birds**: it adds atmosphere only and changes no choices. Wild animals and Hunter add more to play.
 - **Clouds**: you decided not to build it.
 - **Forests spread**: dropped after a first build. Trees regrew in other forests' gaps instead of the felled patch, and we decided not to pursue it.
+- **Model loader, trees and rocks**: load detailed 3D models from free CC0 packs, starting with trees and rocks. We prefer the game's own code-built look to the Kenney and Quaternius packs.
+- **Building models**: swap the built-in building shapes for detailed models. We prefer the code-built look, and each building already has its own details.
+- **Settler models**: swap the built-in settler shapes for detailed, animated models. We prefer the code-built look.
