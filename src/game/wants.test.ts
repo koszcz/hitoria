@@ -2,14 +2,15 @@
 // at a fair rate while they last, and a limit on the tools and iron it sells.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { canTrade, dealFor, TRADE_EVERY } from './trade';
+import { DAY_LENGTH } from '../seasons/day';
+import { canTrade, dealFor } from './trade';
 import { OFFER_STOCK, OFFERS, SELL_LIMIT, WANTS, rollWants, traderDeal } from './wants';
 import { harbourGame, run, runUntil } from './test-helpers';
 import type { Trader } from './types';
 
 function docked(seed = 1) {
   const { g, h } = harbourGame(seed);
-  runUntil(g, () => g.trader?.leg === 'docked', TRADE_EVERY + 200);
+  runUntil(g, () => g.trader?.leg === 'docked', 200);
   return { g, h, t: g.trader! };
 }
 
@@ -48,8 +49,8 @@ describe('what a ship brings', () => {
     const { g, t } = docked();
     expect(t.wants.length).toBe(2);
     expect(t.offers.length).toBe(2);
-    run(g, 100, undefined, 0.5);
-    runUntil(g, () => g.trader?.leg === 'in', TRADE_EVERY + 300);
+    runUntil(g, () => g.trader === null, DAY_LENGTH, undefined, 0.5);
+    runUntil(g, () => g.trader?.leg === 'in', DAY_LENGTH, undefined, 0.5);
     expect(g.trader!.wants.length).toBe(2);
   });
 });

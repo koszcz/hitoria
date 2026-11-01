@@ -1,16 +1,16 @@
-// The trade ship: it sails in from the open sea every few minutes and ties up at your harbour.
-// While it is there, you swap spare goods for goods you lack. What it wants and sells is in wants.ts.
+// The trade ship: each morning it sails in from the open sea and ties up at your harbour until
+// late afternoon. While it is there, you swap spare goods for goods you lack. When it comes and
+// goes is in tradeday.ts. What it wants and sells is in wants.ts.
 import type { P } from '../path';
+import { dayNumber } from '../seasons/day';
 import { W, H } from '../world';
 import { noteTrader } from './chronicle';
 import type { Good } from './defs';
 import type { Game } from './game';
+import { maySail, untilCastOff } from './tradeday';
 import type { Building, Trader } from './types';
 import { flood, sailOn, seaPath, sources, water } from './voyage';
 import { rollWants, stockLeft, traderDeal } from './wants';
-
-export const TRADE_EVERY = 180; // seconds from one visit to the next
-export const TRADE_STAY = 90; // seconds the ship stays tied up
 
 // What each good is worth to the trader. Goods that take longer chains to make are worth more.
 export const VALUE: Record<Good, number> = {
@@ -63,19 +63,18 @@ export function stepTrader(g: Game, dt: number) {
   const t = g.trader;
   if (!t) {
     const h = tradeHarbour(g);
-    if (!h) return; // the wait starts once you have a harbour
-    g.traderT -= dt;
-    if (g.traderT > 0) return;
+    if (!h || !maySail(g.time, g.traderDay)) return;
     const dock = g.dock(h)!, edge = seaEdge(g, dock);
     if (!edge) return;
-    g.trader = { harbour: h.id, ...edge, path: seaPath(g, edge, dock), leg: 'in', left: TRADE_STAY, ...rollWants(g.rand) };
+    g.traderDay = dayNumber(g.time);
+    g.trader = { harbour: h.id, ...edge, path: seaPath(g, edge, dock), leg: 'in', left: untilCastOff(g.time), ...rollWants(g.rand) };
     g.toasts.push('🚢 A trade ship is sailing to your harbour');
     return;
   }
   const h = g.buildings.get(t.harbour);
   if (t.leg !== 'out' && !h) leave(g, t);
   if (t.leg === 'docked') {
-    t.left -= dt;
+    t.left = untilCastOff(g.time);
     if (t.left <= 0) leave(g, t);
     return;
   }
@@ -87,7 +86,6 @@ export function stepTrader(g: Game, dt: number) {
     return;
   }
   g.trader = null; // gone over the horizon
-  g.traderT = TRADE_EVERY;
 }
 
 // How many of good `k` the stores on harbour `h`'s island can spare now.

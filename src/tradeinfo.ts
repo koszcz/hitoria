@@ -1,6 +1,6 @@
 // The part of a harbour's panel about the trade ship: when it comes, and while it is tied up,
 // what it wants and sells, the goods you pick to give and to get, the deal, and the button that makes it.
-import { Game, Building, GOODS, Good, SELL_LIMIT, Trader, canTrade, spare, stockLeft, tradeHarbour, traderDeal } from './game';
+import { Game, Building, GOODS, Good, SELL_LIMIT, Trader, canTrade, spare, stockLeft, tradeHarbour, traderDeal, untilSail } from './game';
 import { getLang, goodName, join, plural, tr } from './i18n';
 
 // The goods the player has picked in the panel. The UI keeps them between redraws.
@@ -79,7 +79,7 @@ export function tradeRows(g: Game, b: Building, pick: TradePick): string {
   if (tradeHarbour(g) !== b) return '';
   const x = text(), t = g.trader;
   const head = `<h4>${x.head}</h4>`;
-  if (!t) return `${head}<p class="status">${x.coming(about(g.traderT))}</p>`;
+  if (!t) return `${head}<p class="status">${x.coming(about(untilSail(g.time, g.traderDay)))}</p>`;
   if (!tradeOpen(g, b)) return `${head}<p class="status">${t.leg === 'in' ? x.sailing : x.gone}</p>`;
   const have = GOODS.filter((k) => spare(g, b, k) > 0);
   const give = pick.give && have.includes(pick.give) ? pick.give : null;

@@ -9,7 +9,6 @@ import { isStore } from './stores';
 import { needsTool, START_TOOLS } from './tools';
 import { SAIL_CARGO } from './voyage';
 import type { Building, Ship, Trader } from './types';
-import { TRADE_EVERY } from './trade';
 import { oldWants } from './wants';
 import type { WinterState } from './survive';
 import type { WishState } from './wishes';
@@ -36,7 +35,7 @@ export interface SaveData {
   winter?: WinterState; // how the survive winter goal is going; older saves wait for the next winter
   ships?: Ship[]; // ships sailing to settle, or tied up; saves from before ships have none
   trader?: Trader | null; // the trade ship, if it is visiting; older saves have none
-  traderT?: number; // seconds until the next trade ship
+  traderDay?: number; // the day the last trade ship set out; older saves have none
   signs?: number[]; // the tiles with a geologist's sign; older saves have none
   chronicle?: Entry[]; // the island's milestones; older saves have none
   tradeVisits?: number; // trade ships that have tied up; older saves have none
@@ -89,7 +88,7 @@ export function save(g: Game): SaveData {
     v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool, nextId: g.nextId, hq: g.hq.id,
     tiles: g.world.tiles.map((t, i): Tile => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.crop, t.field, Math.round(g.wear[i] * 100) / 100]),
     buildings, made: { ...g.made }, goal: g.goal, winter: g.winter.state, ships: structuredClone(g.ships),
-    trader: structuredClone(g.trader), traderT: g.traderT,
+    trader: structuredClone(g.trader), traderDay: g.traderDay,
     signs: [...g.signs.keys()].filter((i) => g.signs[i]),
     chronicle: structuredClone(g.chronicle), tradeVisits: g.tradeVisits,
     wish: structuredClone(g.wish), wishesGranted: g.wishesGranted,
@@ -144,7 +143,7 @@ export function restore(g: Game, d: SaveData) {
   g.winter.state = d.winter ?? 'late';
   g.ships = d.ships ?? [];
   g.trader = d.trader ? { ...d.trader, ...oldWants(d.trader) } : null;
-  g.traderT = d.traderT ?? TRADE_EVERY;
+  g.traderDay = d.traderDay ?? 0;
   g.chronicle = d.chronicle ?? [];
   g.tradeVisits = d.tradeVisits ?? 0;
   g.wish = d.wish ?? null;

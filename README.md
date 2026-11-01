@@ -134,9 +134,10 @@ its foot.
 
 ### Trading with the trade ship
 
-About 3 minutes after your first harbour on the home island is finished, a trade ship sails in
-from the open sea. It stays tied up at the pier for about a minute and a half, then sails away.
-The next one comes 3 minutes later.
+Each morning, a trade ship sails in from the open sea to your first harbour on the home island.
+It stays tied up at the pier until late afternoon, then sails away before sunset. The next one
+comes the next morning. If your harbour is finished after midday, the first ship comes the next
+morning.
 
 1. While the trade ship is tied up, click the harbour.
 2. Under **You give**, pick a good you can spare. Under **You get**, pick a good you lack.
@@ -367,8 +368,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ, in storehouses and in harbours.
 - A harbour stands on the shore, up to 4 tiles from open water. A wooden pier runs out to its dock.
-  A ship sails from it to settle the second island, and later the far island. A trade ship visits it every few
-  minutes.
+  A ship sails from it to settle the second island, and later the far island. A trade ship visits it each
+  morning and leaves before sunset.
 
 There are no roads. A carrier takes one good from the building that has it and walks it the
 quickest way across the grass, all the way to the building that needs it. Spare goods go to the

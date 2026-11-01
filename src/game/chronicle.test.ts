@@ -2,7 +2,6 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, GOALS } from '.';
 import { DAY_LENGTH } from '../seasons/day';
-import { TRADE_EVERY } from './trade';
 import { flatGame, harbourGame, placeLinked, run, runUntil } from './test-helpers';
 
 describe('the chronicle', () => {
@@ -37,11 +36,11 @@ describe('the chronicle', () => {
   test('it notes every tenth trade ship', () => {
     const { g } = harbourGame();
     g.tradeVisits = 8;
-    runUntil(g, () => g.trader?.leg === 'docked', TRADE_EVERY + 200);
+    runUntil(g, () => g.trader?.leg === 'docked', 200);
     expect(g.tradeVisits).toBe(9);
     expect(g.chronicle.some((e) => e.what === 'trade')).toBe(false);
-    runUntil(g, () => !g.trader, 600);
-    runUntil(g, () => g.trader?.leg === 'docked', TRADE_EVERY + 200);
+    runUntil(g, () => !g.trader, DAY_LENGTH, undefined, 0.5);
+    runUntil(g, () => g.trader?.leg === 'docked', DAY_LENGTH, undefined, 0.5);
     expect(g.chronicle.filter((e) => e.what === 'trade')).toEqual([{ day: expect.any(Number), what: 'trade', n: 10 }]);
   });
 

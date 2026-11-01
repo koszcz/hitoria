@@ -26,7 +26,7 @@ import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
 import { START_TOOLS, watchTools } from './tools';
 import type { Entry } from './chronicle';
-import { stepTrader, trade, TRADE_EVERY } from './trade';
+import { stepTrader, trade } from './trade';
 import { richAt, richSpots } from './geology';
 import { canUpgrade, upgrade } from './upgrades';
 import type { Animal, AnimalKind, Building, Settler, Ship, Trader } from './types';
@@ -42,7 +42,7 @@ export class Game {
   pool = 18; // idle settlers inside the HQ
   ships: Ship[] = [];
   trader: Trader | null = null; // the trade ship, while it visits
-  traderT = TRADE_EVERY; // seconds until the next trade ship sets out, counted while you have a harbour
+  traderDay = 0; // the day the last trade ship set out, or 0 if none has
   time = 0;
   toasts: string[] = [];
   chronicle: Entry[] = []; // the island's milestones, oldest first

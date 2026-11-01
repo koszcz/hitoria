@@ -1,14 +1,16 @@
-// The trade ship: it visits your harbour every few minutes, and while it is tied up you swap
+// The trade ship: it visits your harbour each morning, and while it is tied up you swap
 // spare goods for goods you lack, at fixed rates.
 import { describe, expect, test } from 'bun:test';
 import { Game, bag } from '.';
-import { dealFor, TRADE_EVERY, TRADE_STAY, VALUE, tradeHarbour } from './trade';
+import { DAY_LENGTH, clock } from '../seasons/day';
+import { dealFor, VALUE, tradeHarbour } from './trade';
+import { CAST_OFF } from './tradeday';
 import { harbourGame, run, runUntil, totalGoods } from './test-helpers';
 
 // Run until the trade ship is tied up at the harbour.
 function docked(seed = 1) {
   const { g, h } = harbourGame(seed);
-  runUntil(g, () => g.trader?.leg === 'docked', TRADE_EVERY + 200);
+  runUntil(g, () => g.trader?.leg === 'docked', 200);
   Object.assign(g.trader!, { wants: [], offers: [], stock: {} }); // the usual rates, with no limits
   return { g, h };
 }
@@ -34,22 +36,21 @@ describe('the rates', () => {
 describe('visits', () => {
   test('no trade ship comes while you have no harbour', () => {
     const g = new Game(1);
-    run(g, TRADE_EVERY + 30, undefined, 0.5);
+    run(g, DAY_LENGTH, undefined, 0.5);
     expect(g.trader).toBeNull();
   });
 
   test('no trade ship comes to an unfinished harbour', () => {
     const { g } = harbourGame(1, false);
     g.hq.stock = bag(); // nothing to build it with, so it stays unfinished
-    run(g, TRADE_EVERY + 30, undefined, 0.5);
+    run(g, DAY_LENGTH, undefined, 0.5);
     expect(g.trader).toBeNull();
   });
 
-  test('comes a few minutes after the harbour stands, sails in from the sea and ties up', () => {
+  test('comes once the harbour stands in the morning, sails in from the sea and ties up', () => {
     const { g, h } = harbourGame();
-    run(g, TRADE_EVERY - 1, undefined, 0.5);
     expect(g.trader).toBeNull();
-    run(g, 2, undefined, 0.5);
+    run(g, 0.5, undefined, 0.5);
     expect(g.trader?.leg).toBe('in');
     expect(g.trader!.harbour).toBe(h.id);
     expect(g.toasts).toContain('🚢 A trade ship is sailing to your harbour');
@@ -59,14 +60,14 @@ describe('visits', () => {
     expect(g.toasts).toContain('🚢 The trade ship has tied up at your harbour');
   });
 
-  test('stays a while, then sails off, and comes back later', () => {
+  test('stays until late afternoon, then sails off, and comes back the next day', () => {
     const { g } = docked();
-    run(g, TRADE_STAY - 1, undefined, 0.5);
+    run(g, (CAST_OFF - clock(g.time)) * DAY_LENGTH - 1, undefined, 0.5);
     expect(g.trader?.leg).toBe('docked');
     run(g, 2, undefined, 0.5);
     expect(g.trader?.leg).toBe('out');
     runUntil(g, () => g.trader === null, 300);
-    runUntil(g, () => g.trader !== null, TRADE_EVERY + 1);
+    runUntil(g, () => g.trader !== null, DAY_LENGTH, undefined, 0.5);
   });
 
   test('visits a harbour on your home island, not the one your settlers built', () => {
@@ -89,17 +90,17 @@ describe('visits', () => {
     run(g, 10);
     const back = Game.load(JSON.parse(JSON.stringify(g.save())));
     expect(back.trader).toEqual(g.trader);
-    expect(back.traderT).toBe(g.traderT);
+    expect(back.traderDay).toBe(g.traderDay);
   });
 
   test('older saves without a trade ship load with none on the way', () => {
     const { g } = harbourGame();
     const d = g.save();
     delete d.trader;
-    delete d.traderT;
+    delete d.traderDay;
     const back = Game.load(d);
     expect(back.trader).toBeNull();
-    expect(back.traderT).toBe(TRADE_EVERY);
+    expect(back.traderDay).toBe(0);
   });
 });
 
