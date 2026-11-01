@@ -1,9 +1,11 @@
-// The survive winter goal: it watches a whole winter and fails it if a house or mine waits too long for food.
+// The survive winter goal: it watches a whole winter and fails it if a hut worker or miner goes hungry too long.
+// Houses don't count: a house waiting for food only waits to grow a settler, and no one in it goes hungry.
 import { isWinter } from '../seasons/year';
 import type { Game } from './game';
+import { eats } from './meals';
 import type { Building } from './types';
 
-export const HUNGRY_AFTER = 20; // seconds a house or mine can wait for food before its settler goes hungry
+export const HUNGRY_AFTER = 20; // seconds a worker or miner can go without food before the winter is spoiled
 
 // How the winter goal is going:
 // late: a winter was under way when the goal began, so the goal waits for the next one.
@@ -21,8 +23,9 @@ export const WINTER_NOTES: Record<WinterState, string> = {
   done: 'You got through the winter',
 };
 
-const EATERS = new Set(['house', 'mine', 'coalmine', 'ironmine']);
-const waiting = (b: Building) => b.built && EATERS.has(b.type) && b.status === 'Waiting for food';
+const MINES = new Set(['mine', 'coalmine', 'ironmine']);
+const waiting = (b: Building) =>
+  b.built && ((MINES.has(b.type) && b.status === 'Waiting for food') || (eats(b) && !!b.hungry));
 
 // Called often while the winter goal is the goal the player is on.
 export function watchWinter(g: Game) {

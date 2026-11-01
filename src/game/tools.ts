@@ -5,6 +5,7 @@ import type { Game } from './game';
 import { homeOf } from './homes';
 import { isStore } from './stores';
 import type { Building, Settler, Task } from './types';
+import { SAIL_CARGO } from './voyage';
 import { walkFrom } from './walking';
 import { W } from '../world';
 
@@ -59,4 +60,17 @@ export function dropTool(g: Game, s: Settler, home: Building) {
   const store = s.toolFrom && g.buildings.get(s.toolFrom);
   if (store) store.sending.tool--;
   s.toolFrom = undefined;
+}
+
+// Iron lies only on the other island, so tools used up before the ship sails can never be made
+// again. The game warns when the tools left come close to what the ship needs.
+export const TOOLS_LOW = SAIL_CARGO.tool! + 2;
+export const TOOLS_LOW_NOTE = `⚠️ Only ${TOOLS_LOW} tools left. The ship needs ${SAIL_CARGO.tool} to settle the other island`;
+
+// Called often. Warns once each time the stored tools drop to TOOLS_LOW, until the island is settled.
+export function watchTools(g: Game) {
+  const settled = g.ships.length > 0 || [...g.buildings.values()].some((b) => b.landed);
+  const low = !settled && g.stored.tool <= TOOLS_LOW;
+  if (low && !g.toolsLow) g.toasts.push(TOOLS_LOW_NOTE);
+  g.toolsLow = low;
 }

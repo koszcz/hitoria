@@ -12,6 +12,7 @@ export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant' | 'fish' | 'reap' |
 
 // Houses grow your number of settlers.
 export const HOUSE_FOOD: Good[] = ['fish', 'bread', 'meat'];
+export const WINTER_FISHING = 2.5; // a catch takes this many times as long in winter, since fish bite slowly in the cold
 export const HOUSE_PANTRY = 2; // food a house keeps on hand
 export const HOUSE_GROW = 40; // seconds from eating to a new settler
 export const HOUSE_SIZE = 4; // settlers one house adds in all
@@ -34,21 +35,21 @@ export const BDEFS: Record<BType, BDef> = {
   sawmill: { name: 'Sawmill', icon: '🪚', desc: 'Saws logs into planks.', cost: { plank: 2, stone: 2 }, buildTime: 9, worker: 'sawyer', radius: 0 },
   lookout: { name: 'Lookout Tower', icon: '🔭', desc: 'Expands your land. No soldiers, just a view.', cost: { plank: 3, stone: 3 }, buildTime: 10, worker: 'scout', radius: 7 },
   storehouse: { name: 'Storehouse', icon: '📦', desc: 'Stores spare goods close to where they are made and needed.', cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
-  fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5 },
+  fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore. In winter it catches about half as many.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5 },
   farm: { name: 'Farm', icon: '🌾', desc: 'Sows grain on free grass nearby and harvests it when it is ripe.', cost: { plank: 3, stone: 1 }, buildTime: 8, worker: 'farmer', radius: 3 },
   well: { name: 'Well', icon: '🪣', desc: 'Draws water from the ground. Build it on any flat grass.', cost: { plank: 2, stone: 1 }, buildTime: 6, worker: 'drawer', radius: 0 },
   mill: { name: 'Mill', icon: '⚙️', desc: 'Grinds grain into flour.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'miller', radius: 0 },
   bakery: { name: 'Bakery', icon: '🍞', desc: 'Bakes flour and water into bread.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'baker', radius: 0 },
-  house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish, meat or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
+  house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish, meat or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers. A different food from last time grows the settler faster.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
   monument: { name: 'Monument', icon: '🗿', desc: 'A tall stone monument to your peaceful island. It does no work, but your settlers are proud of it.', cost: { plank: 10, stone: 16 }, buildTime: 30, worker: null, radius: 0 },
-  mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
-  coalmine: { name: 'Coal Mine', icon: '⚫', desc: 'Digs coal out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 coal. Coal lies only in the mountains of the other island, so build it there.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
+  mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 stone, or 3 when the food differs from last time. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
+  coalmine: { name: 'Coal Mine', icon: '⚫', desc: 'Digs coal out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 coal, or 3 when the food differs from last time. Coal lies only in the mountains of the other island, so build it there.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
   hunter: { name: "Hunter's Lodge", icon: '🏹', desc: 'Hunts deer and hares nearby and brings home meat. Animals slowly come back.', cost: { plank: 2 }, buildTime: 6, worker: 'hunter', radius: 7 },
   smelter: { name: 'Smelter', icon: '🔥', desc: 'Melts iron ore with coal into iron. It uses 1 iron ore and 1 coal for each bar of iron.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'smelter', radius: 0 },
   harbour: { name: 'Harbour', icon: '⚓', desc: 'A wooden pier on the shore where ships can dock. It stores goods like a storehouse. Build it by open water.', cost: { plank: 4, stone: 3 }, buildTime: 12, worker: null, radius: 0 },
   toolmaker: { name: "Toolmaker's Workshop", icon: '🔨', desc: 'Makes the tools that new workers need, from iron and planks. It uses 1 iron and 1 plank for each tool.', cost: { plank: 2, stone: 2 }, buildTime: 8, worker: 'toolmaker', radius: 0 },
   geologist: { name: "Geologist's Hut", icon: '🔍', desc: 'A geologist surveys the mountains nearby and puts up a sign on each tile. A gold sign marks a rich spot: a mine next to it digs twice as fast. Build it near a mountain.', cost: { plank: 2 }, buildTime: 6, worker: 'geologist', radius: 6 },
-  ironmine: { name: 'Iron Mine', icon: '🪨', desc: 'Digs iron ore out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 iron ore. Iron ore lies only in the mountains of the other island, so build it there.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
+  ironmine: { name: 'Iron Mine', icon: '🪨', desc: 'Digs iron ore out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 iron ore, or 3 when the food differs from last time. Iron ore lies only in the mountains of the other island, so build it there.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
 };
 // Mines dig into a mountain, so they go next to one.
 export const MINES: BType[] = ['mine', 'coalmine', 'ironmine'];

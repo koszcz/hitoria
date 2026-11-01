@@ -1,6 +1,6 @@
 // The language the interface speaks. The game itself keeps its messages in English, and this
 // module turns them into the player's language when they are shown.
-import { BDEFS, type BType, type Good } from './game';
+import { BDEFS, SAIL_CARGO, TOOLS_LOW, TOOLS_LOW_NOTE, type BType, type Good } from './game';
 import { BUILDING_PL } from './lang/buildings';
 
 export type Lang = 'en' | 'pl';
@@ -81,6 +81,7 @@ const MESSAGES_PL: Record<string, string> = {
   'Planting a tree': 'Sadzi drzewo',
   'No shore in range': 'Brak brzegu w zasięgu',
   Fishing: 'Łowi ryby',
+  'Fishing, slowly in the cold': 'Łowi ryby, powoli w zimnie',
   'Waiting for the grain to ripen': 'Czeka, aż zboże dojrzeje',
   'Fields rest in winter': 'Zimą pola odpoczywają',
   'Harvesting grain': 'Zbiera zboże',
@@ -114,7 +115,7 @@ const MESSAGES_PL: Record<string, string> = {
   'Make 50 planks': 'Zrób 50 desek',
   'Bake 20 bread': 'Upiecz 20 bochenków chleba',
   'Grow to 30 settlers': 'Dojdź do 30 osadników',
-  'Build 3 houses': 'Zbuduj 3 domy',
+  'Store 30 fish, meat or bread': 'Zgromadź 30 ryb, porcji mięsa lub bochenków chleba',
   'Build a monument': 'Zbuduj pomnik',
   'Get through a winter with no one hungry': 'Przetrwaj zimę tak, by nikt nie głodował',
   'Winter has begun. Get ready for the next one': 'Zima już trwa. Przygotuj się na następną',
@@ -169,6 +170,7 @@ const MESSAGES_PL: Record<string, string> = {
   'No trade ship is here': 'Nie ma tu statku kupieckiego',
   'Pick two different goods': 'Wybierz dwa różne towary',
   'Not enough goods to give': 'Za mało towarów do wymiany',
+  [TOOLS_LOW_NOTE]: `⚠️ Zostało tylko ${TOOLS_LOW} narzędzi. Statek potrzebuje ${SAIL_CARGO.tool}, by zasiedlić drugą wyspę`,
 };
 
 const BTYPES = Object.keys(BDEFS) as BType[];

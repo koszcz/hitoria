@@ -2,6 +2,7 @@
 // A worker with no food works at half speed.
 import { BDEFS, BType, Good, HOUSE_FOOD, Role } from './defs';
 import type { Building, Task } from './types';
+import { MIXED_MEAL, pickFood, tasteNew } from './variety';
 
 export const MEAL = 60; // seconds of work that one fish, meat or bread is good for
 export const LUNCHBOX = 2; // food a hut keeps on hand for its worker
@@ -40,13 +41,14 @@ export function feed(b: Building, tasks: Task[]) {
 }
 
 // Eat one food from the hut's stock, else from its own pile of finished goods that no carrier is coming for.
+// A new kind of food makes the meal last longer.
 function eat(b: Building) {
-  const k = HOUSE_FOOD.find((k) => b.stock[k] > 0);
+  let k = pickFood(b, (k) => b.stock[k] > 0);
   if (k) b.stock[k]--;
   else {
-    const o = HOUSE_FOOD.find((k) => b.out[k] > b.sending[k]);
-    if (!o) return;
-    b.out[o]--;
+    k = pickFood(b, (k) => b.out[k] > b.sending[k]);
+    if (!k) return;
+    b.out[k]--;
   }
-  b.fed = (b.fed ?? 0) + MEAL;
+  b.fed = (b.fed ?? 0) + MEAL * (tasteNew(b, k) ? MIXED_MEAL : 1);
 }

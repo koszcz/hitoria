@@ -3,7 +3,7 @@ import { Game, SAIL_CARGO } from '.';
 import { BDEFS, BUILDABLE, RECIPES } from './defs';
 import { demolish } from './demolish';
 import { flatGame, placeLinked, run, runUntil, expectIncomingConsistent } from './test-helpers';
-import { needsTool, NO_TOOL, START_TOOLS } from './tools';
+import { needsTool, NO_TOOL, START_TOOLS, TOOLS_LOW } from './tools';
 
 // A finished building with a road to the HQ, still waiting for its worker.
 function finished(g: Game, type: Parameters<Game['place']>[0], dx = 4, dy = 3) {
@@ -150,5 +150,42 @@ describe('tools', () => {
     const l = Game.load(d);
     expect(l.hq.stock.tool).toBe(START_TOOLS);
     expect(l.buildings.get(hut.id)!.tooled).toBe(true);
+  });
+});
+
+describe('the low tools warning', () => {
+  const warning = (g: Game) => g.toasts.filter((t) => t.startsWith('⚠️ Only')).length;
+
+  test('the game warns once when the tools left are close to what the ship needs', () => {
+    const g = flatGame();
+    g.hq.stock.tool = TOOLS_LOW + 1;
+    run(g, 1);
+    expect(warning(g)).toBe(0);
+    g.hq.stock.tool = TOOLS_LOW;
+    run(g, 1);
+    expect(g.toasts).toContain(`⚠️ Only ${TOOLS_LOW} tools left. The ship needs ${SAIL_CARGO.tool} to settle the other island`);
+    g.hq.stock.tool = TOOLS_LOW - 1;
+    run(g, 1);
+    expect(warning(g)).toBe(1);
+  });
+
+  test('it warns again if tools run low a second time', () => {
+    const g = flatGame();
+    g.hq.stock.tool = TOOLS_LOW;
+    run(g, 1);
+    g.hq.stock.tool = TOOLS_LOW + 3;
+    run(g, 1);
+    g.hq.stock.tool = TOOLS_LOW - 2;
+    run(g, 1);
+    expect(warning(g)).toBe(2);
+  });
+
+  test('once the other island is settled, low tools need no warning', () => {
+    const g = flatGame();
+    const store = placeLinked(g, 'storehouse', g.hq.x + 4, g.hq.y + 3);
+    store.landed = true;
+    g.hq.stock.tool = 2;
+    run(g, 1);
+    expect(warning(g)).toBe(0);
   });
 });

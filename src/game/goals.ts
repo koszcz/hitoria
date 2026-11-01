@@ -1,5 +1,5 @@
 // Peaceful goals the player works through in order, such as "make 50 planks" or "build a monument".
-import type { BType } from './defs';
+import { HOUSE_FOOD, type BType } from './defs';
 import type { Game } from './game';
 import { WINTER_NOTES, watchWinter } from './survive';
 
@@ -19,7 +19,8 @@ export const GOALS: Goal[] = [
   { id: 'planks', text: 'Make 50 planks', need: 50, have: (g) => g.made.plank },
   { id: 'bread', text: 'Bake 20 bread', need: 20, have: (g) => g.made.bread },
   { id: 'settlers', text: 'Grow to 30 settlers', need: 30, have: (g) => g.population },
-  { id: 'houses', text: 'Build 3 houses', need: 3, have: (g) => built(g, 'house') },
+  // Food kept in stores, so the player learns to make more than the village eats before winter.
+  { id: 'food', text: 'Store 30 fish, meat or bread', need: 30, have: (g) => HOUSE_FOOD.reduce((n, k) => n + g.stored[k], 0) },
   { id: 'monument', text: 'Build a monument', need: 1, have: (g) => built(g, 'monument') },
   {
     id: 'winter', text: 'Get through a winter with no one hungry', need: 1,

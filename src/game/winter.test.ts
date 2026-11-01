@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { isNight } from '../seasons/day';
+import { clock, isNight } from '../seasons/day';
 import { seasonAt, yearAt } from '../seasons/year';
 import { flatGame, placeLinked, run, runUntil } from './test-helpers';
 import type { Game } from '.';
@@ -63,5 +63,27 @@ describe('winter fields', () => {
     run(g, 20);
     skipTo(g, 'spring');
     runUntil(g, () => fieldsOf(g, farm.id).some((t) => t.crop > 0), 60);
+  });
+});
+
+describe('winter fishing', () => {
+  // Fish a fisher catches in 120 s from the morning of the next `season`.
+  function catchIn(season: 'spring' | 'winter') {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    for (let ty = y - 2; ty <= y + 2; ty++) for (let tx = x - 9; tx <= x - 8; tx++) g.world.at(tx, ty).t = 'water';
+    const fisher = placeLinked(g, 'fisher', x - 5, y);
+    runUntil(g, () => fisher.built && g.made.fish > 0, 300);
+    skipTo(g, season);
+    while (clock(g.time) < 0.3 || clock(g.time) > 0.31) g.time += 1;
+    const before = g.made.fish;
+    run(g, 120);
+    return g.made.fish - before;
+  }
+
+  test('a fisher catches about half as many fish in winter', () => {
+    const spring = catchIn('spring'), winter = catchIn('winter');
+    expect(winter).toBeGreaterThan(0);
+    expect(winter).toBeLessThanOrEqual(Math.ceil(spring * 0.6));
   });
 });
