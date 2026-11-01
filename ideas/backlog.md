@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. Old saves keep the ore they have. *Fun 3 · Effort M · Needs: Sail to settle, Coal and iron mines · Approved · Branch: worktree-agent-a8f9dc4d9888643ef*
+Nothing right now.
 
 ## Next
 
@@ -50,6 +50,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. Old saves keep the ore they have. *2026-11-01*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *2026-11-01*
 - **Harbour**: a harbour building on the shore, where ships can dock. *2026-11-01*
 - **Survive winter goal**: a last goal asks you to get through a whole winter with no house or mine waiting for food. *2026-11-01*

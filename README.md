@@ -41,8 +41,10 @@ when a house or mine waits more than 20 seconds for food. If that happens, try a
    - Fishers, hunters, farms, mills and bakeries make food. A bakery also needs water from a
      well. Houses turn food into new settlers.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
-   - Coal and iron mines also go next to a mountain. A smelter melts their iron ore and coal
-     into iron. Nothing uses iron yet.
+   - Coal and iron ore lie only in the mountain on the second island. The mountains on your home
+     island hold stone only. Coal and iron mines go next to the island's mountain, which has
+     rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron. Nothing
+     uses iron yet.
    - Across the water from the bay lies a second island. To settle it, build a harbour, click it
      and press **Set sail**. See "Settling the second island" below.
 
@@ -72,6 +74,9 @@ winter, farmers bring in ripe grain but sow nothing, so store grain and food bef
 The new harbour is the island's home, like the HQ. Its idle settlers wait there and go out from it
 to build, work and carry goods. Buildings on the island get their goods from it and bring what
 they make back to it. Settlers never cross the sea on foot. You can sail only once.
+
+The second island has a mountain with coal and iron ore in it. Build your coal and iron mines at
+its foot.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ, and its flag and roads stay.
@@ -175,7 +180,8 @@ After a load, everyone starts in their home, the HQ or the harbour on the second
 back to their building, so nothing is lost.
 
 Each save records which version of the map it was made on. A save from before a map change loads
-on the same land it was saved on, even though new games get the new map.
+on the same land it was saved on, even though new games get the new map. On maps from before the
+second island's mountain, every mountain still holds coal and iron ore.
 
 ## Graphics
 
@@ -206,7 +212,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 
 | File | What it does |
 | --- | --- |
-| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
+| `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
 | `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
@@ -226,7 +232,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - Woodcutter → logs → Sawmill → planks. A forester replants trees.
 - A quarry breaks boulders into stone. A stone mine digs stone out of a mountain, and its miner
   eats fish, meat or bread.
-- A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way.
+- A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way. Only the
+  second island's mountain holds coal and iron ore.
 - Iron mine → iron ore, and coal mine → coal → Smelter → iron. The smelter needs 1 iron ore and
   1 coal for each bar of iron. Nothing uses iron yet.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
