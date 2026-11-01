@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *Fun 2 · Effort M · Needs: Well and water · Approved · Branch: worktree-agent-a0bc9a668b53f4cc9*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *Fun 2 · Effort M · Needs: Well and water · Approved*
 - **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved*
 
 ## Inbox
