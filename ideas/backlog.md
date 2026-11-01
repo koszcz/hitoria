@@ -10,19 +10,15 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-*Empty.*
+- **Gameplay review quick fixes**: four small fixes from the gameplay review, built together. (1) The winter goal counts only workers and mines that are really hungry, not houses waiting to grow, and fishers catch less in winter so stored food matters. (2) A house or worker that gets more than one kind of food grows settlers faster or eats less often, so the bread chain and hunting stay useful. (3) A saved, dated chronicle of milestones, such as the first birth or the tenth trade ship, shows when you load your island. (4) "Build 3 houses" is replaced with a goal that teaches something new, and the game warns you before you use up the tools the ship needs. *Fun 2 · Effort M*
 
 ## Inbox
 
 New ideas go here, not scored yet.
 
 - **Village wishes**: after the last goal, the village asks for one gentle wish at a time, such as "store 40 food before the first snow", and a missed wish just moves on.
-- **Fair winter goal**: the winter goal counts only workers and mines that are really hungry, not houses waiting to grow, and fishers catch less in winter so stored food matters.
 - **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal.
 - **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells.
-- **Varied meals**: a house or worker that gets more than one kind of food grows settlers faster or eats less often, so the bread chain and hunting stay useful.
-- **Island chronicle**: a saved, dated log of milestones, such as the first birth or the tenth trade ship, that you see when you load your island.
-- **Better early goals**: "Build 3 houses" is replaced with a goal that teaches something new, and the game warns you before you use up the tools the ship needs.
 - **More voyages**: you sail again to new islands, or start a fresh island that keeps one reward from the last.
 
 ## Later
