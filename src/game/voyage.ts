@@ -14,7 +14,7 @@ import { walkDist } from './walking';
 
 // Who and what the ship takes. The settlers build their harbour from part of the goods.
 export const SAIL_CREW = 5;
-export const SAIL_CARGO: Partial<Bag> = { plank: 12, stone: 8 };
+export const SAIL_CARGO: Partial<Bag> = { plank: 12, stone: 8, tool: 6 }; // tools for the first workers there
 export const SHIP_SPEED = 1.2; // tiles per second
 const ROOM = 24; // open tiles the settlers need to reach from their harbour's flag
 const CLEAR = 2.5; // how far around their harbour the settlers fell trees and break boulders when they land

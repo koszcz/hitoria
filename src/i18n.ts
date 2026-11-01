@@ -1,6 +1,7 @@
 // The language the interface speaks. The game itself keeps its messages in English, and this
 // module turns them into the player's language when they are shown.
-import { BDEFS, HOUSE_GROW, HOUSE_SIZE, type BType, type Good } from './game';
+import { BDEFS, type BType, type Good } from './game';
+import { BUILDING_PL } from './lang/buildings';
 
 export type Lang = 'en' | 'pl';
 export const LANGS: Lang[] = ['en', 'pl'];
@@ -46,56 +47,15 @@ export function plural(n: number, one: string, few: string, many: string) {
 export const join = (names: string[], last: string) =>
   names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} ${last} ${names[names.length - 1]}`;
 
-const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
-  hq: { name: 'Siedziba', desc: 'Przechowuje wszystkie towary i daje dach wolnym osadnikom.' },
-  woodcutter: { name: 'Chata drwala', desc: 'Ścina dorosłe drzewa w pobliżu i dostarcza kłody.' },
-  forester: { name: 'Chata leśnika', desc: 'Sadzi sadzonki, z których wyrastają nowe drzewa.' },
-  quarry: { name: 'Kamieniołom', desc: 'Rozbija pobliskie głazy na kamień.' },
-  sawmill: { name: 'Tartak', desc: 'Tnie kłody na deski.' },
-  lookout: { name: 'Wieża widokowa', desc: 'Poszerza twoje ziemie. Żadnych żołnierzy, tylko widok.' },
-  storehouse: { name: 'Magazyn', desc: 'Przechowuje zapasy blisko miejsc, w których się je wytwarza i zużywa.' },
-  harbour: {
-    name: 'Port',
-    desc: 'Drewniane molo na brzegu, przy którym mogą cumować statki. Przechowuje towary jak magazyn. Zbuduj go przy otwartej wodzie.',
-  },
-  fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu.' },
-  hunter: { name: 'Chata myśliwego', desc: 'Poluje na jelenie i zające w pobliżu i przynosi mięso. Zwierzęta powoli wracają.' },
-  farm: { name: 'Gospodarstwo', desc: 'Sieje zboże na wolnej trawie w pobliżu i zbiera je, gdy dojrzeje.' },
-  well: { name: 'Studnia', desc: 'Czerpie wodę z ziemi. Zbuduj ją na dowolnej płaskiej trawie.' },
-  mill: { name: 'Młyn', desc: 'Miele zboże na mąkę.' },
-  bakery: { name: 'Piekarnia', desc: 'Piecze chleb z mąki i wody.' },
-  mine: {
-    name: 'Kopalnia kamienia',
-    desc: 'Wydobywa kamień z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 kamienie. Zbuduj ją przy górze.',
-  },
-  coalmine: {
-    name: 'Kopalnia węgla',
-    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 worki węgla. Węgiel jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
-  },
-  smelter: { name: 'Huta', desc: 'Wytapia żelazo z rudy żelaza i węgla. Na każdą sztabkę żelaza zużywa 1 bryłę rudy i 1 worek węgla.' },
-  ironmine: {
-    name: 'Kopalnia żelaza',
-    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 bryły rudy. Ruda żelaza jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
-  },
-  monument: {
-    name: 'Pomnik',
-    desc: 'Wysoki kamienny pomnik twojej spokojnej wyspy. Nie wykonuje żadnej pracy, ale osadnicy są z niego dumni.',
-  },
-  house: {
-    name: 'Dom',
-    desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę, porcję mięsa lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników.`,
-  },
-};
-
 export const buildingName = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].name : BDEFS[t].name);
 export const buildingDesc = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].desc : BDEFS[t].desc);
 
 // Goods as a label, as in "Planks: 4".
 const GOOD_EN: Record<Good, string> = {
-  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat', iron: 'Iron',
+  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat', iron: 'Iron', tool: 'Tools',
 };
 const GOOD_PL: Record<Good, string> = {
-  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza', meat: 'Mięso', iron: 'Żelazo',
+  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza', meat: 'Mięso', iron: 'Żelazo', tool: 'Narzędzia',
 };
 export const goodName = (g: Good) => (lang === 'pl' ? GOOD_PL : GOOD_EN)[g];
 
@@ -140,6 +100,10 @@ const MESSAGES_PL: Record<string, string> = {
   'Smelting iron': 'Wytapia żelazo',
   'Waiting for iron ore': 'Czeka na rudę żelaza',
   'Waiting for coal': 'Czeka na węgiel',
+  'Waiting for a tool': 'Czeka na narzędzie',
+  'Making tools': 'Robi narzędzia',
+  'Waiting for iron': 'Czeka na żelazo',
+  'Waiting for planks': 'Czeka na deski',
   Hunting: 'Poluje',
   'No animals in range': 'Brak zwierzyny w zasięgu',
   'A settler will be born soon': 'Wkrótce urodzi się osadnik',

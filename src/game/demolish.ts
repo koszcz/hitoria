@@ -32,6 +32,7 @@ export function demolish(g: Game, b: Building): string | null {
     sendHome(g, s);
   }
   for (const k of GOODS) home.stock[k] += b.stock[k] + b.out[k];
+  if (b.tooled) home.stock.tool++; // the worker brings their tool back
   g.flags.get(b.flag)!.building = 0; // the flag and its roads stay
   g.world.at(b.x, b.y).b = 0;
   freeFields(g, b);

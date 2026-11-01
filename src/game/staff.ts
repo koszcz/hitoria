@@ -1,8 +1,10 @@
 // Sending settlers out of their homes: a builder for every site and a worker for every hut.
+// A new worker fetches a tool on the way, if their hut has none yet.
 import { BDEFS } from './defs';
-import { linked } from './construction';
+import { builtStatus, linked } from './construction';
 import type { Game } from './game';
-import { giveUp, takeSettler } from './settlers';
+import { baseOf, giveUp, takeSettler } from './settlers';
+import { dropTool, fetchTool, lacksTool, NO_TOOL, toolStore } from './tools';
 import type { Building } from './types';
 
 export function staff(g: Game) {
@@ -12,12 +14,30 @@ export function staff(g: Game) {
     if (!sendBuilder(g, b)) continue;
     const role = BDEFS[b.type].worker;
     if (b.built && role && !b.worker) {
+      const store = lacksTool(b) ? toolStore(g, b) : null;
+      if (lacksTool(b) && !store) {
+        b.status = NO_TOOL;
+        continue;
+      }
+      if (b.status === NO_TOOL) b.status = builtStatus(b);
       const s = takeSettler(g, role, b);
       if (!s) continue; // this building's home has nobody left, but another home may
       b.worker = s.id;
       s.home = b.id;
-      s.onAbort = () => giveUp(g, s, b, 'worker');
-      s.tasks = [{ k: 'walk', x: b.x, y: b.y }, { k: 'do', f: () => { s.inside = true; s.onAbort = null; } }];
+      s.onAbort = () => {
+        dropTool(g, s, baseOf(g, s));
+        giveUp(g, s, b, 'worker');
+      };
+      s.tasks = [
+        ...(store ? fetchTool(s, store) : []),
+        { k: 'walk', x: b.x, y: b.y },
+        { k: 'do', f: () => {
+          if (s.carrying === 'tool') b.tooled = true;
+          s.carrying = null;
+          s.inside = true;
+          s.onAbort = null;
+        } },
+      ];
     }
   }
 }

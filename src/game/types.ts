@@ -23,6 +23,7 @@ export interface Building {
   grow: number; // seconds until a house's next settler, while it is eating
   landed?: boolean; // a harbour your settlers built where their ship landed: a home, like the HQ
   crew?: number; // idle settlers waiting inside a landing harbour
+  tooled?: boolean; // a worker brought this hut its tool, which stays here
 }
 
 // One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.
@@ -65,6 +66,7 @@ export interface Settler {
   job: Job | null; // a carrier's current trip
   home: number; // building a worker or builder belongs to
   base: number; // the HQ or landing harbour the settler came out of, and goes back to
+  toolFrom?: number; // the store a new worker is walking to for their tool
   inside: boolean;
   atWork: boolean;
   returning: boolean;

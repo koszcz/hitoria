@@ -45,7 +45,8 @@ export function totalGoods(g: Game): Bag {
   return sum;
 }
 
-// `incoming` and `sending` count the goods of carrier trips. They must match the trips under way.
+// `incoming` and `sending` count the goods of carrier trips, and the tools new workers come for.
+// They must match the trips under way.
 export function expectIncomingConsistent(g: Game) {
   const coming = new Map<number, Bag>(), going = new Map<number, Bag>();
   const add = (m: Map<number, Bag>, id: number, k: keyof Bag) => {
@@ -54,6 +55,7 @@ export function expectIncomingConsistent(g: Game) {
     m.set(id, r);
   };
   for (const s of g.settlers.values()) {
+    if (s.toolFrom) add(going, s.toolFrom, 'tool'); // a new worker coming for a tool
     if (!s.job) continue;
     add(coming, s.job.to, s.job.g);
     if (!s.carrying) add(going, s.job.from, s.job.g);

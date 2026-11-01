@@ -24,7 +24,8 @@ describe('build card facts', () => {
     expect(consumers('coal')).toEqual(['smelter']);
     expect(consumers('ore')).toEqual(['smelter']);
     expect(producers('iron')).toEqual(['smelter']);
-    expect(consumers('iron')).toEqual([]);
+    expect(consumers('iron')).toEqual(['toolmaker']);
+    expect(producers('tool')).toEqual(['toolmaker']);
     expect(consumers('flour')).toEqual(['bakery']);
     expect(makes('well')).toBe('water');
     expect(producers('water')).toEqual(['well']);
@@ -50,11 +51,19 @@ describe('build card facts', () => {
     expect(buildFacts('quarry').worth[0]).toMatch(/^\d+ of \d+ buildings need Stone to be built\.$/);
   });
 
-  test('coal and iron ore feed the smelter, and iron says nothing uses it yet', () => {
+  test('coal and iron ore feed the smelter, and iron feeds the toolmaker', () => {
     expect(buildFacts('coalmine').worth).toContain('Coal feeds the Smelter.');
     expect(buildFacts('ironmine').worth).toContain('Iron Ore feeds the Smelter.');
     expect(buildFacts('smelter').makes).toBe('Turns 1 Iron Ore and 1 Coal into 1 Iron every 6 s. That is up to 10 a minute.');
-    expect(buildFacts('smelter').worth).toContain('Nothing uses Iron yet. It waits in your stores.');
+    expect(buildFacts('smelter').worth).toContain("Iron feeds the Toolmaker's Workshop.");
+  });
+
+  test('the toolmaker says what tools are for, and huts say their worker takes a tool', () => {
+    const shop = buildFacts('toolmaker');
+    expect(shop.makes).toBe('Turns 1 Iron and 1 Plank into 1 Tool every 8 s. That is up to 8 a minute.');
+    expect(shop.worth).toEqual(['Every new worker in a hut needs 1 tool. When the tools you started with run out, new huts wait for one.']);
+    expect(buildFacts('woodcutter').needs).toContain('Takes 1 idle settler as its worker, and 1 tool from your stores.');
+    expect(buildFacts('lookout').needs).toContain('Takes 1 idle settler as its worker.');
   });
 
   test('placement rules and workers are listed', () => {
@@ -114,6 +123,14 @@ describe('build card notes about your game', () => {
     g.hq.stock.bread = 0;
     expect(buildNow(g, 'smelter').warn).toEqual(['You make no Iron Ore yet. Build an Iron Mine first.', 'You make no Coal yet. Build a Coal Mine first.']);
     expect(buildNow(g, 'mine').warn).toContain("You make no Bread, Fish or Meat yet. Build a Bakery, Fisher's Hut or Hunter's Lodge first.");
+  });
+
+  test('a hut warns when no tools are left', () => {
+    const g = flatGame();
+    expect(buildNow(g, 'woodcutter').warn).toEqual([]);
+    g.hq.stock.tool = 0;
+    expect(buildNow(g, 'woodcutter').warn).toEqual(["You have no tools left. Its worker will wait until a Toolmaker's Workshop makes one."]);
+    expect(buildNow(g, 'lookout').warn).toEqual([]);
   });
 
   test('a house explains how it grows your settlers', () => {

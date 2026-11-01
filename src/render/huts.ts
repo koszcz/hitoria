@@ -15,6 +15,7 @@ export function hut(g: THREE.Group, model: Model, type: BType, wall: string, roo
   else if (type === 'bakery') bakery(g, model, wall, roof);
   else if (type === 'well') well(g, wall, roof);
   else if (type === 'smelter') smelter(g, model, wall, roof);
+  else if (type === 'toolmaker') toolmaker(g, model, wall, roof);
 }
 
 // A log cabin with a mossy roof, a pile of logs and a chopping block with an axe in it.
@@ -125,6 +126,27 @@ function smelter(g: THREE.Group, model: Model, wall: string, roof: string) {
   model.chimney = new THREE.Vector3(0.26, 0.68, 0.12);
   for (const [x, z] of [[-0.32, 0.32], [-0.26, 0.38], [-0.38, 0.38]]) add(g, new THREE.DodecahedronGeometry(0.05, 0), '#262424', x, 0.03, z);
   for (let i = 0; i < 3; i++) add(g, new THREE.BoxGeometry(0.12, 0.03, 0.05), '#6a7078', 0.02, 0.015 + i * 0.03, 0.38 - (i % 2) * 0.02);
+}
+
+// A timber workshop under a green tiled roof, with an anvil on a stump, a grindstone and a rack of
+// finished tools: a hammer, an axe and a pick.
+function toolmaker(g: THREE.Group, model: Model, wall: string, roof: string) {
+  house(g, model, { w: 0.28, d: 0.22, h: 0.32, rh: 0.22, wall, roof, x: -0.1, z: -0.14, shutter: '#3a5a3a' });
+  // The anvil on its stump.
+  add(g, new THREE.CylinderGeometry(0.07, 0.08, 0.1, 8), '#7a5530', 0.3, 0.05, 0.3);
+  add(g, new THREE.BoxGeometry(0.12, 0.04, 0.06), '#4a4e54', 0.3, 0.12, 0.3);
+  add(g, new THREE.BoxGeometry(0.06, 0.03, 0.04), '#5a5e64', 0.3, 0.09, 0.3);
+  add(g, new THREE.ConeGeometry(0.02, 0.05, 6).rotateZ(Math.PI / 2), '#4a4e54', 0.385, 0.12, 0.3);
+  // A grindstone on a wooden frame.
+  for (const z of [0.3, 0.4]) add(g, new THREE.BoxGeometry(0.02, 0.12, 0.02), '#5a3c22', -0.36, 0.06, z);
+  add(g, new THREE.CylinderGeometry(0.07, 0.07, 0.03, 12).rotateX(Math.PI / 2), '#a8a294', -0.36, 0.12, 0.35);
+  // A rack of finished tools leaning on the wall.
+  add(g, new THREE.BoxGeometry(0.26, 0.02, 0.02), '#5a3c22', 0.33, 0.26, -0.14);
+  for (const [z, head] of [[-0.24, 'hammer'], [-0.14, 'axe'], [-0.04, 'pick']] as const) {
+    add(g, new THREE.BoxGeometry(0.012, 0.22, 0.012), '#8a6238', 0.38, 0.12, z).rotation.x = 0.15;
+    const w = head === 'pick' ? 0.1 : head === 'axe' ? 0.05 : 0.06;
+    add(g, new THREE.BoxGeometry(0.03, 0.03, w), '#9aa0a8', 0.38, 0.23, z);
+  }
 }
 
 // A round stone well under a little pitched roof, with a winch, a rope and a bucket, and a trough beside it.

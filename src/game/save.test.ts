@@ -26,7 +26,7 @@ describe('save and load', () => {
     const g = flatGame();
     const b = placeLinked(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     g.world.at(b.x + 3, b.y - 2).tree = 1;
-    runUntil(g, () => [...g.settlers.values()].some((s) => s.role === 'woodcutter' && s.carrying), 300);
+    runUntil(g, () => [...g.settlers.values()].some((s) => s.role === 'woodcutter' && s.carrying === 'log'), 300);
     const before = totalGoods(g);
     const g2 = Game.load(JSON.parse(JSON.stringify(g.save())));
     expect(totalGoods(g2)).toEqual(before);

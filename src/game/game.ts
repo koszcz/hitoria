@@ -23,6 +23,7 @@ import { isStore, stored } from './stores';
 import { dockOf } from './harbour';
 import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
+import { START_TOOLS } from './tools';
 import type { Animal, AnimalKind, Building, Flag, Road, Settler, Ship } from './types';
 
 export class Game {
@@ -66,7 +67,7 @@ export class Game {
     this.hq = addBuilding(this, 'hq', x, y);
     this.hq.built = true;
     this.hq.progress = 1;
-    this.hq.stock = bag({ log: 6, plank: 24, stone: 14 });
+    this.hq.stock = bag({ log: 6, plank: 24, stone: 14, tool: START_TOOLS });
     this.computeTerritory();
     spawnAnimals(this);
   }

@@ -1,4 +1,4 @@
-import { Game, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, DOCK_REACH, HOUSE_FOOD, WELL_DRAW } from './game';
+import { Game, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, DOCK_REACH, HOUSE_FOOD, WELL_DRAW, needsTool } from './game';
 import { getLang, goodName, buildingName, buildingDesc, join, plural } from './i18n';
 
 const bname = (t: BType) => buildingName(t);
@@ -21,7 +21,7 @@ const GATHER: Partial<Record<BType, Gather>> = {
 
 // One of a good, for the recipe line.
 const ONE_EN: Record<Good, string> = {
-  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat', iron: 'Iron',
+  log: 'Log', plank: 'Plank', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat', iron: 'Iron', tool: 'Tool',
 };
 // Polish goods counted one by one: the form after 1, after 2–4, and after 5 or more.
 const COUNT_PL: Record<Good, [string, string, string]> = {
@@ -37,9 +37,10 @@ const COUNT_PL: Record<Good, [string, string, string]> = {
   ore: ['bryłę rudy żelaza', 'bryły rudy żelaza', 'brył rudy żelaza'],
   meat: ['porcję mięsa', 'porcje mięsa', 'porcji mięsa'],
   iron: ['sztabkę żelaza', 'sztabki żelaza', 'sztabek żelaza'],
+  tool: ['narzędzie', 'narzędzia', 'narzędzi'],
 };
 // Polish goods whose name is plural ("Kłody zasilają"), not singular ("Kamień zasila").
-const PLURAL_PL: Partial<Record<Good, true>> = { log: true, plank: true, fish: true };
+const PLURAL_PL: Partial<Record<Good, true>> = { log: true, plank: true, fish: true, tool: true };
 
 const EN = {
   recipe: (from: Good[], also: Good[], n: number, to: Good, t: number, perMin: number) =>
@@ -60,6 +61,7 @@ const EN = {
     house: 'More settlers mean more carriers, builders and workers. Build more houses to keep growing.',
     monument: 'Your last goal. Build it once your island is thriving.',
     harbour: 'A ship sails from here to settle the other island. It also stores goods.',
+    toolmaker: 'Every new worker in a hut needs 1 tool. When the tools you started with run out, new huts wait for one.',
   } as Partial<Record<BType, string>>,
   place: {
     fisher: 'Build it near water.',
@@ -67,6 +69,7 @@ const EN = {
     harbour: `Build it on the shore, up to ${DOCK_REACH} tiles from open water.`,
   } as Partial<Record<'fisher' | 'mine' | 'harbour', string>>,
   worker: 'Takes 1 idle settler as its worker.',
+  workerTool: 'Takes 1 idle settler as its worker, and 1 tool from your stores.',
   noWorker: 'Needs no worker.',
   range: (n: number) => `Works up to ${n} tiles away.`,
   buildTime: (s: number) => `Takes ${s} s to build once its materials arrive.`,
@@ -77,6 +80,7 @@ const EN = {
   noWoodcutter: "New trees only help once a Woodcutter's Hut fells them.",
   noIdle: 'No idle settlers right now. It will wait for a worker.',
   unused: (g: Good) => `Nothing uses ${goodName(g)} yet. It waits in your stores.`,
+  noTool: "You have no tools left. Its worker will wait until a Toolmaker's Workshop makes one.",
 };
 
 const PL: typeof EN = {
@@ -97,9 +101,11 @@ const PL: typeof EN = {
     house: 'Więcej osadników to więcej tragarzy, budowniczych i pracowników. Buduj kolejne domy, by dalej rosnąć.',
     monument: 'Twój ostatni cel. Zbuduj go, gdy twoja wyspa kwitnie.',
     harbour: 'Stąd statek wypływa, by osiedlić drugą wyspę. Port przechowuje też towary.',
+    toolmaker: 'Każdy nowy pracownik potrzebuje 1 narzędzia. Gdy skończą się narzędzia z początku gry, nowe budynki czekają na nowe.',
   },
   place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
   worker: 'Zatrudnia 1 wolnego osadnika.',
+  workerTool: 'Zatrudnia 1 wolnego osadnika i bierze 1 narzędzie z magazynu.',
   noWorker: 'Nie potrzebuje pracownika.',
   range: (n) => `Pracuje do ${n} ${plural(n, 'pola', 'pól', 'pól')} od siebie.`,
   buildTime: (s) => `Budowa trwa ${s} s od dostarczenia materiałów.`,
@@ -110,6 +116,7 @@ const PL: typeof EN = {
   noWoodcutter: 'Nowe drzewa przydadzą się dopiero, gdy zetnie je Chata drwala.',
   noIdle: 'Nie ma teraz wolnych osadników. Budynek poczeka na pracownika.',
   unused: (g) => `${goodName(g)} jeszcze się do niczego nie przydaje. Czeka w twoich magazynach.`,
+  noTool: 'Nie masz już narzędzi. Pracownik poczeka, aż Warsztat narzędziarza zrobi nowe.',
 };
 
 const text = () => (getLang() === 'pl' ? PL : EN);
@@ -158,14 +165,14 @@ export function buildFacts(type: BType): BuildFacts {
     else if (users.length) worth.push(x.someNeed(users.length, BUILDABLE.length, out));
     const eat = consumers(out).filter((t) => t !== type);
     if (eat.length) worth.push(x.feeds(out, eat));
-    else if (!users.length) worth.push(x.unused(out));
+    else if (!users.length && out !== 'tool') worth.push(x.unused(out)); // tools go to new workers
   }
   if (x.worth[type]) worth.push(x.worth[type]!);
 
   const needs: string[] = [];
   const place = MINES.includes(type) ? x.place.mine : type === 'fisher' || type === 'harbour' ? x.place[type] : undefined;
   if (place) needs.push(place);
-  needs.push(def.worker ? x.worker : x.noWorker);
+  needs.push(!def.worker ? x.noWorker : needsTool(type) ? x.workerTool : x.worker);
   if (def.radius && type !== 'lookout' && !MINES.includes(type)) needs.push(x.range(def.radius));
   needs.push(x.buildTime(def.buildTime));
 
@@ -194,5 +201,6 @@ export function buildNow(game: Game, type: BType): BuildNow {
       warn.push(x.noInput(from, [...new Set(from.flatMap(producers))]));
   if (type === 'forester' && !count('woodcutter').all) warn.push(x.noWoodcutter);
   if (!game.pool && BDEFS[type].worker) warn.push(x.noIdle);
+  if (needsTool(type) && !game.stored.tool) warn.push(x.noTool);
   return { have, warn };
 }

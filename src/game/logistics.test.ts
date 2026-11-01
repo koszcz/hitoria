@@ -138,8 +138,8 @@ describe('storehouses', () => {
     const g = flatGame();
     const s = storehouse(g);
     s.stock = bag({ log: 1, plank: 2, stone: 3 });
-    const { log, plank, stone } = g.hq.stock;
-    expect(g.stored).toEqual(bag({ log: log + 1, plank: plank + 2, stone: stone + 3 }));
+    const { log, plank, stone, tool } = g.hq.stock;
+    expect(g.stored).toEqual(bag({ log: log + 1, plank: plank + 2, stone: stone + 3, tool }));
   });
 
   test('an unfinished storehouse stores nothing', () => {

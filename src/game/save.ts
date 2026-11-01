@@ -5,11 +5,13 @@ import type { Game } from './game';
 import { claimFields } from './fields';
 import { computeTerritory } from './land';
 import { isStore } from './stores';
+import { needsTool, START_TOOLS } from './tools';
+import { SAIL_CARGO } from './voyage';
 import type { Building, Flag, Road, Ship } from './types';
 import type { WinterState } from './survive';
 import { MAP_VERSION } from '../world';
 
-export const SAVE_VERSION = 4;
+export const SAVE_VERSION = 5;
 
 // A saved game. Settlers are not stored: on load everyone is back in their home (the HQ or a landing
 // harbour) and the dispatcher sends them out again.
@@ -81,7 +83,7 @@ type OldFlag = Flag & { items?: { g: Good }[] };
 type OldRoad = Road & { carrier?: number };
 
 export function checkVersion(d: SaveData) {
-  if (![1, 2, 3, SAVE_VERSION].includes(d.v)) throw new Error('This save is from a different version of Hitoria');
+  if (![1, 2, 3, 4, SAVE_VERSION].includes(d.v)) throw new Error('This save is from a different version of Hitoria');
 }
 
 // The map generator version to rebuild a save's land with. Version 3 saves all came after map 2.
@@ -123,9 +125,19 @@ export function restore(g: Game, d: SaveData) {
   g.goal = d.goal ?? 0;
   g.winter.state = d.winter ?? 'late';
   g.ships = d.ships ?? [];
+  if (d.v < 5) grantTools(g);
   g.net++;
   computeTerritory(g);
   // Farms from saves made before fields take theirs now, keeping the grain already growing.
   const owned = new Set(g.world.tiles.map((t) => t.field));
   for (const b of g.buildings.values()) if (b.type === 'farm' && !owned.has(b.id)) claimFields(g, b, true);
+}
+
+// Saves from before tools: huts already at work keep working, and every home gets the tools a new game starts with.
+function grantTools(g: Game) {
+  for (const b of g.buildings.values()) {
+    if (b.built && needsTool(b.type)) b.tooled = true;
+    if (b === g.hq) b.stock.tool += START_TOOLS;
+    else if (b.landed) b.stock.tool += SAIL_CARGO.tool!;
+  }
 }

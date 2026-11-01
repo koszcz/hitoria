@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import { Game, BDEFS, bag } from '.';
 import { W } from '../world';
 import { flatGame, inside, placeBare } from './test-helpers';
+import { START_TOOLS } from './tools';
 
 describe('a new game', () => {
   test('starts with a built HQ, its flag in front, and starting goods', () => {
@@ -10,7 +11,7 @@ describe('a new game', () => {
     expect(g.hq.built).toBe(true);
     const f = g.flags.get(g.hq.flag)!;
     expect(f).toMatchObject({ x: g.hq.x, y: g.hq.y + 1, building: g.hq.id });
-    expect(g.hq.stock).toEqual(bag({ log: 6, plank: 24, stone: 14 }));
+    expect(g.hq.stock).toEqual(bag({ log: 6, plank: 24, stone: 14, tool: START_TOOLS }));
     expect(g.population).toBe(18);
     expect(g.settlers.size).toBe(0);
   });

@@ -9,3 +9,4 @@ export { SAIL_CARGO, SAIL_CREW, lacking } from './voyage';
 export { LANDING_LAND } from './homes';
 export { ROAM, ANIMAL } from './animals';
 export { HUNT_RANGE, ANIMAL_RETURN } from './hunting';
+export { START_TOOLS, needsTool } from './tools';
