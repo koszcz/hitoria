@@ -1,6 +1,6 @@
 import { expect, test } from 'bun:test';
 import { growVillage } from './village';
-import { clock } from '../../src/render/daylight';
+import { clock } from '../../src/seasons/day';
 
 test('the README village is shown at midday', () => {
   expect(clock(growVillage().time)).toBeCloseTo(0.5, 1);

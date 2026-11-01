@@ -53,7 +53,7 @@ canvas {
 
 #res { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.pill, #speed, #info, #goal, .build, .toast, #help {
+.pill, #speed, #clock, #info, #goal, .build, .toast, #help {
   background: var(--panel);
   border: 1px solid var(--edge);
   border-radius: 8px;
@@ -84,6 +84,29 @@ canvas {
   border-radius: 6px;
 }
 #speed button.active { background: rgba(255, 210, 74, 0.25); color: var(--gold); }
+
+/* The clock beside the speed buttons: a dial for the time of day, then the season and day. */
+#clock {
+  position: fixed;
+  top: calc(var(--bar-bottom, 50px) + 10px);
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 10px 3px 4px;
+}
+#clock .dial { width: 30px; height: 30px; flex: none; }
+#clock .sky { fill: #6fa8d8; }
+#clock .dark { fill: #1d2a4a; }
+#clock line { stroke: #f4ead0; stroke-width: 0.9; stroke-linecap: round; }
+#clock .sun { fill: var(--gold); stroke: #b8860b; stroke-width: 0.5; }
+#clock .moon { fill: #e8ecf4; stroke: #8a94a8; stroke-width: 0.5; }
+#clock .hub { fill: #f4ead0; }
+#clock .when { display: flex; flex-direction: column; gap: 2px; min-width: 74px; }
+#clock .season { font-weight: 600; font-size: 13px; line-height: 1; }
+#clock .bar { height: 3px; background: rgba(0, 0, 0, 0.4); border-radius: 2px; overflow: hidden; }
+#clock .bar i { display: block; height: 100%; background: var(--gold); }
+#clock .day { color: var(--muted); font-size: 11px; line-height: 1; font-variant-numeric: tabular-nums; }
 
 /* Goods are drawn as small pictures, the same everywhere a good is listed. */
 .good {
@@ -138,7 +161,7 @@ canvas {
 
 #info {
   position: fixed;
-  top: calc(60px + var(--bar-drop, 0px));
+  top: calc(var(--bar-bottom, 50px) + 58px); /* below the clock */
   right: 10px;
   width: 250px;
   padding: 12px 14px;
@@ -281,6 +304,8 @@ body.touch .build { row-gap: 0; }
   #res { order: 3; width: 100%; gap: 4px; }
   .pill { padding: 3px 7px; gap: 2px; }
   #speed button { padding: 5px 8px; }
+  #clock { position: static; order: 1; margin-left: auto; }
+  #clock ~ #speed { margin-left: 0; }
   #file { top: 38px; }
   #file button { padding: 10px 14px; }
   #info {

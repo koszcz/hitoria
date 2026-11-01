@@ -1,7 +1,7 @@
 // Grows the village shown in the README screenshot: places a fixed list of buildings near the HQ
 // on a fixed island, then lets the game run until the village is built.
 import { Game, type BType } from '../../src/game';
-import { clock } from '../../src/render/daylight';
+import { clock } from '../../src/seasons/day';
 
 export const SEED = 214;
 

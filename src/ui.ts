@@ -5,6 +5,7 @@ import { costText } from './buildmenu/card';
 import type { Level } from './quality/levels';
 import { sailRows } from './sailinfo';
 import { tradeRows, type TradePick } from './tradeinfo';
+import { drawClock } from './seasons/hud';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -163,6 +164,9 @@ export class UI {
     const drop = Math.max(0, $('res').getBoundingClientRect().bottom - document.querySelector('.brand')!.getBoundingClientRect().bottom);
     const root = document.documentElement.style;
     if (root.getPropertyValue('--bar-drop') !== `${drop}px`) root.setProperty('--bar-drop', `${drop}px`);
+    // The clock and the building panel sit below the whole bar, even when its buttons wrap.
+    const bottom = `${Math.round($('topbar').getBoundingClientRect().bottom)}px`;
+    if (root.getPropertyValue('--bar-bottom') !== bottom) root.setProperty('--bar-bottom', bottom);
   }
 
   refresh() {
@@ -176,6 +180,7 @@ export class UI {
       `<div class="pill">🧑‍🌾 ${x.settlers(g.idle, g.settlers.size)}</div>`;
 
     this.drawGoal();
+    drawClock($('clock'), g.time);
     this.dropPanels();
 
     for (const [type, btn] of this.buttons) btn.classList.toggle('active', this.placing === type);

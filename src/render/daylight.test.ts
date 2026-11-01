@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { DAY_LENGTH, clock, daylightAt } from './daylight';
+import { daylightAt } from './daylight';
 
 const NOON = 0.5, MIDNIGHT = 0;
 
@@ -53,18 +53,5 @@ describe('daylight', () => {
       expect(Math.abs(l.sky.r - prev.sky.r) + Math.abs(l.sky.g - prev.sky.g) + Math.abs(l.sky.b - prev.sky.b)).toBeLessThan(0.02);
       prev = l;
     }
-  });
-});
-
-describe('clock', () => {
-  test('a new game starts in the morning', () => {
-    expect(clock(0)).toBeGreaterThan(0.25);
-    expect(clock(0)).toBeLessThan(0.5);
-  });
-
-  test('a day lasts 8 minutes of game time, then repeats', () => {
-    expect(DAY_LENGTH).toBe(480);
-    expect(clock(123 + DAY_LENGTH)).toBeCloseTo(clock(123), 9);
-    expect(clock(DAY_LENGTH / 2)).toBeCloseTo((clock(0) + 0.5) % 1, 9);
   });
 });

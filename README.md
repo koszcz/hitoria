@@ -7,7 +7,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 - **Changelog:** https://koszcz.github.io/hitoria/changelog.html shows what changed, with screenshots.
 - **Backlog dashboard:** https://koszcz.github.io/hitoria/backlog.html shows the ideas and what is being built.
 
-![A village around the HQ keep, beside a bay and between mountain ridges. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left, and a message says a pack donkey has joined the carriers](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and between mountain ridges. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left. At the top right, the clock shows winter, day 5](docs/screenshot.jpg)
 
 ## How to play
 
@@ -77,6 +77,10 @@ The island also goes through the four seasons. A full year lasts 20 minutes of g
 new game starts in spring. Leafy trees turn yellow, orange and red in autumn and lose their leaves
 in winter, when snow falls and covers the land. Grain grows only from spring to autumn. In
 winter, farmers bring in ripe grain but sow nothing, so store grain and food before the snow comes.
+
+A small clock at the top right shows where you are in the day and the year. On its dial, the sun
+moves across the light half by day and the moon across the dark half by night. Next to the dial
+you see the season, a bar that fills as the season goes on, and the day count.
 
 The sea is alive too. Foam runs along the beaches, fish leap out of the water now and then, and
 ducks paddle near the shore. The ducks fly south for the winter. They are only there to look at.
@@ -258,7 +262,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
-| `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
+| `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, and the clock in the HUD (`hud.ts`) |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, work sounds (`work.ts` picks what you hear, `strikes.ts` plays it), how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
