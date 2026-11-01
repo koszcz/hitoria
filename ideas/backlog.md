@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved · Branch: worktree-agent-a8704c1540054bdae*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved*
+*Empty.*
 
 ## Inbox
 
