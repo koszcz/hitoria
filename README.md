@@ -78,6 +78,11 @@ to the nearest bed: the HQ, a finished house or the harbour on the second island
 building site says "Asleep until dawn", and no new worker leaves home. At dawn they walk back and
 go on working. Carriers and pack donkeys work all night, so goods keep moving.
 
+Once every worker and builder is in bed, the night passes fast. The clock runs 8 times as fast,
+or 16 times if you already play at 2× or 4×, and drops back to your speed at dawn. While a night
+runs fast, the moon button next to the speed buttons turns blue and shows the speed. Click the
+moon button to turn fast nights off or on. The game remembers your choice.
+
 The island also goes through the four seasons. A full year lasts 20 minutes of game time, and a
 new game starts in spring. Leafy trees turn yellow, orange and red in autumn and lose their leaves
 in winter, when snow falls and covers the land. Grain grows only from spring to autumn. In
@@ -137,6 +142,7 @@ to the HQ.
 | Remove a building | `X` |
 | Cancel | Right-click or Esc |
 | Pause | Space |
+| Turn fast nights on or off | The 🌙 button next to the speed buttons |
 | Save | Ctrl+S (or Cmd+S) |
 | Mute or unmute the sound | `M`, or **Sound** in the ☰ menu |
 | Change the music volume | **Music** in the ☰ menu |
@@ -267,7 +273,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
-| `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, and the clock in the HUD (`hud.ts`) |
+| `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, the clock in the HUD (`hud.ts`), and fast nights (`fastnight.ts`) |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, work sounds (`work.ts` picks what you hear, `strikes.ts` plays it), how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |

@@ -84,6 +84,10 @@ canvas {
   border-radius: 6px;
 }
 #speed button.active { background: rgba(255, 210, 74, 0.25); color: var(--gold); }
+/* The fast nights button: dim when off, lit when on, and blue while a night runs fast. */
+#fastnight { opacity: 0.55; }
+#speed #fastnight.active { opacity: 1; background: none; color: inherit; }
+#speed #fastnight.fast { background: rgba(120, 150, 255, 0.3); color: #cdd8ff; font-variant-numeric: tabular-nums; }
 
 /* The clock beside the speed buttons: a dial for the time of day, then the season and day. */
 #clock {

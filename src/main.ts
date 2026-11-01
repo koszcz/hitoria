@@ -323,7 +323,7 @@ function frame(now: number) {
 
   const t0 = performance.now();
   if (!ui.paused) {
-    acc += dt * ui.speed;
+    acc += dt * ui.runSpeed(game.allAsleep());
     let n = 0;
     while (acc >= STEP && n++ < 40) {
       game.update(STEP);

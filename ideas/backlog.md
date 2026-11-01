@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *Fun 2 · Effort S · Needs: Workers sleep at night · Branch: worktree-agent-a31401674bb6cc6f3*
+Nothing right now.
 
 ## Next
 
@@ -36,6 +36,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *2026-11-01*
 - **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *2026-11-01*
 - **Day and season clock**: a small dial in the HUD shows the time of day, the season and the day count. *2026-11-01*
 - **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *2026-11-01*

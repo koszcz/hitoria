@@ -212,6 +212,8 @@ const EN = {
   music: (v: number): string => (v ? `🎵 Music: ${v * 100}%` : '🎵 Music: Off'),
   musicTitle: 'Music volume. Click to change. M mutes all sound.',
   pause: 'Pause (space)',
+  fastNightTitle: (on: boolean) =>
+    `Fast nights: ${on ? 'on' : 'off'}. Once every worker is in bed, the clock runs fast until dawn. Click to turn ${on ? 'off' : 'on'}.`,
   help: 'Drag to pan · Scroll to zoom · B build · X remove · Right-click to cancel · Ctrl+S save · M mute · F3 diagnostics',
   helpTouch: 'Drag to pan · Pinch to zoom · Tap twice to build',
   menu: 'Menu',
@@ -300,6 +302,8 @@ const PL: typeof EN = {
   music: (v: number): string => (v ? `🎵 Muzyka: ${v * 100}%` : '🎵 Muzyka: wył.'),
   musicTitle: 'Głośność muzyki. Kliknij, aby zmienić. M wycisza cały dźwięk.',
   pause: 'Pauza (spacja)',
+  fastNightTitle: (on: boolean) =>
+    `Szybkie noce: ${on ? 'wł.' : 'wył.'}. Gdy wszyscy robotnicy śpią, zegar biegnie szybko aż do świtu. Kliknij, aby ${on ? 'wyłączyć' : 'włączyć'}.`,
   help: 'Przeciągnij, by przesunąć · Kółko przybliża · B buduj · X usuń · Prawy przycisk anuluje · Ctrl+S zapis · M wycisz · F3 diagnostyka',
   helpTouch: 'Przeciągnij: przesuń · Rozsuń palce: przybliż · Stuknij dwa razy: buduj',
   menu: 'Menu',

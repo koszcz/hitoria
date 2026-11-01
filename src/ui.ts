@@ -6,6 +6,7 @@ import type { Level } from './quality/levels';
 import { sailRows } from './sailinfo';
 import { tradeRows, type TradePick } from './tradeinfo';
 import { drawClock } from './seasons/hud';
+import { FastNights, nightSpeed } from './seasons/fastnight';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -20,6 +21,9 @@ export class UI {
   selected = 0;
   speed = 1;
   paused = false;
+  // Whether nights run fast, and how fast the game runs right now. main.ts reads `speedNow`.
+  fastNights = new FastNights();
+  speedNow = 1;
   private buttons = new Map<Tool, HTMLButtonElement>();
   private buildBtn!: HTMLButtonElement;
   private infoHtml = ''; // what the building panel shows now
@@ -45,6 +49,10 @@ export class UI {
         this.refresh();
       };
     }
+    $('fastnight').onclick = () => {
+      this.fastNights.toggle();
+      this.refresh();
+    };
     // The panel is drawn again as the game runs, so its buttons are handled here.
     $('info').addEventListener('click', (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-act]');
@@ -81,6 +89,26 @@ export class UI {
     $('done').textContent = x.done;
     document.querySelector<HTMLButtonElement>('#speed [data-speed=pause]')!.title = x.pause;
     this.refresh();
+  }
+
+  // How fast the game runs now: the chosen speed, or faster while everyone sleeps at night.
+  runSpeed(allAsleep: boolean) {
+    const v = nightSpeed(this.speed, this.fastNights.on, allAsleep);
+    if (v !== this.speedNow) {
+      this.speedNow = v;
+      this.drawFastNight();
+    }
+    return v;
+  }
+
+  // The moon button: lit when fast nights are on, with the speed shown while a night runs fast.
+  private drawFastNight() {
+    const btn = $('fastnight');
+    const on = this.fastNights.on, fast = on && this.speedNow > this.speed;
+    btn.classList.toggle('active', on);
+    btn.classList.toggle('fast', fast && !this.paused);
+    btn.textContent = fast ? `🌙 ${this.speedNow}×` : '🌙';
+    btn.title = T().fastNightTitle(on);
   }
 
   // The bar at the bottom: one button that opens the build menu, then the remove tool.
@@ -190,6 +218,7 @@ export class UI {
       const v = btn.dataset.speed;
       btn.classList.toggle('active', v === 'pause' ? this.paused : !this.paused && Number(v) === this.speed);
     }
+    this.drawFastNight();
 
     const info = $('info');
     const b = g.buildings.get(this.selected);
