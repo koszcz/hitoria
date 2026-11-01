@@ -328,6 +328,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/wishes/` | The goal panel once every goal is reached: the village wish, its progress and its season |
 | `src/i18n.ts` | Translations. The Polish building names and village wishes are in `src/lang/` |
 | `src/main.ts` | Input, camera, fixed-step game loop |
+| `src/playtest/` | `window.playtest`: console commands that read the game as text and act like a player, for `/playtest` runs. Type `playtest.help()` in the console |
 
 ## Current economy
 
@@ -400,3 +401,10 @@ animal used to live.
 ## Ideas
 
 Ideas for the game, and what we build next, live in [ideas/](ideas/README.md).
+
+## Playtests
+
+Run `/playtest` in Claude Code to have Claude play a fresh island for up to 20 minutes as one of
+four tester personas. The personas are in `.claude/skills/playtest/personas.md`. Each run writes
+a report to `docs/playtests/`. The report says what the tester achieved, and lists every
+obstacle, error, bottleneck and surprise they met.

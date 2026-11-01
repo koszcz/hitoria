@@ -18,6 +18,7 @@ import { Music } from './sound/music';
 import { MusicVolume } from './sound/volume';
 import { WorkSounds } from './sound/strikes';
 import { workMix, workSources } from './sound/work';
+import { installPlaytest } from './playtest/hook';
 
 setLang(startLang());
 const saves = new Saves();
@@ -380,3 +381,4 @@ function frame(now: number) {
 requestAnimationFrame(frame);
 
 Object.assign(window, { game, diag, renderer, music, work }); // handy for poking at state from the console
+installPlaytest({ game: () => game, ui, click });
