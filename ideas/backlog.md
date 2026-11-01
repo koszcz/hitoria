@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-*Empty.*
+- **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *Fun 2 · Effort M · Needs: No player roads · Approved*
+- **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *Fun 2 · Effort M · Needs: Well and water · Approved*
+- **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved*
 
 ## Inbox
 
@@ -24,15 +26,12 @@ Triaged, but not next.
 
 - **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
 
-- **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *Fun 2 · Effort M · Needs: Well and water · Approved*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape · Approved*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
-- **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *Fun 2 · Effort M · Needs: No player roads · Approved*
 - **Model loader, trees and rocks**: load detailed 3D models from free CC0 packs by Kenney, starting with trees and rocks. *Fun 2 · Effort M · Approved*
 - **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
 - **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
 - **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved*
-- **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
