@@ -10,8 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Feast Square and wedding feast**: you build a Feast Square and order a wedding feast there. Carriers bring 10 fish, 10 bread and 10 meat. At the next dusk every worker gathers at the square to feast until midnight, then goes to sleep, and 2 new settlers arrive at dawn. You can hold one feast each season. *Fun 3 · Effort M*
+- **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
-- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 
 ## Inbox
 
@@ -29,6 +30,7 @@ Empty.
 
 Triaged and ready to build, but not next.
 
+- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
