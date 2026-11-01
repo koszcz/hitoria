@@ -1,5 +1,5 @@
 // The trade ship: it sails in from the open sea every few minutes and ties up at your harbour.
-// While it is there, you swap spare goods for goods you lack, at fixed rates.
+// While it is there, you swap spare goods for goods you lack. What it wants and sells is in wants.ts.
 import type { P } from '../path';
 import { W, H } from '../world';
 import { noteTrader } from './chronicle';
@@ -7,6 +7,7 @@ import type { Good } from './defs';
 import type { Game } from './game';
 import type { Building, Trader } from './types';
 import { flood, sailOn, seaPath, sources, water } from './voyage';
+import { rollWants, stockLeft, traderDeal } from './wants';
 
 export const TRADE_EVERY = 180; // seconds from one visit to the next
 export const TRADE_STAY = 90; // seconds the ship stays tied up
@@ -20,9 +21,10 @@ export const VALUE: Record<Good, number> = {
 
 const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
 
-// One deal: how many of `give` you hand over for how many of `get`. The trader keeps half the worth.
-export function dealFor(give: Good, get: Good) {
-  const a = 2 * VALUE[get], b = VALUE[give], d = gcd(a, b);
+// One deal: how many of `give` you hand over for how many of `get`. The trader keeps half the
+// worth, unless the deal is `fair`.
+export function dealFor(give: Good, get: Good, fair = false) {
+  const a = (fair ? 1 : 2) * VALUE[get], b = VALUE[give], d = gcd(a, b);
   return { give: a / d, get: b / d };
 }
 
@@ -66,7 +68,7 @@ export function stepTrader(g: Game, dt: number) {
     if (g.traderT > 0) return;
     const dock = g.dock(h)!, edge = seaEdge(g, dock);
     if (!edge) return;
-    g.trader = { harbour: h.id, ...edge, path: seaPath(g, edge, dock), leg: 'in', left: TRADE_STAY };
+    g.trader = { harbour: h.id, ...edge, path: seaPath(g, edge, dock), leg: 'in', left: TRADE_STAY, ...rollWants(g.rand) };
     g.toasts.push('🚢 A trade ship is sailing to your harbour');
     return;
   }
@@ -98,7 +100,9 @@ export function canTrade(g: Game, h: Building, give: Good, get: Good): string | 
   const t = g.trader;
   if (!t || t.leg !== 'docked' || t.harbour !== h.id) return 'No trade ship is here';
   if (give === get) return 'Pick two different goods';
-  if (spare(g, h, give) < dealFor(give, get).give) return 'Not enough goods to give';
+  const deal = traderDeal(t, give, get);
+  if (stockLeft(t, get) < deal.get) return 'The trader has no more of this good';
+  if (spare(g, h, give) < deal.give) return 'Not enough goods to give';
   return null;
 }
 
@@ -107,7 +111,8 @@ export function canTrade(g: Game, h: Building, give: Good, get: Good): string | 
 export function trade(g: Game, h: Building, give: Good, get: Good): string | null {
   const why = canTrade(g, h, give, get);
   if (why) return why;
-  const deal = dealFor(give, get);
+  const t = g.trader!, deal = traderDeal(t, give, get);
+  if (get in t.stock) t.stock[get]! -= deal.get;
   let left = deal.give;
   for (const s of sources(g, h)) {
     const take = Math.max(0, Math.min(left, s.stock[give] - s.sending[give]));

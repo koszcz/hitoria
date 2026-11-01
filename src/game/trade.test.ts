@@ -9,6 +9,7 @@ import { harbourGame, run, runUntil, totalGoods } from './test-helpers';
 function docked(seed = 1) {
   const { g, h } = harbourGame(seed);
   runUntil(g, () => g.trader?.leg === 'docked', TRADE_EVERY + 200);
+  Object.assign(g.trader!, { wants: [], offers: [], stock: {} }); // the usual rates, with no limits
   return { g, h };
 }
 

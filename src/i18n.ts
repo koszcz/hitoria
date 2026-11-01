@@ -179,6 +179,7 @@ const MESSAGES_PL: Record<string, string> = {
   'No trade ship is here': 'Nie ma tu statku kupieckiego',
   'Pick two different goods': 'Wybierz dwa różne towary',
   'Not enough goods to give': 'Za mało towarów do wymiany',
+  'The trader has no more of this good': 'Kupiec nie ma już tego towaru',
   ...WISHES_PL,
   ...UPGRADES_PL,
   [TOOLS_LOW_NOTE]: `⚠️ Zostało tylko ${TOOLS_LOW} narzędzi. Statek potrzebuje ${SAIL_CARGO.tool}, by zasiedlić drugą wyspę`,

@@ -9,6 +9,7 @@ export type { Entry } from './chronicle';
 export { HUNGRY_AFTER } from './survive';
 export { SAIL_CARGO, SAIL_CREW, lacking } from './voyage';
 export { TRADE_STAY, VALUE, canTrade, dealFor, spare, tradeHarbour } from './trade';
+export { SELL_LIMIT, stockLeft, traderDeal } from './wants';
 export { LANDING_LAND } from './homes';
 export { ROAM, ANIMAL } from './animals';
 export { HUNT_RANGE, ANIMAL_RETURN } from './hunting';

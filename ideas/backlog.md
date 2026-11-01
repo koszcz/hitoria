@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *Fun 2 · Effort M · Branch: worktree-agent-a18cf8d156124dfd9*
+Nothing right now.
 
 ## Next
 
@@ -40,6 +40,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *2026-11-01*
 - **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *2026-11-01*
 - **Village wishes**: after the last goal, the village asks for one gentle wish at a time, such as "store 40 food before the first snow", and a missed wish just moves on. *2026-11-01*
 - **Finer mountain mesh**: mountains look like the Alps, with sharp ridges, tall peaks, snowy tops and dark rock faces. Mountains near the HQ stay lower, so they never hide it. The ground has 4 points along each tile side, and flat land looks the same as before. *2026-11-01*

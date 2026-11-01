@@ -209,6 +209,7 @@ canvas {
   cursor: pointer;
 }
 #info button.chip:hover { border-color: rgba(255, 226, 160, 0.6); }
+#info button.chip.special { border-color: rgba(255, 210, 90, 0.55); }
 #info button.chip.on { border-color: var(--gold); background: rgba(40, 60, 110, 0.9); }
 #info .deal { margin: 8px 0 0; font-weight: 600; font-size: 14px; }
 

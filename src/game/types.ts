@@ -106,4 +106,7 @@ export interface Trader {
   path: P[]; // the water tiles still ahead
   leg: 'in' | 'docked' | 'out';
   left: number; // seconds it stays tied up
+  wants: Good[]; // goods it takes at their full worth
+  offers: Good[]; // rare goods it sells at their full worth
+  stock: Partial<Record<Good, number>>; // how many it has left of the goods it sells only a few of
 }

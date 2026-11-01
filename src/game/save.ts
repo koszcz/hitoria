@@ -10,6 +10,7 @@ import { needsTool, START_TOOLS } from './tools';
 import { SAIL_CARGO } from './voyage';
 import type { Building, Ship, Trader } from './types';
 import { TRADE_EVERY } from './trade';
+import { oldWants } from './wants';
 import type { WinterState } from './survive';
 import type { WishState } from './wishes';
 import { MAP_VERSION } from '../world';
@@ -142,7 +143,7 @@ export function restore(g: Game, d: SaveData) {
   g.goal = d.goal ?? 0;
   g.winter.state = d.winter ?? 'late';
   g.ships = d.ships ?? [];
-  g.trader = d.trader ?? null;
+  g.trader = d.trader ? { ...d.trader, ...oldWants(d.trader) } : null;
   g.traderT = d.traderT ?? TRADE_EVERY;
   g.chronicle = d.chronicle ?? [];
   g.tradeVisits = d.tradeVisits ?? 0;
