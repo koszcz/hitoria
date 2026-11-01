@@ -10,13 +10,14 @@ export const HUNGRY_PACE = 2; // a hungry worker takes this many times as long o
 // Miners already eat as they dig. Carriers and builders never work in a hut, and a lookout's scout does no work.
 const NOT_HUNGRY: Role[] = ['carrier', 'builder', 'miner', 'scout'];
 // Huts that make food feed their worker from their own pile, so no carrier brings them food.
-const SELF_FED: BType[] = ['fisher', 'hunter', 'bakery'];
+export const SELF_FED: BType[] = ['fisher', 'hunter', 'bakery'];
 
-// Does the worker of building `b` need food?
-export function eats(b: Building) {
-  const role = BDEFS[b.type].worker;
+// Does the worker of this building type need food?
+export function hungryWorker(type: BType) {
+  const role = BDEFS[type].worker;
   return !!role && !NOT_HUNGRY.includes(role);
 }
+export const eats = (b: Building) => hungryWorker(b.type);
 export const selfFed = (b: Building) => SELF_FED.includes(b.type);
 
 // How many of food `g` a finished hut wants brought in. Food of any kind shares one small pile.

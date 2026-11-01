@@ -23,6 +23,7 @@ import { seasonLook, yearAt, type SeasonLook } from '../seasons/year';
 import { setSeason } from './seasonal';
 import { Snowfall } from './snowfall';
 import { Signs } from './signs';
+import { HungerMarks } from './hunger';
 
 export type { View } from './overlays';
 
@@ -58,6 +59,7 @@ export class Renderer {
   private overlays: Overlays;
   private snowfall: Snowfall;
   private signs: Signs;
+  private hunger: HungerMarks;
   private season: SeasonLook = seasonLook(0);
   private reach = 20; // half the width of the ground in view
 
@@ -89,6 +91,7 @@ export class Renderer {
     this.overlays = new Overlays(scene, this.ground);
     this.snowfall = new Snowfall(scene);
     this.signs = new Signs(scene, this.ground);
+    this.hunger = new HungerMarks(scene, this.ground);
     this.setGraphics(this.graphics);
   }
 
@@ -180,6 +183,7 @@ export class Renderer {
     this.donkeys.draw(game, now, (g, x, y, z, rot) => this.goods.put(g, x, y, z, rot));
     this.ships.draw(game, now);
     this.signs.draw(game);
+    this.hunger.draw(game, now);
     this.overlays.draw(game, view);
     this.goods.finish();
 

@@ -32,6 +32,12 @@ describe('build card facts', () => {
     expect(consumers('water')).toEqual(['bakery']);
   });
 
+  test('the card says which workers eat', () => {
+    expect(buildFacts('sawmill').needs).toContain('Its worker eats 1 Fish, Meat or Bread every 60 s of work. With no food, they work at half speed.');
+    expect(buildFacts('fisher').needs).toContain('Its worker eats from what the hut makes, 1 every 60 s of work.');
+    for (const t of ['mine', 'lookout', 'house'] as const) expect(buildFacts(t).needs.some((n) => n.includes(' eats '))).toBe(false);
+  });
+
   test('workshops show their speed', () => {
     expect(buildFacts('sawmill').makes).toBe('Turns 1 Log into 1 Plank every 5 s. That is up to 12 a minute.');
     expect(buildFacts('mine').makes).toBe('Turns 1 Bread, Fish or Meat into 2 Stone every 8 s. That is up to 15 a minute.');

@@ -1,4 +1,4 @@
-import { Game, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, DOCK_REACH, HOUSE_FOOD, WELL_DRAW, needsTool } from './game';
+import { Game, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, DOCK_REACH, HOUSE_FOOD, WELL_DRAW, needsTool, MEAL, SELF_FED, hungryWorker } from './game';
 import { getLang, goodName, buildingName, buildingDesc, join, plural } from './i18n';
 
 const bname = (t: BType) => buildingName(t);
@@ -71,6 +71,8 @@ const EN = {
     harbour: `Build it on the shore, up to ${DOCK_REACH} tiles from open water.`,
   } as Partial<Record<'fisher' | 'mine' | 'harbour' | 'geologist', string>>,
   worker: 'Takes 1 idle settler as its worker.',
+  eats: `Its worker eats 1 Fish, Meat or Bread every ${MEAL} s of work. With no food, they work at half speed.`,
+  eatsOwn: `Its worker eats from what the hut makes, 1 every ${MEAL} s of work.`,
   workerTool: 'Takes 1 idle settler as its worker, and 1 tool from your stores.',
   noWorker: 'Needs no worker.',
   range: (n: number) => `Works up to ${n} tiles away.`,
@@ -108,6 +110,8 @@ const PL: typeof EN = {
   },
   place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.', geologist: 'Zbuduj ją blisko góry.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
   worker: 'Zatrudnia 1 wolnego osadnika.',
+  eats: `Pracownik zjada 1 rybę, porcję mięsa lub bochenek chleba co ${MEAL} s pracy. Bez jedzenia pracuje o połowę wolniej.`,
+  eatsOwn: `Pracownik je to, co wytwarza budynek: 1 sztukę co ${MEAL} s pracy.`,
   workerTool: 'Zatrudnia 1 wolnego osadnika i bierze 1 narzędzie z magazynu.',
   noWorker: 'Nie potrzebuje pracownika.',
   range: (n) => `Pracuje do ${n} ${plural(n, 'pola', 'pól', 'pól')} od siebie.`,
@@ -176,6 +180,7 @@ export function buildFacts(type: BType): BuildFacts {
   const place = MINES.includes(type) ? x.place.mine : type === 'fisher' || type === 'harbour' || type === 'geologist' ? x.place[type] : undefined;
   if (place) needs.push(place);
   needs.push(!def.worker ? x.noWorker : needsTool(type) ? x.workerTool : x.worker);
+  if (hungryWorker(type)) needs.push(SELF_FED.includes(type) ? x.eatsOwn : x.eats);
   if (def.radius && type !== 'lookout' && !MINES.includes(type)) needs.push(x.range(def.radius));
   needs.push(x.buildTime(def.buildTime));
 

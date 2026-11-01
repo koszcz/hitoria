@@ -147,6 +147,7 @@ canvas {
 #info .desc { margin: 0 0 8px; color: var(--muted); }
 #info .status { margin: 0 0 8px; font-style: italic; }
 #info .warn { margin: 0 0 8px; color: #ffb36b; font-weight: 600; }
+#info .hungry { color: #ffb36b; }
 .build.tool { margin-left: 4px; }
 
 #info h4 { margin: 10px 0 4px; font: 700 13px Georgia, serif; color: var(--gold); }

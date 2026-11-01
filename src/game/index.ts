@@ -12,3 +12,4 @@ export { ROAM, ANIMAL } from './animals';
 export { HUNT_RANGE, ANIMAL_RETURN } from './hunting';
 export { START_TOOLS, needsTool } from './tools';
 export { RICH_SPEED } from './geology';
+export { MEAL, SELF_FED, hungryWorker } from './meals';
