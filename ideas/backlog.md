@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Food makers eat first**: when food is short, carriers bring it to farms, wells and mills first, then to other huts and mines, and to houses last, so the food chain keeps running. *Fun 2 · Effort S · Branch: claude/food-producer-eating-priority-c97bd7*
+Nothing right now.
 
 ## Next
 
@@ -38,6 +38,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Food makers eat first**: when food is short, carriers bring it to farms, wells and mills first, then to other huts and mines, and to houses last, so the food chain keeps running. *2026-11-01*
 - **Far island**: a third island with its own riches lies farther out, and you sail to settle it. New maps only. Old saves keep their land. *2026-11-01*
 - **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *2026-11-01*
 - **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *2026-11-01*

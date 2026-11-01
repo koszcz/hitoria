@@ -5,6 +5,7 @@ import { hire } from './carriers';
 import { DONKEY_BUSY, DONKEY_LOAD, hireDonkey } from './donkeys';
 import type { Game } from './game';
 import { pantry } from './houses';
+import { foodRank } from './foodrank';
 import { eats, lunchbox } from './meals';
 import { isStore } from './stores';
 import type { Building } from './types';
@@ -58,7 +59,9 @@ export function moveGoods(g: Game) {
   }
 
   // Stores send out what buildings still need, the nearest store on foot first.
-  for (const b of g.buildings.values()) {
+  // The food chain is served first, so it gets the food when food is short.
+  const needy = [...g.buildings.values()].sort((p, q) => foodRank(p.type) - foodRank(q.type));
+  for (const b of needy) {
     if (isStore(b) || !GOODS.some((k) => missing(b, k) > 0)) continue;
     const dist = walkFrom(g, b);
     const stores = [...g.buildings.values()]
@@ -76,14 +79,17 @@ export function moveGoods(g: Game) {
 }
 
 // Nearest building on foot that wants this good, else the nearest store.
+// Food goes to the food chain first, and to houses last.
 function pickDest(g: Game, from: Building, good: Good) {
   const dist = walkFrom(g, from);
+  const rank = (b: Building) => (HOUSE_FOOD.includes(good) ? foodRank(b.type) : 0);
   let best: Building | undefined, bd = Infinity;
   for (const b of g.buildings.values()) {
-    if (b === from || isStore(b) || missing(b, good) <= 0) continue;
-    if (at(dist, b) < bd) { bd = at(dist, b); best = b; }
+    if (b === from || isStore(b) || missing(b, good) <= 0 || at(dist, b) === Infinity) continue;
+    if (!best || rank(b) < rank(best) || (rank(b) === rank(best) && at(dist, b) < bd)) { bd = at(dist, b); best = b; }
   }
   if (best) return best;
+  bd = Infinity;
   for (const b of g.buildings.values()) {
     if (isStore(b) && at(dist, b) < bd) { bd = at(dist, b); best = b; }
   }

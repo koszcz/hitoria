@@ -57,6 +57,8 @@ first, the wish just passes, with no penalty, and a new one comes.
      well. Houses turn food into new settlers.
    - Every worker in a hut eats fish, meat or bread now and then. A hungry worker works at half
      speed, and a bowl floats over their hut. Carriers and builders need no food.
+   - When food is short, farms, wells and mills get it first, so the food chain keeps running.
+     Houses get food last.
    - Mix your food. When a house or worker gets a different food from last time, the house grows
      its settler faster, the worker's meal lasts longer, and a miner digs 3 goods instead of 2.
    - Fishers catch about half as many fish in winter, so store bread and meat too.
@@ -308,7 +310,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -359,6 +361,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   each hut up to 2 food. With no food, the worker works at half speed. Fishers, hunters and
   bakers eat from what their own hut makes. Miners eat as they dig instead, and scouts, builders
   and carriers never eat. A meal of a different food from last time lasts 1.5 times as long.
+- Carriers bring food to farms, wells and mills first, then to other huts and mines, and to
+  houses last. Within each group, the nearest building comes first.
 - A miner digs 2 goods for each fish, meat or bread, or 3 when the food differs from last time.
 - An upgrade costs 2 iron and 1 tool. An upgraded worker takes half as long over each piece of
   work, and an upgraded house adds 6 settlers instead of 4.
