@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *Fun 2 · Effort M · Needs: Day and night light · Branch: worktree-agent-ae9569e66008128f6*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *Fun 2 · Effort M · Needs: Day and night light*
 - **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *Fun 2 · Effort S · Needs: Workers sleep at night*
 
 ## Inbox
