@@ -139,6 +139,18 @@ The rates are fixed. Each good has a worth, from 1 for logs, stone, water and gr
 tools, and the trader keeps half the worth of what you give. The goods you give come from the
 harbour first, then from your nearest stores. The goods you get go into the harbour.
 
+### Upgrading buildings
+
+Once you make iron, you can upgrade your huts and houses.
+
+1. Click a finished hut, mine, workshop or house.
+2. Under **Upgrade**, the panel shows the cost: 2 iron and 1 tool from your stores.
+3. Press **Upgrade**.
+
+In an upgraded hut, mine or workshop, the worker takes half as long over each piece of work.
+An upgraded house has room for 2 more settlers. Each building upgrades once. Until your settlers
+sail to the other island, the game keeps back the 6 tools their ship needs.
+
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ.
 
@@ -283,7 +295,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -294,6 +306,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/ui.ts` | HUD, goal panel and info panel |
 | `src/sailinfo.ts` | The harbour panel's "Sail to settle" part |
 | `src/tradeinfo.ts` | The harbour panel's "Trade ship" part |
+| `src/upgradeinfo.ts` | The "Upgrade" part of a hut's or house's panel |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/chronicle/` | The island chronicle panel and how its lines read |
@@ -334,6 +347,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   bakers eat from what their own hut makes. Miners eat as they dig instead, and scouts, builders
   and carriers never eat. A meal of a different food from last time lasts 1.5 times as long.
 - A miner digs 2 goods for each fish, meat or bread, or 3 when the food differs from last time.
+- An upgrade costs 2 iron and 1 tool. An upgraded worker takes half as long over each piece of
+  work, and an upgraded house adds 6 settlers instead of 4.
 - A lookout tower expands your land.
 - A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ, in storehouses and in harbours.

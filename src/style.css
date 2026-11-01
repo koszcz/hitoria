@@ -547,3 +547,4 @@ body.touch .build { row-gap: 0; }
   padding: 5px 9px;
 }
 #chronicle button:hover { border-color: var(--gold); }
+#info .upgraded { margin-top: 6px; color: var(--gold); }

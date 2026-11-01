@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *Fun 2 · Effort M · Branch: worktree-agent-a602b73cdaa453675*
+Nothing right now.
 
 ## Next
 
@@ -43,6 +43,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *2026-11-01*
 - **Village wishes**: after the last goal, the village asks for one gentle wish at a time, such as "store 40 food before the first snow", and a missed wish just moves on. *2026-11-01*
 - **Finer mountain mesh**: mountains look like the Alps, with sharp ridges, tall peaks, snowy tops and dark rock faces. Mountains near the HQ stay lower, so they never hide it. The ground has 4 points along each tile side, and flat land looks the same as before. *2026-11-01*
 - **Gameplay review quick fixes**: four small fixes from the gameplay review, built together. (1) The winter goal counts only workers and mines that are really hungry, not houses waiting to grow, and fishers catch less in winter so stored food matters. (2) A house or worker that gets more than one kind of food grows settlers faster or eats less often, so the bread chain and hunting stay useful. (3) A saved, dated chronicle of milestones, such as the first birth or the tenth trade ship, shows when you load your island. (4) "Build 3 houses" is replaced with a goal that teaches something new, and the game warns you before you use up the tools the ship needs. *2026-11-01*

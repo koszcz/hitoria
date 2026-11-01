@@ -67,10 +67,12 @@ export function dropTool(g: Game, s: Settler, home: Building) {
 export const TOOLS_LOW = SAIL_CARGO.tool! + 2;
 export const TOOLS_LOW_NOTE = `⚠️ Only ${TOOLS_LOW} tools left. The ship needs ${SAIL_CARGO.tool} to settle the other island`;
 
+// Has a ship sailed to settle the other island?
+export const settled = (g: Game) => g.ships.length > 0 || [...g.buildings.values()].some((b) => b.landed);
+
 // Called often. Warns once each time the stored tools drop to TOOLS_LOW, until the island is settled.
 export function watchTools(g: Game) {
-  const settled = g.ships.length > 0 || [...g.buildings.values()].some((b) => b.landed);
-  const low = !settled && g.stored.tool <= TOOLS_LOW;
+  const low = !settled(g) && g.stored.tool <= TOOLS_LOW;
   if (low && !g.toolsLow) g.toasts.push(TOOLS_LOW_NOTE);
   g.toolsLow = low;
 }

@@ -1,4 +1,4 @@
-import { Game, BDEFS, BType, GOODS, Good, HOUSE_SIZE, HOUSE_GROW } from './game';
+import { Game, BDEFS, BType, GOODS, Good, HOUSE_GROW, houseSize } from './game';
 import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
 import { openBuildMenu } from './buildmenu/menu';
 import { costText } from './buildmenu/card';
@@ -8,6 +8,7 @@ import { tradeRows, type TradePick } from './tradeinfo';
 import { drawClock } from './seasons/hud';
 import { FastNights, nightSpeed } from './seasons/fastnight';
 import { wishHtml, wishTitle } from './wishes/panel';
+import { upgradeRows } from './upgradeinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -62,6 +63,7 @@ export class UI {
       const act = btn.dataset.act, good = btn.dataset.good as Good;
       let why: string | null = null;
       if (act === 'sail') why = this.game.sail(b);
+      else if (act === 'upgrade') why = this.game.upgrade(b);
       else if (act === 'trade' && this.pick.give && this.pick.get) why = this.game.trade(b, this.pick.give, this.pick.get);
       else if (act === 'give' || act === 'get') this.pick[act] = this.pick[act] === good ? null : good;
       if (why) this.toast(why);
@@ -243,7 +245,7 @@ export class UI {
       for (const k of GOODS) rows.push(`<div>${x.stored} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
     } else {
       if (b.type === 'house') {
-        rows.push(`<div>${x.born(b.born, HOUSE_SIZE)}</div>`);
+        rows.push(`<div>${x.born(b.born, houseSize(b))}</div>`);
         if (b.busy) rows.push(`<div class="bar"><i style="width:${Math.round((1 - b.grow / HOUSE_GROW) * 100)}%"></i></div>`);
       }
       if (g.richAt(b.type, b.x, b.y)) rows.push(`<div>${x.richSpot}</div>`);
@@ -252,6 +254,7 @@ export class UI {
         if (b.stock[k]) rows.push(`<div>${x.input} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
         if (b.out[k]) rows.push(`<div>${x.ready} <span class="good ${k}"></span>${b.out[k]} ${goodName(k)}</div>`);
       }
+      rows.push(upgradeRows(g, b));
     }
     info.hidden = false;
     const warn = b.type !== 'hq' && !g.linked(b) ? `<p class="warn">⚠ ${x.notLinked}</p>` : '';

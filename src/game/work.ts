@@ -11,6 +11,7 @@ import { near, plantable } from './land';
 import { eats, feed } from './meals';
 import { bedtime } from './sleep';
 import type { Building, Settler } from './types';
+import { quicken } from './upgrades';
 import { MIXED_DIG, pickFood, tasteNew } from './variety';
 
 export function idle(g: Game, s: Settler) {
@@ -18,7 +19,10 @@ export function idle(g: Game, s: Settler) {
   const home = g.buildings.get(s.home);
   if (!home || bedtime(g, s, home) || s.role === 'builder') return;
   // A worker who rests eats nothing. Before real work, they eat, or work at half speed with no food.
-  if (!plan(g, s, home) && eats(home)) feed(home, s.tasks);
+  // An upgraded hut's worker works faster, but eats as much for each good they make.
+  if (plan(g, s, home)) return;
+  if (eats(home)) feed(home, s.tasks);
+  quicken(home, s.tasks);
 }
 
 // Give the worker their next piece of work. Returns true when they only rest.

@@ -3,6 +3,7 @@
 import { BDEFS, SAIL_CARGO, TOOLS_LOW, TOOLS_LOW_NOTE, type BType, type Good } from './game';
 import { BUILDING_PL } from './lang/buildings';
 import { WISHES_PL, wishToastPl } from './lang/wishes';
+import { UPGRADES_PL } from './lang/upgrades';
 
 export type Lang = 'en' | 'pl';
 export const LANGS: Lang[] = ['en', 'pl'];
@@ -179,6 +180,7 @@ const MESSAGES_PL: Record<string, string> = {
   'Pick two different goods': 'Wybierz dwa różne towary',
   'Not enough goods to give': 'Za mało towarów do wymiany',
   ...WISHES_PL,
+  ...UPGRADES_PL,
   [TOOLS_LOW_NOTE]: `⚠️ Zostało tylko ${TOOLS_LOW} narzędzi. Statek potrzebuje ${SAIL_CARGO.tool}, by zasiedlić drugą wyspę`,
 };
 

@@ -28,6 +28,7 @@ import { START_TOOLS, watchTools } from './tools';
 import type { Entry } from './chronicle';
 import { stepTrader, trade, TRADE_EVERY } from './trade';
 import { richAt, richSpots } from './geology';
+import { canUpgrade, upgrade } from './upgrades';
 import type { Animal, AnimalKind, Building, Settler, Ship, Trader } from './types';
 
 export class Game {
@@ -181,6 +182,16 @@ export class Game {
   // Is it night, with every worker and builder in bed? Carriers and donkeys don't count.
   allAsleep() {
     return allAsleep(this);
+  }
+
+  // Why building `b` can't be upgraded now, or null if it can.
+  canUpgrade(b: Building) {
+    return canUpgrade(this, b);
+  }
+
+  // Spend iron and tools to upgrade building `b`. Returns why it can't, or null.
+  upgrade(b: Building) {
+    return upgrade(this, b);
   }
 
   // Demolish the building on tile `t`. Returns why it can't, or null.
