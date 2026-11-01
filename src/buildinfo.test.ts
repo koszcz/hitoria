@@ -73,7 +73,7 @@ describe('build card facts', () => {
   });
 
   test('placement rules and workers are listed', () => {
-    for (const t of ['mine', 'coalmine', 'ironmine'] as const) expect(buildFacts(t).needs).toContain('Build it next to a mountain.');
+    for (const t of ['mine', 'coalmine', 'ironmine'] as const) expect(buildFacts(t).needs).toContain('Build it next to a mountain, or on its edge with grass in front.');
     expect(buildFacts('mill').worth).toContain('Flour feeds the Bakery.');
     expect(buildFacts('fisher').needs).toContain('Build it near water.');
     expect(buildFacts('storehouse').needs).toContain('Needs no worker.');

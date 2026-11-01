@@ -9,7 +9,7 @@ import type { Terrain } from './terrain';
 
 export class Signs {
   private group = new THREE.Group();
-  private key = -1;
+  private key = ''; // the survey count and building count last drawn
   private of: Uint8Array | null = null; // the signs of the game last drawn
 
   constructor(private scene: THREE.Scene, private ground: Terrain) {
@@ -17,8 +17,10 @@ export class Signs {
   }
 
   draw(game: Game) {
-    if (game.signed === this.key && game.signs === this.of) return;
-    this.key = game.signed;
+    // A mine can stand on a signed tile, so the signs are drawn again when buildings come or go.
+    const key = `${game.signed}:${game.buildings.size}`;
+    if (key === this.key && game.signs === this.of) return;
+    this.key = key;
     this.of = game.signs;
     this.scene.remove(this.group);
     disposeModel(this.group);
@@ -26,7 +28,8 @@ export class Signs {
     game.signs.forEach((s, i) => {
       if (!s) return;
       const x = i % W, y = (i / W) | 0;
-      if (game.world.at(x, y).t !== 'mountain') return;
+      const t = game.world.at(x, y);
+      if (t.t !== 'mountain' || t.b) return;
       const rich = game.rich[i] === 1;
       const ore = game.world.hasOre(x, y);
       const sign = new THREE.Group();

@@ -19,7 +19,9 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   if (t.b) return 'Occupied';
   if (isDoorstep(g, x, y)) return 'In front of the door of another building';
   if (!g.world.territory[y * W + x]) return 'Outside your land';
-  if (t.t !== 'grass') return 'Needs flat grass';
+  // A mine may also stand on the mountain's edge. The check below for open ground in front of
+  // its door keeps it out of the middle of the mountain.
+  if (t.t !== 'grass' && !(MINES.includes(type) && t.t === 'mountain')) return 'Needs flat grass';
   if (t.tree) return 'A tree is in the way';
   if (t.rock) return 'A boulder is in the way';
   if (t.field) return 'This is a farm field';
