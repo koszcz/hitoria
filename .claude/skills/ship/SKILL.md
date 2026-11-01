@@ -38,5 +38,11 @@ before you merge and push.
    screenshot.
 10. Push: `git push origin main`. If the push is rejected because `main` moved, go back to
     step 8.
-11. Tell the user the commit hash and what went out, including whether the README or its
-    screenshot changed.
+11. Check that the push landed: `git branch -r --contains <hash>` must list `origin/main`.
+12. Tell the user what went out. Start the message with one of these lines, before anything else:
+    - "Shipped: `<hash>` is on origin/main." Use this only after step 11 passes.
+    - "Not shipped." Use this when any step failed or stopped. Say which step, and offer to
+      ship again once it is fixed.
+    - "Nothing to ship." Use this when there were no changes and `main` already has the work.
+
+    Then say what went out, including whether the README or its screenshot changed.
