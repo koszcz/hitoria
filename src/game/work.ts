@@ -62,7 +62,7 @@ export function idle(g: Game, s: Settler) {
         { k: 'work', t: 2.5, anim: 'plant' },
         { k: 'do', f: () => {
           g.claimed.delete(i);
-          if (!tile.tree && !tile.crop && !tile.b && !tile.road && !tile.flag) {
+          if (!tile.tree && !tile.crop && !tile.b) {
             tile.tree = 0.05;
             tile.conifer = Math.random() < 0.4;
           }

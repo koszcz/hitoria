@@ -4,11 +4,9 @@ import { Game, bag } from '.';
 import { flatGame, run, runUntil, totalGoods, expectIncomingConsistent, placeLinked, placeBare, wallOff } from './test-helpers';
 
 describe('logistics', () => {
-  test('one carrier walks each good the whole way, along the roads', () => {
+  test('one carrier walks each good the whole way', () => {
     const g = flatGame();
     const site = placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
-    const tiles = new Set([...g.roads.values()].flatMap((r) => r.path.map((p) => `${p.x},${p.y}`)));
-    tiles.add(`${g.hq.x},${g.hq.y}`).add(`${site.x},${site.y}`);
     const delivered = new Set<number>();
     runUntil(g, () => site.built, 300, () => {
       for (const s of g.settlers.values()) {
@@ -16,9 +14,6 @@ describe('logistics', () => {
         // Whoever holds a good took it from the HQ and keeps it until the site.
         delivered.add(s.id);
         expect(s.job).toMatchObject({ from: g.hq.id, to: site.id });
-        if (!s.walking) continue;
-        const near = [Math.floor, Math.ceil].some((fx) => [Math.floor, Math.ceil].some((fy) => tiles.has(`${fx(s.x)},${fy(s.y)}`)));
-        expect(near).toBe(true);
       }
       expectIncomingConsistent(g);
     });
@@ -63,7 +58,7 @@ describe('logistics', () => {
 });
 
 describe('storehouses', () => {
-  // A finished storehouse east of the HQ, joined to it by road.
+  // A finished storehouse east of the HQ.
   function storehouse(g: Game) {
     const s = placeLinked(g, 'storehouse', g.hq.x + 5, g.hq.y);
     runUntil(g, () => s.built, 300);
@@ -74,9 +69,7 @@ describe('storehouses', () => {
   test('spare goods go to the nearest store, not the HQ', () => {
     const g = flatGame();
     const s = storehouse(g);
-    // The woodcutter's only road runs through the storehouse's flag.
     const cutter = placeBare(g, 'woodcutter', s.x + 3, s.y - 3);
-    g.buildRoad(cutter.flag, g.flags.get(s.flag)!);
     for (const [dx, dy] of [[1, -2], [-1, -2], [2, 0]]) g.world.at(cutter.x + dx, cutter.y + dy).tree = 1;
     runUntil(g, () => cutter.built, 300);
     const hqLogs = g.hq.stock.log;
@@ -90,7 +83,6 @@ describe('storehouses', () => {
     s.stock = bag({ log: 0, plank: 5, stone: 5 });
     const hq = { ...g.hq.stock };
     const site = placeBare(g, 'woodcutter', s.x + 3, s.y - 3);
-    g.buildRoad(site.flag, g.flags.get(s.flag)!);
     runUntil(g, () => site.built, 300);
     expect(s.stock.plank).toBe(3);
     expect(g.hq.stock).toEqual(hq);
@@ -101,12 +93,11 @@ describe('storehouses', () => {
     const s = storehouse(g);
     s.stock = bag({ log: 0, plank: 1, stone: 0 });
     const site = placeBare(g, 'woodcutter', s.x + 3, s.y - 3);
-    g.buildRoad(site.flag, g.flags.get(s.flag)!);
     runUntil(g, () => site.built, 300);
     expect(s.stock.plank).toBe(0);
   });
 
-  test('goods with no road go to the nearest store on foot', () => {
+  test('goods go to the nearest store on foot', () => {
     const g = flatGame();
     const s = placeBare(g, 'storehouse', g.hq.x + 8, g.hq.y);
     runUntil(g, () => s.built, 300);
@@ -116,7 +107,6 @@ describe('storehouses', () => {
     const hqLogs = g.hq.stock.log;
     runUntil(g, () => s.stock.log === 2, 120, () => expectIncomingConsistent(g));
     expect(g.hq.stock.log).toBe(hqLogs);
-    expect(g.roads.size).toBe(0);
   });
 
   test('goods go to the store that is nearest on foot, not as the crow flies', () => {

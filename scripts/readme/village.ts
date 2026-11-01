@@ -1,5 +1,5 @@
 // Grows the village shown in the README screenshot: places a fixed list of buildings near the HQ
-// on a fixed island, each with a road, then lets the game run until the village is built.
+// on a fixed island, then lets the game run until the village is built.
 import { Game, type BType } from '../../src/game';
 import { clock } from '../../src/render/daylight';
 
@@ -26,11 +26,11 @@ function spots(g: Game) {
 const crowded = (g: Game, x: number, y: number) =>
   [...g.buildings.values()].some((b) => Math.abs(b.x - x) <= GAP && Math.abs(b.y - y) <= GAP);
 
-// Places what fits. A building with no spot that has a road to it is left out.
+// Places what fits. A building with no free spot is left out.
 function placeRound(g: Game, round: BType[]) {
   for (const type of round) {
     const at = spots(g).find(
-      ({ x, y }) => !g.canPlace(type, x, y) && !crowded(g, x, y) && g.planAutoRoad(type, x, y),
+      ({ x, y }) => !g.canPlace(type, x, y) && !crowded(g, x, y),
     );
     if (at) g.place(type, at.x, at.y);
   }

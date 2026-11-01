@@ -47,17 +47,16 @@ describe('production', () => {
     runUntil(g, () => count(1) > before, 200);
   });
 
-  test('a forester never plants next to a flag', () => {
+  test('a forester never plants next to a building', () => {
     const g = flatGame();
     const b = placeLinked(g, 'forester', g.hq.x + 4, g.hq.y - 3);
-    // A lone flag near the hut, with nothing around it but the planting ground.
-    const lone = g.buildRoad(b.flag, { x: b.x + 3, y: b.y + 1 });
-    if (typeof lone === 'string') throw new Error(lone);
     run(g, 400);
-    for (const f of g.flags.values())
+    for (const o of g.buildings.values())
       for (let dy = -1; dy <= 1; dy++)
         for (let dx = -1; dx <= 1; dx++)
-          expect(g.world.at(f.x + dx, f.y + dy).tree).toBe(0);
+          expect(g.world.at(o.x + dx, o.y + dy).tree).toBe(0);
+    expect(g.world.tiles.some((t) => t.tree > 0)).toBe(true); // it did plant, farther off
+    expect(b.built).toBe(true);
   });
 
   test('saplings grow fully in about 40 seconds', () => {

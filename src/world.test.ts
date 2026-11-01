@@ -7,9 +7,14 @@ import { toIso, fromIso } from './iso';
 // machine that runs the checks. That last digit changes neither the land nor how it looks.
 const SIGNIFICANT = 12;
 const round = (n: number) => Number(n.toPrecision(SIGNIFICANT));
+// Tiles held a flag and a road when these fingerprints were taken, always 0 on a new map.
+// They go back in after `b`, in the same order, so the fingerprints still match.
+const withRoads = (t: object) =>
+  Object.fromEntries(Object.entries(t).flatMap(([k, v]) => (k === 'b' ? [[k, v], ['flag', 0], ['road', 0]] : [[k, v]])));
+
 const fingerprint = (tiles: object[]) =>
   Bun.hash(
-    JSON.stringify(tiles, (_, v) =>
+    JSON.stringify(tiles.map(withRoads), (_, v) =>
       typeof v === 'number' ? round(v) : typeof v === 'string' ? v.replace(/\d+\.\d+/g, (n) => String(round(+n))) : v,
     ),
   ).toString();

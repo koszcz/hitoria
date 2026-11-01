@@ -16,7 +16,7 @@ import { walkDist } from './walking';
 export const SAIL_CREW = 5;
 export const SAIL_CARGO: Partial<Bag> = { plank: 12, stone: 8, tool: 6 }; // tools for the first workers there
 export const SHIP_SPEED = 1.2; // tiles per second
-const ROOM = 24; // open tiles the settlers need to reach from their harbour's flag
+const ROOM = 24; // open tiles the settlers need to reach from their harbour's doorstep
 const CLEAR = 2.5; // how far around their harbour the settlers fell trees and break boulders when they land
 
 const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
@@ -48,10 +48,10 @@ export const water = (g: Game) => (x: number, y: number) => g.world.at(x, y).t =
 function free(g: Game, x: number, y: number, clear = false) {
   if (!g.world.inside(x, y)) return false;
   const t = g.world.at(x, y);
-  return (t.t === 'grass' || t.t === 'sand') && (clear || (!t.tree && !t.rock)) && !t.b && !t.flag && !t.road && !t.field;
+  return (t.t === 'grass' || t.t === 'sand') && (clear || (!t.tree && !t.rock)) && !t.b && !t.field;
 }
 
-// Free grass where the settlers can build their harbour, with room for its flag in front.
+// Free grass where the settlers can build their harbour, with room for its doorstep in front.
 function freeShore(g: Game, x: number, y: number) {
   return g.world.at(x, y).t === 'grass' && free(g, x, y, true) && free(g, x, y + 1, true);
 }
@@ -59,7 +59,7 @@ function freeShore(g: Game, x: number, y: number) {
 // The tiles around a harbour at (x, y) that its settlers clear when they land.
 const cleared = (x: number, y: number, nx: number, ny: number) => Math.hypot(nx - x, ny - y) <= CLEAR;
 
-// How much open ground the settlers can walk to from the flag of a harbour at (x, y), in its land.
+// How much open ground the settlers can walk to from the doorstep of a harbour at (x, y), in its land.
 function room(g: Game, x: number, y: number) {
   const near = (nx: number, ny: number) =>
     Math.hypot(nx - x, ny - y) <= LANDING_LAND && (nx !== x || ny !== y) && free(g, nx, ny, cleared(x, y, nx, ny));

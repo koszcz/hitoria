@@ -7,11 +7,11 @@ import type { Game } from './game';
 const SHADES = 6;
 const shade = (w: number) => Math.round(w * SHADES);
 
-// Only open ground wears. Roads and fields have their own look, and buildings stand on theirs.
+// Only open ground wears. Fields have their own look, and buildings stand on theirs.
 function wearable(g: Game, x: number, y: number) {
   if (!g.world.inside(x, y)) return false;
   const t = g.world.at(x, y);
-  return (t.t === 'grass' || t.t === 'sand') && !t.road && !t.flag && !t.field && !t.b;
+  return (t.t === 'grass' || t.t === 'sand') && !t.field && !t.b;
 }
 
 // A settler stepped onto (x, y).

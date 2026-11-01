@@ -15,7 +15,7 @@ export const ART = {
   // Applied to every model colour: shift saturation and lightness, then blend toward a warm tint.
   grade: { h: 0, s: -0.14, l: 0.03, tint: '#b8a478', k: 0.18 },
   grass: { h: -0.04, s: -0.2, l: 0.03 }, // shift from the map's own grass colour
-  grain: 2.2, // how strong the speckle on ground and roads is
+  grain: 2.2, // how strong the speckle on the ground is
   rock: '#7a6e5a',
   ore: ['#7a5240', '#4a4440'] as const, // mountain rock with iron ore, then with seams of coal
   snow: '#ece6d8',
@@ -25,8 +25,6 @@ export const ART = {
   water: '#3f7470',
   waterOpacity: 0.8,
   deep: '#1f3a38', // sea floor colour far from shore
-  roads: ['#7e6a48', '#c4ae80'] as const, // verge, then track
   path: '#a08a5e', // grass worn down to dirt by footsteps
   tree: { hue: 0.1, range: 0.12, s: 0.3, l: 0.74 }, // per-tree tint
-  flag: '#c8a030',
 };

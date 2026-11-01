@@ -1,22 +1,21 @@
 // Placing buildings and building them: where they may go, and how builders turn materials into a building.
 import { findPath } from '../path';
 import { W } from '../world';
-import { autoRoad } from './autoroad';
 import { BDEFS, BType, FARM_FIELDS, GOODS, MINES, ORE_MINES, bag } from './defs';
 import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
-import { computeTerritory, flaggable, near, nearOre, roadable } from './land';
+import { computeTerritory, isDoorstep, near, nearOre, openGround, passable } from './land';
 import { dockAt } from './harbour';
 import { noteRichMine } from './geology';
 import { homeOf, homes } from './homes';
-import { ensureFlag } from './roads';
 import { sendHome } from './settlers';
 import type { Building } from './types';
 
 export function canPlace(g: Game, type: BType, x: number, y: number): string | null {
   if (!g.world.inside(x, y) || !g.world.inside(x, y + 1)) return 'Outside the map';
   const t = g.world.at(x, y);
-  if (t.b || t.flag || t.road) return 'Occupied';
+  if (t.b) return 'Occupied';
+  if (isDoorstep(g, x, y)) return 'In front of the door of another building';
   if (!g.world.territory[y * W + x]) return 'Outside your land';
   if (t.t !== 'grass') return 'Needs flat grass';
   if (t.tree) return 'A tree is in the way';
@@ -29,29 +28,23 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   if (type === 'harbour' && !dockAt(g, x, y)) return 'Must be on the shore by open water';
   const fields = type === 'farm' ? pickFields(g, x, y) : [];
   if (type === 'farm' && fields.length < FARM_FIELDS) return 'No room for its fields';
-  const front = g.world.at(x, y + 1);
-  const flagOk = front.flag ? !g.flags.get(front.flag)!.building : flaggable(g, x, y + 1);
-  if (!flagOk) return 'No room for its flag in front';
-  // Players can't fell trees themselves, so a flag walled in by trees would never get a road.
-  const onField = (tx: number, ty: number) => fields.some((p) => p.x === tx && p.y === ty);
-  const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && !onField(tx, ty) && (roadable(g, tx, ty) || !!g.world.at(tx, ty).road || !!g.world.at(tx, ty).flag);
-  const fromHome = (h: Building) => {
-    const f = g.flags.get(h.flag)!;
-    return !!findPath(f.x, f.y, x, y + 1, reach);
-  };
-  if (!homes(g).some(fromHome)) return 'No road can reach it';
+  if (!openGround(g, x, y + 1) || !g.world.territory[(y + 1) * W + x]) return 'No room in front of its door';
+  // Players can't fell trees themselves, so a door walled in by trees would never be reached.
+  // Saplings count too, because they grow into trees.
+  const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && passable(g, tx, ty) && !g.world.at(tx, ty).tree;
+  const fromHome = (h: Building) => !!findPath(h.x, h.y + 1, x, y + 1, reach);
+  if (!homes(g).some(fromHome)) return 'Settlers cannot walk there';
   return BDEFS[type] ? null : 'Unknown building';
 }
 
-// A new building site, with its road to your roads if one fits.
+// A new building site. Settlers walk to it across the open ground.
 export function place(g: Game, type: BType, x: number, y: number) {
   const b = placeSite(g, type, x, y);
-  autoRoad(g, b);
   noteRichMine(g, b);
   return b;
 }
 
-// A new building site with no road yet.
+// A new building site, with no word yet about a rich spot.
 export function placeSite(g: Game, type: BType, x: number, y: number) {
   const b = addBuilding(g, type, x, y);
   b.status = 'Waiting for a builder';
@@ -61,15 +54,12 @@ export function placeSite(g: Game, type: BType, x: number, y: number) {
 
 export function addBuilding(g: Game, type: BType, x: number, y: number) {
   const b: Building = {
-    id: g.nextId++, type, x, y, flag: 0, built: false, progress: 0,
+    id: g.nextId++, type, x, y, built: false, progress: 0,
     stock: bag(), out: bag(), incoming: bag(), sending: bag(),
     worker: 0, builder: 0, busy: false, using: null, status: '', born: 0, grow: 0,
   };
   g.buildings.set(b.id, b);
   Object.assign(g.world.at(x, y), { b: b.id, crop: 0 });
-  const f = ensureFlag(g, x, y + 1);
-  f.building = b.id;
-  b.flag = f.id;
   return b;
 }
 

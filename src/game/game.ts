@@ -5,16 +5,15 @@ import { MAP_VERSION, World, W, H } from '../world';
 import { BType, CROP_GROW, Good, bag } from './defs';
 import { spawnAnimals, stepAnimal } from './animals';
 import { regrow } from './hunting';
-import { planAutoRoad } from './autoroad';
 import { pickFields } from './fields';
 import { fieldsGrow } from '../seasons/year';
 import { checkGoals, goalNow } from './goals';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
+import { removeAt } from './demolish';
 import { raise } from './houses';
 import type { WinterState } from './survive';
 import { computeTerritory, passable } from './land';
 import { moveGoods } from './logistics';
-import { buildRoad, flagAt, planRoad, removeAt, startFlag } from './roads';
 import { checkVersion, mapVersion, restore, save, SaveData } from './save';
 import { step } from './settlers';
 import { staff } from './staff';
@@ -26,14 +25,12 @@ import { canSail, sail, stepShips } from './voyage';
 import { START_TOOLS } from './tools';
 import { stepTrader, trade, TRADE_EVERY } from './trade';
 import { richAt, richSpots } from './geology';
-import type { Animal, AnimalKind, Building, Flag, Road, Settler, Ship, Trader } from './types';
+import type { Animal, AnimalKind, Building, Settler, Ship, Trader } from './types';
 
 export class Game {
   world: World;
   buildings = new Map<number, Building>();
   settlers = new Map<number, Settler>();
-  flags = new Map<number, Flag>();
-  roads = new Map<number, Road>();
   animals = new Map<number, Animal>(); // wild animals; not saved, a loaded game spawns them again
   hq: Building;
   pool = 18; // idle settlers inside the HQ
@@ -41,7 +38,6 @@ export class Game {
   trader: Trader | null = null; // the trade ship, while it visits
   traderT = TRADE_EVERY; // seconds until the next trade ship sets out, counted while you have a harbour
   time = 0;
-  net = 0; // bumped whenever the road network changes
   toasts: string[] = [];
   made = bag(); // every good the settlement has made since the game began
   goal = 0; // index in GOALS of the goal the player is on
@@ -56,8 +52,6 @@ export class Game {
   nextId = 1;
   claimed = new Set<number>(); // tiles a worker is heading to
   snubbed = new Map<number, number>(); // unreachable tiles -> retry time
-  dist = new Map<number, Map<number, number>>(); // per destination flag, cached for `distNet`
-  distNet = -1;
   walks = new Map<number, { t: number; d: Float32Array }>(); // walking distances from each building
   ground: { t: number; kind: Uint8Array; cost: Float32Array } | null = null; // what each tile is to a walker
   trod = new Float32Array(W * H); // game time of the last footstep on each tile
@@ -157,27 +151,6 @@ export class Game {
     return computeTerritory(this);
   }
 
-  flagAt(t: P) {
-    return flagAt(this, t);
-  }
-
-  startFlag(t: P) {
-    return startFlag(this, t);
-  }
-
-  planRoad(fromId: number, t: P) {
-    return planRoad(this, fromId, t);
-  }
-
-  buildRoad(fromId: number, t: P) {
-    return buildRoad(this, fromId, t);
-  }
-
-  // The road a building placed at (x, y) would get, for showing before you place it.
-  planAutoRoad(type: BType, x: number, y: number) {
-    return planAutoRoad(this, { x, y: y + 1 }, [{ x, y }, ...this.planFields(type, x, y)]);
-  }
-
   // The fields a building placed at (x, y) would take. Only farms have fields.
   planFields(type: BType, x: number, y: number) {
     return type === 'farm' ? pickFields(this, x, y) : [];
@@ -188,6 +161,7 @@ export class Game {
     return goalNow(this);
   }
 
+  // Demolish the building on tile `t`. Returns why it can't, or null.
   removeAt(t: P) {
     return removeAt(this, t);
   }

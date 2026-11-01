@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { BUILDABLE } from '../game';
 import { add } from './kit';
 import { mergeModel } from './merge';
-import { makeBuilding, makeFlag } from './buildings';
+import { makeBuilding } from './buildings';
 import { makePerson } from './people';
 
 // Building signs are drawn on a canvas. Tests have no DOM, so give them one that ignores drawing.
@@ -83,9 +83,4 @@ describe('models', () => {
     for (const limb of [...p.legs, ...p.arms]) expect(meshes(limb).length).toBeGreaterThan(0);
   });
 
-  test('a flag keeps its waving cloth', () => {
-    const f = makeFlag();
-    expect(meshes(f.cloth!).length).toBeGreaterThan(0);
-    expect(meshes(f.g).length).toBeLessThanOrEqual(4);
-  });
 });

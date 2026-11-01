@@ -1,4 +1,4 @@
-// Walking distances on foot: how far every tile is from a building, with roads and worn paths cheaper.
+// Walking distances on foot: how far every tile is from a building, with worn paths cheaper.
 // Carriers use them to pick the nearest store, and a building counts as linked when the HQ can walk to it.
 import { W, H } from '../world';
 import type { Game } from './game';

@@ -6,9 +6,8 @@ import { expectIncomingConsistent, flatGame, run, runUntil, placeLinked, totalGo
 describe('carriers', () => {
   const carriers = (g: Game) => [...g.settlers.values()].filter((s) => s.role === 'carrier');
 
-  test('roads with nothing to carry get no carrier', () => {
+  test('with nothing to carry, no carrier comes out', () => {
     const g = flatGame();
-    g.buildRoad(g.hq.flag, { x: g.hq.x + 9, y: g.hq.y + 1 });
     run(g, 10);
     expect(carriers(g)).toEqual([]);
     expect(g.pool).toBe(18);

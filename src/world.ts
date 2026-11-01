@@ -13,8 +13,6 @@ export interface Tile {
   field: number; // id of the farm whose field this is, 0 = none
   plant: Plant;
   b: number; // id of the building on this tile, 0 = none
-  flag: number; // id of the flag on this tile, 0 = none
-  road: number; // id of the road crossing this tile (between its flags), 0 = none
   col: string; // precomputed ground colour
 }
 
@@ -134,7 +132,7 @@ export class World {
         // The second island's mountain rises past its middle, so the near shore stays free for a harbour.
         if (map >= 5) h = Math.max(h, ISLE_PEAK - Math.hypot(x - islePeak.x, y - islePeak.y) * ISLE_PEAK_SLOPE);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
-        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
+        this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, col: '' });
         // Older maps have ore in every mountain. From map 5, only the second island's mountain holds it.
         const rich = map < 5 || Math.hypot(x - isle.x, y - isle.y) < ISLE_SIZE;
         if (t === 'mountain' && rich) this.ore[y * W + x] = 1;

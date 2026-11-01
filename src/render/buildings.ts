@@ -1,9 +1,9 @@
-// Building and flag models.
+// Building models.
 import * as THREE from 'three';
 import { BDEFS, BType } from '../game';
 import { ART } from '../art';
 import { RIGHT } from './kit';
-import { iconTexture, noRoadTexture, softDot } from './textures';
+import { iconTexture, softDot } from './textures';
 import { add, shadeOf } from './kit';
 import { mergeModel } from './merge';
 import { barrel, crate, house, logPile } from './props';
@@ -14,8 +14,6 @@ import { mine } from './mines';
 
 let dotTex: THREE.Texture | undefined;
 const dot = () => (dotTex ??= softDot());
-let noRoadTexture_: THREE.Texture | undefined;
-const noRoadTex = () => (noRoadTexture_ ??= noRoadTexture());
 const icons = new Map<BType, THREE.Texture>();
 
 // How high a building's sign floats.
@@ -30,7 +28,6 @@ export interface Model {
   smoke?: THREE.Sprite[];
   cloth?: THREE.Object3D;
   sails?: THREE.Object3D;
-  noRoad?: THREE.Sprite;
   chimney?: THREE.Vector3; // where smoke rises from while the building works
   spin?: THREE.Object3D; // a saw blade that turns while the building works
 }
@@ -238,13 +235,6 @@ export function makeBuilding(type: BType, built: boolean): Model {
   return model;
 }
 
-export function noRoadSign() {
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: noRoadTex(), depthTest: false, transparent: true }));
-  s.scale.setScalar(0.4);
-  s.renderOrder = 13;
-  return s;
-}
-
 export function iconTex(type: BType) {
   let t = icons.get(type);
   if (!t) icons.set(type, (t = iconTexture(BDEFS[type].icon)));
@@ -260,16 +250,4 @@ export function ghostify(g: THREE.Object3D) {
     m.castShadow = false;
   });
   g.visible = false;
-}
-
-export function makeFlag(): Model {
-  const g = new THREE.Group();
-  add(g, new THREE.DodecahedronGeometry(0.045, 0).scale(1, 0.5, 1), '#9d958a', 0, 0.01, 0);
-  add(g, new THREE.CylinderGeometry(0.013, 0.017, 0.58, 6), '#5a3c22', 0, 0.29, 0);
-  add(g, new THREE.SphereGeometry(0.022, 8, 6), '#f0c030', 0, 0.59, 0, { metalness: 0.5, roughness: 0.4 });
-  const pennant = new THREE.Shape([new THREE.Vector2(0, 0.075), new THREE.Vector2(0.25, 0.075), new THREE.Vector2(0.19, 0), new THREE.Vector2(0.25, -0.075), new THREE.Vector2(0, -0.075)]);
-  const cloth = add(g, new THREE.ShapeGeometry(pennant), ART.flag, 0, 0.49, 0, { side: THREE.DoubleSide });
-  add(cloth, new THREE.PlaneGeometry(0.25, 0.022).translate(0.1, 0.06, 0.001), '#f0c030', 0, 0, 0, { side: THREE.DoubleSide });
-  mergeModel(g, [cloth]);
-  return { g, key: 'flag', cloth };
 }

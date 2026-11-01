@@ -1,7 +1,8 @@
 // Saving a game and loading it back.
 import { describe, expect, test } from 'bun:test';
-import { Game, SAVE_VERSION, bag } from '.';
-import { MAP_VERSION, World } from '../world';
+import { Game, SAVE_VERSION, bag, type SaveData } from '.';
+import { MAP_VERSION, World, W } from '../world';
+import type { Building } from './types';
 import { flatGame, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
 
 describe('save and load', () => {
@@ -14,8 +15,6 @@ describe('save and load', () => {
     expect(totalGoods(g2)).toEqual(before);
     expect(g2.population).toBe(18);
     expect(g2.settlers.size).toBe(0);
-    expect(g2.roads.size).toBe(g.roads.size);
-    expect(g2.flags.size).toBe(g.flags.size);
     expectIncomingConsistent(g2);
     // The loaded game carries on and finishes the job.
     const b2 = g2.buildings.get(b.id)!;
@@ -68,19 +67,38 @@ describe('save and load', () => {
   test('a version 2 save puts goods lying on flags into the HQ', () => {
     const g = flatGame();
     const site = placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
-    const d = JSON.parse(JSON.stringify(g.save()));
+    const d = withRoad(g, site);
     d.v = 2;
-    const end = d.flags.find((f: { id: number }) => f.id !== g.hq.flag && f.id !== site.flag) ?? d.flags[0];
-    end.items = [{ g: 'plank', dest: site.id }, { g: 'stone', dest: 0 }];
-    for (const r of d.roads) r.carrier = 0;
-    d.buildings.find((b: { id: number }) => b.id === site.id).incoming.plank = 1;
+    d.flags![1].items = [{ g: 'plank' }, { g: 'stone' }];
+    d.buildings.find((b: { id: number }) => b.id === site.id)!.incoming.plank = 1;
     const l = Game.load(d);
     expect(l.hq.stock.plank).toBe(g.hq.stock.plank + 1);
     expect(l.hq.stock.stone).toBe(g.hq.stock.stone + 1);
     expect(l.buildings.get(site.id)!.incoming.plank).toBe(0);
-    expect([...l.flags.values()].some((f) => 'items' in f)).toBe(false);
-    expect([...l.roads.values()].some((r) => 'carrier' in r)).toBe(false);
     runUntil(l, () => l.buildings.get(site.id)!.built, 300);
+  });
+
+  test('a save from before version 6 loads, and its roads and flags become worn paths', () => {
+    const g = flatGame();
+    const site = placeLinked(g, 'lookout', g.hq.x + 8, g.hq.y - 2);
+    const d = withRoad(g, site);
+    const l = Game.load(JSON.parse(JSON.stringify(d)));
+    for (let x = g.hq.x; x <= site.x; x++) expect(l.wear[(g.hq.y + 1) * W + x]).toBe(1);
+    expect(l.wear[(g.hq.y + 5) * W + g.hq.x]).toBe(0);
+    for (const b of l.buildings.values()) expect(b).not.toHaveProperty('flag');
+    expect(l).not.toHaveProperty('roads');
+    // The tiles and buildings load where they were.
+    expect(l.world.at(site.x, site.y).b).toBe(site.id);
+    expect(l.save().tiles).toEqual(Game.load(JSON.parse(JSON.stringify(l.save()))).save().tiles);
+    runUntil(l, () => l.buildings.get(site.id)!.built, 300);
+  });
+
+  test('a new save holds no roads or flags', () => {
+    const d = flatGame().save();
+    expect(d.v).toBe(SAVE_VERSION);
+    expect(d).not.toHaveProperty('roads');
+    expect(d).not.toHaveProperty('flags');
+    expect(d.tiles[0]).toHaveLength(7);
   });
 
   test('records the map version, and a save from before map versions loads on the old map', () => {
@@ -99,3 +117,24 @@ describe('save and load', () => {
     expect(() => Game.load({ ...d, v: SAVE_VERSION + 1 })).toThrow();
   });
 });
+
+// The game saved as a version 5 save: each tile also holds a flag and a road, and a road runs
+// from the HQ's flag east along the row in front of it to the flag of building `to`.
+function withRoad(g: Game, to: Building): SaveData {
+  const d = g.save();
+  const y = g.hq.y + 1;
+  const flags: { id: number; x: number; y: number; roads: number[]; building: number; items?: unknown[] }[] = [
+    { id: 9001, x: g.hq.x, y, roads: [9003], building: g.hq.id },
+    { id: 9002, x: to.x, y, roads: [9003], building: 0 },
+  ];
+  const path = [];
+  for (let x = g.hq.x; x <= to.x; x++) path.push({ x, y });
+  const tiles = (d.tiles as number[][]).map(([tree, conifer, rock, b, crop, field, wear], i) => {
+    const tx = i % W, ty = Math.floor(i / W);
+    const onRoad = ty === y && tx > g.hq.x && tx < to.x;
+    const flag = flags.find((f) => f.x === tx && f.y === ty)?.id ?? 0;
+    return [tree, conifer, rock, b, flag, onRoad ? 9003 : 0, crop, field, wear];
+  });
+  for (const b of d.buildings) Object.assign(b, { flag: b.id === g.hq.id ? 9001 : 9002 });
+  return { ...d, v: 5, tiles, flags, roads: [{ id: 9003, a: 9001, b: 9002, path, carrier: 0 }] } as unknown as SaveData;
+}

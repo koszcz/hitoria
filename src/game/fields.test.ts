@@ -34,18 +34,11 @@ describe('farm fields', () => {
     }
   });
 
-  test('roads and flags go around fields', () => {
+  test('no building may have its door on a field', () => {
     const g = flatGame();
-    const { x, y } = g.hq;
-    const farm = placeBare(g, 'farm', x, y - 4); // no road of its own in the way
-    const fields = fieldsOf(g, farm.id).map(at);
-    expect(g.buildRoad(g.hq.flag, fields[0])).toBe('No room for a road there');
-    // A road from one side of the farm to the other walks round its fields.
-    const west = g.startFlag({ x: farm.x - 5, y: farm.y });
-    if (typeof west === 'string') throw new Error(west);
-    const end = g.buildRoad(west.id, { x: farm.x + 5, y: farm.y });
-    if (typeof end === 'string') throw new Error(end);
-    for (const r of g.roads.values()) for (const p of r.path) expect(g.world.at(p.x, p.y).field).toBe(0);
+    const farm = placeBare(g, 'farm', g.hq.x, g.hq.y - 4);
+    const p = fieldsOf(g, farm.id).map(at).find((f) => !g.world.at(f.x, f.y - 1).field && !g.world.at(f.x, f.y - 1).b)!;
+    expect(g.canPlace('woodcutter', p.x, p.y - 1)).toBe('No room in front of its door');
   });
 
   test('a farmer sows only its own fields, and a forester never plants on them', () => {
@@ -75,21 +68,19 @@ describe('farm fields', () => {
     const fields = fieldsOf(g, farm.id);
     g.world.tiles[fields[0]].crop = 0.5;
     const d = g.save();
-    d.tiles = d.tiles.map(([tree, conifer, rock, b, flag, road, crop]) => [tree, conifer, rock, b, flag, road, crop]);
+    d.v = 5; // before fields, tiles also held a flag and a road, and no field
+    d.tiles = (d.tiles as number[][]).map(([tree, conifer, rock, b, crop]) => [tree, conifer, rock, b, 0, 0, crop]) as typeof d.tiles;
     const g2 = Game.load(JSON.parse(JSON.stringify(d)));
     expect(fieldsOf(g2, farm.id)).toEqual(fields);
     expect(g2.world.tiles[fields[0]].crop).toBe(0.5);
   });
 
-  test('before you place a farm, the game shows its fields and a road that keeps off them', () => {
+  test('before you place a farm, the game shows its fields', () => {
     const g = flatGame();
     const { x, y } = g.hq;
     expect(g.planFields('mill', x, y + 5)).toEqual([]);
     const planned = g.planFields('farm', x, y + 5);
     expect(planned).toHaveLength(6);
-    // The farm sits south of the HQ, so its fields lie on the short way round the farm to the HQ.
-    const road = g.planAutoRoad('farm', x, y + 5)!;
-    for (const p of road) expect(planned).not.toContainEqual(p);
     const farm = g.place('farm', x, y + 5);
     const byTile = (ps: { x: number; y: number }[]) => ps.map((p) => p.y * W + p.x).sort((a, b) => a - b);
     expect(fieldsOf(g, farm.id)).toEqual(byTile(planned));

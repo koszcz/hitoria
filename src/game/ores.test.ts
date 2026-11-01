@@ -2,17 +2,9 @@ import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
 import { BDEFS, BUILDABLE, GOODS, RECIPES, type BType } from './defs';
 import { W } from '../world';
-import { flatGame, runUntil, expectIncomingConsistent, placeBare } from './test-helpers';
+import { flatGame, runUntil, expectIncomingConsistent, placeBare, placeLinked } from './test-helpers';
 
 const ORE_MINES = [['coalmine', 'coal'], ['ironmine', 'ore']] as const;
-
-function placeLinked(g: Game, type: BType, x: number, y: number) {
-  expect(g.canPlace(type, x, y)).toBeNull();
-  const b = placeBare(g, type, x, y);
-  const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-  if (typeof r === 'string') throw new Error(r);
-  return b;
-}
 
 // A block of mountain. With `ore`, coal and iron ore lie in it, as in the second island's mountains.
 function mountain(g: Game, x0: number, y0: number, x1: number, y1: number, ore = true) {

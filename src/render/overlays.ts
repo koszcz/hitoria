@@ -1,19 +1,16 @@
 // What the player is pointing at or doing: hover and selection rings, work radius circles,
-// the planned road, and a see-through ghost of the building being placed, with a farm's fields.
+// and a see-through ghost of the building being placed, with a farm's fields.
 import * as THREE from 'three';
 import { Game, BDEFS, BType, FARM_FIELDS } from '../game';
 import type { P } from '../path';
-import { smoothPath } from '../curve';
-import { ghostify, makeBuilding, makeFlag } from './buildings';
+import { ghostify, makeBuilding } from './buildings';
 import { SEA, Terrain } from './terrain';
 
 export interface View {
   hover: P | null;
   placing: BType | null;
   placeOk: boolean;
-  tool: 'road' | 'remove' | null;
-  roadFrom: number; // flag a road is being drawn from
-  preview: P[] | null; // planned road under the cursor
+  tool: 'remove' | null;
   fields: P[]; // fields the farm being placed would take
   selected: number;
 }
@@ -22,17 +19,12 @@ export class Overlays {
   private hoverFill: THREE.Mesh;
   private hoverRing: THREE.LineLoop;
   private selRing: THREE.LineLoop;
-  private fromRing: THREE.LineLoop;
   private selRadius: THREE.LineLoop;
   private placeRadius: THREE.LineLoop;
-  private preview = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: '#fff5c8', dashSize: 0.2, gapSize: 0.14 }));
-  private previewOf: P[] | null = null;
   private ghosts = new Map<BType, THREE.Group>();
-  private ghostFlag: THREE.Group;
   private fieldFills: THREE.Mesh[];
 
   constructor(private scene: THREE.Scene, private ground: Terrain) {
-    scene.add(this.preview);
     const tileFill = (color?: string) => {
       const geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(12), 3));
@@ -53,13 +45,8 @@ export class Overlays {
     };
     this.hoverRing = loop('#ffffff', 4);
     this.selRing = loop('#ffe27a', 4);
-    this.fromRing = loop('#ffe27a', 4);
     this.selRadius = loop('#ffffff', 96);
     this.placeRadius = loop('#ffffff', 96);
-
-    this.ghostFlag = makeFlag().g;
-    ghostify(this.ghostFlag);
-    scene.add(this.ghostFlag);
   }
 
   private tileOutline(line: THREE.LineLoop | THREE.Mesh, x: number, y: number, lift = 0.04) {
@@ -81,25 +68,9 @@ export class Overlays {
 
   draw(game: Game, view: View) {
     const height = (x: number, y: number) => this.ground.heightAt(x, y);
-    for (const o of [this.hoverFill, this.hoverRing, this.selRing, this.fromRing, this.selRadius, this.placeRadius, this.ghostFlag]) o.visible = false;
+    for (const o of [this.hoverFill, this.hoverRing, this.selRing, this.selRadius, this.placeRadius]) o.visible = false;
     for (const o of [...this.ghosts.values(), ...this.fieldFills]) o.visible = false;
     const world = game.world;
-
-    const from = view.tool === 'road' && view.roadFrom ? game.flags.get(view.roadFrom) : null;
-    if (from) this.tileOutline(this.fromRing, from.x, from.y);
-    // The road being drawn, or the road a building would get where you are about to place it.
-    const shown = from || view.placeOk ? view.preview : null;
-    const path = shown && shown.length > 1 ? shown : null;
-    if (path !== this.previewOf) {
-      this.previewOf = path;
-      const g = new THREE.BufferGeometry();
-      if (path) g.setFromPoints(smoothPath(path).map((p) => new THREE.Vector3(p.x + 0.5, height(p.x + 0.5, p.y + 0.5) + 0.08, p.y + 0.5)));
-      this.preview.geometry.dispose();
-      this.preview.geometry = g;
-      // A geometry without points has no position attribute, which computeLineDistances needs.
-      if (path) this.preview.computeLineDistances();
-    }
-    this.preview.visible = !!path;
 
     const sel = game.buildings.get(view.selected);
     if (sel) {
@@ -126,8 +97,6 @@ export class Overlays {
         }
         ghost.position.set(hv.x + 0.5, height(hv.x + 0.5, hv.y + 0.5), hv.y + 0.5);
         ghost.visible = true;
-        this.ghostFlag.position.set(hv.x + 0.5, height(hv.x + 0.5, hv.y + 1.5), hv.y + 1.5);
-        this.ghostFlag.visible = true;
         view.fields.forEach((p, i) => this.fieldFills[i] && this.tileOutline(this.fieldFills[i], p.x, p.y, 0.03));
       }
     } else {

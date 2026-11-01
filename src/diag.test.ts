@@ -14,8 +14,6 @@ describe('diagnostics', () => {
     const { g, d, run } = watched();
     g.hq.stock.plank = 0; // the site can never get its planks
     const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
-    const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-    if (typeof r === 'string') throw new Error(r);
     run(LIMITS.buildingWaiting + 15);
     expect(d.issues.get(`b${b.id}`)?.text).toContain('Waiting for materials');
     expect(d.events.some((e) => e.includes('Long wait'))).toBe(true);
@@ -38,8 +36,6 @@ describe('diagnostics', () => {
     const { g, d, run } = watched();
     g.pool = 0;
     const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
-    const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-    if (typeof r === 'string') throw new Error(r);
     run(LIMITS.noSettlers + 5);
     expect(d.issues.get('pool')?.text).toContain('No idle settlers in the HQ');
     expect(d.issues.get('pool')?.text).toContain('Woodcutter');
@@ -52,8 +48,6 @@ describe('diagnostics', () => {
   test('reports nothing stuck in a healthy game', () => {
     const { g, d, run } = watched();
     const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
-    const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-    if (typeof r === 'string') throw new Error(r);
     run(120);
     expect([...d.issues.values()]).toEqual([]);
     expect(d.events.some((e) => e.includes('finished'))).toBe(true);
@@ -71,8 +65,6 @@ describe('diagnostics', () => {
   test('builds a snapshot with every building, settler and the idle count', () => {
     const { g, d, run } = watched();
     const b = placeBare(g, 'woodcutter', g.hq.x + 4, g.hq.y + 1);
-    const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-    if (typeof r === 'string') throw new Error(r);
     run(60);
     const text = d.snapshot();
     expect(text).toContain(`idle in the HQ ${g.pool}`);
@@ -80,7 +72,6 @@ describe('diagnostics', () => {
     expect(text).toMatch(/trees \d+ grown/);
     expect(g.settlers.size).toBeGreaterThan(0);
     for (const s of g.settlers.values()) expect(text).toContain(`${s.role} #${s.id} |`);
-    for (const road of g.roads.values()) expect(text).toContain(`#${road.id} | #${road.a}-#${road.b} |`);
   });
 
   test('says so when no game is watched', () => {

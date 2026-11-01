@@ -6,7 +6,7 @@ import type { Game } from './game';
 import type { Building } from './types';
 
 // The fields a farm at (x, y) would take: the nearest free grass in its reach. Tiles next to the
-// farm or its flag stay free, so the farm and its flag can always be reached. `withCrops` lets
+// farm or its doorstep stay free, so the farm and its door can always be reached. `withCrops` lets
 // tiles that already grow grain count, for farms from saves made before fields.
 export function pickFields(g: Game, x: number, y: number, withCrops = false): P[] {
   const r = BDEFS.farm.radius;
@@ -15,9 +15,9 @@ export function pickFields(g: Game, x: number, y: number, withCrops = false): P[
     for (let tx = x - r; tx <= x + r; tx++) {
       const d = Math.hypot(tx - x, ty - y);
       if (d > r || !g.world.inside(tx, ty) || !g.world.territory[ty * W + tx]) continue;
-      if (Math.abs(tx - x) <= 1 && ty >= y - 1 && ty <= y + 2) continue; // next to the farm or its flag
+      if (Math.abs(tx - x) <= 1 && ty >= y - 1 && ty <= y + 2) continue; // next to the farm or its doorstep
       const t = g.world.at(tx, ty);
-      if (t.t !== 'grass' || t.tree || t.rock || t.b || t.road || t.flag || t.field) continue;
+      if (t.t !== 'grass' || t.tree || t.rock || t.b || t.field) continue;
       if (t.crop && !withCrops) continue;
       if (besideOther(g, tx, ty)) continue;
       found.push({ x: tx, y: ty, d });
@@ -26,13 +26,13 @@ export function pickFields(g: Game, x: number, y: number, withCrops = false): P[
   return found.slice(0, FARM_FIELDS).map(({ x, y }) => ({ x, y }));
 }
 
-// Next to some other building or flag, where fields could wall it in.
+// Next to some other building, where fields could wall in its door.
 function besideOther(g: Game, x: number, y: number) {
   for (let dy = -1; dy <= 1; dy++)
     for (let dx = -1; dx <= 1; dx++) {
       if (!g.world.inside(x + dx, y + dy)) continue;
       const t = g.world.at(x + dx, y + dy);
-      if (t.b || t.flag) return true;
+      if (t.b) return true;
     }
   return false;
 }

@@ -6,11 +6,12 @@ import { flatGame, inside, placeBare } from './test-helpers';
 import { START_TOOLS } from './tools';
 
 describe('a new game', () => {
-  test('starts with a built HQ, its flag in front, and starting goods', () => {
+  test('starts with a built HQ and starting goods, and no roads or flags', () => {
     const g = new Game(1);
     expect(g.hq.built).toBe(true);
-    const f = g.flags.get(g.hq.flag)!;
-    expect(f).toMatchObject({ x: g.hq.x, y: g.hq.y + 1, building: g.hq.id });
+    expect(g.hq).not.toHaveProperty('flag');
+    expect(g).not.toHaveProperty('roads');
+    expect(g).not.toHaveProperty('flags');
     expect(g.hq.stock).toEqual(bag({ log: 6, plank: 24, stone: 14, tool: START_TOOLS }));
     expect(g.population).toBe(18);
     expect(g.settlers.size).toBe(0);
@@ -45,12 +46,24 @@ describe('canPlace', () => {
     expect(g.canPlace('woodcutter', x, y - 4)).toBe('A boulder is in the way');
   });
 
-  test('needs room for a flag in front of the door', () => {
+  test('needs open ground in front of its door', () => {
     const g = flatGame();
     // The tile in front would be the HQ itself.
-    expect(g.canPlace('woodcutter', g.hq.x, g.hq.y - 1)).toBe('No room for its flag in front');
-    // The tile in front would sit right next to the HQ's flag.
-    expect(g.canPlace('woodcutter', g.hq.x + 1, g.hq.y)).toBe('No room for its flag in front');
+    expect(g.canPlace('woodcutter', g.hq.x, g.hq.y - 1)).toBe('No room in front of its door');
+    g.world.at(g.hq.x + 4, g.hq.y + 1).tree = 1;
+    expect(g.canPlace('woodcutter', g.hq.x + 4, g.hq.y)).toBe('No room in front of its door');
+    g.world.at(g.hq.x - 4, g.hq.y + 1).t = 'water';
+    expect(g.canPlace('woodcutter', g.hq.x - 4, g.hq.y)).toBe('No room in front of its door');
+  });
+
+  test("never goes on another building's doorstep", () => {
+    const g = flatGame();
+    expect(g.canPlace('woodcutter', g.hq.x, g.hq.y + 1)).toBe('In front of the door of another building');
+  });
+
+  test('may stand right beside another building', () => {
+    const g = flatGame();
+    expect(g.canPlace('woodcutter', g.hq.x + 1, g.hq.y)).toBeNull();
   });
 
   test('refuses spots settlers cannot walk to', () => {
@@ -59,38 +72,37 @@ describe('canPlace', () => {
     for (let dy = -2; dy <= 3; dy++)
       for (let dx = -2; dx <= 2; dx++)
         if (Math.abs(dx) === 2 || dy === -2 || dy === 3) g.world.at(bx + dx, by + dy).t = 'water';
-    expect(g.canPlace('woodcutter', bx, by)).toBe('No road can reach it');
+    expect(g.canPlace('woodcutter', bx, by)).toBe('Settlers cannot walk there');
   });
 
-  // Ring the flag tile in front of (bx, by) with trees of the given size, leaving the building's own tile free.
-  const wallFlag = (g: ReturnType<typeof flatGame>, bx: number, by: number, tree: number) => {
+  // Ring the doorstep in front of (bx, by) with trees of the given size, leaving the building's own tile free.
+  const wallDoor = (g: ReturnType<typeof flatGame>, bx: number, by: number, tree: number) => {
     for (let dy = -1; dy <= 1; dy++)
       for (let dx = -1; dx <= 1; dx++)
         if ((dx || dy) && (dx || dy !== -1)) g.world.at(bx + dx, by + 1 + dy).tree = tree;
   };
 
-  test('refuses a spot whose flag is walled in by trees', () => {
+  test('refuses a spot whose door is walled in by trees', () => {
     const g = flatGame();
     const bx = g.hq.x + 5, by = g.hq.y - 4;
-    wallFlag(g, bx, by, 1);
-    expect(g.canPlace('woodcutter', bx, by)).toBe('No road can reach it');
+    wallDoor(g, bx, by, 1);
+    expect(g.canPlace('woodcutter', bx, by)).toBe('Settlers cannot walk there');
   });
 
-  test('saplings around the flag also block roads', () => {
+  test('saplings around the door also wall it in, because they grow into trees', () => {
     const g = flatGame();
     const bx = g.hq.x + 5, by = g.hq.y - 4;
-    wallFlag(g, bx, by, 0.1);
-    expect(g.canPlace('woodcutter', bx, by)).toBe('No road can reach it');
+    wallDoor(g, bx, by, 0.1);
+    expect(g.canPlace('woodcutter', bx, by)).toBe('Settlers cannot walk there');
   });
 
-  test('a road may reach the flag through a gap in the trees', () => {
+  test('settlers may reach the door through a gap in the trees', () => {
     const g = flatGame();
     const bx = g.hq.x + 5, by = g.hq.y - 4;
-    wallFlag(g, bx, by, 1);
+    wallDoor(g, bx, by, 1);
     g.world.at(bx, by + 2).tree = 0;
     expect(g.canPlace('woodcutter', bx, by)).toBeNull();
-    const b = placeBare(g, 'woodcutter', bx, by);
-    expect(typeof g.buildRoad(b.flag, g.flags.get(g.hq.flag)!)).toBe('object');
+    const b = g.place('woodcutter', bx, by);
     expect(g.linked(b)).toBe(true);
   });
 });

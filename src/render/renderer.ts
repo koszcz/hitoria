@@ -6,7 +6,7 @@ import { World } from '../world';
 import { TW, toIso, fromIso } from '../iso';
 import type { P } from '../path';
 import { ART } from '../art';
-import { Model, iconY, makeBuilding, makeFlag, noRoadSign } from './buildings';
+import { Model, iconY, makeBuilding } from './buildings';
 import { CARRY_Y, Person, makePerson } from './people';
 import { SEA, Terrain } from './terrain';
 import { pierTo } from './harbour';
@@ -14,7 +14,6 @@ import { Scenery } from './scenery';
 import { Goods } from './goods';
 import { Animals } from './animals';
 import { Ships } from './ships';
-import { drawRoads } from './roads';
 import { Overlays, View } from './overlays';
 import { disposeModel } from './merge';
 import { GRAPHICS, type Graphics } from '../quality/levels';
@@ -60,11 +59,8 @@ export class Renderer {
   private season: SeasonLook = seasonLook(0);
   private reach = 20; // half the width of the ground in view
 
-  private roads = new THREE.Group();
-  private roadNet = -1;
   private wornKey = -1; // game.worn when the ground was last painted
   private models = new Map<number, Model>();
-  private flags = new Map<number, Model>();
   private people = new Map<number, Person>();
   private graphics: Graphics = GRAPHICS.high;
 
@@ -87,7 +83,6 @@ export class Renderer {
     this.goods = new Goods(scene);
     this.animals = new Animals(scene, this.ground);
     this.ships = new Ships(scene);
-    scene.add(this.roads);
     this.overlays = new Overlays(scene, this.ground);
     this.snowfall = new Snowfall(scene);
     this.signs = new Signs(scene, this.ground);
@@ -172,16 +167,11 @@ export class Renderer {
       this.wornKey = game.worn;
       this.ground.paint(game.wear);
     }
-    if (game.net !== this.roadNet) {
-      this.roadNet = game.net;
-      drawRoads(this.roads, game, this.ground);
-    }
 
     this.goods.start();
     this.scenery.draw(game.world, game.wear, now, this.season);
     this.snowfall.draw(this.season.snowfall, this.sun.target.position, this.reach * 1.3, now, this.gl.getPixelRatio());
     this.buildings(game, now);
-    this.flagsAndGoods(game, now);
     this.settlers(game, now);
     this.animals.draw(game, now);
     this.ships.draw(game, now);
@@ -230,11 +220,9 @@ export class Renderer {
   private setWorld(world: World) {
     this.world = world;
     this.terrKey = -1;
-    this.roadNet = -1;
-    for (const m of [...this.models.values(), ...this.flags.values()]) this.drop(m.g);
+    for (const m of [...this.models.values()]) this.drop(m.g);
     for (const p of this.people.values()) this.drop(p.g);
     this.models.clear();
-    this.flags.clear();
     this.people.clear();
     this.animals.clear();
     this.ships.clear();
@@ -257,16 +245,11 @@ export class Renderer {
       if (!m || m.key !== key) {
         if (m) this.drop(m.g);
         m = makeBuilding(b.type, b.built);
-        if (b.type !== 'hq') m.g.add((m.noRoad = noRoadSign()));
         const dock = b.type === 'harbour' && b.built && game.dock(b);
         if (dock) m.g.add(pierTo(b, dock, (x, z) => this.heightAt(x, z), SEA));
         m.g.position.set(b.x + 0.5, this.heightAt(b.x + 0.5, b.y + 0.5), b.y + 0.5);
         this.models.set(b.id, m);
         this.scene.add(m.g);
-      }
-      if (m.noRoad) {
-        m.noRoad.visible = !game.linked(b);
-        m.noRoad.position.y = (b.built ? iconY(b.type) + 0.42 : 1.4) + Math.sin(now * 4) * 0.04;
       }
       this.animateBuilding(b, m, now);
     }
@@ -305,27 +288,7 @@ export class Renderer {
       for (let i = 0; i < b.out[g]; i++, k++) this.goods.put(g, base.x + 0.5, base.y + 0.04 + Math.floor(k / 2) * 0.06, base.z + 0.12 - (k % 2) * 0.24, Math.PI / 2);
   }
 
-  // --- flags and settlers --------------------------------------------------
-
-  private flagsAndGoods(game: Game, now: number) {
-    const seen = new Set<number>();
-    for (const f of game.flags.values()) {
-      seen.add(f.id);
-      let m = this.flags.get(f.id);
-      if (!m) {
-        m = makeFlag();
-        m.g.position.set(f.x + 0.5, this.heightAt(f.x + 0.5, f.y + 0.5), f.y + 0.5);
-        this.flags.set(f.id, m);
-        this.scene.add(m.g);
-      }
-      m.cloth!.rotation.y = Math.sin(now * 4 + f.x) * 0.4;
-    }
-    for (const [id, m] of this.flags)
-      if (!seen.has(id)) {
-        this.drop(m.g);
-        this.flags.delete(id);
-      }
-  }
+  // --- settlers ---------------------------------------------------------
 
   private settlers(game: Game, now: number) {
     const seen = new Set<number>();

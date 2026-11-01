@@ -1,6 +1,6 @@
 // Worn paths: footsteps wear grass into dirt, worn ground is faster to walk on, and unused paths fade.
 import { describe, expect, test } from 'bun:test';
-import { Game, FADE_DELAY, FADE_TIME, PATH_SPEED, ROAD_SPEED, WEAR_STEP } from '.';
+import { Game, FADE_DELAY, FADE_TIME, PATH_SPEED, WEAR_STEP } from '.';
 import { W } from '../world';
 import { findPath } from '../path';
 import { walkCost, walkSpeed } from './land';
@@ -40,10 +40,10 @@ describe('worn paths', () => {
     expect(wearAt(g, x, y)).toBe(1);
   });
 
-  test('roads, flags, fields, buildings, water and mountains never wear', () => {
+  test('fields, buildings, water and mountains never wear', () => {
     const g = flatGame();
     const x = g.hq.x + 4, y = g.hq.y + 4;
-    const marks: [string, object][] = [['road', { road: 1 }], ['flag', { flag: 1 }], ['field', { field: 1 }],
+    const marks: [string, object][] = [['field', { field: 1 }],
       ['building', { b: 1 }], ['water', { t: 'water' }], ['mountain', { t: 'mountain' }]];
     marks.forEach(([, mark], i) => {
       Object.assign(g.world.at(x + i, y), mark);
@@ -55,7 +55,7 @@ describe('worn paths', () => {
     expect(wearAt(g, x, y + 1)).toBeGreaterThan(0);
   });
 
-  test('a fully worn path is faster than grass, but slower than a road', () => {
+  test('a fully worn path is faster than grass', () => {
     const g = flatGame();
     const x = g.hq.x + 4, y = g.hq.y + 4;
     expect(walkSpeed(g, x, y)).toBe(1);
@@ -64,7 +64,6 @@ describe('worn paths', () => {
     g.wear[y * W + x] = 1;
     expect(walkSpeed(g, x, y)).toBe(PATH_SPEED);
     expect(PATH_SPEED).toBeGreaterThan(1);
-    expect(PATH_SPEED).toBeLessThan(ROAD_SPEED);
     expect(walkCost(g, x, y)).toBeCloseTo(1 / PATH_SPEED);
   });
 

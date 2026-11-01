@@ -6,6 +6,7 @@ import type { Game } from './game';
 import { homeOf, isHome } from './homes';
 import { computeTerritory } from './land';
 import { sendHome } from './settlers';
+import type { P } from '../path';
 import type { Building } from './types';
 
 export function demolish(g: Game, b: Building): string | null {
@@ -33,7 +34,6 @@ export function demolish(g: Game, b: Building): string | null {
   }
   for (const k of GOODS) home.stock[k] += b.stock[k] + b.out[k];
   if (b.tooled) home.stock.tool++; // the worker brings their tool back
-  g.flags.get(b.flag)!.building = 0; // the flag and its roads stay
   g.world.at(b.x, b.y).b = 0;
   freeFields(g, b);
   g.buildings.delete(b.id);
@@ -41,4 +41,10 @@ export function demolish(g: Game, b: Building): string | null {
   if (b.type === 'lookout' && b.built) computeTerritory(g);
   g.toasts.push(`${BDEFS[b.type].icon} ${BDEFS[b.type].name} demolished`);
   return null;
+}
+
+// Demolish the building on tile `t`, if there is one.
+export function removeAt(g: Game, t: P): string | null {
+  const id = g.world.inside(t.x, t.y) ? g.world.at(t.x, t.y).b : 0;
+  return id ? demolish(g, g.buildings.get(id)!) : 'Nothing to remove here';
 }

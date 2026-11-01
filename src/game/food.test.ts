@@ -1,14 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, Good } from '.';
-import { flatGame, run, runUntil, expectIncomingConsistent, placeBare } from './test-helpers';
-
-function placeLinked(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
-  expect(g.canPlace(type, x, y)).toBeNull();
-  const b = placeBare(g, type, x, y);
-  const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-  if (typeof r === 'string') throw new Error(r);
-  return b;
-}
+import { flatGame, run, runUntil, expectIncomingConsistent, placeLinked } from './test-helpers';
 
 function setTiles(g: Game, x0: number, y0: number, x1: number, y1: number, t: 'grass' | 'water' | 'mountain') {
   for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) g.world.at(x, y).t = t;
@@ -38,11 +30,9 @@ describe('mines and food', () => {
     const g = flatGame();
     const { x, y } = g.hq;
     const farm = placeLinked(g, 'farm', x + 5, y - 4);
-    const mill = placeLinked(g, 'mill', x - 4, y);
+    placeLinked(g, 'mill', x - 4, y);
     placeLinked(g, 'bakery', x + 4, y + 3);
-    // The HQ flag has no room for a fourth road, so the well joins the mill's flag.
-    const well = placeBare(g, 'well', x - 4, y - 4);
-    if (typeof g.buildRoad(well.flag, g.flags.get(mill.flag)!) === 'string') throw new Error('No road to the well');
+    placeLinked(g, 'well', x - 4, y - 4);
     runUntil(g, () => farm.built, 120);
     runUntil(g, () => g.world.tiles.some((t) => t.crop > 0), 60);
     runUntil(g, () => g.stored.bread >= 1, 600, () => expectIncomingConsistent(g));
@@ -67,7 +57,7 @@ describe('mines and food', () => {
     const d = g.save();
     d.v = 1;
     for (const b of d.buildings) b.stock = { log: b.stock.log, plank: b.stock.plank, stone: b.stock.stone } as typeof b.stock;
-    d.tiles = d.tiles.map((t) => t.slice(0, 6) as typeof t);
+    d.tiles = (d.tiles as number[][]).map(([tree, conifer, rock, b]) => [tree, conifer, rock, b, 0, 0]) as typeof d.tiles;
     const l = Game.load(d);
     expect(l.hq.stock.bread).toBe(0);
     expect(l.world.tiles.every((t) => t.crop === 0)).toBe(true);
@@ -94,22 +84,16 @@ describe('mines and food', () => {
     expect(tile.crop).toBe(1);
   });
 
-  test('buildings, flags and roads clear the grain they are built on', () => {
+  test('a building clears the grain it is built on', () => {
     const g = flatGame();
     const { x, y } = g.hq;
     for (let ty = y - 8; ty <= y + 8; ty++)
       for (let tx = x - 8; tx <= x + 8; tx++) {
         const t = g.world.at(tx, ty);
-        if (!t.b && !t.flag) t.crop = 0.5;
+        if (!t.b) t.crop = 0.5;
       }
     const b = placeLinked(g, 'mill', x + 6, y);
-    const f = g.startFlag({ x: x - 6, y: y - 6 });
-    if (typeof f === 'string') throw new Error(f);
     expect(g.world.at(b.x, b.y).crop).toBe(0);
-    expect(g.world.at(b.x, b.y + 1).crop).toBe(0);
-    expect(g.world.at(f.x, f.y).crop).toBe(0);
-    expect(g.roads.size).toBeGreaterThan(0);
-    for (const r of g.roads.values()) for (const p of r.path) expect(g.world.at(p.x, p.y).crop).toBe(0);
   });
 
   test('a mine keeps at most 4 food, counting fish and bread together', () => {
@@ -149,7 +133,7 @@ describe('mines and food', () => {
     const g = flatGame();
     const d = g.save();
     d.v = 1;
-    Object.assign(d.flags.find((f) => f.id === g.hq.flag)!, { items: [{ g: 'cheese' as Good, dest: 0 }, { g: 'log', dest: 0 }] });
+    d.flags = [{ items: [{ g: 'cheese' as Good }, { g: 'log' }] }];
     const l = Game.load(d);
     expect(l.hq.stock.log).toBe(g.hq.stock.log + 1);
     expect('cheese' in l.hq.stock).toBe(false);

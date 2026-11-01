@@ -18,15 +18,17 @@ describe('demolishing a building', () => {
     expect(g.buildings.has(g.hq.id)).toBe(true);
   });
 
-  test('its flag and road stay, free for a new building', () => {
+  test('its spot is free for a new building', () => {
     const g = flatGame();
     const b = placeLinked(g, 'woodcutter', g.hq.x + 4, g.hq.y);
-    const flag = g.flags.get(b.flag)!;
-    const roads = [...flag.roads];
     g.removeAt({ x: b.x, y: b.y });
-    expect(g.flags.get(b.flag)?.building).toBe(0);
-    expect(flag.roads).toEqual(roads);
     expect(g.canPlace('quarry', b.x, b.y)).toBeNull();
+  });
+
+  test('the remove tool says so when there is no building on the tile', () => {
+    const g = flatGame();
+    expect(g.removeAt({ x: g.hq.x + 3, y: g.hq.y - 3 })).toBe('Nothing to remove here');
+    expect(g.removeAt({ x: -1, y: 0 })).toBe('Nothing to remove here');
   });
 
   test('goods at a site and on their way to it go back to the HQ', () => {

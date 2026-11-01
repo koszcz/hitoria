@@ -188,13 +188,12 @@ function updateSound(t: number) {
 }
 
 let hover: P | null = null;
-let preview: P[] | null = null;
 let fields: P[] = []; // fields the farm under the cursor would take
 let previewKey = '';
 const keys = new Set<string>();
 const gestures = new Gestures(renderer);
 
-// On a touch screen there is no hover. A first tap aims (shows the ghost or road plan) and a
+// On a touch screen there is no hover. A first tap aims (shows the ghost of the building) and a
 // second tap on the same tile builds.
 let touch = matchMedia('(pointer: coarse)').matches;
 function setTouch(on: boolean) {
@@ -261,7 +260,6 @@ window.addEventListener('keydown', (e) => {
     debug.toggle();
   }
   if (e.key === 'b' || e.key === 'B') ui.openBuild();
-  if (e.key === 'r' || e.key === 'R') ui.setPlacing(ui.placing === 'road' ? null : 'road');
   if (e.key === 'x' || e.key === 'X') ui.setPlacing(ui.placing === 'remove' ? null : 'remove');
   const n = Number(e.key);
   if (n >= 1 && n <= BUILDABLE.length) ui.setPlacing(BUILDABLE[n - 1]);
@@ -273,21 +271,13 @@ window.addEventListener('keydown', (e) => {
 window.addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
 window.addEventListener('blur', () => keys.clear());
 
-// Step back one level: drop the road being drawn, then the tool, then the selection.
+// Step back one level: drop the tool, then the selection.
 function cancel() {
-  if (ui.placing === 'road' && ui.roadFrom) ui.roadFrom = 0;
-  else if (ui.placing) ui.setPlacing(null);
+  if (ui.placing) ui.setPlacing(null);
   else ui.select(0);
 }
 
 function click(t: P, keep: boolean) {
-  if (ui.placing === 'road') {
-    const res = ui.roadFrom ? game.buildRoad(ui.roadFrom, t) : game.startFlag(t);
-    diag.event(`Road ${ui.roadFrom ? `from flag #${ui.roadFrom}` : 'start'} at ${t.x},${t.y}: ${typeof res === 'string' ? `refused (${res})` : `ok, flag #${res.id}`}`);
-    if (typeof res === 'string') return ui.toast(res);
-    ui.roadFrom = res.id;
-    return;
-  }
   if (ui.placing === 'remove') {
     const why = game.removeAt(t);
     diag.event(`Remove at ${t.x},${t.y}: ${why ? `refused (${why})` : 'ok'}`);
@@ -341,17 +331,15 @@ function frame(now: number) {
   const t1 = performance.now();
 
   if (touch) hover = aim && aim.tool === ui.placing ? aim.t : null;
-  const tool = ui.placing === 'road' || ui.placing === 'remove' ? ui.placing : null;
+  const tool = ui.placing === 'remove' ? ui.placing : null;
   const placing = tool ? null : (ui.placing as BType | null);
   const placeOk = !!placing && !!hover && !game.canPlace(placing, hover.x, hover.y);
-  const key = `${ui.placing}:${placeOk}:${ui.roadFrom}:${hover?.x},${hover?.y}:${game.net}`;
+  const key = `${ui.placing}:${placeOk}:${hover?.x},${hover?.y}`;
   if (key !== previewKey) {
     previewKey = key;
-    if (tool === 'road' && ui.roadFrom && hover) preview = game.planRoad(ui.roadFrom, hover);
-    else preview = placeOk ? game.planAutoRoad(placing!, hover!.x, hover!.y) : null;
     fields = placeOk ? game.planFields(placing!, hover!.x, hover!.y) : [];
   }
-  renderer.draw(game, { hover, placing, placeOk, tool, roadFrom: ui.roadFrom, preview, fields, selected: ui.selected }, now / 1000);
+  renderer.draw(game, { hover, placing, placeOk, tool, fields, selected: ui.selected }, now / 1000);
   updateSound(now / 1000);
   diag.frame(dt * 1000, t1 - t0, performance.now() - t1);
   // On auto, the graphics level follows how fast frames are. Tell the player when it drops.

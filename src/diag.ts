@@ -188,7 +188,7 @@ export class Diagnostics {
       this.issues.size ? [...this.issues.values()].map((i) => `- ${i.text}`).join('\n') : '(none)',
       '',
       '### Buildings',
-      'building | at | built | status (for how long) | worker | road to HQ | stock | out | coming | in range',
+      'building | at | built | status (for how long) | worker | walk to HQ | stock | out | coming | in range',
     ];
     for (const b of g.buildings.values()) {
       const def = BDEFS[b.type];
@@ -211,9 +211,6 @@ export class Diagnostics {
         || (s.inside ? 'inside' : s.atWork ? 'at work' : 'idle');
       lines.push(`${s.role} #${s.id} | ${s.x.toFixed(1)},${s.y.toFixed(1)} | ${home} | ${doing} | ${s.carrying ?? '-'}`);
     }
-
-    lines.push('', '### Roads', 'road | flags | length');
-    for (const r of g.roads.values()) lines.push(`#${r.id} | #${r.a}-#${r.b} | ${r.path.length - 1}`);
 
     lines.push(
       '', '### Timeline (every 10 s of game time, last 2 minutes)',

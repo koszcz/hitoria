@@ -2,7 +2,7 @@ import type { P } from './path';
 
 // Rounds the corners of a tile path with Chaikin corner cutting. Each pass replaces every
 // corner with two points a quarter of the way along its neighbouring segments. The ends stay
-// put, so a road still meets its flags, and straight stretches stay straight.
+// put, so a line still meets its end points, and straight stretches stay straight.
 export function smoothPath(path: P[], passes = 3): P[] {
   let pts = path;
   for (let n = 0; n < passes && pts.length > 2; n++) {

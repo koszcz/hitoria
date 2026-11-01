@@ -73,7 +73,7 @@ function nearestFree(all: Settler[], b: Building) {
   return best;
 }
 
-// Walk to building `b` the cheapest way on foot. Roads and worn paths are quicker, so carriers keep to them when they help.
+// Walk to building `b` the cheapest way on foot. Worn paths are quicker, so carriers keep to them when they help.
 function wayTo(b: Building): Task {
   return { k: 'walk', x: b.x, y: b.y };
 }

@@ -8,16 +8,14 @@ import { tradeRows, type TradePick } from './tradeinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
 
-export type Tool = BType | 'road' | 'remove';
+export type Tool = BType | 'remove';
 
 const TOOLS: { tool: Tool; key: string; icon: string; name: () => string; desc: () => string }[] = [
-  { tool: 'road', key: 'R', icon: '🛤️', name: () => T().road, desc: () => T().roadDesc },
   { tool: 'remove', key: 'X', icon: '✖️', name: () => T().remove, desc: () => T().removeDesc },
 ];
 
 export class UI {
   placing: Tool | null = null;
-  roadFrom = 0;
   selected = 0;
   speed = 1;
   paused = false;
@@ -84,7 +82,7 @@ export class UI {
     this.refresh();
   }
 
-  // The bar at the bottom: one button that opens the build menu, then the road and remove tools.
+  // The bar at the bottom: one button that opens the build menu, then the remove tool.
   private drawBar() {
     const bar = $('buildbar');
     bar.replaceChildren();
@@ -107,7 +105,7 @@ export class UI {
   }
 
   openBuild() {
-    const current = this.placing && this.placing !== 'road' && this.placing !== 'remove' ? this.placing : null;
+    const current = this.placing && this.placing !== 'remove' ? this.placing : null;
     openBuildMenu({
       game: this.game,
       current,
@@ -120,7 +118,7 @@ export class UI {
   private labelBuild() {
     const x = T();
     const p = this.placing;
-    const type = p && p !== 'road' && p !== 'remove' ? p : null;
+    const type = p && p !== 'remove' ? p : null;
     const html = type
       ? `<span class="icon">${BDEFS[type].icon}</span><span class="name">${buildingName(type)}</span><span class="cost">${costText(BDEFS[type].cost)}</span>`
       : `<span class="icon">🔨</span><span class="name">${x.build}</span><span class="cost key">${x.key('B')}</span>`;
@@ -130,7 +128,6 @@ export class UI {
 
   setPlacing(type: Tool | null) {
     this.placing = type;
-    this.roadFrom = 0;
     if (type) this.selected = 0;
     this.refresh();
   }

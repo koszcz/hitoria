@@ -12,7 +12,7 @@ export function flatGame(seed = 1, radius = 16) {
     for (let x = hx - radius; x <= hx + radius; x++) {
       if (!g.world.inside(x, y)) continue;
       const t = g.world.at(x, y);
-      if (t.b || t.flag) continue;
+      if (t.b) continue;
       Object.assign(t, { t: 'grass', h: 0.5, tree: 0, rock: 0 });
     }
   return g;
@@ -71,17 +71,15 @@ export function expectIncomingConsistent(g: Game) {
   }
 }
 
-// Place a building site without the road it would get on its own, so a test can lay roads itself.
+// Place a building site wherever the test says, without checking that the spot is allowed.
 export function placeBare(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
   return placeSite(g, type, x, y);
 }
 
-// Place a building and join its flag to the HQ's flag with a road straight to it.
+// Place a building on an allowed spot that settlers can walk to from the HQ.
 export function placeLinked(g: Game, type: Parameters<Game['place']>[0], x: number, y: number) {
   expect(g.canPlace(type, x, y)).toBeNull();
   const b = placeBare(g, type, x, y);
-  const r = g.buildRoad(b.flag, g.flags.get(g.hq.flag)!);
-  if (typeof r === 'string') throw new Error(r);
   expect(g.linked(b)).toBe(true);
   return b;
 }
