@@ -52,14 +52,15 @@ export function seasonTree(m: THREE.MeshStandardMaterial, leafy: boolean) {
 }
 
 // Grass dries in autumn and is fresh in spring. Snow settles on flat land, in patches at first.
+// Feet keep worn paths clear, so the ground mesh's `wear` attribute holds the snow back there.
 export function seasonGround(m: THREE.MeshStandardMaterial) {
   m.onBeforeCompile = (s) => {
     Object.assign(s.uniforms, U);
     s.vertexShader = s.vertexShader
-      .replace('#include <common>', '#include <common>\nvarying float vH, vUp;')
-      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvH = (modelMatrix * vec4(transformed, 1.0)).y;\nvUp = objectNormal.y;');
+      .replace('#include <common>', '#include <common>\nattribute float wear;\nvarying float vH, vUp, vWear;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvH = (modelMatrix * vec4(transformed, 1.0)).y;\nvUp = objectNormal.y;\nvWear = wear;');
     s.fragmentShader = s.fragmentShader
-      .replace('#include <common>', '#include <common>\nuniform float uSnow, uDry;\nuniform vec3 uSnowCol;\nvarying float vH, vUp;')
+      .replace('#include <common>', '#include <common>\nuniform float uSnow, uDry;\nuniform vec3 uSnowCol;\nvarying float vH, vUp, vWear;')
       .replace('#include <color_fragment>', `#include <color_fragment>
         vec3 c = diffuseColor.rgb;
         float grassy = c.g > c.r * 1.02 && c.g > c.b ? 0.7 : 0.0;
@@ -67,6 +68,7 @@ export function seasonGround(m: THREE.MeshStandardMaterial) {
         diffuseColor.rgb = mix(c, c * tint, abs(uDry) * grassy);
         float patches = texture2D(map, vMapUv * 0.13).r;
         float cover = smoothstep(patches * 0.6, patches * 0.6 + 0.2, uSnow) * step(0.02, vH) * smoothstep(0.5, 0.8, vUp);
+        cover *= 1.0 - smoothstep(0.3, 0.8, vWear) * 0.75;
         diffuseColor.rgb = mix(diffuseColor.rgb, uSnowCol * (0.85 + patches * 0.2), cover);`);
   };
 }

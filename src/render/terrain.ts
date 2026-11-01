@@ -19,6 +19,7 @@ export class Terrain {
   private corners = new Float32Array((W + 1) * (H + 1));
   private relief!: Relief;
   private cornerCol = new Float32Array((W + 1) * (H + 1) * 3);
+  private cornerWear = new Float32Array((W + 1) * (H + 1)); // how worn the path at each corner is, so snow can spare it
   private water!: THREE.Mesh;
   private border = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: '#ffeaa0', dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.9 }));
   private c = new THREE.Color();
@@ -78,6 +79,7 @@ export class Terrain {
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(pos.length), 3));
+    geo.setAttribute('wear', new THREE.BufferAttribute(new Float32Array(r.heights.length), 1));
     geo.setIndex(new THREE.BufferAttribute(idx, 1));
     geo.computeVertexNormals();
     const mat = new THREE.MeshStandardMaterial({ vertexColors: true, map: this.grain, roughness: 0.95 });
@@ -105,8 +107,9 @@ export class Terrain {
   // Corner colours blend the four tiles around them, and each fine point blends its corners.
   // Slope and height then add rock and snow. `wear` turns grass and sand toward dirt.
   paint(wear: Float32Array) {
-    const world = this.world!, CC = this.cornerCol;
+    const world = this.world!, CC = this.cornerCol, CW = this.cornerWear;
     const col = this.mesh.geometry.attributes.color as THREE.BufferAttribute;
+    const trail = this.mesh.geometry.attributes.wear as THREE.BufferAttribute;
     const base = new Map<number, THREE.Color>();
     const path = new THREE.Color(ART.path);
     const tileCol = (x: number, y: number) => {
@@ -140,6 +143,7 @@ export class Terrain {
         // A worn tile browns all four of its corners, so a path one tile wide still shows clearly.
         if (worn) c.lerp(path, Math.min(0.85, worn));
         CC.set([c.r, c.g, c.b], k * 3);
+        CW[k] = worn;
       }
     const r = this.relief, n = r.n, rock = new THREE.Color(ART.rock), snow = new THREE.Color(ART.snow);
     for (let k = 0; k < r.heights.length; k++) {
@@ -156,8 +160,11 @@ export class Terrain {
       if (r.snow[k]) c.lerp(snow, r.snow[k]);
       if (r.deep[k]) c.lerp(this.deep, r.deep[k]);
       col.setXYZ(k, c.r, c.g, c.b);
+      const ca = a / 3, cd = d / 3;
+      trail.setX(k, CW[ca] * w0 + CW[ca + 1] * w1 + CW[cd] * w2 + CW[cd + 1] * w3);
     }
     col.needsUpdate = true;
+    trail.needsUpdate = true;
   }
 
   drawBorder() {

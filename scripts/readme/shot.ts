@@ -34,6 +34,9 @@ try {
     for (const [k, v] of items) localStorage.setItem(k, v);
   }, [...store]);
   await page.goto(`http://127.0.0.1:${server.port}/`, { waitUntil: 'load' });
+  // A loaded island opens its chronicle and pauses. Close it so the village shows and runs.
+  await page.waitForSelector('#chronicle button');
+  await page.click('#chronicle button');
   await Bun.sleep(LOAD_MS);
   await page.screenshot({ path: FILE as `${string}.jpeg`, type: 'jpeg', quality: 80 });
   console.log(`Saved ${FILE}`);
