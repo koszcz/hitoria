@@ -43,9 +43,11 @@ when a house or mine waits more than 20 seconds for food. If that happens, try a
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
    - Coal and iron mines also go next to a mountain. A smelter melts their iron ore and coal
      into iron. Nothing uses iron yet.
-   - Across the water from the bay lies a second island. You can't reach it yet.
+   - Across the water from the bay lies a second island. To settle it, build a harbour, click it
+     and press **Set sail**. See "Settling the second island" below.
 
-Settlers must be able to walk from the HQ to every building. If water, mountains or trees cut a
+Settlers must be able to walk from the HQ, or from a harbour they built on the second island, to
+every building. If water, mountains or trees cut a
 building off, no goods arrive and the builder or worker waits. A warning sign floats over it.
 Click a building to see what it is doing and what it is waiting for.
 
@@ -56,6 +58,20 @@ The island also goes through the four seasons. A full year lasts 20 minutes of g
 new game starts in spring. Leafy trees turn yellow, orange and red in autumn and lose their leaves
 in winter, when snow falls and covers the land. Grain grows only from spring to autumn. In
 winter, farmers bring in ripe grain but sow nothing, so store grain and food before the snow comes.
+
+### Settling the second island
+
+1. Build a harbour on the shore by the bay.
+2. Gather 5 idle settlers in the HQ and 12 planks and 8 stone in your stores. Click the harbour to
+   see what is still missing.
+3. Press **Set sail**. A ship takes the settlers and goods to the nearest free shore on the
+   second island.
+4. The settlers clear the trees and boulders around them, which gives them logs and stone. They
+   build a harbour of their own and claim the land 6 tiles around it. The ship sails home.
+
+The new harbour is the island's home, like the HQ. Its idle settlers wait there and go out from it
+to build, work and carry goods. Buildings on the island get their goods from it and bring what
+they make back to it. Settlers never cross the sea on foot. You can sail only once.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ, and its flag and roads stay.
@@ -155,7 +171,7 @@ The save buttons are in the ☰ menu at the top right.
 
 The save keeps the map, buildings, roads, flags, worn paths, every good, your goals and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
-After a load, everyone starts in the HQ and walks back to their post. Goods a settler was holding go
+After a load, everyone starts in their home, the HQ or the harbour on the second island, and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
 
 Each save records which version of the map it was made on. A save from before a map change loads
@@ -191,14 +207,15 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
 | `src/ui.ts` | HUD, goal panel and info panel |
+| `src/sailinfo.ts` | The harbour panel's "Sail to settle" part |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/i18n.ts` | Translations |
@@ -225,7 +242,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ, in storehouses and in harbours.
 - A harbour stands on the shore, up to 4 tiles from open water. A wooden pier runs out to its dock.
-  Ships do not come yet.
+  A ship sails from it once, to settle the second island.
 
 Every building has a flag in front of its door. Flags mark where roads end and where they meet.
 A carrier takes one good from the building that has it and walks it the quickest way, all the way

@@ -1,6 +1,7 @@
 ---
 title: Sail to settle
 date: '2026-11-01 03:23'
+before: d3e5dc9
 shots:
   - name: voyage
     caption: The ship on its way to the other island, with settlers and crates on deck.

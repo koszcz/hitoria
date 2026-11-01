@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *Fun 3 · Effort M · Needs: Harbour, Second island · Approved · Branch: worktree-agent-a73b5bd4868c5980c*
+Nothing right now.
 
 ## Next
 
@@ -51,6 +51,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *2026-11-01*
 - **Harbour**: a harbour building on the shore, where ships can dock. *2026-11-01*
 - **Survive winter goal**: a last goal asks you to get through a whole winter with no house or mine waiting for food. *2026-11-01*
 - **Winter fields**: grain grows only in the warm months, so you store food for winter. In winter, farmers bring in ripe grain but sow nothing, and sown grain waits for spring. *2026-11-01*
