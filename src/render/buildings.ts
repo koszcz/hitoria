@@ -8,6 +8,7 @@ import { add, shadeOf } from './kit';
 import { mergeModel } from './merge';
 import { barrel, crate, house, logPile } from './props';
 import { hut } from './huts';
+import { harbourHouse } from './harbour';
 import { LOOKS } from './looks';
 import { mine } from './mines';
 
@@ -154,6 +155,9 @@ export function makeBuilding(type: BType, built: boolean): Model {
       barrel(g, 0.42, 0.24);
       break;
     }
+    case 'harbour':
+      harbourHouse(g, model, wall, roof);
+      break;
     case 'mill': {
       // A tapered white tower with a turning cap and four lattice sails.
       add(g, new THREE.CylinderGeometry(0.36, 0.38, 0.3, 14), '#9d958a', 0, -0.1, 0);

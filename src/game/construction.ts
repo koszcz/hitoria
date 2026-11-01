@@ -6,6 +6,7 @@ import { BDEFS, BType, FARM_FIELDS, GOODS, MINES, bag } from './defs';
 import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory, flaggable, near, roadable } from './land';
+import { dockAt } from './harbour';
 import { ensureFlag } from './roads';
 import { sendHome } from './settlers';
 import type { Building } from './types';
@@ -22,6 +23,7 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   if (t.field) return 'This is a farm field';
   if (MINES.includes(type) && !near(g, x, y, BDEFS[type].radius, (n) => n.t === 'mountain')) return 'Must be next to a mountain';
   if (type === 'fisher' && !near(g, x, y, BDEFS.fisher.radius, (n) => n.t === 'water')) return 'Must be near water';
+  if (type === 'harbour' && !dockAt(g, x, y)) return 'Must be on the shore by open water';
   const fields = type === 'farm' ? pickFields(g, x, y) : [];
   if (type === 'farm' && fields.length < FARM_FIELDS) return 'No room for its fields';
   const front = g.world.at(x, y + 1);

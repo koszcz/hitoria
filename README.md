@@ -191,7 +191,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, and the second island across the bay |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
@@ -223,7 +223,9 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A house turns fish, meat or bread into new settlers.
 - A lookout tower expands your land.
 - A monument does no work. Building one is your fifth goal.
-- Goods are stored at the HQ and in storehouses.
+- Goods are stored at the HQ, in storehouses and in harbours.
+- A harbour stands on the shore, up to 4 tiles from open water. A wooden pier runs out to its dock.
+  Ships do not come yet.
 
 Every building has a flag in front of its door. Flags mark where roads end and where they meet.
 A carrier takes one good from the building that has it and walks it the quickest way, all the way

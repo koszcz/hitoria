@@ -7,7 +7,7 @@ export const bag = (p: Partial<Bag> = {}): Bag => ({ log: 0, plank: 0, stone: 0,
 export type Role = 'carrier' | 'builder' | 'woodcutter' | 'forester' | 'stonecutter' | 'sawyer' | 'scout'
   | 'fisher' | 'farmer' | 'miller' | 'baker' | 'miner' | 'drawer' | 'hunter' | 'smelter';
 export type BType = 'hq' | 'woodcutter' | 'forester' | 'quarry' | 'sawmill' | 'lookout' | 'storehouse'
-  | 'fisher' | 'farm' | 'well' | 'mill' | 'bakery' | 'mine' | 'coalmine' | 'ironmine' | 'house' | 'monument' | 'hunter' | 'smelter';
+  | 'fisher' | 'farm' | 'well' | 'mill' | 'bakery' | 'mine' | 'coalmine' | 'ironmine' | 'house' | 'monument' | 'hunter' | 'smelter' | 'harbour';
 export type Anim = '' | 'chop' | 'mine' | 'hammer' | 'plant' | 'fish' | 'reap' | 'hunt';
 
 // Houses grow your number of settlers.
@@ -45,11 +45,14 @@ export const BDEFS: Record<BType, BDef> = {
   coalmine: { name: 'Coal Mine', icon: '⚫', desc: 'Digs coal out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 coal. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
   hunter: { name: "Hunter's Lodge", icon: '🏹', desc: 'Hunts deer and hares nearby and brings home meat. Animals slowly come back.', cost: { plank: 2 }, buildTime: 6, worker: 'hunter', radius: 7 },
   smelter: { name: 'Smelter', icon: '🔥', desc: 'Melts iron ore with coal into iron. It uses 1 iron ore and 1 coal for each bar of iron.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'smelter', radius: 0 },
+  harbour: { name: 'Harbour', icon: '⚓', desc: 'A wooden pier on the shore where ships can dock. It stores goods like a storehouse. Build it by open water.', cost: { plank: 4, stone: 3 }, buildTime: 12, worker: null, radius: 0 },
   ironmine: { name: 'Iron Mine', icon: '🪨', desc: 'Digs iron ore out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 iron ore. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
 };
 // Mines dig into a mountain, so they go next to one.
 export const MINES: BType[] = ['mine', 'coalmine', 'ironmine'];
-export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well', 'coalmine', 'ironmine', 'hunter', 'smelter'];
+// How far from a harbour its dock may lie, in tiles.
+export const DOCK_REACH = 4;
+export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well', 'coalmine', 'ironmine', 'hunter', 'smelter', 'harbour'];
 
 // Workshops turn goods into other goods inside the building. With several inputs in `from`, any one of them
 // will do. The good in `with` is needed as well.

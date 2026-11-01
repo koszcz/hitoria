@@ -54,6 +54,10 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   sawmill: { name: 'Tartak', desc: 'Tnie kłody na deski.' },
   lookout: { name: 'Wieża widokowa', desc: 'Poszerza twoje ziemie. Żadnych żołnierzy, tylko widok.' },
   storehouse: { name: 'Magazyn', desc: 'Przechowuje zapasy blisko miejsc, w których się je wytwarza i zużywa.' },
+  harbour: {
+    name: 'Port',
+    desc: 'Drewniane molo na brzegu, przy którym mogą cumować statki. Przechowuje towary jak magazyn. Zbuduj go przy otwartej wodzie.',
+  },
   fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu.' },
   hunter: { name: 'Chata myśliwego', desc: 'Poluje na jelenie i zające w pobliżu i przynosi mięso. Zwierzęta powoli wracają.' },
   farm: { name: 'Gospodarstwo', desc: 'Sieje zboże na wolnej trawie w pobliżu i zbiera je, gdy dojrzeje.' },
@@ -163,6 +167,7 @@ const MESSAGES_PL: Record<string, string> = {
   'A boulder is in the way': 'Przeszkadza głaz',
   'Must be next to a mountain': 'Musi stać przy górze',
   'Must be near water': 'Musi stać blisko wody',
+  'Must be on the shore by open water': 'Musi stać na brzegu przy otwartej wodzie',
   'No room for its flag in front': 'Brak miejsca na flagę przed budynkiem',
   'No road can reach it': 'Żadna droga tu nie dotrze',
   'No room for its fields': 'Brak miejsca na pola',

@@ -20,6 +20,7 @@ import { step } from './settlers';
 import { staff } from './staff';
 import { fade } from './wear';
 import { isStore, stored } from './stores';
+import { dockOf } from './harbour';
 import type { Animal, AnimalKind, Building, Flag, Road, Settler } from './types';
 
 export class Game {
@@ -95,6 +96,11 @@ export class Game {
 
   place(type: BType, x: number, y: number) {
     return place(this, type, x, y);
+  }
+
+  // Where ships tie up at a harbour.
+  dock(b: Building) {
+    return dockOf(this, b);
   }
 
   isStore(b: Building) {

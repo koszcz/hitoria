@@ -8,7 +8,8 @@ import type { P } from '../path';
 import { ART } from '../art';
 import { Model, iconY, makeBuilding, makeFlag, noRoadSign } from './buildings';
 import { CARRY_Y, Person, makePerson } from './people';
-import { Terrain } from './terrain';
+import { SEA, Terrain } from './terrain';
+import { pierTo } from './harbour';
 import { Scenery } from './scenery';
 import { Goods } from './goods';
 import { Animals } from './animals';
@@ -248,6 +249,8 @@ export class Renderer {
         if (m) this.drop(m.g);
         m = makeBuilding(b.type, b.built);
         if (b.type !== 'hq') m.g.add((m.noRoad = noRoadSign()));
+        const dock = b.type === 'harbour' && b.built && game.dock(b);
+        if (dock) m.g.add(pierTo(b, dock, (x, z) => this.heightAt(x, z), SEA));
         m.g.position.set(b.x + 0.5, this.heightAt(b.x + 0.5, b.y + 0.5), b.y + 0.5);
         this.models.set(b.id, m);
         this.scene.add(m.g);

@@ -1,4 +1,4 @@
-import { Game, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, HOUSE_FOOD, WELL_DRAW } from './game';
+import { Game, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, DOCK_REACH, HOUSE_FOOD, WELL_DRAW } from './game';
 import { getLang, goodName, buildingName, buildingDesc, join, plural } from './i18n';
 
 const bname = (t: BType) => buildingName(t);
@@ -59,8 +59,13 @@ const EN = {
     mine: 'Never runs dry, unlike the boulders a Quarry breaks.',
     house: 'More settlers mean more carriers, builders and workers. Build more houses to keep growing.',
     monument: 'Your last goal. Build it once your island is thriving.',
+    harbour: 'Ships will dock here. Until then, it is a store by the water.',
   } as Partial<Record<BType, string>>,
-  place: { fisher: 'Build it near water.', mine: 'Build it next to a mountain.' } as Partial<Record<'fisher' | 'mine', string>>,
+  place: {
+    fisher: 'Build it near water.',
+    mine: 'Build it next to a mountain.',
+    harbour: `Build it on the shore, up to ${DOCK_REACH} tiles from open water.`,
+  } as Partial<Record<'fisher' | 'mine' | 'harbour', string>>,
   worker: 'Takes 1 idle settler as its worker.',
   noWorker: 'Needs no worker.',
   range: (n: number) => `Works up to ${n} tiles away.`,
@@ -91,8 +96,9 @@ const PL: typeof EN = {
     mine: 'Nigdy się nie wyczerpuje, w przeciwieństwie do głazów, które rozbija Kamieniołom.',
     house: 'Więcej osadników to więcej tragarzy, budowniczych i pracowników. Buduj kolejne domy, by dalej rosnąć.',
     monument: 'Twój ostatni cel. Zbuduj go, gdy twoja wyspa kwitnie.',
+    harbour: 'Tu będą cumować statki. Do tego czasu służy jako magazyn nad wodą.',
   },
-  place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.' },
+  place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
   worker: 'Zatrudnia 1 wolnego osadnika.',
   noWorker: 'Nie potrzebuje pracownika.',
   range: (n) => `Pracuje do ${n} ${plural(n, 'pola', 'pól', 'pól')} od siebie.`,
@@ -157,7 +163,7 @@ export function buildFacts(type: BType): BuildFacts {
   if (x.worth[type]) worth.push(x.worth[type]!);
 
   const needs: string[] = [];
-  const place = MINES.includes(type) ? x.place.mine : type === 'fisher' ? x.place.fisher : undefined;
+  const place = MINES.includes(type) ? x.place.mine : type === 'fisher' || type === 'harbour' ? x.place[type] : undefined;
   if (place) needs.push(place);
   needs.push(def.worker ? x.worker : x.noWorker);
   if (def.radius && type !== 'lookout' && !MINES.includes(type)) needs.push(x.range(def.radius));

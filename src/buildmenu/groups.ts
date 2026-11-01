@@ -7,7 +7,7 @@ export const GROUPS: { group: Group; types: BType[] }[] = [
   { group: 'wood', types: ['woodcutter', 'forester', 'sawmill'] },
   { group: 'stone', types: ['quarry', 'mine', 'coalmine', 'ironmine', 'smelter'] },
   { group: 'food', types: ['fisher', 'hunter', 'farm', 'well', 'mill', 'bakery'] },
-  { group: 'town', types: ['house', 'storehouse', 'lookout', 'monument'] },
+  { group: 'town', types: ['house', 'storehouse', 'harbour', 'lookout', 'monument'] },
 ];
 
 // The number key that picks a building straight away, or '' if it has none.
