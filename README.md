@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a smelter and a stone mine, all joined by roads. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a smelter, a toolmaker's workshop and a stone mine, all joined by roads. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
 
 ## How to play
 
@@ -50,8 +50,9 @@ The settle goal is reached when your settlers' ship lands there and they build t
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
    - Coal and iron ore lie only in the mountain on the second island. The mountains on your home
      island hold stone only. Coal and iron mines go next to the island's mountain, which has
-     rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron. Nothing
-     uses iron yet.
+     rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
+   - Every new worker in a hut needs a tool. The HQ starts with 20 tools. When they run out, a
+     toolmaker's workshop makes more from iron and planks. Until then, a new hut waits for a tool.
    - Across the water from the bay lies a second island. To settle it, build a harbour, click it
      and press **Set sail**. See "Settling the second island" below.
 
@@ -71,7 +72,7 @@ winter, farmers bring in ripe grain but sow nothing, so store grain and food bef
 ### Settling the second island
 
 1. Build a harbour on the shore by the bay.
-2. Gather 5 idle settlers in the HQ and 12 planks and 8 stone in your stores. Click the harbour to
+2. Gather 5 idle settlers in the HQ and 12 planks, 8 stone and 6 tools in your stores. Click the harbour to
    see what is still missing.
 3. Press **Set sail**. A ship takes the settlers and goods to the nearest free shore on the
    second island.
@@ -220,7 +221,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
@@ -231,7 +232,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/sailinfo.ts` | The harbour panel's "Sail to settle" part |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
-| `src/i18n.ts` | Translations |
+| `src/i18n.ts` | Translations. The Polish building names are in `src/lang/` |
 | `src/main.ts` | Input, camera, fixed-step game loop |
 
 ## Current economy
@@ -242,7 +243,12 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way. Only the
   second island's mountain holds coal and iron ore.
 - Iron mine → iron ore, and coal mine → coal → Smelter → iron. The smelter needs 1 iron ore and
-  1 coal for each bar of iron. Nothing uses iron yet.
+  1 coal for each bar of iron.
+- Iron and planks → Toolmaker's Workshop → tools. The toolmaker needs 1 iron and 1 plank for
+  each tool.
+- When a hut gets its worker, the worker takes 1 tool from the nearest store, and the hut keeps
+  it. Scouts, builders and carriers need no tool. Demolishing a hut puts its tool back in your
+  stores.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish.
 - A hunter catches deer and hares up to 7 tiles from the Hunter's Lodge and brings home meat.
   Foxes are left alone.

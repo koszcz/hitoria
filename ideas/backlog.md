@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved · Branch: worktree-agent-ad0ead3c553b27ebb*
+Nothing right now.
 
 ## Next
 
@@ -49,6 +49,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Tools**: a toolmaker makes the tools that new workers need, from 1 iron and 1 plank each. The HQ starts with 20 tools, and the ship takes 6 to the other island. *2026-11-01*
 - **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *2026-11-01*
 - **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. Old saves keep the ore they have. *2026-11-01*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *2026-11-01*
