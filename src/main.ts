@@ -16,6 +16,8 @@ import { MuteChoice } from './sound/mute';
 import { mix, musicLevel, waterShare } from './sound/mix';
 import { Music } from './sound/music';
 import { MusicVolume } from './sound/volume';
+import { WorkSounds } from './sound/strikes';
+import { workMix, workSources } from './sound/work';
 import { wind } from './wind';
 
 setLang(startLang());
@@ -51,6 +53,7 @@ const mute = new MuteChoice();
 const ambience = new Ambience();
 const musicVolume = new MusicVolume();
 const music = new Music();
+const work = new WorkSounds();
 ui.muted = mute.muted;
 ui.music = musicVolume.volume;
 ui.relabel();
@@ -175,9 +178,11 @@ for (const ev of ['pointerdown', 'keydown'])
 function startSound() {
   ambience.start();
   music.start();
+  work.start();
 }
 
-// The sound follows the camera: waves near water, wind as gusts pass, quieter when zoomed out.
+// The sound follows the camera: waves near water, wind as gusts pass, work near workers,
+// quieter when zoomed out.
 function updateSound(t: number) {
   const c = renderer.screenToTile(innerWidth / 2, innerHeight / 2);
   const w = game.world;
@@ -185,6 +190,8 @@ function updateSound(t: number) {
   const gust = wind(c.x, c.y, t);
   ambience.set(mix({ water, wind: gust, zoom: renderer.cam.zoom, muted: mute.muted }), gust, t);
   music.set(musicLevel(musicVolume.volume, mute.muted));
+  // Work stops while the game is paused, so its sounds stop too.
+  work.set(workMix(workSources(game), { ...c, zoom: renderer.cam.zoom, muted: mute.muted || ui.paused }));
 }
 
 let hover: P | null = null;
@@ -366,4 +373,4 @@ function frame(now: number) {
 }
 requestAnimationFrame(frame);
 
-Object.assign(window, { game, diag, renderer, ambience, music }); // handy for poking at state from the console
+Object.assign(window, { game, diag, renderer, ambience, music, work }); // handy for poking at state from the console
