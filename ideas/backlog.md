@@ -5,12 +5,12 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Branch: claude/finer-mountain-mesh-e4c9e4*
+- **Gameplay review quick fixes**: four small fixes from the gameplay review, built together. (1) The winter goal counts only workers and mines that are really hungry, not houses waiting to grow, and fishers catch less in winter so stored food matters. (2) A house or worker that gets more than one kind of food grows settlers faster or eats less often, so the bread chain and hunting stay useful. (3) A saved, dated chronicle of milestones, such as the first birth or the tenth trade ship, shows when you load your island. (4) "Build 3 houses" is replaced with a goal that teaches something new, and the game warns you before you use up the tools the ship needs. *Fun 2 · Effort M · Branch: claude/build-eca1e3*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Gameplay review quick fixes**: four small fixes from the gameplay review, built together. (1) The winter goal counts only workers and mines that are really hungry, not houses waiting to grow, and fishers catch less in winter so stored food matters. (2) A house or worker that gets more than one kind of food grows settlers faster or eats less often, so the bread chain and hunting stay useful. (3) A saved, dated chronicle of milestones, such as the first birth or the tenth trade ship, shows when you load your island. (4) "Build 3 houses" is replaced with a goal that teaches something new, and the game warns you before you use up the tools the ship needs. *Fun 2 · Effort M*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 
