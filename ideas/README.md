@@ -19,7 +19,8 @@ The list itself is in [backlog.md](backlog.md).
 Triage when the inbox has a few new ideas, or when **Next** is empty.
 Triage the latest backlog from `main`: run `git fetch origin`, then `git merge origin/main`.
 Never put an idea in **Next** that is already in **Building now**.
-To have Claude do it, run `/triage`. Claude proposes the scores and waits for you to agree.
+To have Claude do it, run `/triage`. Claude scores and sorts the ideas itself. Then it asks you
+about one idea at a time: build it, refine it or drop it.
 To add ideas and triage them in one go, run `/triage` followed by the ideas.
 For each idea in the inbox, follow these steps.
 
@@ -34,11 +35,22 @@ For each idea in the inbox, follow these steps.
    - M: a few sessions.
    - L: needs splitting into smaller ideas before we build it.
 4. **Note what it needs first**, if another idea must be built before it.
-5. **Move it** to **Next** or **Later**, with the scores on the line:
+5. **Check that it is ready to build.** A builder working alone must be able to build it without
+   a guess that, if wrong, means building it again. If it is not ready, move it to
+   **Needs thought**, with the open questions after its scores:
+
+   ```markdown
+   - **Short title**: one sentence. *Fun 2 · Effort M · Open: does a wish fail, or just move on?*
+   ```
+
+6. **Move a ready idea** to **Next** or **Later**, with the scores on the line:
 
    ```markdown
    - **Short title**: one sentence. *Fun 3 · Effort S · Needs: Food chain*
    ```
+
+Every idea in **Next** and **Later** is ready, and the factory may build it. So an idea goes
+there only when you want it built.
 
 ### Choose what goes in Next
 
@@ -47,6 +59,13 @@ For each idea in the inbox, follow these steps.
 - Don't put an L idea in **Next**. Split it into S or M ideas first.
 - Don't put an idea in **Next** before the ideas it needs.
 - Move everything else to **Later**. Nothing is lost there.
+
+## Refine an idea
+
+An idea in **Needs thought** has open questions. To settle them, start a new session and run
+`/refine`, or `/refine` followed by the idea's title. Claude reads the code the idea touches.
+Then it asks you one question at a time, with options. It rewrites the idea with your answers
+and moves it to **Next** or **Later**.
 
 ## Build an idea
 
@@ -73,20 +92,15 @@ idea back to **Next** by hand.
 
 ## The factory
 
-The factory builds approved ideas one after another, without you.
+The factory builds the ideas in **Next** and **Later** one after another, without you.
 
-1. Run `/factory-triage`. Claude scores and sorts the ideas itself. It asks you about one idea at
-   a time: build it or drop it?
-2. Run `/factory-build`. Claude builds and ships every approved idea, one at a time, until none
-   is left. You can be away while it runs. It reports at the end.
+1. Run `/triage` to fill the queue.
+2. Run `/refine` in a new session for each idea that triage put in **Needs thought**. This step
+   is optional. The factory builds the other ideas without it.
+3. Run `/factory-build`. Claude builds and ships every idea in **Next** and **Later**, one at a
+   time, until none is left. You can be away while it runs. It reports at the end.
 
-An approved idea has `Approved` at the end of its scores:
-
-```markdown
-- **Hunter**: a hunter catches wild animals. *Fun 2 · Effort S · Needs: Wild animals · Approved*
-```
-
-- The factory builds only Approved ideas. Ideas in **Next** must still follow the rules above.
+- The factory skips ideas in **Inbox** and **Needs thought**.
 - A dropped idea goes to **Dropped**, with the reason after its sentence.
-- If the factory can't ship an idea, it moves the idea back to **Later** without `Approved`.
-  The next `/factory-triage` asks you about it again.
+- If the factory can't ship an idea, it moves the idea to **Needs thought**, with the reason as
+  its open question. Run `/refine` on it before the factory tries again.

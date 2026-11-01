@@ -1,11 +1,12 @@
 ---
 name: factory-build
-description: Run the Hitoria factory. Builds and ships every Approved idea in the backlog, one at a time, each in its own subagent, until none is left. Runs unattended. Use when the user says factory build, run the factory, or asks to build all approved ideas.
+description: Run the Hitoria factory. Builds and ships every triaged idea in Next and Later, one at a time, each in its own subagent, until none is left. Runs unattended. Use when the user says factory build, run the factory, or asks to build all triaged ideas.
 ---
 
 # Run the factory
 
-The factory builds every Approved idea, one after another. The backlog is `ideas/backlog.md`.
+The factory builds every idea in **Next** and **Later**, one after another. `triage` and
+`refine` put an idea there only once the user wants it built, so no idea needs approving again. The backlog is `ideas/backlog.md`.
 The rules are in `ideas/README.md`, under "The factory". Read both files first, with the Read
 tool. If the README disagrees with this skill, follow the README.
 
@@ -18,15 +19,15 @@ for the report. Each idea is built by a subagent, so your own context holds only
 Repeat these steps until step 2 finds no idea to build.
 
 1. **Get the latest backlog.** Run `git fetch origin`, then `git merge --ff-only origin/main`.
-   Then read `ideas/backlog.md` again. Other sessions may have approved new ideas since the
+   Then read `ideas/backlog.md` again. Other sessions may have triaged new ideas since the
    last round. They count too.
-2. **Pick the idea.** Take the first idea in **Next** that is Approved, is not effort L, and has
-   every idea it **Needs** in **Done**.
-   - If no idea in **Next** fits, refill **Next** from Approved ideas in **Later**, using the
+2. **Pick the idea.** Take the first idea in **Next** that is not effort L and has every idea it
+   **Needs** in **Done**.
+   - If no idea in **Next** fits, refill **Next** from ideas in **Later**, using the
      README's rules. Commit only `ideas/backlog.md` with the message `Refill Next for the
      factory`, and push it with `git push origin HEAD:main`. If the push is rejected, go back to
      step 1.
-   - If no Approved idea fits anywhere, the loop is over. Go to the report.
+   - If no idea in **Next** or **Later** fits, the loop is over. Go to the report.
 3. **Send a subagent to build and ship it.** Use the `Agent` tool with `isolation: "worktree"`,
    so the idea gets its own worktree and branch. Give it the prompt in "Subagent prompt" below,
    with the idea's title filled in. Wait for its report.
@@ -36,9 +37,9 @@ Repeat these steps until step 2 finds no idea to build.
 5. **Handle a failure.** If the idea did not ship, write down the subagent's reason.
    - If the reason will stop every idea, such as changes left in `/Users/hito/code/hitoria`, a
      failing test on `main`, or a missing tool, stop the loop and go to the report.
-   - Otherwise, give the idea back. In the backlog, move it from **Building now** to **Later**,
-     remove `· Approved` and the `Branch:` part, and push as in step 2. The idea now waits for
-     the user in `/factory-triage`. Leave its branch alone.
+   - Otherwise, give the idea back. In the backlog, move it from **Building now** to **Needs thought**,
+     remove the `Branch:` part, add `Open: <the reason it failed>` to its scores, and push as in
+     step 2. The idea now waits for the user in `/refine`. Leave its branch alone.
    - If two ideas in a row fail, stop the loop and go to the report.
 6. Go back to step 1.
 
@@ -67,4 +68,5 @@ When the loop is over, tell the user:
 - The choices the subagents made alone, so the user can change them later.
 - Each idea that failed, with the reason and its branch.
 - Why the loop stopped.
-- How many ideas wait in **Inbox** or are not Approved. Suggest `/factory-triage` if any do.
+- How many ideas wait in **Inbox**. Suggest `/triage` if any do.
+- How many ideas wait in **Needs thought**. Suggest `/refine` in a new session for each one.
