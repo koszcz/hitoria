@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free · Approved · Branch: worktree-agent-ab686b2c8ae7dc654*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free · Approved*
+*Empty.*
 
 ## Inbox
 
