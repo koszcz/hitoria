@@ -11,7 +11,7 @@
     "backlog": "bun ideas/build.ts",
     "changelog:shots": "bun changelog/shots.ts",
     "readme:shot": "bun scripts/readme/shot.ts",
-    "check": "tsc --noEmit && bun scripts/check-size.ts",
+    "check": "tsc --noEmit && bun scripts/check-size.ts && bun scripts/check-tests.ts",
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {

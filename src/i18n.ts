@@ -7,26 +7,33 @@ export type Lang = 'en' | 'pl';
 export const LANGS: Lang[] = ['en', 'pl'];
 const KEY = 'hitoria.lang';
 
+// Where the player's choice is kept, and the languages the browser asks for. The game uses the
+// browser's own; tests pass in their own.
+export type LangStore = Pick<Storage, 'getItem' | 'setItem'>;
+export type BrowserLangs = { language?: string; languages?: readonly string[] };
+
 let lang: Lang = 'en';
 export const getLang = () => lang;
 
-export function setLang(l: Lang) {
+export function setLang(l: Lang, store?: LangStore) {
   lang = l;
   try {
-    localStorage.setItem(KEY, l);
+    (store ?? localStorage).setItem(KEY, l);
   } catch {} // storage may be blocked; the choice then lasts until the page closes
   if (typeof document !== 'undefined' && document.documentElement) document.documentElement.lang = l; // tests may fake a bare document
 }
 
 // The language to start in: the one the player picked last time, or else the first language in
 // the browser's list that the game speaks, or else English.
-export function startLang(): Lang {
+export function startLang(
+  store?: LangStore,
+  nav: BrowserLangs | undefined = typeof navigator !== 'undefined' ? navigator : undefined,
+): Lang {
   let saved: string | null = null;
   try {
-    saved = localStorage.getItem(KEY);
+    saved = (store ?? localStorage).getItem(KEY);
   } catch {}
   if (saved === 'en' || saved === 'pl') return saved;
-  const nav = typeof navigator !== 'undefined' ? navigator : undefined;
   const browser = nav?.languages?.length ? nav.languages : [nav?.language ?? ''];
   for (const tag of browser) {
     const base = tag.toLowerCase().split('-')[0];

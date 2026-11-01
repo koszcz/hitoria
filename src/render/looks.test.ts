@@ -8,7 +8,7 @@ const pairs = types.flatMap((a, i) => types.slice(i + 1).map((b) => [a, b] as co
 
 describe('building looks', () => {
   test('every building has a look', () => {
-    for (const t of types) expect(LOOKS[t]).toBeDefined();
+    expect(Object.keys(LOOKS).sort()).toEqual([...types].sort());
   });
 
   test('no two buildings share a body shape', () => {

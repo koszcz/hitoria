@@ -3,12 +3,11 @@ import * as THREE from 'three';
 import { BUILDABLE } from '../game';
 import { add } from './kit';
 import { mergeModel } from './merge';
-import { makeBuilding } from './buildings';
+import { makeBuilding, type Paint } from './buildings';
 import { makePerson } from './people';
 
-// Building signs are drawn on a canvas. Tests have no DOM, so give them one that ignores drawing.
-const ctx: object = new Proxy({}, { get: (_, k) => (k === 'measureText' ? () => ({ width: 10 }) : () => ctx), set: () => true });
-(globalThis as { document?: unknown }).document ??= { createElement: () => ({ getContext: () => ctx }) };
+// Plain textures in place of the ones the game draws on a canvas.
+const paint: Paint = { icon: () => new THREE.Texture(), dot: () => new THREE.Texture() };
 
 const meshes = (o: THREE.Object3D) => {
   const out: THREE.Mesh[] = [];
@@ -64,16 +63,16 @@ describe('mergeModel', () => {
 describe('models', () => {
   test('every building is drawn with only a few meshes', () => {
     for (const t of ['hq', ...BUILDABLE] as const) {
-      expect(meshes(makeBuilding(t, true).g).length).toBeLessThanOrEqual(8);
-      expect(meshes(makeBuilding(t, false).g).length).toBeLessThanOrEqual(4);
+      expect(meshes(makeBuilding(t, true, paint).g).length).toBeLessThanOrEqual(8);
+      expect(meshes(makeBuilding(t, false, paint).g).length).toBeLessThanOrEqual(4);
     }
   });
 
   test('a building keeps its moving parts', () => {
-    const mill = makeBuilding('mill', true);
+    const mill = makeBuilding('mill', true, paint);
     expect(mill.sails?.parent).toBe(mill.g);
     expect(meshes(mill.sails!).length).toBeGreaterThan(0);
-    const site = makeBuilding('woodcutter', false);
+    const site = makeBuilding('woodcutter', false, paint);
     expect(meshes(site.rise!)).toHaveLength(1);
   });
 

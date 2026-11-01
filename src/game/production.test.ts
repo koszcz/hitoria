@@ -17,7 +17,7 @@ describe('production', () => {
     const b = placeLinked(g, 'woodcutter', g.hq.x + 4, g.hq.y);
     g.world.at(b.x + 2, b.y - 2).tree = 0.5; // a sapling, not ready
     runUntil(g, () => b.status === 'No grown trees in range', 200);
-    expect(g.world.at(b.x + 2, b.y - 2).tree).toBeGreaterThan(0);
+    expect(g.world.at(b.x + 2, b.y - 2).tree).toBeGreaterThanOrEqual(0.5); // still standing, maybe grown a little
   });
 
   test('a quarry breaks boulders into stone', () => {

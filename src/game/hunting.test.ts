@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import { ANIMAL_RETURN, Game, HUNT_RANGE, type AnimalKind } from '.';
 import { demolish } from './demolish';
+import { HOUSE_PANTRY, HOUSE_SIZE } from './defs';
 import { pantry } from './houses';
 import { expectIncomingConsistent, flatGame, placeLinked, run, runUntil } from './test-helpers';
 
@@ -139,7 +140,7 @@ describe('meat as food', () => {
     const g = flatGame();
     const house = placeLinked(g, 'house', g.hq.x + 5, g.hq.y);
     runUntil(g, () => house.built, 120);
-    expect(pantry(house, 'meat')).toBeGreaterThan(0);
+    expect(pantry(house, 'meat')).toBe(Math.min(HOUSE_PANTRY, HOUSE_SIZE)); // an empty house has room for a full pantry
     g.hq.stock.meat = 2;
     runUntil(g, () => house.using === 'meat', 60);
   });

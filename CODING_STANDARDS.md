@@ -31,3 +31,26 @@ A domain is one part of the game, such as drawing, roads, settlers or saving.
 - Shared test setup for the game lives in `src/game/test-helpers.ts`.
 - When a new feature does not fit any folder, add a folder for it rather than a new top-level
   file in `src/`.
+
+## Write tests that use the real code
+
+A test should run the same code the player runs, and give the same result every time.
+
+`bun run check` enforces the first three rules. The pre-commit hook and CI both run it.
+
+1. Don't use mocking tools, such as `mock`, `spyOn` or `setSystemTime`. Don't replace browser
+   globals, such as `localStorage` or `navigator`, from a test. Instead, let the code take what
+   it reads from outside the game as an argument, and pass a fake from the test. For example,
+   `MuteChoice` takes the store it saves to, `startLang` takes the store and the browser's
+   languages, and `makeBuilding` takes the textures for its sign and smoke.
+2. Don't call `Math.random`, `Date.now` or `performance.now` in `src/game/`. Use `g.rand`, which
+   comes from the island's seed, and game time. Otherwise a test can pass on one run and fail on
+   the next.
+3. Don't commit `.only` or `.skip`. They turn off other tests without anyone noticing.
+4. Check for the exact result when you know it. Write `expect(hq.stock.plank).toBe(3)`, not
+   `toBeGreaterThan(0)` or `toBeTruthy()`. A loose check passes when the code is wrong in a new
+   way. Use one only when the exact value depends on things the test does not control.
+5. Start a game test with `flatGame` from `src/game/test-helpers.ts` when the test places
+   buildings, roads or trees. It clears the land around the HQ, so the test does not depend on
+   how the map generator lays out a seed. Use `new Game(seed)` only to test the generated map
+   itself.

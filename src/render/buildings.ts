@@ -16,6 +16,14 @@ let dotTex: THREE.Texture | undefined;
 const dot = () => (dotTex ??= softDot());
 const icons = new Map<BType, THREE.Texture>();
 
+// The textures a model hangs on itself: the sign over it and its smoke. The game draws them on a
+// canvas. Tests have no canvas, so they pass plain textures.
+export interface Paint {
+  icon: (type: BType) => THREE.Texture;
+  dot: () => THREE.Texture;
+}
+const CANVAS: Paint = { icon: (type) => iconTex(type), dot };
+
 // How high a building's sign floats.
 export const iconY = (type: BType) => (type === 'lookout' ? 2.45 : type === 'mill' || type === 'monument' ? 1.95 : 1.3);
 
@@ -32,7 +40,7 @@ export interface Model {
   spin?: THREE.Object3D; // a saw blade that turns while the building works
 }
 
-export function makeBuilding(type: BType, built: boolean): Model {
+export function makeBuilding(type: BType, built: boolean, paint = CANVAS): Model {
   const g = new THREE.Group();
   const model: Model = { g, key: `${type}:${built}` };
   if (!built) {
@@ -218,7 +226,7 @@ export function makeBuilding(type: BType, built: boolean): Model {
       hut(g, model, type, wall, roof);
   }
   mergeModel(g, [model.cloth, model.sails, model.spin]);
-  const icon = new THREE.Sprite(new THREE.SpriteMaterial({ map: iconTex(type), depthTest: false, transparent: true }));
+  const icon = new THREE.Sprite(new THREE.SpriteMaterial({ map: paint.icon(type), depthTest: false, transparent: true }));
   icon.scale.setScalar(0.3);
   icon.renderOrder = 12;
   if (type !== 'hq') {
@@ -227,7 +235,7 @@ export function makeBuilding(type: BType, built: boolean): Model {
     model.icon = icon;
   }
   model.smoke = [0, 1, 2].map(() => {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: dot(), color: '#e8e8e8', transparent: true, depthWrite: false }));
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: paint.dot(), color: '#e8e8e8', transparent: true, depthWrite: false }));
     s.visible = false;
     g.add(s);
     return s;
