@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-Empty.
+- **Far island**: a third island with its own riches lies farther out, and you sail to settle it. New maps only. Old saves keep their land. *Fun 2 · Effort M*
+- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
+- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 
 ## Inbox
 
@@ -28,10 +30,7 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
-- **Far island**: a third island with its own riches lies farther out, and you sail to settle it. New maps only. Old saves keep their land. *Fun 2 · Effort M*
-- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
