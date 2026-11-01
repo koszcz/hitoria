@@ -37,8 +37,9 @@ const PL: typeof EN = {
 
 const text = () => (getLang() === 'pl' ? PL : EN);
 
-// Round seconds up to the next 10, so the panel does not change every frame.
-const about = (s: number) => Math.max(10, Math.ceil(s / 10) * 10);
+// Round seconds up to the next 30. The panel is drawn again whenever its text changes, which swaps
+// out its buttons, so a countdown that changes often would swallow clicks.
+const about = (s: number) => Math.max(30, Math.ceil(s / 30) * 30);
 
 const chip = (act: 'give' | 'get', k: Good, on: boolean, n?: number) =>
   `<button class="chip${on ? ' on' : ''}" data-act="${act}" data-good="${k}" title="${goodName(k)}">` +

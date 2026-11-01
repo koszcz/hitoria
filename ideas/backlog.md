@@ -4,7 +4,6 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Trade ship**: a ship that visits the harbour every few minutes. You pick which spare goods to swap for goods you lack, at fixed rates. *Fun 2 · Effort M · Needs: Harbour · Approved · Branch: worktree-agent-af3a862343a02ee32*
 
 ## Next
 
@@ -47,6 +46,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Trade ship**: a trade ship visits your harbour every few minutes. While it is tied up, you swap spare goods for goods you lack, at fixed rates. *2026-11-01*
 - **Tools**: a toolmaker makes the tools that new workers need, from 1 iron and 1 plank each. The HQ starts with 20 tools, and the ship takes 6 to the other island. *2026-11-01*
 - **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *2026-11-01*
 - **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. Old saves keep the ore they have. *2026-11-01*
