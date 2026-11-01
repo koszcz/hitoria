@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle · Approved · Branch: worktree-agent-a3af74f28c83db5b5*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle · Approved*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
 
 ## Inbox
