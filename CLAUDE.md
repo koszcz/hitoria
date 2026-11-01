@@ -13,5 +13,7 @@
   - If `preview_start` fails with "Another copy is already running" from this same folder, the
     server is already up. Navigate to the address in the error.
   - Take screenshots with `scale: 0.5`. Use full size only to inspect small details.
+- When you finish work that changed files, start your last message with whether it shipped. If
+  you did not run the `ship` skill, say "Not shipped." and offer to ship it.
 - Every change needs a changelog entry. See [changelog/README.md](changelog/README.md).
 - Code is split into small files, in folders by domain. See [CODING_STANDARDS.md](CODING_STANDARDS.md).
