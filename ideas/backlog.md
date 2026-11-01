@@ -10,6 +10,7 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Food makers eat first**: when food is short, carriers bring it to farms, wells and mills first, then to other huts and mines, and to houses last, so the food chain keeps running. *Fun 2 · Effort S*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 
