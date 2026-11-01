@@ -10,6 +10,7 @@ import { noteRichMine } from './geology';
 import { homeOf, homes } from './homes';
 import { sendHome } from './settlers';
 import type { Building } from './types';
+import { ASLEEP, night } from './sleep';
 
 export function canPlace(g: Game, type: BType, x: number, y: number): string | null {
   if (!g.world.inside(x, y) || !g.world.inside(x, y + 1)) return 'Outside the map';
@@ -82,7 +83,7 @@ export function construct(g: Game, b: Building, dt: number) {
   }
   const cap = need ? have / need : 1;
   if (!builder?.atWork) {
-    b.status = builder ? 'Builder on the way' : linked(g, b) ? 'Waiting for a free settler' : 'No way to walk to your HQ';
+    b.status = night(g) ? ASLEEP : builder ? 'Builder on the way' : linked(g, b) ? 'Waiting for a free settler' : 'No way to walk to your HQ';
     return;
   }
   if (b.progress >= cap) {

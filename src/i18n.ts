@@ -70,6 +70,7 @@ const MESSAGES_PL: Record<string, string> = {
   'Under construction': 'W budowie',
   'Unreachable, retrying soon': 'Nie da się tu dojść, wkrótce kolejna próba',
   'Waiting for a worker': 'Czeka na pracownika',
+  'Asleep until dawn': 'Śpi do świtu',
   'Storing goods': 'Przechowuje towary',
   'Full, waiting for a carrier': 'Pełno, czeka na tragarza',
   'No grown trees in range': 'Brak dorosłych drzew w zasięgu',

@@ -55,6 +55,7 @@ export interface Settler {
   base: number; // the HQ or landing harbour the settler came out of, and goes back to
   toolFrom?: number; // the store a new worker is walking to for their tool
   inside: boolean;
+  asleep?: number; // the building a worker or builder sleeps in tonight, once they are in bed
   atWork: boolean;
   returning: boolean;
   walking: boolean;

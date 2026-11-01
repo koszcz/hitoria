@@ -6,14 +6,23 @@ import type { Game } from './game';
 import { baseOf, giveUp, takeSettler } from './settlers';
 import { dropTool, fetchTool, lacksTool, NO_TOOL, toolStore } from './tools';
 import type { Building } from './types';
+import { ASLEEP, night } from './sleep';
+
+// Nobody leaves home for work at night. Huts and sites with nobody yet say so.
+function nightStatus(g: Game) {
+  for (const b of g.buildings.values())
+    if (b.built ? BDEFS[b.type].worker && !b.worker : !b.builder) b.status = ASLEEP;
+}
 
 export function staff(g: Game) {
+  if (night(g)) return nightStatus(g);
   // Houses come first, because only they bring in more settlers.
   for (const b of g.buildings.values()) if (b.type === 'house' && !sendBuilder(g, b)) break;
   for (const b of g.buildings.values()) {
     if (!sendBuilder(g, b)) continue;
     const role = BDEFS[b.type].worker;
     if (b.built && role && !b.worker) {
+      if (b.status === ASLEEP) b.status = builtStatus(b);
       const store = lacksTool(b) ? toolStore(g, b) : null;
       if (lacksTool(b) && !store) {
         b.status = NO_TOOL;

@@ -2,6 +2,7 @@ import { expect } from 'bun:test';
 import { Game, GOODS, Bag, bag } from './index';
 import { W } from '../world';
 import { placeSite } from './construction';
+import { DAY_LENGTH, clock } from '../seasons/day';
 
 // A game whose land around the HQ is flat grass with no trees or boulders, so tests can
 // place things where they want without depending on how the map generator lays out a seed.
@@ -108,4 +109,10 @@ export function harbourGame(seed = 1, built = true) {
     return { g, h };
   }
   throw new Error('no harbour spot');
+}
+
+// Move the game's clock forward to the next moment of day fraction `f`, without running anything.
+export function setClock(g: Game, f: number) {
+  const now = clock(g.time);
+  g.time += ((((f - now) % 1) + 1) % 1) * DAY_LENGTH;
 }

@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *Fun 2 · Effort M · Needs: Day and night light · Branch: worktree-agent-ae9569e66008128f6*
+Nothing right now.
 
 ## Next
 
@@ -36,6 +36,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *2026-11-01*
 - **Day and season clock**: a small dial in the HUD shows the time of day, the season and the day count. *2026-11-01*
 - **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *2026-11-01*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. New maps only. Old saves keep their land. *2026-11-01*

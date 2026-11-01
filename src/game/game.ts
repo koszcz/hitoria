@@ -18,6 +18,7 @@ import { checkVersion, mapVersion, restore, save, SaveData } from './save';
 import { step } from './settlers';
 import { staff } from './staff';
 import { fade } from './wear';
+import { allAsleep } from './sleep';
 import { isStore, stored } from './stores';
 import { dockOf } from './harbour';
 import { idleTotal, poolOf } from './homes';
@@ -161,6 +162,11 @@ export class Game {
   // The goal the player is on now, with its progress, or null once every goal is reached.
   goalNow() {
     return goalNow(this);
+  }
+
+  // Is it night, with every worker and builder in bed? Carriers and donkeys don't count.
+  allAsleep() {
+    return allAsleep(this);
   }
 
   // Demolish the building on tile `t`. Returns why it can't, or null.

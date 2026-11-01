@@ -1,13 +1,16 @@
 import { describe, expect, test } from 'bun:test';
+import { isNight } from '../seasons/day';
 import { seasonAt, yearAt } from '../seasons/year';
 import { flatGame, placeLinked, run, runUntil } from './test-helpers';
 import type { Game } from '.';
 
-// Move the game clock to the next start of `season`, plus `into` seconds.
+// Move the game clock to the next start of `season`, plus `into` seconds. If that falls at night,
+// wait for the morning, because workers sleep at night.
 function skipTo(g: Game, season: 'spring' | 'winter', into = 5) {
   while (seasonAt(yearAt(g.time)) === season) g.time += 1;
   while (seasonAt(yearAt(g.time)) !== season) g.time += 1;
   g.time += into;
+  while (isNight(g.time)) g.time += 1;
 }
 
 const fieldsOf = (g: Game, id: number) => g.world.tiles.filter((t) => t.field === id);

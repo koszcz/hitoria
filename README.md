@@ -71,7 +71,12 @@ building off, no goods arrive and the builder or worker waits. A warning sign fl
 Click a building to see what it is doing and what it is waiting for.
 
 Days and nights pass as you play. A full day lasts 8 minutes of game time, and a new game starts
-in the morning. The light turns orange at dawn and dusk, and blue at night. Work goes on at night.
+in the morning. The light turns orange at dawn and dusk, and blue at night.
+
+Workers and builders sleep at night. When dusk ends, each one finishes the work in hand and walks
+to the nearest bed: the HQ, a finished house or the harbour on the second island. Their hut or
+building site says "Asleep until dawn", and no new worker leaves home. At dawn they walk back and
+go on working. Carriers and pack donkeys work all night, so goods keep moving.
 
 The island also goes through the four seasons. A full year lasts 20 minutes of game time, and a
 new game starts in spring. Leafy trees turn yellow, orange and red in autumn and lose their leaves
@@ -258,7 +263,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |

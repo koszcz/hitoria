@@ -9,12 +9,13 @@ import { digSpeed, survey, surveyable } from './geology';
 import { fieldsGrow } from '../seasons/year';
 import { near, plantable } from './land';
 import { eats, feed } from './meals';
+import { bedtime } from './sleep';
 import type { Building, Settler } from './types';
 
 export function idle(g: Game, s: Settler) {
   if (s.role === 'carrier') return carry(g, s);
   const home = g.buildings.get(s.home);
-  if (!home || s.role === 'builder') return;
+  if (!home || bedtime(g, s, home) || s.role === 'builder') return;
   // A worker who rests eats nothing. Before real work, they eat, or work at half speed with no food.
   if (!plan(g, s, home) && eats(home)) feed(home, s.tasks);
 }

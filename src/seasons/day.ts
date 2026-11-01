@@ -14,3 +14,13 @@ export function clock(time: number) {
 export function dayNumber(time: number) {
   return Math.floor(time / DAY_LENGTH + START) + 1;
 }
+
+// Workers go to bed once dusk is nearly over and get up at dawn. The light is darkest in between.
+export const BEDTIME = 0.76;
+export const WAKE = 0.24;
+
+// Is it night, when workers sleep and work stops?
+export function isNight(time: number) {
+  const f = clock(time);
+  return f >= BEDTIME || f < WAKE;
+}
