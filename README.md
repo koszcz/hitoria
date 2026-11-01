@@ -7,7 +7,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 - **Changelog:** https://koszcz.github.io/hitoria/changelog.html shows what changed, with screenshots.
 - **Backlog dashboard:** https://koszcz.github.io/hitoria/backlog.html shows the ideas and what is being built.
 
-![A village around the HQ keep, beside a bay and between mountain ridges. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left. At the top right, the clock shows winter, day 5](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and between rocky, sharp-peaked mountains. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left. At the top right, the clock shows winter, day 5](docs/screenshot.jpg)
 
 ## How to play
 
@@ -52,7 +52,8 @@ The settle goal is reached when your settlers' ship lands there and they build t
    - Every worker in a hut eats fish, meat or bread now and then. A hungry worker works at half
      speed, and a bowl floats over their hut. Carriers and builders need no food.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher. Beyond it,
-     mountains run in long ridges, with grassy valleys between them.
+     mountains run in long ridges, with grassy valleys between them. They rise into sharp,
+     snowy peaks, like the Alps. Mountains near the HQ stay lower, so they never hide it.
    - Coal and iron ore lie only in the mountain on the second island. The mountains on your home
      island hold stone only. Coal and iron mines go next to the island's mountain, which has
      rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
@@ -271,7 +272,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
 | `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, the clock in the HUD (`hud.ts`), and fast nights (`fastnight.ts`) |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |

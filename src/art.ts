@@ -16,7 +16,7 @@ export const ART = {
   grade: { h: 0, s: -0.14, l: 0.03, tint: '#b8a478', k: 0.18 },
   grass: { h: -0.04, s: -0.2, l: 0.03 }, // shift from the map's own grass colour
   grain: 2.2, // how strong the speckle on the ground is
-  rock: '#7a6e5a',
+  rock: '#56504a', // steep rock faces on mountains, darker than the slopes around them
   ore: ['#7a5240', '#4a4440'] as const, // mountain rock with iron ore, then with seams of coal
   snow: '#ece6d8',
   snowLine: 2.4,

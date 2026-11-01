@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Branch: claude/finer-mountain-mesh-e4c9e4*
+Nothing right now.
 
 ## Next
 
@@ -34,6 +34,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Finer mountain mesh**: mountains look like the Alps, with sharp ridges, tall peaks, snowy tops and dark rock faces. Mountains near the HQ stay lower, so they never hide it. The ground has 4 points along each tile side, and flat land looks the same as before. *2026-11-01*
 - **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *2026-11-01*
 - **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *2026-11-01*
 - **Day and season clock**: a small dial in the HUD shows the time of day, the season and the day count. *2026-11-01*
