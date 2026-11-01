@@ -25,6 +25,11 @@ export const GOALS: Goal[] = [
     id: 'winter', text: 'Get through a winter with no one hungry', need: 1,
     have: (g) => (g.winter.state === 'done' ? 1 : 0), note: (g) => WINTER_NOTES[g.winter.state], watch: watchWinter,
   },
+  // The second set: coal and iron ore lie only on the other island, so the player settles it first.
+  { id: 'settle', text: 'Settle the other island', need: 1, have: (g) => ([...g.buildings.values()].some((b) => b.landed) ? 1 : 0) },
+  { id: 'coal', text: 'Mine 20 coal', need: 20, have: (g) => g.made.coal },
+  { id: 'ore', text: 'Mine 20 iron ore', need: 20, have: (g) => g.made.ore },
+  { id: 'iron', text: 'Make 10 iron', need: 10, have: (g) => g.made.iron },
 ];
 
 // The goal the player is on now, with its progress, or null once every goal is reached.

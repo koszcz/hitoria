@@ -25,8 +25,8 @@ function onWinterGoal() {
 }
 
 describe('survive winter goal', () => {
-  test('it comes last, after the monument', () => {
-    expect(GOALS.map((x) => x.text).slice(-2)).toEqual(['Build a monument', 'Get through a winter with no one hungry']);
+  test('it comes right after the monument', () => {
+    expect(GOALS.map((x) => x.text).slice(WINTER - 1, WINTER + 1)).toEqual(['Build a monument', 'Get through a winter with no one hungry']);
   });
 
   test('before winter, the goal asks you to store food', () => {
@@ -40,7 +40,7 @@ describe('survive winter goal', () => {
     expect(g.goalNow()?.note).toBe('Winter: no one has gone hungry yet');
     house.born = 4; // a full house eats nothing
     skipTo(g, 'spring');
-    expect(g.goalNow()).toBeNull();
+    expect(g.goalNow()?.id).toBe('settle');
     expect(g.toasts).toContain('🏆 Goal reached: Get through a winter with no one hungry');
   });
 
@@ -65,7 +65,7 @@ describe('survive winter goal', () => {
     runUntil(g, () => house.status !== 'Waiting for food', 60);
     house.born = 4;
     skipTo(g, 'spring');
-    expect(g.goalNow()).toBeNull();
+    expect(g.goalNow()?.id).toBe('settle');
   });
 
   test('a mine waiting for food in winter counts as hungry too', () => {
@@ -98,7 +98,7 @@ describe('survive winter goal', () => {
     expect(g.goalNow()?.id).toBe('winter');
     skipTo(g, 'winter');
     skipTo(g, 'spring');
-    expect(g.goalNow()).toBeNull();
+    expect(g.goalNow()?.id).toBe('settle');
   });
 
   test('a saved game keeps how the winter is going', () => {

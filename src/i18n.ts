@@ -158,6 +158,10 @@ const MESSAGES_PL: Record<string, string> = {
   'Someone went hungry. Try again next winter': 'Ktoś głodował. Spróbuj następnej zimy',
   'You got through the winter': 'Zima przetrwana',
   '🥶 A settler went hungry this winter': '🥶 Osadnik głodował tej zimy',
+  'Settle the other island': 'Zasiedl drugą wyspę',
+  'Mine 20 coal': 'Wydobądź 20 węgla',
+  'Mine 20 iron ore': 'Wydobądź 20 rudy żelaza',
+  'Make 10 iron': 'Wytop 10 żelaza',
   // Why a building can't go here
   'Outside the map': 'Poza mapą',
   Occupied: 'Zajęte',

@@ -1,7 +1,7 @@
 // Peaceful goals: the goods the settlement has made, and the goals the player works through in order.
 import { describe, expect, test } from 'bun:test';
 import { Game, GOALS } from '.';
-import { flatGame, run, runUntil, placeLinked } from './test-helpers';
+import { flatGame, harbourGame, run, runUntil, placeLinked } from './test-helpers';
 
 describe('goods made', () => {
   test('a new game has made nothing yet', () => {
@@ -61,6 +61,7 @@ describe('goals', () => {
     expect(GOALS.map((x) => x.text)).toEqual([
       'Make 50 planks', 'Bake 20 bread', 'Grow to 30 settlers', 'Build 3 houses', 'Build a monument',
       'Get through a winter with no one hungry',
+      'Settle the other island', 'Mine 20 coal', 'Mine 20 iron ore', 'Make 10 iron',
     ]);
   });
 
@@ -97,6 +98,73 @@ describe('goals', () => {
     expect(g.goalNow()).toBeNull();
     run(g, 1);
     expect(g.goal).toBe(GOALS.length);
+  });
+});
+
+describe('the second set of goals', () => {
+  const at = (id: string) => GOALS.findIndex((x) => x.id === id);
+
+  test('getting through a winter starts the goal to settle the other island', () => {
+    const g = flatGame();
+    g.goal = at('winter');
+    g.winter.state = 'done';
+    run(g, 1);
+    expect(g.toasts).toContain('🏆 Goal reached: Get through a winter with no one hungry');
+    expect(g.goalNow()).toEqual({ id: 'settle', text: 'Settle the other island', have: 0, need: 1 });
+  });
+
+  test('the settle goal is reached when your settlers land on the other island', () => {
+    const { g, h } = harbourGame();
+    g.goal = at('settle');
+    expect(g.sail(h)).toBeNull();
+    run(g, 1);
+    expect(g.goalNow()?.id).toBe('settle');
+    runUntil(g, () => [...g.buildings.values()].some((b) => b.landed), 200);
+    run(g, 1);
+    expect(g.toasts).toContain('🏆 Goal reached: Settle the other island');
+    expect(g.goalNow()?.id).toBe('coal');
+  });
+
+  test('coal and iron ore count what the mines dig, not what is stored', () => {
+    const g = flatGame();
+    g.goal = at('coal');
+    g.hq.stock.coal = 50;
+    g.made.coal = 7;
+    expect(g.goalNow()).toEqual({ id: 'coal', text: 'Mine 20 coal', have: 7, need: 20 });
+    g.made.coal = 20;
+    run(g, 1);
+    expect(g.goalNow()).toEqual({ id: 'ore', text: 'Mine 20 iron ore', have: 0, need: 20 });
+    g.made.ore = 20;
+    run(g, 1);
+    expect(g.goalNow()).toEqual({ id: 'iron', text: 'Make 10 iron', have: 0, need: 10 });
+  });
+
+  test('a smelter making iron counts toward the last goal', () => {
+    const g = flatGame();
+    g.goal = at('iron');
+    const b = placeLinked(g, 'smelter', g.hq.x + 4, g.hq.y);
+    g.hq.stock.ore = 5;
+    g.hq.stock.coal = 5;
+    runUntil(g, () => g.made.iron >= 1, 400);
+    expect(g.goalNow()?.have).toBe(g.made.iron);
+    expect(b.built).toBe(true);
+  });
+
+  test('making 10 iron reaches every goal', () => {
+    const g = flatGame();
+    g.goal = at('iron');
+    g.made.iron = 10;
+    run(g, 1);
+    expect(g.toasts).toContain('🏆 Goal reached: Make 10 iron');
+    expect(g.goalNow()).toBeNull();
+  });
+
+  test('a save keeps the player on a goal from the second set', () => {
+    const g = flatGame();
+    g.goal = at('ore');
+    g.made.ore = 4;
+    const g2 = Game.load(JSON.parse(JSON.stringify(g.save())));
+    expect(g2.goalNow()).toEqual({ id: 'ore', text: 'Mine 20 iron ore', have: 4, need: 20 });
   });
 });
 
