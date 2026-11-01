@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, with worn dirt paths between them. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left, and a message says a pack donkey has joined the carriers](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left, and a message says a pack donkey has joined the carriers](docs/screenshot.jpg)
 
 ## How to play
 
@@ -46,6 +46,8 @@ The settle goal is reached when your settlers' ship lands there and they build t
    - A lookout tower (`5`) expands your land, so you have room for more.
    - Fishers, hunters, farms, mills and bakeries make food. A bakery also needs water from a
      well. Houses turn food into new settlers.
+   - Every worker in a hut eats fish, meat or bread now and then. A hungry worker works at half
+     speed, and a bowl floats over their hut. Carriers and builders need no food.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher.
    - Coal and iron ore lie only in the mountain on the second island. The mountains on your home
      island hold stone only. Coal and iron mines go next to the island's mountain, which has
@@ -239,7 +241,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
@@ -280,6 +282,10 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - Grain grows only from spring to autumn. In winter the fields rest, and sown grain waits for
   spring.
 - A house turns fish, meat or bread into new settlers.
+- Every worker in a hut eats 1 fish, meat or bread for every 60 seconds of work. Carriers bring
+  each hut up to 2 food. With no food, the worker works at half speed. Fishers, hunters and
+  bakers eat from what their own hut makes. Miners eat as they dig instead, and scouts, builders
+  and carriers never eat.
 - A lookout tower expands your land.
 - A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ, in storehouses and in harbours.
