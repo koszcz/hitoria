@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved · Branch: worktree-agent-a76d9a7edc9d5c9a9*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved*
+*Empty.*
 
 ## Inbox
 
