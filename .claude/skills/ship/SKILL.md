@@ -23,8 +23,8 @@ before you merge and push.
    - It must show a built village around the HQ, with the game's controls on screen.
    - If it doesn't, fix the village plan in `scripts/readme/village.ts` and run it again.
    - Update the screenshot's alt text in `README.md` if the picture now shows something else.
-   - Skip this step for changes players can't see. The picture changes a little on every run,
-     so a new one with no visible change only adds noise.
+   - Skip this step for changes players can't see. A new picture with no visible change only
+     adds noise.
 5. Commit your changes with a short message that says what changed. Add only the files this
    change touched, by name, including `README.md` and `docs/screenshot.jpg` if you changed them.
 6. If you are in a worktree, leave it first with `ExitWorktree` and `action: "keep"`. You are

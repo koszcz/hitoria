@@ -113,15 +113,15 @@ export function stepAnimal(g: Game, a: Animal, dt: number) {
   if (!a.path.length) {
     a.path = null;
     a.fleeing = false;
-    a.wait = 2 + Math.random() * 5; // graze a while
+    a.wait = 2 + g.rand() * 5; // graze a while
   }
 }
 
 // A path to a random free tile near home, or null if none was found this time.
 function roam(g: Game, a: Animal) {
   for (let i = 0; i < 6; i++) {
-    const x = a.home.x + Math.round((Math.random() * 2 - 1) * ROAM);
-    const y = a.home.y + Math.round((Math.random() * 2 - 1) * ROAM);
+    const x = a.home.x + Math.round((g.rand() * 2 - 1) * ROAM);
+    const y = a.home.y + Math.round((g.rand() * 2 - 1) * ROAM);
     if (Math.hypot(x - a.home.x, y - a.home.y) > ROAM) continue;
     const p = pathTo(g, a, x, y);
     if (p) return p;

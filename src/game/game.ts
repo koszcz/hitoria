@@ -1,7 +1,7 @@
 // The Game class: all the state of one settlement, and the actions the player and the main loop call.
 // The work itself lives in the other files of this folder, as functions that take the game.
 import type { P } from '../path';
-import { MAP_VERSION, World, W, H } from '../world';
+import { MAP_VERSION, World, W, H, rng } from '../world';
 import { BType, CROP_GROW, Good, bag } from './defs';
 import { spawnAnimals, stepAnimal } from './animals';
 import { regrow } from './hunting';
@@ -62,11 +62,13 @@ export class Game {
   wildT = 0; // seconds the island has been short of animals
   caught: { kind: AnimalKind; home: P }[] = []; // where caught animals lived, oldest first
   nextAnimal = 1; // id for the next wild animal, never reused, so a new animal gets a new model
+  rand: () => number; // the game's own random numbers, from the seed, so the same seed plays out the same way
   private dispatchT = 0;
   private growT = 0;
 
   constructor(readonly seed: number, map = MAP_VERSION) {
     this.world = new World(seed, map);
+    this.rand = rng(seed ^ 0x9a3e);
     this.rich = richSpots(this.world, seed);
     const { x, y } = this.world.start;
     this.hq = addBuilding(this, 'hq', x, y);

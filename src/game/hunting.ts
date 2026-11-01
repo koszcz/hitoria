@@ -66,8 +66,8 @@ export function regrow(g: Game, dt: number) {
   if (g.wildT < ANIMAL_RETURN) return;
   const i = g.caught.findIndex((c) => c.kind === short);
   const old = i >= 0 ? g.caught.splice(i, 1)[0].home : null;
-  const at = old && g.passable(old.x, old.y) ? old : openSpot(g, short, Math.random);
+  const at = old && g.passable(old.x, old.y) ? old : openSpot(g, short, g.rand);
   if (!at) return; // try again next step
   g.wildT = 0;
-  addAnimal(g, short, at.x, at.y, Math.random);
+  addAnimal(g, short, at.x, at.y, g.rand);
 }

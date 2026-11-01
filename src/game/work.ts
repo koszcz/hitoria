@@ -73,7 +73,7 @@ function plan(g: Game, s: Settler, home: Building): true | void {
           g.claimed.delete(i);
           if (!tile.tree && !tile.crop && !tile.b) {
             tile.tree = 0.05;
-            tile.conifer = Math.random() < 0.4;
+            tile.conifer = g.rand() < 0.4;
           }
         } },
         { k: 'walk', x: home.x, y: home.y },
@@ -217,5 +217,5 @@ function findTile(g: Game, b: Building, r: number, ok: (t: Tile, x: number, y: n
       else if (d < bd) { bd = d; best = { x, y }; }
     }
   }
-  return random ? cands[Math.floor(Math.random() * cands.length)] ?? null : best;
+  return random ? cands[Math.floor(g.rand() * cands.length)] ?? null : best;
 }
