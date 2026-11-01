@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *Fun 2 · Effort M · Branch: worktree-agent-a18cf8d156124dfd9*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *Fun 2 · Effort M*
+Empty.
 
 ## Inbox
 
