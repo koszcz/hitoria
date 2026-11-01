@@ -79,6 +79,7 @@ export class Terrain {
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(pos.length), 3));
+    geo.setAttribute('wear', new THREE.BufferAttribute(new Float32Array(r.heights.length), 1));
     geo.setIndex(new THREE.BufferAttribute(idx, 1));
     geo.computeVertexNormals();
     const mat = new THREE.MeshStandardMaterial({ vertexColors: true, map: this.grain, roughness: 0.95 });
@@ -108,6 +109,7 @@ export class Terrain {
   paint(wear: Float32Array) {
     const world = this.world!, CC = this.cornerCol;
     const col = this.mesh.geometry.attributes.color as THREE.BufferAttribute;
+    const trail = this.mesh.geometry.attributes.wear as THREE.BufferAttribute;
     const base = new Map<number, THREE.Color>();
     const path = new THREE.Color(ART.path);
     const tileCol = (x: number, y: number) => {
@@ -163,8 +165,10 @@ export class Terrain {
       if (r.snow[k]) c.lerp(snow, r.snow[k]);
       if (r.deep[k]) c.lerp(this.deep, r.deep[k]);
       col.setXYZ(k, c.r, c.g, c.b);
+      trail.setX(k, worn); // snow keeps off a worn path
     }
     col.needsUpdate = true;
+    trail.needsUpdate = true;
   }
 
   drawBorder() {

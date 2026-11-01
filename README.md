@@ -388,7 +388,8 @@ work is done.
 Settlers' footsteps wear the grass into dirt paths. A few footsteps leave no mark. About 4
 footsteps on a tile start to show, and about 15 turn it fully to dirt. Settlers walk up to 1.25×
 faster on a well-worn path, so they keep to the same lines. A path nobody walks for a minute
-fades back to grass over about 3 minutes.
+fades back to grass over about 3 minutes. In winter, snow covers the land but not a well-worn
+path, which shows as a brown track through the snow.
 
 Deer, hares and foxes live on the island. Each one wanders near its own spot and grazes. When a
 settler comes within about 2 tiles, it runs a few steps away. Animals never block settlers and
