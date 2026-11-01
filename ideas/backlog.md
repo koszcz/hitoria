@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Far island**: a third island with its own riches lies farther out, and you sail to settle it. New maps only. Old saves keep their land. *Fun 2 · Effort M · Branch: worktree-agent-a916d1f08e6d52038*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Far island**: a third island with its own riches lies farther out, and you sail to settle it. New maps only. Old saves keep their land. *Fun 2 · Effort M*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 
