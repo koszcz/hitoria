@@ -12,14 +12,12 @@ import { T, getLang, setLang, startLang } from './i18n';
 import type { P } from './path';
 import { GraphicsSetting } from './quality/setting';
 import { GRAPHICS, LEVELS } from './quality/levels';
-import { Ambience } from './sound/ambience';
 import { MuteChoice } from './sound/mute';
-import { mix, musicLevel, waterShare } from './sound/mix';
+import { musicLevel } from './sound/mix';
 import { Music } from './sound/music';
 import { MusicVolume } from './sound/volume';
 import { WorkSounds } from './sound/strikes';
 import { workMix, workSources } from './sound/work';
-import { wind } from './wind';
 
 setLang(startLang());
 const saves = new Saves();
@@ -51,7 +49,6 @@ renderer.setGraphics(GRAPHICS[graphics.level]);
 const ui = new UI(game);
 ui.graphics = graphics;
 const mute = new MuteChoice();
-const ambience = new Ambience();
 const musicVolume = new MusicVolume();
 const music = new Music();
 const work = new WorkSounds();
@@ -191,19 +188,13 @@ function toggleSound() {
 for (const ev of ['pointerdown', 'keydown'])
   window.addEventListener(ev, () => { if (!mute.muted) startSound(); }, true);
 function startSound() {
-  ambience.start();
   music.start();
   work.start();
 }
 
-// The sound follows the camera: waves near water, wind as gusts pass, work near workers,
-// quieter when zoomed out.
-function updateSound(t: number) {
+// Work sounds follow the camera: louder near workers, quieter when zoomed out.
+function updateSound() {
   const c = renderer.screenToTile(innerWidth / 2, innerHeight / 2);
-  const w = game.world;
-  const water = waterShare((x, y) => !w.inside(x, y) || w.at(x, y).t === 'water', c.x, c.y, 8);
-  const gust = wind(c.x, c.y, t);
-  ambience.set(mix({ water, wind: gust, zoom: renderer.cam.zoom, muted: mute.muted }), gust, t);
   music.set(musicLevel(musicVolume.volume, mute.muted));
   // Work stops while the game is paused, so its sounds stop too.
   work.set(workMix(workSources(game), { ...c, zoom: renderer.cam.zoom, muted: mute.muted || ui.paused }));
@@ -362,7 +353,7 @@ function frame(now: number) {
     fields = placeOk ? game.planFields(placing!, hover!.x, hover!.y) : [];
   }
   renderer.draw(game, { hover, placing, placeOk, tool, fields, selected: ui.selected }, now / 1000);
-  updateSound(now / 1000);
+  updateSound();
   diag.frame(dt * 1000, t1 - t0, performance.now() - t1);
   // On auto, the graphics level follows how fast frames are. Tell the player when it drops.
   const was = graphics.level, changed = graphics.frame(frameMs);
@@ -388,4 +379,4 @@ function frame(now: number) {
 }
 requestAnimationFrame(frame);
 
-Object.assign(window, { game, diag, renderer, ambience, music, work }); // handy for poking at state from the console
+Object.assign(window, { game, diag, renderer, music, work }); // handy for poking at state from the console
