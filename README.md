@@ -20,11 +20,18 @@ reach a goal, the next one starts:
 4. Build 3 houses.
 5. Build a monument.
 6. Get through a winter with no one hungry.
+7. Settle the other island.
+8. Mine 20 coal.
+9. Mine 20 iron ore.
+10. Make 10 iron.
 
 Only goods your settlers make count toward a goal, not the goods you start with.
 
 The winter goal counts one whole winter, from the first snow to spring. A settler goes hungry
 when a house or mine waits more than 20 seconds for food. If that happens, try again next winter.
+
+Goals 7 to 10 send you to the other island, because coal and iron ore lie only in its mountains.
+The settle goal is reached when your settlers' ship lands there and they build their harbour.
 
 1. **Place a woodcutter's hut.** Press `B` to open the build menu and pick the woodcutter's hut.
    Then click open grass near trees.

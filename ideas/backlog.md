@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *Fun 2 · Effort S · Needs: Smelter, Sail to settle · Approved · Branch: worktree-agent-a3af74f28c83db5b5*
+Nothing right now.
 
 ## Next
 
@@ -49,6 +49,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **More goals**: after the monument, a second set of goals asks you to mine coal and iron, make iron and settle the second island. *2026-11-01*
 - **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. Old saves keep the ore they have. *2026-11-01*
 - **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *2026-11-01*
 - **Harbour**: a harbour building on the shore, where ships can dock. *2026-11-01*
