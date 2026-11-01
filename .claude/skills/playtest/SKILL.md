@@ -13,6 +13,11 @@ The run ends in a report in `docs/playtests/`.
 
 - **Wall time is 20 minutes at most.** Run `date +%s` at the start and write the number down.
   Check the time again after every few moves. At 17 minutes, stop playing and write the report.
+- **Ask the user when you find a major problem.** A major problem is a crash, an error in the
+  console, a broken save, or a point where the village cannot go on, such as everyone stuck or
+  starving with no way out. Write it in the report first. Then stop playing and ask the user,
+  with `AskUserQuestion`, whether to stop and write the report now or play on. The time you
+  wait for the answer does not count toward the 20 minutes. Do what the user answers.
 - **Play with a player's knowledge only.** Learn the game from what it shows you: the goal panel,
   building cards, building panels and messages. Leave `src/` and the README unread until the
   report step. When you are stuck, stay stuck for a while and try what a player would try. How
@@ -42,7 +47,8 @@ The run ends in a report in `docs/playtests/`.
    `playtest.state()` shows game time 0.
 3. **Create the report file** `docs/playtests/<date>-<persona>.md` from the template below, with
    the seed, the commit (`git log -1 --format='%h %s'`) and the start time filled in.
-4. **Play.** Repeat this loop until the persona's goal is met or 17 minutes have passed:
+4. **Play.** Repeat this loop until the persona's goal is met, 17 minutes have passed, or the
+   user tells you to stop:
    1. Read `playtest.state()`. Decide what the persona does next, and why.
    2. Act: `build`, `remove`, `open`, `press`, or the page's own buttons.
    3. Advance time, then read what changed.
