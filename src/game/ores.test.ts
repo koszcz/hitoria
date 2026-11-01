@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
 import { BDEFS, BUILDABLE, GOODS, RECIPES, type BType } from './defs';
+import { W } from '../world';
 import { flatGame, runUntil, expectIncomingConsistent, placeBare } from './test-helpers';
 
 const ORE_MINES = [['coalmine', 'coal'], ['ironmine', 'ore']] as const;
@@ -13,8 +14,13 @@ function placeLinked(g: Game, type: BType, x: number, y: number) {
   return b;
 }
 
-function mountain(g: Game, x0: number, y0: number, x1: number, y1: number) {
-  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) g.world.at(x, y).t = 'mountain';
+// A block of mountain. With `ore`, coal and iron ore lie in it, as in the second island's mountains.
+function mountain(g: Game, x0: number, y0: number, x1: number, y1: number, ore = true) {
+  for (let y = y0; y <= y1; y++)
+    for (let x = x0; x <= x1; x++) {
+      g.world.at(x, y).t = 'mountain';
+      g.world.ore[y * W + x] = ore ? 1 : 0;
+    }
 }
 
 describe('coal and iron mines', () => {
@@ -44,6 +50,14 @@ describe('coal and iron mines', () => {
     for (const [type] of ORE_MINES) expect(g.canPlace(type, x + 5, y)).toBe('Must be next to a mountain');
     mountain(g, x + 7, y - 1, x + 8, y + 1);
     for (const [type] of ORE_MINES) expect(g.canPlace(type, x + 5, y)).toBeNull();
+  });
+
+  test('the mines need a mountain with ore in it, but a stone mine does not', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    mountain(g, x + 7, y - 1, x + 8, y + 1, false);
+    for (const [type] of ORE_MINES) expect(g.canPlace(type, x + 5, y)).toBe('Coal and iron lie only in the mountains of the other island');
+    expect(g.canPlace('mine', x + 5, y)).toBeNull();
   });
 
   for (const [type, good] of ORE_MINES)

@@ -44,6 +44,14 @@ export function near(g: Game, x: number, y: number, r: number, ok: (t: Tile) => 
   return false;
 }
 
+// Is there a mountain tile with coal and iron ore within `r` of (x, y)?
+export function nearOre(g: Game, x: number, y: number, r: number) {
+  for (let dy = -r; dy <= r; dy++)
+    for (let dx = -r; dx <= r; dx++)
+      if (Math.hypot(dx, dy) <= r && g.world.inside(x + dx, y + dy) && g.world.hasOre(x + dx, y + dy)) return true;
+  return false;
+}
+
 // Free grass in your land where a tree can grow. Farm fields are kept for grain.
 export function plantable(g: Game, t: Tile, x: number, y: number) {
   return t.t === 'grass' && !t.tree && !t.crop && !t.field && !t.rock && !t.b && !t.road && !t.flag

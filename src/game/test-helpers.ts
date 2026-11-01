@@ -93,3 +93,16 @@ export function wallOff(g: Game, b: { x: number; y: number }) {
 
 // Is the tile at (x, y) part of your land?
 export const inside = (g: Game, x: number, y: number) => !!g.world.territory[y * W + x];
+
+// A new game on a real map, with a finished harbour on the first shore spot that fits one.
+export function harbourGame(seed = 1, built = true) {
+  const g = new Game(seed);
+  for (let i = 0; i < W * W; i++) {
+    const x = i % W, y = Math.floor(i / W);
+    if (g.canPlace('harbour', x, y)) continue;
+    const h = placeBare(g, 'harbour', x, y);
+    if (built) Object.assign(h, { built: true, progress: 1, status: 'Storing goods' });
+    return { g, h };
+  }
+  throw new Error('no harbour spot');
+}

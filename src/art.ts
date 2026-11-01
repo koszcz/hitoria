@@ -17,6 +17,7 @@ export const ART = {
   grass: { h: -0.04, s: -0.2, l: 0.03 }, // shift from the map's own grass colour
   grain: 2.2, // how strong the speckle on ground and roads is
   rock: '#7a6e5a',
+  ore: ['#7a5240', '#4a4440'] as const, // mountain rock with iron ore, then with seams of coal
   snow: '#ece6d8',
   snowLine: 2.4,
   winter: '#e4ebf2', // fresh winter snow on the land, a little cooler than the old snow on peaks

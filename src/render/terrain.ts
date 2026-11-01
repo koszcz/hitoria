@@ -107,6 +107,7 @@ export class Terrain {
       if (c) return c;
       const t = world.at(x, y);
       c = t.t === 'water' ? new THREE.Color(ART.sand)
+        : world.hasOre(x, y) ? new THREE.Color(ART.ore[hash(x, y) < 0.35 ? 1 : 0]).multiplyScalar(0.92 + hash(y, x) * 0.16)
         : t.t === 'mountain' ? new THREE.Color().setHSL(0.07, 0.1, 0.44 + hash(x, y) * 0.08)
         : t.t === 'grass' ? new THREE.Color(t.col).offsetHSL(ART.grass.h, ART.grass.s, ART.grass.l)
         : new THREE.Color(t.col).offsetHSL(0, 0.05, 0.04);

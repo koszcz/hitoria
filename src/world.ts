@@ -27,7 +27,8 @@ export const H = 64;
 // 1: the first maps. 2: adds a mountain and a bay near the start.
 // 3: mountains rise smoothly from the land around them, with no cliff at their edge.
 // 4: a second island sits off the mouth of the bay.
-export const MAP_VERSION = 4;
+// 5: the second island gets a mountain, and coal and iron ore lie only there.
+export const MAP_VERSION = 5;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -47,6 +48,14 @@ const SLOPE = 0.065;
 const ISLE_AWAY = 14;
 const ISLE_SIZE = 6.5;
 const STRAIT = 3.5;
+// From map version 5, the second island's mountain: how far past the island's centre its top sits,
+// away from the home island, how high the top is, and how much lower each tile out from the top is.
+// Its sides are steep, so the strait to the home island stays as wide as before.
+const ISLE_PEAK_AWAY = 1.5;
+const ISLE_PEAK = 0.98;
+const ISLE_PEAK_SLOPE = 0.12;
+// No trees or boulders grow this close to the top of the second island's mountain, so mines fit at its foot.
+const ISLE_FOOT = 4;
 // The guaranteed grove and quarry near the start: how wide they are.
 const GROVE = 2.8;
 const QUARRY = 1.9;
@@ -79,6 +88,8 @@ function noise(rand: () => number, cell: number) {
 export class World {
   tiles: Tile[] = [];
   territory = new Uint8Array(W * H);
+  // 1 where coal and iron ore lie in a mountain tile. The generator lays it down, so saves don't store it.
+  ore = new Uint8Array(W * H);
   start = { x: W / 2, y: H / 2 };
   private peak = this.start;
 
@@ -91,6 +102,7 @@ export class World {
     const grove = { x: sx + 6, y: sy - 4 }, quarry = { x: sx - 5, y: sy + 5 };
     const { peak, bay, out } = this.landmarks(seed);
     const isle = { x: bay.x + out.x * ISLE_AWAY, y: bay.y + out.y * ISLE_AWAY };
+    const islePeak = { x: isle.x + out.x * ISLE_PEAK_AWAY, y: isle.y + out.y * ISLE_PEAK_AWAY };
     this.peak = peak;
 
     for (let y = 0; y < H; y++) {
@@ -119,8 +131,13 @@ export class World {
           else if (toBay < BAY_WIDTH + 1.2) h = Math.min(h, 0.32);
         }
         if (map >= 4) h = this.island(h, x - isle.x, y - isle.y, out, n3(x, y));
+        // The second island's mountain rises past its middle, so the near shore stays free for a harbour.
+        if (map >= 5) h = Math.max(h, ISLE_PEAK - Math.hypot(x - islePeak.x, y - islePeak.y) * ISLE_PEAK_SLOPE);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, flag: 0, road: 0, col: '' });
+        // Older maps have ore in every mountain. From map 5, only the second island's mountain holds it.
+        const rich = map < 5 || Math.hypot(x - isle.x, y - isle.y) < ISLE_SIZE;
+        if (t === 'mountain' && rich) this.ore[y * W + x] = 1;
       }
     }
 
@@ -134,7 +151,8 @@ export class World {
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
         // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
-        const foot = landmarks && Math.hypot(x - this.peak.x, y - this.peak.y) < PEAK_SIZE + 2.5;
+        const foot = (landmarks && Math.hypot(x - this.peak.x, y - this.peak.y) < PEAK_SIZE + 2.5)
+          || (map >= 5 && Math.hypot(x - islePeak.x, y - islePeak.y) < ISLE_FOOT);
         if (tile.t !== 'grass' || near < 3.5 || foot) continue;
         if (Math.hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
         else if (Math.hypot(x - quarry.x, y - quarry.y) < QUARRY) tile.rock = 4 + Math.floor(rand() * 3);
@@ -212,6 +230,11 @@ export class World {
           else t.plant = r < 0.05 ? 'bush' : r < 0.12 ? 'flowers' : r < 0.2 ? 'grass' : '';
         }
       }
+  }
+
+  // Do coal and iron ore lie in the tile at (x, y)?
+  hasOre(x: number, y: number) {
+    return this.at(x, y).t === 'mountain' && this.ore[y * W + x] === 1;
   }
 
   inside(x: number, y: number) {

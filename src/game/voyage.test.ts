@@ -8,20 +8,7 @@ import { demolish } from './demolish';
 import { landingSpot, lacking, SAIL_CARGO, SAIL_CREW } from './voyage';
 import type { Building } from './types';
 import { walkFrom } from './walking';
-import { inside, placeBare, run, runUntil, totalGoods } from './test-helpers';
-
-// A new game on a real map, with a finished harbour on the first shore spot that fits one.
-function harbourGame(seed = 1, built = true) {
-  const g = new Game(seed);
-  for (let i = 0; i < W * W; i++) {
-    const x = i % W, y = Math.floor(i / W);
-    if (g.canPlace('harbour', x, y)) continue;
-    const h = placeBare(g, 'harbour', x, y);
-    if (built) Object.assign(h, { built: true, progress: 1, status: 'Storing goods' });
-    return { g, h };
-  }
-  throw new Error('no harbour spot');
-}
+import { harbourGame, inside, placeBare, run, runUntil, totalGoods } from './test-helpers';
 
 const landed = (g: Game) => [...g.buildings.values()].find((b) => b.landed);
 

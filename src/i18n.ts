@@ -70,12 +70,12 @@ const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   },
   coalmine: {
     name: 'Kopalnia węgla',
-    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 worki węgla. Zbuduj ją przy górze.',
+    desc: 'Wydobywa węgiel z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 worki węgla. Węgiel jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
   },
   smelter: { name: 'Huta', desc: 'Wytapia żelazo z rudy żelaza i węgla. Na każdą sztabkę żelaza zużywa 1 bryłę rudy i 1 worek węgla.' },
   ironmine: {
     name: 'Kopalnia żelaza',
-    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 bryły rudy. Zbuduj ją przy górze.',
+    desc: 'Wydobywa rudę żelaza z góry i nigdy się nie wyczerpuje. Górnik zjada jedną rybę, porcję mięsa lub bochenek chleba na każde 2 bryły rudy. Ruda żelaza jest tylko w górach drugiej wyspy, więc zbuduj ją tam.',
   },
   monument: {
     name: 'Pomnik',
@@ -166,6 +166,7 @@ const MESSAGES_PL: Record<string, string> = {
   'A tree is in the way': 'Przeszkadza drzewo',
   'A boulder is in the way': 'Przeszkadza głaz',
   'Must be next to a mountain': 'Musi stać przy górze',
+  'Coal and iron lie only in the mountains of the other island': 'Węgiel i żelazo są tylko w górach drugiej wyspy',
   'Must be near water': 'Musi stać blisko wody',
   'Must be on the shore by open water': 'Musi stać na brzegu przy otwartej wodzie',
   'No room for its flag in front': 'Brak miejsca na flagę przed budynkiem',

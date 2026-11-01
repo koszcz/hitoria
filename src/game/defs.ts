@@ -42,14 +42,16 @@ export const BDEFS: Record<BType, BDef> = {
   house: { name: 'House', icon: '🏠', desc: `A family home. It turns one fish, meat or bread into a new settler every ${HOUSE_GROW} s, up to ${HOUSE_SIZE} settlers.`, cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
   monument: { name: 'Monument', icon: '🗿', desc: 'A tall stone monument to your peaceful island. It does no work, but your settlers are proud of it.', cost: { plank: 10, stone: 16 }, buildTime: 30, worker: null, radius: 0 },
   mine: { name: 'Stone Mine', icon: '⛰️', desc: 'Digs stone out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 stone. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
-  coalmine: { name: 'Coal Mine', icon: '⚫', desc: 'Digs coal out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 coal. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
+  coalmine: { name: 'Coal Mine', icon: '⚫', desc: 'Digs coal out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 coal. Coal lies only in the mountains of the other island, so build it there.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
   hunter: { name: "Hunter's Lodge", icon: '🏹', desc: 'Hunts deer and hares nearby and brings home meat. Animals slowly come back.', cost: { plank: 2 }, buildTime: 6, worker: 'hunter', radius: 7 },
   smelter: { name: 'Smelter', icon: '🔥', desc: 'Melts iron ore with coal into iron. It uses 1 iron ore and 1 coal for each bar of iron.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'smelter', radius: 0 },
   harbour: { name: 'Harbour', icon: '⚓', desc: 'A wooden pier on the shore where ships can dock. It stores goods like a storehouse. Build it by open water.', cost: { plank: 4, stone: 3 }, buildTime: 12, worker: null, radius: 0 },
-  ironmine: { name: 'Iron Mine', icon: '🪨', desc: 'Digs iron ore out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 iron ore. Build it next to a mountain.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
+  ironmine: { name: 'Iron Mine', icon: '🪨', desc: 'Digs iron ore out of a mountain and never runs dry. The miner eats one fish, meat or bread for every 2 iron ore. Iron ore lies only in the mountains of the other island, so build it there.', cost: { plank: 4 }, buildTime: 10, worker: 'miner', radius: 2 },
 };
 // Mines dig into a mountain, so they go next to one.
 export const MINES: BType[] = ['mine', 'coalmine', 'ironmine'];
+// These mines also need coal and iron ore in the mountain. Stone lies in every mountain.
+export const ORE_MINES: BType[] = ['coalmine', 'ironmine'];
 // How far from a harbour its dock may lie, in tiles.
 export const DOCK_REACH = 4;
 export const BUILDABLE: BType[] = ['woodcutter', 'forester', 'quarry', 'sawmill', 'lookout', 'storehouse', 'fisher', 'farm', 'mill', 'bakery', 'mine', 'house', 'monument', 'well', 'coalmine', 'ironmine', 'hunter', 'smelter', 'harbour'];
