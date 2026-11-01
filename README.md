@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left, and a message says a pack donkey has joined the carriers](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and between mountain ridges: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left, and a message says a pack donkey has joined the carriers](docs/screenshot.jpg)
 
 ## How to play
 
@@ -48,7 +48,8 @@ The settle goal is reached when your settlers' ship lands there and they build t
      well. Houses turn food into new settlers.
    - Every worker in a hut eats fish, meat or bread now and then. A hungry worker works at half
      speed, and a bowl floats over their hut. Carriers and builders need no food.
-   - Your starting land always has a mountain for a stone mine and a bay for a fisher.
+   - Your starting land always has a mountain for a stone mine and a bay for a fisher. Beyond it,
+     mountains run in long ridges, with grassy valleys between them.
    - Coal and iron ore lie only in the mountain on the second island. The mountains on your home
      island hold stone only. Coal and iron mines go next to the island's mountain, which has
      rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
@@ -209,7 +210,8 @@ back to their building, so nothing is lost.
 
 Each save records which version of the map it was made on. A save from before a map change loads
 on the same land it was saved on, even though new games get the new map. On maps from before the
-second island's mountain, every mountain still holds coal and iron ore.
+second island's mountain, every mountain still holds coal and iron ore. Maps from before mountain ranges
+keep their round mountains.
 
 ## Graphics
 
@@ -245,6 +247,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
+| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
