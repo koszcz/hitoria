@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Village wishes**: after the last goal, the village asks for one gentle wish at a time, such as "store 40 food before the first snow", and a missed wish just moves on. *Fun 2 · Effort M · Approved · Branch: worktree-agent-a352b93ae6094c27e*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Village wishes**: after the last goal, the village asks for one gentle wish at a time, such as "store 40 food before the first snow", and a missed wish just moves on. *Fun 2 · Effort M · Approved*
 - **Building upgrades**: you spend iron and tools to make a hut work faster or a house hold more settlers, so iron has a use after the last goal. *Fun 2 · Effort M · Approved*
 - **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *Fun 2 · Effort M · Approved*
 
