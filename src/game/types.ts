@@ -23,6 +23,8 @@ export interface Building {
   landed?: boolean; // a harbour your settlers built where their ship landed: a home, like the HQ
   crew?: number; // idle settlers waiting inside a landing harbour
   tooled?: boolean; // a worker brought this hut its tool, which stays here
+  fed?: number; // seconds of work the worker's last meal is still good for
+  hungry?: boolean; // the worker had no food for their last piece of work, so they work at half speed
 }
 
 // One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.

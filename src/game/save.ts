@@ -117,6 +117,7 @@ export function restore(g: Game, d: SaveData) {
     b.using ??= null;
     b.born ??= 0; // saves from before houses
     b.grow ??= 0;
+    b.fed ??= 0; // saves from before hungry workers
     delete (b as { flag?: number }).flag; // saves before version 6 gave each building a flag
   }
   g.buildings = new Map(d.buildings.map((b) => [b.id, b]));

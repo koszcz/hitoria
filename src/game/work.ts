@@ -8,15 +8,23 @@ import { hunt } from './hunting';
 import { digSpeed, survey, surveyable } from './geology';
 import { fieldsGrow } from '../seasons/year';
 import { near, plantable } from './land';
+import { eats, feed } from './meals';
 import type { Building, Settler } from './types';
 
 export function idle(g: Game, s: Settler) {
   if (s.role === 'carrier') return carry(g, s);
   const home = g.buildings.get(s.home);
   if (!home || s.role === 'builder') return;
-  const rest = (t: number, status: string) => {
+  // A worker who rests eats nothing. Before real work, they eat, or work at half speed with no food.
+  if (!plan(g, s, home) && eats(home)) feed(home, s.tasks);
+}
+
+// Give the worker their next piece of work. Returns true when they only rest.
+function plan(g: Game, s: Settler, home: Building): true | void {
+  const rest = (t: number, status: string): true => {
     home.status = status;
     s.tasks = [{ k: 'work', t }];
+    return true;
   };
   const r = BDEFS[home.type].radius;
   const free = (t: Tile, x: number, y: number) => plantable(g, t, x, y);

@@ -1,10 +1,11 @@
 // Moving goods: what each building wants, and which carrier trips the dispatcher starts.
 // When many goods wait, pack donkeys take the trips that move two goods at once.
-import { BDEFS, GOODS, Good, PILE, RECIPES } from './defs';
+import { BDEFS, GOODS, Good, HOUSE_FOOD, PILE, RECIPES } from './defs';
 import { hire } from './carriers';
 import { DONKEY_BUSY, DONKEY_LOAD, hireDonkey } from './donkeys';
 import type { Game } from './game';
 import { pantry } from './houses';
+import { eats, lunchbox } from './meals';
 import { isStore } from './stores';
 import type { Building } from './types';
 import { walkFrom } from './walking';
@@ -13,6 +14,7 @@ import { W } from '../world';
 function want(b: Building, g: Good) {
   if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
   if (b.type === 'house') return pantry(b, g);
+  if (eats(b) && HOUSE_FOOD.includes(g)) return lunchbox(b, g);
   const rc = RECIPES[b.type];
   if (rc?.with === g) return PILE;
   if (!rc?.from.includes(g)) return 0;
