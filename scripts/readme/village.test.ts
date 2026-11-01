@@ -6,7 +6,7 @@ test('the README village is shown at midday', () => {
   expect(clock(growVillage().time)).toBeCloseTo(0.5, 1);
 });
 
-test('the README village is fully built, with every building on a road to the HQ', () => {
+test('the README village is fully built, and settlers can walk to every building', () => {
   const g = growVillage();
   const buildings = [...g.buildings.values()];
   expect(buildings.length).toBeGreaterThanOrEqual(14);

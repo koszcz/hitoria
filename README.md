@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, all joined by roads. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, with worn dirt paths between them. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
 
 ## How to play
 
@@ -37,9 +37,8 @@ The settle goal is reached when your settlers' ship lands there and they build t
    Then click open grass near trees.
 2. **Watch it get built.** A builder walks to the site. Carriers walk planks over from the HQ.
    Once it is built, a woodcutter moves in and starts felling trees.
-3. **Add roads if you like.** The game lays a road to your nearest flag when one fits. Settlers walk
-   faster on roads, but no building needs one. To draw a road yourself, press `R`, click a flag or
-   building, then click where the road should go. Right-click to stop drawing.
+3. **Watch the paths form.** You don't build roads. Settlers walk across the grass, and their
+   footsteps wear it into dirt paths. Busy paths are quicker to walk, so settlers keep to them.
 4. **Grow your economy.**
    - A forester (`2`) plants new trees, so the woodcutter never runs out.
    - A quarry (`3`) next to boulders makes stone.
@@ -106,7 +105,7 @@ tools, and the trader keeps half the worth of what you give. The goods you give 
 harbour first, then from your nearest stores. The goods you get go into the harbour.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
-to the HQ, and its flag and roads stay.
+to the HQ.
 
 ### Controls
 
@@ -117,8 +116,7 @@ to the HQ, and its flag and roads stay.
 | Open the build menu | `B`, or the Build button |
 | Pick a building straight away | `1`–`9` |
 | Place several of the same building | Shift-click |
-| Draw roads | `R` |
-| Remove a road, a lone flag, or a building | `X` |
+| Remove a building | `X` |
 | Cancel | Right-click or Esc |
 | Pause | Space |
 | Save | Ctrl+S (or Cmd+S) |
@@ -201,8 +199,9 @@ The save buttons are in the ☰ menu at the top right.
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
 
-The save keeps the map, buildings, roads, flags, worn paths, every good, your goals and the time of day and year. It does not keep where settlers and
+The save keeps the map, buildings, worn paths, every good, your goals and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
+Saves from when the game still had roads load too. Their roads and flags become worn paths.
 After a load, everyone starts in their home, the HQ or the harbour on the second island, and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
 
@@ -240,7 +239,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
@@ -288,13 +287,12 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   A ship sails from it once, to settle the second island. A trade ship visits it every few
   minutes.
 
-Every building has a flag in front of its door. Flags mark where roads end and where they meet.
-A carrier takes one good from the building that has it and walks it the quickest way, all the way
-to the building that needs it. Carriers don't need roads. They cross the grass, but they keep to
-roads and paths when those are quicker. Spare goods go to the store that is nearest on foot.
-Goods never wait on flags. Settlers walk 1.5× faster on roads.
+There are no roads. A carrier takes one good from the building that has it and walks it the
+quickest way across the grass, all the way to the building that needs it. Spare goods go to the
+store that is nearest on foot. The tile in front of each door stays open, so nothing can be
+built there, and settlers can always get in.
 
-Off the roads, settlers' footsteps wear the grass into dirt paths. Settlers walk up to 1.25×
+Settlers' footsteps wear the grass into dirt paths. Settlers walk up to 1.25×
 faster on a well-worn path, so they keep to the same lines. A path nobody walks for a minute
 fades back to grass over about 3 minutes.
 
