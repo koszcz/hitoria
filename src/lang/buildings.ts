@@ -31,6 +31,10 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
     name: 'Warsztat narzędziarza',
     desc: 'Robi narzędzia, których potrzebują nowi pracownicy, z żelaza i desek. Na każde narzędzie zużywa 1 sztabkę żelaza i 1 deskę.',
   },
+  geologist: {
+    name: 'Chata geologa',
+    desc: 'Geolog bada pobliskie góry i stawia znak na każdym polu. Złoty znak oznacza bogate złoże: kopalnia obok niego wydobywa dwa razy szybciej. Zbuduj ją przy górze.',
+  },
   smelter: { name: 'Huta', desc: 'Wytapia żelazo z rudy żelaza i węgla. Na każdą sztabkę żelaza zużywa 1 bryłę rudy i 1 worek węgla.' },
   ironmine: {
     name: 'Kopalnia żelaza',

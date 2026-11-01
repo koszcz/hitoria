@@ -34,6 +34,7 @@ export interface SaveData {
   ships?: Ship[]; // ships sailing to settle, or tied up; saves from before ships have none
   trader?: Trader | null; // the trade ship, if it is visiting; older saves have none
   traderT?: number; // seconds until the next trade ship
+  signs?: number[]; // the tiles with a geologist's sign; older saves have none
 }
 
 export function save(g: Game): SaveData {
@@ -79,6 +80,7 @@ export function save(g: Game): SaveData {
     tiles: g.world.tiles.map((t, i) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field, Math.round(g.wear[i] * 100) / 100]),
     buildings, flags, roads, made: { ...g.made }, goal: g.goal, winter: g.winter.state, ships: structuredClone(g.ships),
     trader: structuredClone(g.trader), traderT: g.traderT,
+    signs: [...g.signs.keys()].filter((i) => g.signs[i]),
   };
 }
 
@@ -131,6 +133,8 @@ export function restore(g: Game, d: SaveData) {
   g.ships = d.ships ?? [];
   g.trader = d.trader ?? null;
   g.traderT = d.traderT ?? TRADE_EVERY;
+  for (const i of d.signs ?? []) g.signs[i] = 1;
+  g.signed++;
   if (d.v < 5) grantTools(g);
   g.net++;
   computeTerritory(g);

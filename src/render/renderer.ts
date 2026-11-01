@@ -22,6 +22,7 @@ import { clock, daylightAt } from './daylight';
 import { seasonLook, yearAt, type SeasonLook } from '../seasons/year';
 import { setSeason } from './seasonal';
 import { Snowfall } from './snowfall';
+import { Signs } from './signs';
 
 export type { View } from './overlays';
 
@@ -55,6 +56,7 @@ export class Renderer {
   private ships: Ships;
   private overlays: Overlays;
   private snowfall: Snowfall;
+  private signs: Signs;
   private season: SeasonLook = seasonLook(0);
   private reach = 20; // half the width of the ground in view
 
@@ -88,6 +90,7 @@ export class Renderer {
     scene.add(this.roads);
     this.overlays = new Overlays(scene, this.ground);
     this.snowfall = new Snowfall(scene);
+    this.signs = new Signs(scene, this.ground);
     this.setGraphics(this.graphics);
   }
 
@@ -182,6 +185,7 @@ export class Renderer {
     this.settlers(game, now);
     this.animals.draw(game, now);
     this.ships.draw(game, now);
+    this.signs.draw(game);
     this.overlays.draw(game, view);
     this.goods.finish();
 

@@ -5,6 +5,7 @@ import { BDEFS, Good, PILE, RECIPES, WELL_DRAW } from './defs';
 import { carry } from './carriers';
 import type { Game } from './game';
 import { hunt } from './hunting';
+import { digSpeed, survey, surveyable } from './geology';
 import { fieldsGrow } from '../seasons/year';
 import { near, plantable } from './land';
 import type { Building, Settler } from './types';
@@ -146,8 +147,23 @@ export function idle(g: Game, s: Settler) {
           home.busy = true;
           home.using = input;
         } },
-        { k: 'work', t: rc.t },
+        { k: 'work', t: rc.t / digSpeed(g, home) },
         { k: 'do', f: () => { make(rc.to, rc.n); home.busy = false; home.using = null; } },
+      ];
+      return;
+    }
+    case 'geologist': {
+      const at = findTile(g, home, r, (_t, x, y) => surveyable(g, x, y));
+      if (!at) return rest(4, 'Every mountain nearby is surveyed');
+      home.status = 'Surveying the mountain';
+      const i = claim(g, s, at);
+      s.tasks = [
+        { k: 'walk', ...at, adjacent: true },
+        { k: 'work', t: 4, anim: 'mine' },
+        { k: 'do', f: () => { g.claimed.delete(i); survey(g, at.x, at.y); } },
+        { k: 'walk', x: home.x, y: home.y },
+        { k: 'do', f: () => { s.onAbort = null; s.inside = true; } },
+        { k: 'work', t: 1.5 },
       ];
       return;
     }

@@ -25,6 +25,7 @@ import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
 import { START_TOOLS } from './tools';
 import { stepTrader, trade, TRADE_EVERY } from './trade';
+import { richAt, richSpots } from './geology';
 import type { Animal, AnimalKind, Building, Flag, Road, Settler, Ship, Trader } from './types';
 
 export class Game {
@@ -47,6 +48,9 @@ export class Game {
   winter = { state: 'late' as WinterState, since: new Map<number, number>() }; // the survive winter goal; `since` is when each house or mine began waiting for food
   wear = new Float32Array(W * H); // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
   worn = 0; // bumped whenever a tile's wear changes enough to see
+  rich: Uint8Array; // 1 on the mountain tiles that are rich spots; the seed makes them, so saves don't store them
+  signs = new Uint8Array(W * H); // 1 where a geologist has put up a sign
+  signed = 0; // bumped whenever a geologist puts up signs
 
   // Internal state for the files in this folder. Code outside src/game/ should not touch it.
   nextId = 1;
@@ -66,6 +70,7 @@ export class Game {
 
   constructor(readonly seed: number, map = MAP_VERSION) {
     this.world = new World(seed, map);
+    this.rich = richSpots(this.world, seed);
     const { x, y } = this.world.start;
     this.hq = addBuilding(this, 'hq', x, y);
     this.hq.built = true;
@@ -133,6 +138,11 @@ export class Game {
   // Swap one deal of `give` for `get` with the trade ship at harbour `b`. Returns why it can't, or null.
   trade(b: Building, give: Good, get: Good) {
     return trade(this, b, give, get);
+  }
+
+  // Does a mine of this type at (x, y) sit next to a rich spot, so it digs twice as fast?
+  richAt(type: BType, x: number, y: number) {
+    return richAt(this, type, x, y);
   }
 
   isStore(b: Building) {

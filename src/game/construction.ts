@@ -7,6 +7,7 @@ import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory, flaggable, near, nearOre, roadable } from './land';
 import { dockAt } from './harbour';
+import { noteRichMine } from './geology';
 import { homeOf, homes } from './homes';
 import { ensureFlag } from './roads';
 import { sendHome } from './settlers';
@@ -22,6 +23,7 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   if (t.rock) return 'A boulder is in the way';
   if (t.field) return 'This is a farm field';
   if (MINES.includes(type) && !near(g, x, y, BDEFS[type].radius, (n) => n.t === 'mountain')) return 'Must be next to a mountain';
+  if (type === 'geologist' && !near(g, x, y, BDEFS.geologist.radius, (n) => n.t === 'mountain')) return 'Must be near a mountain';
   if (ORE_MINES.includes(type) && !nearOre(g, x, y, BDEFS[type].radius)) return 'Coal and iron lie only in the mountains of the other island';
   if (type === 'fisher' && !near(g, x, y, BDEFS.fisher.radius, (n) => n.t === 'water')) return 'Must be near water';
   if (type === 'harbour' && !dockAt(g, x, y)) return 'Must be on the shore by open water';
@@ -45,6 +47,7 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
 export function place(g: Game, type: BType, x: number, y: number) {
   const b = placeSite(g, type, x, y);
   autoRoad(g, b);
+  noteRichMine(g, b);
   return b;
 }
 

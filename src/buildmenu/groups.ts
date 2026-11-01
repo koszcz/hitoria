@@ -5,7 +5,7 @@ export type Group = 'wood' | 'stone' | 'food' | 'town';
 
 export const GROUPS: { group: Group; types: BType[] }[] = [
   { group: 'wood', types: ['woodcutter', 'forester', 'sawmill'] },
-  { group: 'stone', types: ['quarry', 'mine', 'coalmine', 'ironmine', 'smelter', 'toolmaker'] },
+  { group: 'stone', types: ['quarry', 'geologist', 'mine', 'coalmine', 'ironmine', 'smelter', 'toolmaker'] },
   { group: 'food', types: ['fisher', 'hunter', 'farm', 'well', 'mill', 'bakery'] },
   { group: 'town', types: ['house', 'storehouse', 'harbour', 'lookout', 'monument'] },
 ];

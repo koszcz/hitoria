@@ -16,6 +16,7 @@ export function hut(g: THREE.Group, model: Model, type: BType, wall: string, roo
   else if (type === 'well') well(g, wall, roof);
   else if (type === 'smelter') smelter(g, model, wall, roof);
   else if (type === 'toolmaker') toolmaker(g, model, wall, roof);
+  else if (type === 'geologist') geologist(g, model, wall, roof);
 }
 
 // A log cabin with a mossy roof, a pile of logs and a chopping block with an axe in it.
@@ -166,4 +167,17 @@ function well(g: THREE.Group, wall: string, roof: string) {
   add(g, new THREE.BoxGeometry(0.28, 0.06, 0.1), '#7a5530', 0.3, 0.03, 0.3);
   add(g, new THREE.BoxGeometry(0.24, 0.01, 0.07), '#3a6a8a', 0.3, 0.06, 0.3);
   add(g, new THREE.CylinderGeometry(0.035, 0.028, 0.05, 8), '#8a6238', -0.3, 0.025, 0.32);
+}
+
+// A small timber hut under a purple roof, a table with rock samples and a magnifying glass, and a
+// gold survey sign stuck in the ground.
+function geologist(g: THREE.Group, model: Model, wall: string, roof: string) {
+  house(g, model, { w: 0.24, d: 0.22, h: 0.3, rh: 0.26, wall, roof, x: -0.12, z: -0.12, chimney: false, shutter: '#5a3c22' });
+  add(g, new THREE.BoxGeometry(0.22, 0.02, 0.14), '#8a6238', 0.28, 0.12, 0.3);
+  for (const [x, z] of [[0.19, 0.25], [0.37, 0.25], [0.19, 0.35], [0.37, 0.35]]) add(g, new THREE.BoxGeometry(0.015, 0.12, 0.015), '#5a3c22', x, 0.06, z);
+  for (const [x, z, c] of [[0.22, 0.28, '#8a8478'], [0.28, 0.33, '#2a2626'], [0.34, 0.28, '#8a4a30']] as const)
+    add(g, new THREE.DodecahedronGeometry(0.025, 0), c, x, 0.15, z);
+  add(g, new THREE.TorusGeometry(0.02, 0.005, 4, 10).rotateX(Math.PI / 2), '#c8a040', 0.34, 0.135, 0.34);
+  add(g, new THREE.BoxGeometry(0.015, 0.3, 0.015), '#6b4a28', -0.34, 0.15, 0.3);
+  add(g, new THREE.BoxGeometry(0.14, 0.09, 0.015), '#e8c040', -0.34, 0.27, 0.31, { metalness: 0.4, roughness: 0.5 });
 }

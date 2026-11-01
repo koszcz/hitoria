@@ -62,12 +62,14 @@ const EN = {
     monument: 'Your last goal. Build it once your island is thriving.',
     harbour: 'A ship sails from here to settle the other island. A trade ship visits every few minutes. It also stores goods.',
     toolmaker: 'Every new worker in a hut needs 1 tool. When the tools you started with run out, new huts wait for one.',
+    geologist: 'Shows you where to put your mines. A mine next to a gold sign digs twice as fast.',
   } as Partial<Record<BType, string>>,
   place: {
     fisher: 'Build it near water.',
     mine: 'Build it next to a mountain.',
+    geologist: 'Build it near a mountain.',
     harbour: `Build it on the shore, up to ${DOCK_REACH} tiles from open water.`,
-  } as Partial<Record<'fisher' | 'mine' | 'harbour', string>>,
+  } as Partial<Record<'fisher' | 'mine' | 'harbour' | 'geologist', string>>,
   worker: 'Takes 1 idle settler as its worker.',
   workerTool: 'Takes 1 idle settler as its worker, and 1 tool from your stores.',
   noWorker: 'Needs no worker.',
@@ -102,8 +104,9 @@ const PL: typeof EN = {
     monument: 'Twój ostatni cel. Zbuduj go, gdy twoja wyspa kwitnie.',
     harbour: 'Stąd statek wypływa, by osiedlić drugą wyspę. Co kilka minut przypływa statek kupiecki. Port przechowuje też towary.',
     toolmaker: 'Każdy nowy pracownik potrzebuje 1 narzędzia. Gdy skończą się narzędzia z początku gry, nowe budynki czekają na nowe.',
+    geologist: 'Pokazuje, gdzie stawiać kopalnie. Kopalnia obok złotego znaku wydobywa dwa razy szybciej.',
   },
-  place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
+  place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.', geologist: 'Zbuduj ją blisko góry.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
   worker: 'Zatrudnia 1 wolnego osadnika.',
   workerTool: 'Zatrudnia 1 wolnego osadnika i bierze 1 narzędzie z magazynu.',
   noWorker: 'Nie potrzebuje pracownika.',
@@ -170,7 +173,7 @@ export function buildFacts(type: BType): BuildFacts {
   if (x.worth[type]) worth.push(x.worth[type]!);
 
   const needs: string[] = [];
-  const place = MINES.includes(type) ? x.place.mine : type === 'fisher' || type === 'harbour' ? x.place[type] : undefined;
+  const place = MINES.includes(type) ? x.place.mine : type === 'fisher' || type === 'harbour' || type === 'geologist' ? x.place[type] : undefined;
   if (place) needs.push(place);
   needs.push(!def.worker ? x.noWorker : needsTool(type) ? x.workerTool : x.worker);
   if (def.radius && type !== 'lookout' && !MINES.includes(type)) needs.push(x.range(def.radius));

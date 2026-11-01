@@ -14,17 +14,17 @@ export const ROLE_COLOR: Record<Role, string> = {
   carrier: '#d8c08a', builder: '#e0883a', woodcutter: '#b0402e', forester: '#5f9a3a',
   stonecutter: '#8a8f96', sawyer: '#a8763e', scout: '#3f6fc0',
   fisher: '#3f7a96', farmer: '#c8a040', miller: '#efe8d6', baker: '#d9894a', miner: '#5a5048',
-  drawer: '#4f8fb0', hunter: '#5a6a3a', smelter: '#7a3a2a', toolmaker: '#6a5a4a',
+  drawer: '#4f8fb0', hunter: '#5a6a3a', smelter: '#7a3a2a', toolmaker: '#6a5a4a', geologist: '#8a6a9a',
 };
 export const HAT: Record<Role, string> = {
   carrier: '', builder: '#f2c23a', woodcutter: '#3f6a34', forester: '#4a6a2c', stonecutter: '#6a6e72',
   sawyer: '#6b4a28', scout: '#2c4a8a', fisher: '#e8c84a', farmer: '#ead48a', miller: '#ffffff', baker: '#ffffff', miner: '#4a4440',
-  drawer: '#2f5f7a', hunter: '#6a4a2a', smelter: '#3a3430', toolmaker: '#8a3a2a',
+  drawer: '#2f5f7a', hunter: '#6a4a2a', smelter: '#3a3430', toolmaker: '#8a3a2a', geologist: '#c8a86a',
 };
 export const HAIR: Record<Role, string> = {
   carrier: '#6a4a2a', builder: '#3a2618', woodcutter: '#8a4a22', forester: '#4a3020', stonecutter: '#2a2420',
   sawyer: '#b0803a', scout: '#d8b060', fisher: '#5a5048', farmer: '#9a6a32', miller: '#c8c0b0', baker: '#4a3020', miner: '#2a2420',
-  drawer: '#6a4a2a', hunter: '#3a2618', smelter: '#2a2420', toolmaker: '#5a3a20',
+  drawer: '#6a4a2a', hunter: '#3a2618', smelter: '#2a2420', toolmaker: '#5a3a20', geologist: '#7a5a3a',
 };
 
 export interface Person {
@@ -132,6 +132,7 @@ export function makeTool(role: Role) {
       break;
     case 'stonecutter':
     case 'miner':
+    case 'geologist':
       handle(0.17);
       add(t, new THREE.BoxGeometry(0.014, 0.12, 0.018), iron, 0, 0, 0.13).rotation.x = 0.2;
       break;

@@ -210,6 +210,7 @@ export class UI {
         rows.push(`<div>${x.born(b.born, HOUSE_SIZE)}</div>`);
         if (b.busy) rows.push(`<div class="bar"><i style="width:${Math.round((1 - b.grow / HOUSE_GROW) * 100)}%"></i></div>`);
       }
+      if (g.richAt(b.type, b.x, b.y)) rows.push(`<div>${x.richSpot}</div>`);
       for (const k of GOODS) {
         if (b.stock[k]) rows.push(`<div>${x.input} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
         if (b.out[k]) rows.push(`<div>${x.ready} <span class="good ${k}"></span>${b.out[k]} ${goodName(k)}</div>`);
