@@ -24,7 +24,8 @@ Empty.
 
 Triaged, but with open questions. Run `/refine` on one to settle them.
 
-Empty.
+- **Bigger islands**: the second and far islands are much larger than today's small round islands, so they feel worth sailing to. *Fun 2 · Effort L · Open: should the map grow past 64 by 64 tiles, which touches many files and saves, or should the islands grow inside the current map? How big should each island be?*
+- **Islands with their own look**: each new island has a shape and features that make it stand out, such as coves, cliffs, special trees or a landmark. *Fun 2 · Effort M · Open: which features make each island special? Should they only look different, or also change play?*
 
 ## Later
 
