@@ -9,6 +9,7 @@ import { KINDS, Kind, LEAN_AXIS, PETALS, PLANTS, UP, birch, blossom, boulder, br
 import type { Terrain } from './terrain';
 import type { SeasonLook } from '../seasons/year';
 import { seasonTree } from './seasonal';
+import { wornLook } from '../game/wear';
 
 export class Scenery {
   private trees: THREE.InstancedMesh[];
@@ -116,7 +117,7 @@ export class Scenery {
           this.crops.setColorAt(nc++, t.crop >= 1 ? this.c.set('#e0b84a') : this.c.setHSL(0.25 - 0.1 * t.crop, 0.55, 0.36 + 0.1 * t.crop));
         }
         // A plant hides under anything else on its tile, on a worn path or under snow, and comes back when that is gone.
-        if (t.plant && season.snow < 0.5 && !t.tree && !t.crop && !t.field && !t.rock && !t.b && wear[y * W + x] < 0.3) {
+        if (t.plant && season.snow < 0.5 && !t.tree && !t.crop && !t.field && !t.rock && !t.b && wornLook(wear[y * W + x]) < 0.3) {
           const p = PLANTS[t.plant], mesh = this.plants[t.plant], n = np[t.plant]++;
           const px = x + 0.5 + (hash(x * 5, y) - 0.5) * 0.2, pz = y + 0.5 + (hash(x, y * 5) - 0.5) * 0.2;
           const bend = p.bend * (gust + flutter(x, y, now, 1.6) * 0.25);

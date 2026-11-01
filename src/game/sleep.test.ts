@@ -17,6 +17,10 @@ function sawmillGame() {
 
 const workerOf = (g: Game, b: Building) => g.settlers.get(b.worker);
 
+// Every plank made so far: at the mill, in store, or in a carrier's hands on the way.
+const planksMade = (g: Game, mill: Building) => mill.out.plank + g.stored.plank
+  + [...g.settlers.values()].reduce((n, s) => n + (s.carrying === 'plank' ? s.load ?? 1 : 0), 0);
+
 describe('workers sleep at night', () => {
   test('at night a worker walks home to the HQ, goes inside and stops working', () => {
     const { g, mill } = sawmillGame();
@@ -27,9 +31,9 @@ describe('workers sleep at night', () => {
     expect(Math.round(s.x)).toBe(g.hq.x);
     expect(Math.round(s.y)).toBe(g.hq.y);
     expect(mill.status).toBe(ASLEEP);
-    const planks = mill.out.plank + g.stored.plank;
+    const planks = planksMade(g, mill);
     run(g, 60);
-    expect(mill.out.plank + g.stored.plank).toBe(planks);
+    expect(planksMade(g, mill)).toBe(planks);
     expect(mill.busy).toBe(false);
     expect(mill.worker).toBe(s.id); // the hut keeps its worker
   });
