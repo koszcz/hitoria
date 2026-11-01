@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape · Approved · Branch: worktree-agent-af1cb30067e22305c*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape · Approved*
 - **Living water**: foam along the shore, fish that jump now and then, and ducks on the water. *Fun 2 · Effort M · Approved*
 
 ## Inbox
