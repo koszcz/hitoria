@@ -2,7 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
 import { eats, feed, HUNGRY_PACE, LUNCHBOX, lunchbox, MEAL, selfFed } from './meals';
-import { expectIncomingConsistent, flatGame, placeBare, placeLinked, runUntil } from './test-helpers';
+import { expectIncomingConsistent, flatGame, placeBare, placeLinked, run, runUntil } from './test-helpers';
 import type { Task } from './types';
 
 const work = (t: number): Task[] => [{ k: 'work', t }];
@@ -120,6 +120,20 @@ describe('hungry workers in play', () => {
     // It keeps a lunchbox, and the rest of the fish stays in the HQ.
     expect(b.stock.fish).toBeLessThanOrEqual(LUNCHBOX);
     expect(g.hq.stock.fish).toBeGreaterThanOrEqual(1);
+  });
+
+  test('a fisher keeps one fish from its catch, so it does not go hungry while carriers take the rest', () => {
+    const g = flatGame();
+    const { x, y } = g.hq;
+    for (let ty = y - 2; ty <= y + 2; ty++) for (let tx = x - 9; tx <= x - 8; tx++) g.world.at(tx, ty).t = 'water';
+    const b = placeLinked(g, 'fisher', x - 5, y);
+    runUntil(g, () => b.built && b.worker > 0, 200);
+    runUntil(g, () => g.made.fish >= 3, 600, () => expectIncomingConsistent(g));
+    // After its first catch, the fisher always has a fish of its own to eat.
+    let hungry = 0;
+    run(g, 120, () => { if (b.hungry) hungry++; });
+    expect(hungry).toBe(0);
+    expect(g.stored.fish).toBeGreaterThan(0);
   });
 
   test('a worker waiting for goods eats nothing', () => {

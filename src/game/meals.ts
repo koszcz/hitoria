@@ -7,6 +7,7 @@ import { MIXED_MEAL, pickFood, tasteNew } from './variety';
 export const MEAL = 60; // seconds of work that one fish, meat or bread is good for
 export const LUNCHBOX = 2; // food a hut keeps on hand for its worker
 export const HUNGRY_PACE = 2; // a hungry worker takes this many times as long over each piece of work
+export const OWN_MEAL = 1; // food a hut that makes food keeps back from carriers, so its worker can eat
 
 // Miners already eat as they dig. Carriers and builders never work in a hut, and a lookout's scout does no work.
 const NOT_HUNGRY: Role[] = ['carrier', 'builder', 'miner', 'scout'];
@@ -20,6 +21,12 @@ export function hungryWorker(type: BType) {
 }
 export const eats = (b: Building) => hungryWorker(b.type);
 export const selfFed = (b: Building) => SELF_FED.includes(b.type);
+
+// How many of finished good `g` carriers may take. A hut that makes food keeps one back for its worker.
+export function forCarriers(b: Building, g: Good) {
+  const keep = selfFed(b) && HOUSE_FOOD.includes(g) ? Math.min(b.out[g], OWN_MEAL) : 0;
+  return Math.max(0, b.out[g] - b.sending[g] - keep);
+}
 
 // How many of food `g` a finished hut wants brought in. Food of any kind shares one small pile.
 export function lunchbox(b: Building, g: Good) {

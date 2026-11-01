@@ -361,8 +361,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   settler 25% faster.
 - Every worker in a hut eats 1 fish, meat or bread for every 60 seconds of work. Carriers bring
   each hut up to 2 food. With no food, the worker works at half speed. Fishers, hunters and
-  bakers eat from what their own hut makes. Miners eat as they dig instead, and scouts, builders
-  and carriers never eat. A meal of a different food from last time lasts 1.5 times as long.
+  bakers eat from what their own hut makes, and keep 1 of it back from carriers. Miners eat as
+  they dig instead, and scouts, builders and carriers never eat. A meal of a different food from last time lasts 1.5 times as long.
 - Carriers bring food to farms, wells and mills first, then to other huts and mines, and to
   houses last. Within each group, the nearest building comes first.
 - A miner digs 2 goods for each fish, meat or bread, or 3 when the food differs from last time.

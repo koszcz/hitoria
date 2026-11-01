@@ -62,7 +62,7 @@ describe('food makers eat first', () => {
     const fisher = built(g, 'fisher', x + 8, y);
     const house = built(g, 'house', x + 5, y + 3);
     const farm = built(g, 'farm', x - 6, y - 4);
-    fisher.out.fish = 1;
+    fisher.out.fish = 2; // the fisher keeps one for itself
     run(g, 2, () => expectIncomingConsistent(g));
     expect(got(farm)).toBe(1);
     expect(got(house)).toBe(0);

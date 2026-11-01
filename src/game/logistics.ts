@@ -6,7 +6,7 @@ import { DONKEY_BUSY, DONKEY_LOAD, hireDonkey } from './donkeys';
 import type { Game } from './game';
 import { pantry } from './houses';
 import { foodRank } from './foodrank';
-import { eats, lunchbox } from './meals';
+import { eats, forCarriers, lunchbox } from './meals';
 import { isStore } from './stores';
 import type { Building } from './types';
 import { walkFrom } from './walking';
@@ -34,7 +34,7 @@ export function waiting(g: Game) {
   let n = 0;
   for (const b of g.buildings.values()) {
     if (isStore(b)) continue;
-    for (const k of GOODS) n += (b.built ? b.out[k] - b.sending[k] : 0) + Math.max(0, missing(b, k));
+    for (const k of GOODS) n += (b.built ? forCarriers(b, k) : 0) + Math.max(0, missing(b, k));
   }
   return n;
 }
@@ -49,11 +49,11 @@ export function moveGoods(g: Game) {
   for (const b of g.buildings.values()) {
     if (isStore(b) || !b.built) continue;
     for (const k of GOODS)
-      while (b.out[k] > b.sending[k]) {
+      while (forCarriers(b, k) > 0) {
         const to = pickDest(g, b, k);
         if (!to) break;
         const job = { from: b.id, to: to.id, g: k };
-        if (pack(b.out[k] - b.sending[k], isStore(to) ? Infinity : missing(to, k), job)) continue;
+        if (pack(forCarriers(b, k), isStore(to) ? Infinity : missing(to, k), job)) continue;
         if (!hire(g, job)) return;
       }
   }
