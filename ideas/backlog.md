@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Day and season clock**: a small dial in the HUD shows the time of day, the season and the day count. *Fun 2 · Effort S · Branch: worktree-agent-a43885ae8894b3724*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Day and season clock**: a small dial in the HUD shows the time of day, the season and the day count. *Fun 2 · Effort S*
 - **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *Fun 2 · Effort M · Needs: Day and night light*
 - **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *Fun 2 · Effort S · Needs: Workers sleep at night*
 
