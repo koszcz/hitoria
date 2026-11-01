@@ -5,13 +5,14 @@ import type { Game } from './game';
 import { claimFields } from './fields';
 import { computeTerritory } from './land';
 import { isStore } from './stores';
-import type { Building, Flag, Road } from './types';
+import type { Building, Flag, Road, Ship } from './types';
 import type { WinterState } from './survive';
 import { MAP_VERSION } from '../world';
 
 export const SAVE_VERSION = 4;
 
-// A saved game. Settlers are not stored: on load everyone is back in the HQ and the dispatcher sends them out again.
+// A saved game. Settlers are not stored: on load everyone is back in their home (the HQ or a landing
+// harbour) and the dispatcher sends them out again.
 export interface SaveData {
   v: number;
   seed: number;
@@ -27,6 +28,7 @@ export interface SaveData {
   made?: Bag; // goods made since the game began; saves from before goals have none
   goal?: number; // index of the goal the player is on
   winter?: WinterState; // how the survive winter goal is going; older saves wait for the next winter
+  ships?: Ship[]; // ships sailing to settle, or tied up; saves from before ships have none
 }
 
 export function save(g: Game): SaveData {
@@ -51,6 +53,13 @@ export function save(g: Game): SaveData {
       if (also) home.stock[also]++;
     }
   }
+  // Everyone out working counts as back in their home.
+  let pool = g.pool;
+  for (const s of g.settlers.values()) {
+    const base = bs.get(s.base);
+    if (base?.landed) base.crew = (base.crew ?? 0) + 1;
+    else pool++;
+  }
   for (const b of buildings) {
     b.worker = b.builder = 0;
     b.incoming = bag(); // no carrier is on the way after a load
@@ -61,9 +70,9 @@ export function save(g: Game): SaveData {
     if (b.type !== 'hq') b.status = b.built ? builtStatus(b) : 'Waiting for a builder';
   }
   return {
-    v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool: g.population, nextId: g.nextId, hq: g.hq.id,
+    v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool, nextId: g.nextId, hq: g.hq.id,
     tiles: g.world.tiles.map((t, i) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field, Math.round(g.wear[i] * 100) / 100]),
-    buildings, flags, roads, made: { ...g.made }, goal: g.goal, winter: g.winter.state,
+    buildings, flags, roads, made: { ...g.made }, goal: g.goal, winter: g.winter.state, ships: structuredClone(g.ships),
   };
 }
 
@@ -113,6 +122,7 @@ export function restore(g: Game, d: SaveData) {
   g.made = bag(d.made);
   g.goal = d.goal ?? 0;
   g.winter.state = d.winter ?? 'late';
+  g.ships = d.ships ?? [];
   g.net++;
   computeTerritory(g);
   // Farms from saves made before fields take theirs now, keeping the grain already growing.

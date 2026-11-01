@@ -179,6 +179,15 @@ const MESSAGES_PL: Record<string, string> = {
   'No room for a road there': 'Tu nie zmieści się droga',
   'Nothing to remove here': 'Nie ma tu nic do usunięcia',
   'The HQ cannot be demolished': 'Siedziby nie można zburzyć',
+  'A landing harbour cannot be demolished': 'Portu założonego po wylądowaniu nie można zburzyć',
+  // Sailing to settle
+  'Build the harbour first': 'Najpierw zbuduj port',
+  'Your settlers have already sailed': 'Twoi osadnicy już wypłynęli',
+  'Needs more idle settlers': 'Potrzeba więcej wolnych osadników',
+  'Needs more goods in your stores': 'Potrzeba więcej towarów w magazynach',
+  'No free shore on the other island': 'Na drugiej wyspie nie ma wolnego brzegu',
+  '⛵ A ship sets sail for the other island': '⛵ Statek wypływa na drugą wyspę',
+  '⚓ Your settlers have landed on the other island': '⚓ Twoi osadnicy wylądowali na drugiej wyspie',
 };
 
 const BTYPES = Object.keys(BDEFS) as BType[];

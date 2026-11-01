@@ -2,6 +2,7 @@
 import { W, Tile } from '../world';
 import { BDEFS, PATH_SPEED, ROAD_SPEED } from './defs';
 import type { Game } from './game';
+import { isHome, LANDING_LAND } from './homes';
 
 export function passable(g: Game, x: number, y: number) {
   const t = g.world.at(x, y);
@@ -60,13 +61,13 @@ function besideBuildingOrFlag(g: Game, x: number, y: number) {
   return false;
 }
 
-// Your land is everything within reach of the HQ and finished lookouts.
+// Your land is everything within reach of the HQ, landing harbours and finished lookouts.
 export function computeTerritory(g: Game) {
   const t = g.world.territory;
   t.fill(0);
   for (const b of g.buildings.values()) {
-    if (!b.built || (b.type !== 'hq' && b.type !== 'lookout')) continue;
-    const r = BDEFS[b.type].radius;
+    if (!b.built || (b.type !== 'lookout' && !isHome(b))) continue;
+    const r = b.type === 'harbour' ? LANDING_LAND : BDEFS[b.type].radius;
     for (let y = b.y - r; y <= b.y + r; y++)
       for (let x = b.x - r; x <= b.x + r; x++)
         if (g.world.inside(x, y) && Math.hypot(x - b.x, y - b.y) <= r + 0.3) t[y * W + x] = 1;

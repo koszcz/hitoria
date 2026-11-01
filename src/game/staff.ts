@@ -1,4 +1,4 @@
-// Sending settlers out of the HQ: a builder for every site and a worker for every hut.
+// Sending settlers out of their homes: a builder for every site and a worker for every hut.
 import { BDEFS } from './defs';
 import { linked } from './construction';
 import type { Game } from './game';
@@ -9,11 +9,11 @@ export function staff(g: Game) {
   // Houses come first, because only they bring in more settlers.
   for (const b of g.buildings.values()) if (b.type === 'house' && !sendBuilder(g, b)) break;
   for (const b of g.buildings.values()) {
-    if (!sendBuilder(g, b)) break;
+    if (!sendBuilder(g, b)) continue;
     const role = BDEFS[b.type].worker;
     if (b.built && role && !b.worker) {
-      const s = takeSettler(g, role);
-      if (!s) break;
+      const s = takeSettler(g, role, b);
+      if (!s) continue; // this building's home has nobody left, but another home may
       b.worker = s.id;
       s.home = b.id;
       s.onAbort = () => giveUp(g, s, b, 'worker');
@@ -22,11 +22,11 @@ export function staff(g: Game) {
   }
 }
 
-// Send a builder to a site that is joined to the HQ and has none yet.
-// Returns false when the HQ has nobody left to send.
+// Send a builder to a site that a home can walk to and has none yet.
+// Returns false when its home has nobody left to send.
 function sendBuilder(g: Game, b: Building) {
   if (b.built || b.builder || !linked(g, b)) return true;
-  const s = takeSettler(g, 'builder');
+  const s = takeSettler(g, 'builder', b);
   if (!s) return false;
   b.builder = s.id;
   s.home = b.id;

@@ -1,7 +1,8 @@
 // Carriers: each one fetches a good from a building and walks it on foot to the building
-// that needs it. With no trip to make, a carrier walks back to the HQ and can be sent out again on the way.
+// that needs it. With no trip to make, a carrier walks back to its home and can be sent out again on the way.
 import type { Game } from './game';
-import { despawn, takeSettler } from './settlers';
+import { homeOf } from './homes';
+import { baseOf, despawn, takeSettler } from './settlers';
 import { isStore } from './stores';
 import type { Building, Job, Settler, Task } from './types';
 
@@ -12,7 +13,9 @@ const carriers = (g: Game) => [...g.settlers.values()].filter((s) => s.role === 
 export function hire(g: Game, job: Job): boolean {
   const from = g.buildings.get(job.from)!, to = g.buildings.get(job.to)!;
   const all = carriers(g);
-  const s = nearestFree(all, from) ?? (all.length < g.buildings.size ? takeSettler(g, 'carrier') : null);
+  // Only carriers from the home that can walk to the trip, so nobody is sent across the sea.
+  const base = homeOf(g, from);
+  const s = nearestFree(all.filter((c) => c.base === base?.id), from) ?? (all.length < g.buildings.size ? takeSettler(g, 'carrier', from) : null);
   if (!s) return false;
   from.sending[job.g]++;
   to.incoming[job.g]++;
@@ -40,20 +43,20 @@ export function hire(g: Game, job: Job): boolean {
   return true;
 }
 
-// A carrier with no trip goes back to the HQ.
+// A carrier with no trip goes back to its home.
 export function carry(g: Game, s: Settler) {
   if (s.job) return;
   s.onAbort = () => despawn(g, s);
-  s.tasks = [wayTo(g.hq), { k: 'do', f: () => despawn(g, s) }];
+  s.tasks = [wayTo(baseOf(g, s)), { k: 'do', f: () => despawn(g, s) }];
 }
 
-// Undo a trip that can't be finished. A good already picked up goes into the HQ's stock.
+// Undo a trip that can't be finished. A good already picked up goes into the stock of the carrier's home.
 export function cancel(g: Game, s: Settler) {
   const job = s.job;
   if (!job) return;
   const from = g.buildings.get(job.from), to = g.buildings.get(job.to);
   if (to) to.incoming[job.g]--;
-  if (s.carrying) g.hq.stock[s.carrying]++;
+  if (s.carrying) baseOf(g, s).stock[s.carrying]++;
   else if (from) from.sending[job.g]--;
   s.carrying = null;
   s.job = null;

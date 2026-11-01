@@ -1,18 +1,22 @@
-// Settlers leaving and entering the HQ, and how each one walks through their list of tasks.
+// Settlers leaving and entering their home (the HQ or a landing harbour), and how each one walks through their list of tasks.
 import { findPath } from '../path';
 import { Role, SPEED } from './defs';
 import type { Game } from './game';
 import { walkCost, walkSpeed } from './land';
 import type { Building, Settler } from './types';
+import { addPool, homeOf, isHome, poolOf } from './homes';
 import { tread } from './wear';
 import { idle } from './work';
 
-export function takeSettler(g: Game, role: Role): Settler | null {
-  if (g.pool <= 0) return null;
-  g.pool--;
+// A settler comes out of the home that can walk to building `to`. The HQ sends one when no home
+// can, or when `to` is not given.
+export function takeSettler(g: Game, role: Role, to?: Building): Settler | null {
+  const base = (to && homeOf(g, to)) || g.hq;
+  if (poolOf(g, base) <= 0) return null;
+  addPool(g, base, -1);
   const s: Settler = {
-    id: g.nextId++, role, x: g.hq.x, y: g.hq.y, path: null, tasks: [], carrying: null, job: null,
-    home: 0, inside: false, atWork: false, returning: false, walking: false, anim: '', facing: 1, onAbort: null,
+    id: g.nextId++, role, x: base.x, y: base.y, path: null, tasks: [], carrying: null, job: null,
+    home: 0, base: base.id, inside: false, atWork: false, returning: false, walking: false, anim: '', facing: 1, onAbort: null,
   };
   g.settlers.set(s.id, s);
   return s;
@@ -28,12 +32,19 @@ export function giveUp(g: Game, s: Settler, b: Building, slot: 'builder' | 'work
 export function sendHome(g: Game, s: Settler) {
   s.atWork = false;
   s.anim = '';
-  s.tasks = [{ k: 'walk', x: g.hq.x, y: g.hq.y }, { k: 'do', f: () => despawn(g, s) }];
+  const b = baseOf(g, s);
+  s.tasks = [{ k: 'walk', x: b.x, y: b.y }, { k: 'do', f: () => despawn(g, s) }];
+}
+
+// The home a settler came out of. If it is gone, the HQ.
+export function baseOf(g: Game, s: Settler) {
+  const b = g.buildings.get(s.base);
+  return b && isHome(b) ? b : g.hq;
 }
 
 export function despawn(g: Game, s: Settler) {
   g.settlers.delete(s.id);
-  g.pool++;
+  addPool(g, baseOf(g, s), 1);
 }
 
 function abort(s: Settler) {

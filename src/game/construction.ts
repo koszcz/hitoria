@@ -7,10 +7,10 @@ import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory, flaggable, near, roadable } from './land';
 import { dockAt } from './harbour';
+import { homeOf, homes } from './homes';
 import { ensureFlag } from './roads';
 import { sendHome } from './settlers';
 import type { Building } from './types';
-import { walkDist } from './walking';
 
 export function canPlace(g: Game, type: BType, x: number, y: number): string | null {
   if (!g.world.inside(x, y) || !g.world.inside(x, y + 1)) return 'Outside the map';
@@ -30,10 +30,13 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   const flagOk = front.flag ? !g.flags.get(front.flag)!.building : flaggable(g, x, y + 1);
   if (!flagOk) return 'No room for its flag in front';
   // Players can't fell trees themselves, so a flag walled in by trees would never get a road.
-  const hq = g.flags.get(g.hq.flag)!;
   const onField = (tx: number, ty: number) => fields.some((p) => p.x === tx && p.y === ty);
   const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && !onField(tx, ty) && (roadable(g, tx, ty) || !!g.world.at(tx, ty).road || !!g.world.at(tx, ty).flag);
-  if (!findPath(hq.x, hq.y, x, y + 1, reach)) return 'No road can reach it';
+  const fromHome = (h: Building) => {
+    const f = g.flags.get(h.flag)!;
+    return !!findPath(f.x, f.y, x, y + 1, reach);
+  };
+  if (!homes(g).some(fromHome)) return 'No road can reach it';
   return BDEFS[type] ? null : 'Unknown building';
 }
 
@@ -70,9 +73,9 @@ export function builtStatus(b: Building) {
   return BDEFS[b.type].worker ? 'Waiting for a worker' : 'Storing goods';
 }
 
-// Can settlers walk from the HQ to the building?
+// Can settlers walk from a home to the building?
 export function linked(g: Game, b: Building) {
-  return b === g.hq || walkDist(g, g.hq, b) < Infinity;
+  return !!homeOf(g, b);
 }
 
 export function construct(g: Game, b: Building, dt: number) {

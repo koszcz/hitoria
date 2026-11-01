@@ -21,7 +21,9 @@ import { staff } from './staff';
 import { fade } from './wear';
 import { isStore, stored } from './stores';
 import { dockOf } from './harbour';
-import type { Animal, AnimalKind, Building, Flag, Road, Settler } from './types';
+import { idleTotal, poolOf } from './homes';
+import { canSail, sail, stepShips } from './voyage';
+import type { Animal, AnimalKind, Building, Flag, Road, Settler, Ship } from './types';
 
 export class Game {
   world: World;
@@ -32,6 +34,7 @@ export class Game {
   animals = new Map<number, Animal>(); // wild animals; not saved, a loaded game spawns them again
   hq: Building;
   pool = 18; // idle settlers inside the HQ
+  ships: Ship[] = [];
   time = 0;
   net = 0; // bumped whenever the road network changes
   toasts: string[] = [];
@@ -79,8 +82,19 @@ export class Game {
     return g;
   }
 
+  // Everyone: idle in a home, out working, or on board a ship.
   get population() {
-    return this.pool + this.settlers.size;
+    return idleTotal(this) + this.settlers.size + this.ships.reduce((n, s) => n + s.crew, 0);
+  }
+
+  // Idle settlers in every home.
+  get idle() {
+    return idleTotal(this);
+  }
+
+  // Idle settlers waiting in the HQ or a landing harbour.
+  poolOf(home: Building) {
+    return poolOf(this, home);
   }
 
   // All goods kept in the HQ and storehouses.
@@ -101,6 +115,15 @@ export class Game {
   // Where ships tie up at a harbour.
   dock(b: Building) {
     return dockOf(this, b);
+  }
+
+  // Why settlers can't sail from harbour `b` to settle the other island, or null if they can.
+  canSail(b: Building) {
+    return canSail(this, b);
+  }
+
+  sail(b: Building) {
+    return sail(this, b);
   }
 
   isStore(b: Building) {
@@ -175,6 +198,7 @@ export class Game {
     }
     for (const s of this.settlers.values()) step(this, s, dt);
     for (const a of this.animals.values()) stepAnimal(this, a, dt);
+    stepShips(this, dt);
     regrow(this, dt);
   }
 }

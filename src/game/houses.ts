@@ -2,6 +2,7 @@
 import { Good, HOUSE_FOOD, HOUSE_GROW, HOUSE_PANTRY, HOUSE_SIZE } from './defs';
 import { linked } from './construction';
 import type { Game } from './game';
+import { addPool, homeOf } from './homes';
 import type { Building } from './types';
 
 // A house keeps a little food of any kind, but never more than its last settlers need.
@@ -13,7 +14,7 @@ export function pantry(b: Building, g: Good) {
   return Math.max(0, Math.min(HOUSE_PANTRY, left) - other);
 }
 
-// A house eats one food, and a new settler moves into the HQ once it has grown up.
+// A house eats one food, and a new settler moves into its home once it has grown up.
 export function raise(g: Game, b: Building, dt: number) {
   if (b.born >= HOUSE_SIZE) {
     b.status = 'House is full';
@@ -36,6 +37,6 @@ export function raise(g: Game, b: Building, dt: number) {
   b.busy = false;
   b.using = null;
   b.born++;
-  g.pool++;
+  addPool(g, homeOf(g, b) ?? g.hq, 1);
   g.toasts.push('👶 A new settler was born');
 }

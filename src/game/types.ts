@@ -21,6 +21,8 @@ export interface Building {
   status: string;
   born: number; // settlers a house has added so far
   grow: number; // seconds until a house's next settler, while it is eating
+  landed?: boolean; // a harbour your settlers built where their ship landed: a home, like the HQ
+  crew?: number; // idle settlers waiting inside a landing harbour
 }
 
 // One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.
@@ -62,6 +64,7 @@ export interface Settler {
   carrying: Good | null;
   job: Job | null; // a carrier's current trip
   home: number; // building a worker or builder belongs to
+  base: number; // the HQ or landing harbour the settler came out of, and goes back to
   inside: boolean;
   atWork: boolean;
   returning: boolean;
@@ -86,4 +89,18 @@ export interface Animal {
   fleeing: boolean; // stepping aside from a settler
   facing: 1 | -1;
   hunter: number; // the settler stalking it, or 0
+}
+
+// A ship sailing from a harbour to settle the other island, then back again. It ties up at
+// its harbour's dock once it is home.
+export interface Ship {
+  id: number;
+  harbour: number; // the harbour it sails from and back to
+  x: number;
+  y: number;
+  path: P[]; // the water tiles still ahead
+  leg: 'out' | 'back' | 'moored';
+  crew: number; // settlers on board
+  cargo: Bag; // goods on board
+  land: P; // the tile where the settlers build their harbour
 }
