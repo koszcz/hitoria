@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *Fun 2 · Effort M · Needs: No player roads · Approved · Branch: worktree-agent-a503c56e41ab41409*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *Fun 2 · Effort M · Needs: No player roads · Approved*
 - **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *Fun 2 · Effort M · Needs: Well and water · Approved*
 - **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved*
 
