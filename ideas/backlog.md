@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *Fun 3 · Effort M · Needs: Harbour, Second island · Approved · Branch: worktree-agent-a73b5bd4868c5980c*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *Fun 3 · Effort M · Needs: Harbour, Second island · Approved*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
 - **Trade ship**: a ship that visits the harbour every few minutes. You pick which spare goods to swap for goods you lack, at fixed rates. *Fun 2 · Effort M · Needs: Harbour · Approved*
 
