@@ -5,9 +5,10 @@ import { World, W, H } from '../world';
 
 const world = new World(1);
 const dist = landDistance(world, W, H);
+const HOME = { x: W / 2, y: H / 2 };
 
 describe('pickSpots', () => {
-  const spots = pickSpots(dist, W, 2, 5, 4, 12, 1);
+  const spots = pickSpots(dist, W, HOME, 2, 5, 4, 12, 1);
 
   test('picks water tiles at the asked distance from land', () => {
     expect(spots.length).toBeGreaterThan(0);
@@ -25,11 +26,16 @@ describe('pickSpots', () => {
   });
 
   test('gives the same spots for the same map', () => {
-    expect(pickSpots(dist, W, 2, 5, 4, 12, 1)).toEqual(spots);
+    expect(pickSpots(dist, W, HOME, 2, 5, 4, 12, 1)).toEqual(spots);
+  });
+
+  test('spots near home come first', () => {
+    const one = pickSpots(dist, W, HOME, 2, 5, 4, 1, 1)[0], far = pickSpots(dist, W, { x: 0, y: 0 }, 2, 5, 4, 1, 1)[0];
+    expect(Math.hypot(one.x - HOME.x, one.y - HOME.y)).toBeLessThan(Math.hypot(far.x - HOME.x, far.y - HOME.y));
   });
 
   test('a different salt gives other spots', () => {
-    expect(pickSpots(dist, W, 2, 5, 4, 12, 2)).not.toEqual(spots);
+    expect(pickSpots(dist, W, HOME, 2, 5, 4, 12, 2)).not.toEqual(spots);
   });
 });
 

@@ -5,11 +5,13 @@ import { hash } from '../render/kit';
 export interface Spot { x: number; y: number } // the middle of a tile, in tile coordinates
 
 // Picks up to `count` water tiles whose distance to land (from `landDistance`) is between `near`
-// and `far`, at least `apart` tiles from each other. The same map always gives the same spots.
-export function pickSpots(dist: Uint8Array, w: number, near: number, far: number, apart: number, count: number, salt: number): Spot[] {
+// and `far`, at least `apart` tiles from each other. Spots close to `home` (the start) come first,
+// so the player sees them, with some randomness. The same map always gives the same spots.
+export function pickSpots(dist: Uint8Array, w: number, home: Spot, near: number, far: number, apart: number, count: number, salt: number): Spot[] {
   const free: number[] = [];
   for (let i = 0; i < dist.length; i++) if (dist[i] >= near && dist[i] <= far) free.push(i);
-  const order = free.map((i) => [hash(i * 0.37 + salt, salt * 1.9), i]).sort((a, b) => a[0] - b[0]);
+  const away = (i: number) => Math.hypot((i % w) + 0.5 - home.x, Math.floor(i / w) + 0.5 - home.y);
+  const order = free.map((i) => [away(i) * (0.5 + hash(i * 0.37 + salt, salt * 1.9)), i]).sort((a, b) => a[0] - b[0]);
   const out: Spot[] = [];
   for (const [, i] of order) {
     if (out.length >= count) break;

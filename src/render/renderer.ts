@@ -162,7 +162,7 @@ export class Renderer {
   }
 
   draw(game: Game, view: View, now: number) {
-    if (game.world !== this.world) this.setWorld(game.world);
+    if (game.world !== this.world) this.setWorld(game.world, game.hq);
     this.light(game.time);
     setSeason((this.season = seasonLook(yearAt(game.time))));
     this.placeCamera();
@@ -233,7 +233,7 @@ export class Renderer {
     this.sunDir.copy(l.dir);
   }
 
-  private setWorld(world: World) {
+  private setWorld(world: World, hq: P) {
     this.world = world;
     this.terrKey = -1;
     for (const m of [...this.models.values()]) this.drop(m.g);
@@ -245,7 +245,7 @@ export class Renderer {
     this.ships.clear();
     this.ground.build(world);
     this.foam.build(world, this.ground);
-    this.waterlife.build(world);
+    this.waterlife.build(world, { x: hq.x + 0.5, y: hq.y + 0.5 });
   }
 
   private drop(g: THREE.Object3D) {

@@ -74,9 +74,9 @@ function foamMaterial(time: { value: number }) {
         float fringe = smoothstep(-0.004, 0.006, vDepth) * (1.0 - smoothstep(lap, lap + 0.05, vDepth));
         // A wave rolls in from deeper water every few seconds, starting at different times along the coast.
         float phase = fract(uTime * 0.18 + grain * 1.7);
-        float front = (1.0 - phase) * 0.28;
+        float front = (1.0 - phase) * 0.18;
         float wave = (1.0 - smoothstep(0.0, 0.022, abs(vDepth - front))) * smoothstep(0.0, 0.3, phase) * (1.0 - phase);
-        float foam = max(fringe * 0.85, wave * 0.75) * smoothstep(0.25, 0.6, grain2 + 0.25);
+        float foam = max(fringe * 0.85, wave * 0.5) * smoothstep(0.25, 0.6, grain2 + 0.25);
         diffuseColor.a *= foam * step(-0.004, vDepth);`);
   };
   return m;
