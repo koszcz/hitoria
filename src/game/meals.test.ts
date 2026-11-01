@@ -2,7 +2,9 @@
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
 import { eats, feed, HUNGRY_PACE, LUNCHBOX, lunchbox, MEAL, selfFed } from './meals';
-import { expectIncomingConsistent, flatGame, placeBare, placeLinked, run, runUntil } from './test-helpers';
+import { expectIncomingConsistent, flatGame, placeBare, placeLinked, run, runUntil, setClock } from './test-helpers';
+import { BEDTIME } from '../seasons/day';
+import { ASLEEP } from './sleep';
 import type { Task } from './types';
 
 const work = (t: number): Task[] => [{ k: 'work', t }];
@@ -120,6 +122,28 @@ describe('hungry workers in play', () => {
     // It keeps a lunchbox, and the rest of the fish stays in the HQ.
     expect(b.stock.fish).toBeLessThanOrEqual(LUNCHBOX);
     expect(g.hq.stock.fish).toBeGreaterThanOrEqual(1);
+  });
+
+  test('a hungry worker who rests for want of work is no longer marked hungry', () => {
+    const g = flatGame();
+    const b = sawmill(g);
+    sawFor(g, b, 2);
+    expect(b.hungry).toBe(true);
+    b.stock.log = 0;
+    runUntil(g, () => b.status === 'Waiting for logs', 60);
+    run(g, 2);
+    expect(b.hungry).toBe(false);
+  });
+
+  test('a hungry worker who sleeps is no longer marked hungry', () => {
+    const g = flatGame();
+    const b = sawmill(g);
+    sawFor(g, b, 2);
+    expect(b.hungry).toBe(true);
+    setClock(g, BEDTIME);
+    runUntil(g, () => b.status === ASLEEP, 60);
+    run(g, 1);
+    expect(b.hungry).toBe(false);
   });
 
   test('a fisher keeps one fish from its catch, so it does not go hungry while carriers take the rest', () => {

@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, SAIL_CARGO } from '.';
-import { BDEFS, BUILDABLE, RECIPES } from './defs';
+import { BDEFS, BUILDABLE, RECIPES, bag } from './defs';
 import { demolish } from './demolish';
-import { flatGame, placeLinked, run, runUntil, expectIncomingConsistent } from './test-helpers';
+import { flatGame, placeBare, placeLinked, run, runUntil, expectIncomingConsistent } from './test-helpers';
 import { needsTool, NO_TOOL, START_TOOLS, TOOLS_LOW } from './tools';
 
 // A finished building with a road to the HQ, still waiting for its worker.
@@ -180,10 +180,37 @@ describe('the low tools warning', () => {
     expect(warning(g)).toBe(2);
   });
 
-  test('once the other island is settled, low tools need no warning', () => {
+  test('after the first landing, low tools still warn while a far island waits', () => {
     const g = flatGame();
-    const store = placeLinked(g, 'storehouse', g.hq.x + 4, g.hq.y + 3);
-    store.landed = true;
+    expect(g.world.far).toBeTruthy();
+    placeLinked(g, 'storehouse', g.hq.x + 4, g.hq.y + 3).landed = true;
+    g.hq.stock.tool = 2;
+    run(g, 1);
+    expect(warning(g)).toBe(1);
+  });
+
+  test('once every voyage has sailed, low tools need no warning', () => {
+    const g = flatGame();
+    placeLinked(g, 'storehouse', g.hq.x + 4, g.hq.y + 3).landed = true;
+    placeLinked(g, 'storehouse', g.hq.x - 4, g.hq.y + 3).landed = true;
+    g.hq.stock.tool = 2;
+    run(g, 1);
+    expect(warning(g)).toBe(0);
+  });
+
+  test('a ship on its way out on the last voyage counts as sailed', () => {
+    const g = flatGame();
+    placeLinked(g, 'storehouse', g.hq.x + 4, g.hq.y + 3).landed = true;
+    g.ships.push({ id: 99, harbour: g.hq.id, x: 0, y: 0, path: [{ x: 0, y: 0 }], leg: 'out', crew: 5, cargo: bag(), land: { x: 0, y: 0 } });
+    g.hq.stock.tool = 2;
+    run(g, 0.3);
+    expect(warning(g)).toBe(0);
+  });
+
+  test('on an old map with no far island, one landing is enough', () => {
+    const g = new Game(1, 6);
+    expect(g.world.far).toBe(null);
+    placeBare(g, 'storehouse', g.hq.x + 4, g.hq.y + 3).landed = true;
     g.hq.stock.tool = 2;
     run(g, 1);
     expect(warning(g)).toBe(0);

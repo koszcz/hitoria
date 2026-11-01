@@ -111,6 +111,7 @@ export function trade(g: Game, h: Building, give: Good, get: Good): string | nul
   if (why) return why;
   const t = g.trader!, deal = traderDeal(t, give, get);
   if (get in t.stock) t.stock[get]! -= deal.get;
+  if (t.wants.includes(give)) g.wantedSold += deal.give;
   let left = deal.give;
   for (const s of sources(g, h)) {
     const take = Math.max(0, Math.min(left, s.stock[give] - s.sending[give]));

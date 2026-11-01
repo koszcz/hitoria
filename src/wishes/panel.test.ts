@@ -36,3 +36,21 @@ describe('wish toasts in Polish', () => {
     expect(tr('🍂 The wish passed: Make 5 tools')).toBe('🍂 Życzenie minęło: Zrób 5 narzędzi');
   });
 });
+
+describe('new wishes in Polish', () => {
+  test('store wishes speak Polish for any number', () => {
+    setLang('pl');
+    expect(tr('Store 80 stone')).toBe('Zgromadź 80 kamieni');
+    expect(tr('Store 70 fish, meat or bread')).toBe('Zgromadź 70 ryb, porcji mięsa lub bochenków chleba');
+    expect(tr('🌟 Wish granted: Store 60 stone')).toBe('🌟 Życzenie spełnione: Zgromadź 60 kamieni');
+  });
+
+  test('the late-game wishes speak Polish', () => {
+    setLang('pl');
+    expect(tr('Welcome 1 trade ship')).toBe('Przyjmij 1 statek kupiecki');
+    expect(tr('Make 10 iron')).toBe('Wytop 10 żelaza');
+    expect(tr('Upgrade 2 buildings')).toBe('Ulepsz 2 budynki');
+    expect(tr('Sell the trader 8 goods it wants')).toBe('Sprzedaj kupcowi 8 towarów, których szuka');
+    expect(tr('Land on the far island')).toBe('Wyląduj na dalekiej wyspie');
+  });
+});

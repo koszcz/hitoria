@@ -11,7 +11,7 @@ import { checkGoals, goalNow } from './goals';
 import { canPlace, construct, linked, place, addBuilding } from './construction';
 import { removeAt } from './demolish';
 import { raise } from './houses';
-import type { WinterState } from './survive';
+import { noteWinters, type WinterState } from './survive';
 import { checkWishes, wishNow, type WishState } from './wishes';
 import { computeTerritory, passable } from './land';
 import { moveGoods } from './logistics';
@@ -25,7 +25,7 @@ import { dockOf } from './harbour';
 import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
 import { START_TOOLS, watchTools } from './tools';
-import type { Entry } from './chronicle';
+import { noteSettlers, type Entry } from './chronicle';
 import { stepTrader, trade } from './trade';
 import { richAt, richSpots } from './geology';
 import { canUpgrade, upgrade } from './upgrades';
@@ -47,11 +47,13 @@ export class Game {
   toasts: string[] = [];
   chronicle: Entry[] = []; // the island's milestones, oldest first
   tradeVisits = 0; // trade ships that have tied up since the game began
+  wantedSold = 0; // goods the trade ships wanted that you gave them
   toolsLow = false; // the low tools warning was shown, and tools have not risen since
   made = bag(); // every good the settlement has made since the game began
   goal = 0; // index in GOALS of the goal the player is on
   wish: WishState | null = null; // the village wish, once every goal is reached
   wishesGranted = 0; // village wishes the player has met
+  winters = { state: 'ready' as WinterState, since: new Map<number, number>() }; // every winter, for the chronicle
   winter = { state: 'late' as WinterState, since: new Map<number, number>() }; // the survive winter goal; `since` is when each house or mine began waiting for food
   wear = new Float32Array(W * H); // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
   worn = 0; // bumped whenever a tile's wear changes enough to see
@@ -209,6 +211,8 @@ export class Game {
       checkGoals(this);
       checkWishes(this);
       watchTools(this);
+      noteWinters(this);
+      noteSettlers(this);
     }
     this.growT -= dt;
     if (this.growT <= 0) {

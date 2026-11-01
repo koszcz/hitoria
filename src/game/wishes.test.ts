@@ -2,8 +2,12 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, GOALS, WISHES, WISH_MIN_TIME } from '.';
 import { seasonAt, yearAt, YEAR_LENGTH } from '../seasons/year';
-import { wishUntil } from './wishes';
-import { flatGame, run } from './test-helpers';
+import { beginWish, wishChoices, wishUntil } from './wishes';
+import { HOUSE_FOOD } from './defs';
+import { trade } from './trade';
+import { traderDeal } from './wants';
+import { W } from '../world';
+import { flatGame, harbourGame, placeBare, run, runUntil } from './test-helpers';
 
 // A game with every goal reached, so the village starts wishing at the next check.
 function doneGame() {
@@ -34,8 +38,7 @@ describe('when wishes start', () => {
     const g = doneGame();
     run(g, 0.3);
     const w = WISHES.find((x) => x.id === g.wish!.id)!;
-    expect(g.toasts).toEqual([`🌟 The village wishes: ${w.text}`]);
-    expect(g.wishNow()?.text).toBe(w.text);
+    expect(g.toasts).toEqual([`🌟 The village wishes: ${g.wishNow()!.text}`]);
   });
 
   test('reaching the last goal starts the first wish', () => {
@@ -122,11 +125,10 @@ describe('meeting a wish', () => {
     expect(g.wish!.until - g.time).toBeGreaterThanOrEqual(WISH_MIN_TIME - 0.3);
   });
 
-  test('every wish can be met by the count it follows', () => {
-    for (const w of WISHES) {
+  test('every growing wish can be met by the count it follows', () => {
+    for (const w of WISHES.filter((x) => x.grow)) {
       const g = wishGame(w.id);
       g.wish!.base = -w.need; // as if the count had grown by the whole need
-      if (!w.grow) g.hq.stock.stone = g.hq.stock.fish = 40;
       expect(g.wishNow()?.have).toBe(w.need);
     }
   });
@@ -153,3 +155,134 @@ describe('saving', () => {
     expect(WISHES.map((w) => w.id)).toContain(back.wish!.id);
   });
 });
+
+describe('fair wishes', () => {
+  test('the trade wish asks for 1 trade ship', () => {
+    const w = WISHES.find((x) => x.id === 'trade')!;
+    expect(w.need).toBe(1);
+    expect(w.text(w.need)).toBe('Welcome 1 trade ship');
+  });
+
+  test('a store wish asks for 40 when the stores hold little', () => {
+    const g = doneGame();
+    run(g, 0.3);
+    g.hq.stock.stone = 10;
+    beginWish(g, 'stone');
+    expect(g.wishNow()).toMatchObject({ text: 'Store 40 stone', need: 40, have: 10 });
+  });
+
+  test('a store wish asks for 20 more than the stores hold, rounded up to ten', () => {
+    const g = doneGame();
+    run(g, 0.3);
+    g.hq.stock.stone = 55;
+    beginWish(g, 'stone');
+    expect(g.wishNow()).toMatchObject({ text: 'Store 80 stone', need: 80, have: 55 });
+    expect(g.toasts.at(-1)).toBe('🌟 The village wishes: Store 80 stone');
+    g.hq.stock.stone = 80;
+    run(g, 0.3);
+    expect(g.wishesGranted).toBe(1);
+    expect(g.toasts).toContain('🌟 Wish granted: Store 80 stone');
+  });
+
+  test('the food wish counts fish, meat and bread together', () => {
+    const g = doneGame();
+    run(g, 0.3);
+    for (const k of HOUSE_FOOD) g.hq.stock[k] = 0;
+    g.hq.stock.fish = 30;
+    g.hq.stock.bread = 15;
+    beginWish(g, 'food');
+    expect(g.wishNow()).toMatchObject({ text: 'Store 70 fish, meat or bread', need: 70 });
+  });
+
+  test('a save keeps the need of a store wish', () => {
+    const g = doneGame();
+    run(g, 0.3);
+    g.hq.stock.stone = 55;
+    beginWish(g, 'stone');
+    expect(Game.load(g.save()).wishNow()?.need).toBe(80);
+  });
+});
+
+describe('late-game wishes', () => {
+  const ids = (g: Game) => wishChoices(g).map((w) => w.id);
+
+  test('they wait until you can grant them', () => {
+    const g = doneGame();
+    expect(ids(g)).not.toContain('iron');
+    expect(ids(g)).not.toContain('upgrades');
+    expect(ids(g)).not.toContain('wanted');
+    expect(ids(g)).not.toContain('trade');
+    expect(ids(g)).not.toContain('far');
+    expect(ids(g)).toContain('planks');
+  });
+
+  test('"Make 10 iron" comes once a smelter is finished', () => {
+    const g = doneGame();
+    Object.assign(placeBare(g, 'smelter', g.hq.x + 4, g.hq.y), { built: true });
+    expect(ids(g)).toContain('iron');
+    beginWish(g, 'iron');
+    g.made.iron += 10;
+    expect(g.wishNow()).toMatchObject({ text: 'Make 10 iron', have: 10, need: 10 });
+  });
+
+  test('"Upgrade 2 buildings" comes once you have made iron, and counts upgraded buildings', () => {
+    const g = doneGame();
+    g.made.iron = 1;
+    expect(ids(g)).toContain('upgrades');
+    const a = Object.assign(placeBare(g, 'sawmill', g.hq.x + 4, g.hq.y), { built: true });
+    const b = Object.assign(placeBare(g, 'house', g.hq.x - 4, g.hq.y), { built: true });
+    beginWish(g, 'upgrades');
+    a.level = 2;
+    expect(g.wishNow()).toMatchObject({ text: 'Upgrade 2 buildings', have: 1, need: 2 });
+    b.level = 2;
+    expect(g.wishNow()?.have).toBe(2);
+  });
+
+  test('trade wishes come once a harbour is finished, and selling wanted goods counts', () => {
+    const { g, h } = harbourGame();
+    g.goal = GOALS.length;
+    expect(ids(g)).toContain('trade');
+    expect(ids(g)).toContain('wanted');
+    runUntil(g, () => g.trader?.leg === 'docked', 200);
+    beginWish(g, 'wanted');
+    const t = g.trader!;
+    t.wants = ['stone'];
+    h.stock.stone = 20;
+    expect(trade(g, h, 'stone', 'plank')).toBeNull();
+    const deal = traderDeal(t, 'stone', 'plank');
+    expect(g.wishNow()).toMatchObject({ text: 'Sell the trader 8 goods it wants', have: deal.give, need: 8 });
+    expect(trade(g, h, 'plank', 'stone')).toBeNull(); // planks are not wanted
+    expect(g.wishNow()?.have).toBe(deal.give);
+  });
+
+  test('"Land on the far island" comes on maps with a far island, until you land there', () => {
+    const { g } = harbourGame();
+    g.goal = GOALS.length;
+    expect(g.world.far).toBeTruthy();
+    expect(ids(g)).toContain('far');
+    beginWish(g, 'far');
+    expect(g.wishNow()).toMatchObject({ text: 'Land on the far island', have: 0, need: 1 });
+    const [x, y] = farTile(g);
+    Object.assign(placeBare(g, 'harbour', x, y), { built: true, landed: true });
+    expect(g.wishNow()?.have).toBe(1);
+    expect(ids(g)).not.toContain('far');
+  });
+
+  test('the village never wishes for something it cannot grant', () => {
+    const g = doneGame();
+    const bad = new Set(['iron', 'upgrades', 'wanted', 'trade', 'far']);
+    run(g, 0.3);
+    for (let i = 0; i < 100; i++) {
+      g.time = g.wish!.until;
+      run(g, 0.2);
+      expect(bad.has(g.wish!.id)).toBe(false);
+    }
+  });
+});
+
+// A land tile on the far island.
+function farTile(g: Game): [number, number] {
+  for (let y = 0; y < W; y++)
+    for (let x = 0; x < W; x++) if (g.world.isleAt(x, y) === 'far' && g.world.at(x, y).t !== 'water') return [x, y];
+  throw new Error('no far island');
+}

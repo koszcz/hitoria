@@ -2,7 +2,7 @@
 // module turns them into the player's language when they are shown.
 import { BDEFS, SAIL_CARGO, TOOLS_LOW, TOOLS_LOW_NOTE, type BType, type Good } from './game';
 import { BUILDING_PL } from './lang/buildings';
-import { WISHES_PL, wishToastPl } from './lang/wishes';
+import { WISHES_PL, wishPl, wishToastPl } from './lang/wishes';
 import { UPGRADES_PL } from './lang/upgrades';
 import { ISLES_PL } from './lang/isles';
 
@@ -195,7 +195,7 @@ export function tr(msg: string): string {
   if (MESSAGES_PL[msg]) return MESSAGES_PL[msg];
   const goal = msg.match(/^🏆 Goal reached: (.+)$/);
   if (goal) return `🏆 Cel osiągnięty: ${tr(goal[1])}`;
-  const wish = wishToastPl(msg);
+  const wish = wishToastPl(msg) ?? wishPl(msg);
   if (wish) return wish;
   // "🪓 Woodcutter's Hut finished" and "🪓 Woodcutter's Hut demolished"
   for (const t of BTYPES) {

@@ -1,8 +1,10 @@
 // The last goal: get through a whole winter with no hut worker or miner going hungry.
 import { describe, expect, test } from 'bun:test';
 import { Game, GOALS, HUNGRY_AFTER } from '.';
+import { watchWinter } from './survive';
 import { seasonAt, yearAt } from '../seasons/year';
-import { flatGame, placeLinked, run, runUntil } from './test-helpers';
+import { flatGame, placeLinked, run, runUntil, setClock } from './test-helpers';
+import { BEDTIME } from '../seasons/day';
 
 const WINTER = GOALS.findIndex((x) => x.id === 'winter');
 
@@ -88,6 +90,16 @@ describe('survive winter goal', () => {
     mine.status = 'Waiting for food';
     run(g, HUNGRY_AFTER + 2);
     expect(g.goalNow()?.note).toBe('Someone went hungry. Try again next winter');
+  });
+
+  test('the goal does not check for hunger at night', () => {
+    const { g, house } = onWinterGoal();
+    skipTo(g, 'winter');
+    setClock(g, BEDTIME);
+    Object.assign(house, { type: 'forester', hungry: true });
+    // Step only the goal, so nothing else wakes the hut or changes its status.
+    for (let t = 0; t < HUNGRY_AFTER + 2; t++, g.time++) watchWinter(g);
+    expect(g.winter.state).toBe('watch');
   });
 
   test('hunger outside winter does not matter', () => {

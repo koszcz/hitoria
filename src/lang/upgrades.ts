@@ -5,6 +5,7 @@ export const UPGRADES_PL: Record<string, string> = {
   'Finish building it first': 'Najpierw dokończ budowę',
   'Already upgraded': 'Już ulepszony',
   'Not enough iron and tools in your stores': 'Za mało żelaza i narzędzi w magazynach',
+  'Make iron in a smelter first': 'Najpierw wytop żelazo w hucie',
   'Keep the tools the ship needs to settle the other island': 'Zostaw narzędzia, których statek potrzebuje, by zasiedlić drugą wyspę',
   '⬆️ Building upgraded': '⬆️ Budynek ulepszony',
 };

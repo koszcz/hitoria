@@ -1,5 +1,6 @@
 // Huts and workshops that make goods.
 import { describe, expect, test } from 'bun:test';
+import { W } from '../world';
 import { flatGame, run, runUntil, totalGoods, placeLinked } from './test-helpers';
 
 describe('production', () => {
@@ -45,6 +46,28 @@ describe('production', () => {
     const before = count(1);
     runUntil(g, () => count(0.01) > before, 200);
     runUntil(g, () => count(1) > before, 200);
+  });
+
+  test('a forester never plants on a worn path', () => {
+    const g = flatGame();
+    const b = placeLinked(g, 'forester', g.hq.x + 4, g.hq.y - 3);
+    const worn = new Set<number>();
+    for (let y = b.y - 8; y <= b.y + 8; y++)
+      for (let x = b.x - 8; x <= b.x + 8; x++)
+        if ((x + y) % 2 === 0) {
+          const i = y * W + x;
+          worn.add(i);
+          g.wear[i] = 1;
+        }
+    run(g, 200, () => { for (const i of worn) g.trod[i] = g.time; }, 0.5);
+    let planted = 0;
+    for (let y = b.y - 8; y <= b.y + 8; y++)
+      for (let x = b.x - 8; x <= b.x + 8; x++) {
+        const t = g.world.at(x, y);
+        if (t.tree > 0 && t.tree < 1) planted++;
+        if (worn.has(y * W + x)) expect(t.tree).toBe(0);
+      }
+    expect(planted).toBeGreaterThan(0); // it did plant, between the paths
   });
 
   test('a forester never plants next to a building', () => {

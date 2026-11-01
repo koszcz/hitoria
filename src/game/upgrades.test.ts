@@ -17,6 +17,7 @@ function finished(g: Game, type: Parameters<Game['place']>[0], dx = 4, dy = 3) {
 function rich(iron = 10, tool = 20) {
   const g = flatGame();
   Object.assign(g.hq.stock, { iron, tool });
+  g.made.iron = 1; // upgrades need iron you made yourself
   return g;
 }
 
@@ -72,8 +73,25 @@ describe('building upgrades', () => {
     expect(g.hq.stock.tool).toBe(20);
   });
 
+  test('you can upgrade only after you have made iron yourself', () => {
+    const g = rich();
+    g.made.iron = 0;
+    const hut = finished(g, 'sawmill');
+    expect(g.upgrade(hut)).toBe('Make iron in a smelter first');
+    g.made.iron = 1;
+    expect(g.upgrade(hut)).toBeNull();
+  });
+
+  test('after the first landing, the HQ still keeps the tools for the voyage to the far island', () => {
+    const g = rich(10, SAIL_CARGO.tool! + UPGRADE_COST.tool! - 1);
+    expect(g.world.far).toBeTruthy();
+    Object.assign(finished(g, 'storehouse', -4, 3), { landed: true });
+    expect(g.upgrade(finished(g, 'sawmill'))).toBe('Keep the tools the ship needs to settle the other island');
+  });
+
   test('before the other island is settled, the ship keeps its tools', () => {
     const g = flatGame();
+    g.made.iron = 1;
     const tools = SAIL_CARGO.tool! + UPGRADE_COST.tool! - 1;
     Object.assign(g.hq.stock, { iron: 10, tool: tools });
     const hut = finished(g, 'sawmill');

@@ -17,10 +17,12 @@ import { MIXED_DIG, pickFood, tasteNew } from './variety';
 export function idle(g: Game, s: Settler) {
   if (s.role === 'carrier') return carry(g, s);
   const home = g.buildings.get(s.home);
-  if (!home || bedtime(g, s, home) || s.role === 'builder') return;
-  // A worker who rests eats nothing. Before real work, they eat, or work at half speed with no food.
-  // An upgraded hut's worker works faster, but eats as much for each good they make.
-  if (plan(g, s, home)) return;
+  if (!home) return;
+  // A worker who sleeps or rests eats nothing, so they are not hungry. Before real work, they eat,
+  // or work at half speed with no food. An upgraded hut's worker works faster, but eats as much for each good they make.
+  if (bedtime(g, s, home)) return void (home.hungry = false);
+  if (s.role === 'builder') return;
+  if (plan(g, s, home)) return void (home.hungry = false);
   if (eats(home)) feed(home, s.tasks);
   quicken(home, s.tasks);
 }

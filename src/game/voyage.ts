@@ -4,6 +4,7 @@
 import { findPath, type P } from '../path';
 import { W, H } from '../world';
 import { BDEFS, GOODS, Good, bag, type Bag } from './defs';
+import { note } from './chronicle';
 import { addBuilding } from './construction';
 import type { Game } from './game';
 import { dockAt } from './harbour';
@@ -171,6 +172,7 @@ function land(g: Game, ship: Ship) {
   ship.crew = 0;
   ship.cargo = bag();
   computeTerritory(g);
+  note(g, { what: 'landed', isle: onFar(g, x, y) ? 'far' : 'other' });
   if (onFar(g, x, y)) g.toasts.push('⚓ Your settlers have landed on the far island');
   else g.toasts.push('⚓ Your settlers have landed on the other island');
   return true;

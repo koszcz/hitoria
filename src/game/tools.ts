@@ -3,6 +3,7 @@
 import { BDEFS, type BType } from './defs';
 import type { Game } from './game';
 import { homeOf } from './homes';
+import { landings, voyages } from './isles';
 import { isStore } from './stores';
 import type { Building, Settler, Task } from './types';
 import { SAIL_CARGO } from './voyage';
@@ -67,10 +68,11 @@ export function dropTool(g: Game, s: Settler, home: Building) {
 export const TOOLS_LOW = SAIL_CARGO.tool! + 2;
 export const TOOLS_LOW_NOTE = `⚠️ Only ${TOOLS_LOW} tools left. The ship needs ${SAIL_CARGO.tool} to settle the other island`;
 
-// Has a ship sailed to settle the other island?
-export const settled = (g: Game) => g.ships.length > 0 || [...g.buildings.values()].some((b) => b.landed);
+// Has every voyage on the map sailed? A ship on its way out with settlers counts as sailed.
+export const settled = (g: Game) =>
+  landings(g).length + g.ships.filter((s) => s.leg === 'out' && s.crew > 0).length >= voyages(g);
 
-// Called often. Warns once each time the stored tools drop to TOOLS_LOW, until the island is settled.
+// Called often. Warns once each time the stored tools drop to TOOLS_LOW, until every voyage has sailed.
 export function watchTools(g: Game) {
   const low = !settled(g) && g.stored.tool <= TOOLS_LOW;
   if (low && !g.toolsLow) g.toasts.push(TOOLS_LOW_NOTE);

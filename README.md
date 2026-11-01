@@ -32,7 +32,8 @@ Only goods your settlers make count toward a goal, not the goods you start with.
 
 The winter goal counts one whole winter, from the first snow to spring. A settler goes hungry
 when a hut worker has no food, or a mine waits for food, for more than 20 seconds. A house that
-waits for food does not count, because no one in it goes hungry. If that happens, try again next winter.
+waits for food does not count, because no one in it goes hungry. Nights do not count either,
+because everyone sleeps. If someone goes hungry, try again next winter.
 
 Goals 7 to 10 send you to the other island, because coal and iron ore lie only in its mountains.
 The settle goal is reached when your settlers' ship lands there and they build their harbour.
@@ -42,6 +43,13 @@ panel shows how close you are, and the season to meet the wish by, such as "befo
 snow". When you meet a wish, it counts as granted, and a new wish comes. If the season comes
 first, the wish just passes, with no penalty, and a new one comes.
 
+- A store wish asks for more than your stores hold when it starts: at least 40, and at least
+  20 more than you have, rounded up to ten.
+- Later wishes ask you to make iron, upgrade buildings, sell the trader goods it wants, and land
+  on the far island.
+- The village only wishes for what you can do now. For example, it asks for iron only once you
+  have a smelter, and for trade only once you have a harbour.
+
 1. **Place a woodcutter's hut.** Press `B` to open the build menu and pick the woodcutter's hut.
    Then click open grass near trees.
 2. **Watch it get built.** A builder walks to the site. Carriers walk planks over from the HQ.
@@ -49,14 +57,16 @@ first, the wish just passes, with no penalty, and a new one comes.
 3. **Watch the paths form.** You don't build roads. Settlers walk across the grass, and their
    footsteps wear it into dirt paths. Busy paths are quicker to walk, so settlers keep to them.
 4. **Grow your economy.**
-   - A forester (`2`) plants new trees, so the woodcutter never runs out.
+   - A forester (`2`) plants new trees, so the woodcutter never runs out. It does not plant on
+     worn paths.
    - A quarry (`3`) next to boulders makes stone.
    - A sawmill (`4`) turns logs into planks. You need planks for every new building.
    - A lookout tower (`5`) expands your land, so you have room for more.
    - Fishers, hunters, farms, mills and bakeries make food. A bakery also needs water from a
      well. Houses turn food into new settlers.
    - Every worker in a hut eats fish, meat or bread now and then. A hungry worker works at half
-     speed, and a bowl floats over their hut. Carriers and builders need no food.
+     speed, and a bowl floats over their hut. A worker who rests or sleeps is not hungry.
+     Carriers and builders need no food.
    - When food is short, farms, wells and mills get it first, so the food chain keeps running.
      Houses get food last.
    - Mix your food. When a house or worker gets a different food from last time, the house grows
@@ -158,7 +168,8 @@ Each ship also has its own wishes, shown in the panel:
 
 ### Upgrading buildings
 
-Once you make iron, you can upgrade your huts and houses.
+Once you make iron in a smelter, you can upgrade your huts and houses. Iron you buy from the
+trader does not count until you have made some yourself.
 
 1. Click a finished hut, mine, workshop or house.
 2. Under **Upgrade**, the panel shows the cost: 2 iron and 1 tool from your stores.
@@ -166,7 +177,7 @@ Once you make iron, you can upgrade your huts and houses.
 
 In an upgraded hut, mine or workshop, the worker takes half as long over each piece of work.
 An upgraded house has room for 2 more settlers. Each building upgrades once. Until your settlers
-sail to the other island, the game keeps back the 6 tools their ship needs.
+have sailed to every island, the game keeps back the 6 tools their ship needs.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ.
@@ -264,7 +275,9 @@ The save buttons are in the ☰ menu at the top right.
 - **New** starts a fresh island. It makes an autosave of the old island first.
 - Opening the page continues from your newest save.
 - When you load a save, the island chronicle opens. It lists the island's milestones by day, such
-  as the first birth, the first of each building, each goal and every tenth trade ship.
+  as the first birth, the first of each building, each goal, every tenth trade ship, the first
+  wish granted and every fifth after it, the first upgrade, each landing on an island, each winter
+  with no one hungry, and reaching 50 and 100 settlers.
 
 The save keeps the map, buildings, worn paths, every good, your goals, the village wish, the chronicle and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.

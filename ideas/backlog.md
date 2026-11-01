@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Design review round 2 fixes**: seven small fixes from the second gameplay review, built together. (1) A worker who rests or sleeps is no longer marked hungry, and the winter goal does not check for hunger at night. (2) Every wish can be granted, and none is granted for free: "Welcome 2 trade ships" asks for 1 ship, and the two "Store 40" wishes ask you to store more than you have when the wish starts. (3) New wishes point you at the late-game systems: upgrade 2 buildings, make 10 iron, sell the trader 8 of the goods it wants, and land on the far island. (4) The chronicle records more milestones: the first wish granted and every 5th after it, the first upgrade, each landing on an island, each winter with no one hungry, and 50 and 100 settlers. (5) You can upgrade a building only after you have made iron yourself, as the README says. (6) Foresters do not plant on worn paths. (7) The HQ keeps 6 tools back until every voyage on the map has sailed, not only the first. *Fun 2 · Effort M · Branch: claude/build-255b68*
+Nothing right now.
 
 ## Next
 
@@ -46,6 +46,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Design review round 2 fixes**: seven small fixes from the second gameplay review, built together. (1) A worker who rests or sleeps is no longer marked hungry, and the winter goal does not check for hunger at night. (2) Every wish can be granted, and none is granted for free: "Welcome 2 trade ships" asks for 1 ship, and the two "Store 40" wishes ask you to store more than you have when the wish starts. (3) New wishes point you at the late-game systems: upgrade 2 buildings, make 10 iron, sell the trader 8 of the goods it wants, and land on the far island. (4) The chronicle records more milestones: the first wish granted and every 5th after it, the first upgrade, each landing on an island, each winter with no one hungry, and 50 and 100 settlers. (5) You can upgrade a building only after you have made iron yourself, as the README says. (6) Foresters do not plant on worn paths. (7) The HQ keeps 6 tools back until every voyage on the map has sailed, not only the first. *2026-11-01*
 - **Food makers eat first**: when food is short, carriers bring it to farms, wells and mills first, then to other huts and mines, and to houses last, so the food chain keeps running. *2026-11-01*
 - **Far island**: a third island with its own riches lies farther out, and you sail to settle it. New maps only. Old saves keep their land. *2026-11-01*
 - **Trader wants**: each trade ship brings a short list of goods it wants at a better rate, a few rare goods to buy, and a limit on how many tools and iron it sells. *2026-11-01*

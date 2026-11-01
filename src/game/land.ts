@@ -1,6 +1,6 @@
 // What the ground allows: where settlers walk, where buildings and plants may go, and which land is yours.
 import { W, Tile } from '../world';
-import { BDEFS, PATH_SPEED } from './defs';
+import { BDEFS, PATH_SPEED, WEAR_SHOWS } from './defs';
 import type { Game } from './game';
 import { isHome, LANDING_LAND } from './homes';
 
@@ -48,10 +48,10 @@ export function nearOre(g: Game, x: number, y: number, r: number) {
   return false;
 }
 
-// Free grass in your land where a tree can grow. Farm fields are kept for grain.
+// Free grass in your land where a tree can grow. Farm fields are kept for grain, and worn paths for walking.
 export function plantable(g: Game, t: Tile, x: number, y: number) {
   return t.t === 'grass' && !t.tree && !t.crop && !t.field && !t.rock && !t.b
-    && !!g.world.territory[y * W + x] && !besideBuilding(g, x, y);
+    && !!g.world.territory[y * W + x] && g.wear[y * W + x] < WEAR_SHOWS && !besideBuilding(g, x, y);
 }
 
 // Trees next to a building could wall in its door, so nothing is planted there.

@@ -1,6 +1,7 @@
 // Building upgrades: you spend iron and tools from your stores to make a hut's worker work faster,
 // or to give a house room for more settlers. Each building upgrades once.
 import { BType, GOODS, HOUSE_SIZE, type Bag } from './defs';
+import { noteUpgrade } from './chronicle';
 import type { Game } from './game';
 import { isStore } from './stores';
 import { needsTool, settled } from './tools';
@@ -15,6 +16,8 @@ export const UPGRADED = 2; // the level of an upgraded building
 // Huts whose worker works, and houses, can be upgraded. Stores, lookouts and the monument cannot.
 export const upgradable = (type: BType) => type === 'house' || needsTool(type);
 export const upgraded = (b: Building) => (b.level ?? 1) >= UPGRADED;
+// Upgrades need iron that you made yourself, so they come after the smelter.
+export const madeIron = (g: Game) => g.made.iron > 0;
 
 // How many settlers house `b` adds in all.
 export const houseSize = (b: Building) => HOUSE_SIZE + (upgraded(b) ? HOUSE_EXTRA : 0);
@@ -32,6 +35,7 @@ export function canUpgrade(g: Game, b: Building): string | null {
   if (!upgradable(b.type)) return 'This building cannot be upgraded';
   if (!b.built) return 'Finish building it first';
   if (upgraded(b)) return 'Already upgraded';
+  if (!madeIron(g)) return 'Make iron in a smelter first';
   const have = { iron: 0, tool: 0 };
   for (const s of g.buildings.values()) if (isStore(s)) for (const k of ['iron', 'tool'] as const) have[k] += free(s, k);
   if (have.iron < UPGRADE_COST.iron! || have.tool < UPGRADE_COST.tool!) return 'Not enough iron and tools in your stores';
@@ -54,6 +58,7 @@ export function upgrade(g: Game, b: Building): string | null {
     }
   }
   b.level = UPGRADED;
+  noteUpgrade(g);
   g.toasts.push('⬆️ Building upgraded');
   return null;
 }
