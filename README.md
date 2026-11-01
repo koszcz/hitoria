@@ -4,7 +4,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 
 **Play it in your browser:** https://koszcz.github.io/hitoria/
 
-![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a smelter, a toolmaker's workshop and a stone mine, all joined by roads. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay and below a mountain: huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter, a toolmaker's workshop and a stone mine, all joined by roads. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left](docs/screenshot.jpg)
 
 ## How to play
 
@@ -53,6 +53,10 @@ The settle goal is reached when your settlers' ship lands there and they build t
      rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
    - Every new worker in a hut needs a tool. The HQ starts with 20 tools. When they run out, a
      toolmaker's workshop makes more from iron and planks. Until then, a new hut waits for a tool.
+   - Some mountain tiles are rich spots. A mine next to a rich spot digs twice as fast. Build a
+     geologist's hut near a mountain, and its geologist puts up a sign on each mountain tile
+     nearby. A gold sign marks a rich spot. The lumps on a sign show what lies below: grey stone,
+     or coal and iron ore. A mine's panel says when it sits next to a rich spot.
    - Across the water from the bay lies a second island. To settle it, build a harbour, click it
      and press **Set sail**. See "Settling the second island" below.
 
@@ -236,9 +240,9 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, rich spots and the geologist (`geology.ts`), goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
 | `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
@@ -258,6 +262,9 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   eats fish, meat or bread.
 - A coal mine and an iron mine dig coal and iron ore out of a mountain in the same way. Only the
   second island's mountain holds coal and iron ore.
+- A mine next to a rich spot digs twice as fast. A geologist surveys the mountains up to 6 tiles
+  from the Geologist's Hut and marks rich spots with gold signs. The mountain by the HQ and the
+  second island's mountain always have one.
 - Iron mine → iron ore, and coal mine → coal → Smelter → iron. The smelter needs 1 iron ore and
   1 coal for each bar of iron.
 - Iron and planks → Toolmaker's Workshop → tools. The toolmaker needs 1 iron and 1 plank for
