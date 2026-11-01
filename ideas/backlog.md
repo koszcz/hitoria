@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. A mine on a rich spot works twice as fast. The geologist puts up small signs that show what lies below. *Fun 2 · Effort M · Needs: Coal and iron mines · Approved · Branch: worktree-agent-aa7bbe72ac4847890*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. A mine on a rich spot works twice as fast. The geologist puts up small signs that show what lies below. *Fun 2 · Effort M · Needs: Coal and iron mines · Approved*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free · Approved*
 
 ## Inbox
