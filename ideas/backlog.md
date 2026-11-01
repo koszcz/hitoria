@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-*Empty.*
+- **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M*
+- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
+- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 
 ## Inbox
 
@@ -22,11 +24,8 @@ New ideas go here, not scored yet.
 
 Triaged, but not next.
 
-- **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
-- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
-- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
 - **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night light*
