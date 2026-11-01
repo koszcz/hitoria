@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Design review round 2 fixes**: seven small fixes from the second gameplay review, built together. (1) A worker who rests or sleeps is no longer marked hungry, and the winter goal does not check for hunger at night. (2) Every wish can be granted, and none is granted for free: "Welcome 2 trade ships" asks for 1 ship, and the two "Store 40" wishes ask you to store more than you have when the wish starts. (3) New wishes point you at the late-game systems: upgrade 2 buildings, make 10 iron, sell the trader 8 of the goods it wants, and land on the far island. (4) The chronicle records more milestones: the first wish granted and every 5th after it, the first upgrade, each landing on an island, each winter with no one hungry, and 50 and 100 settlers. (5) You can upgrade a building only after you have made iron yourself, as the README says. (6) Foresters do not plant on worn paths. (7) The HQ keeps 6 tools back until every voyage on the map has sailed, not only the first. *Fun 2 · Effort M · Branch: claude/build-255b68*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Design review round 2 fixes**: seven small fixes from the second gameplay review, built together. (1) A worker who rests or sleeps is no longer marked hungry, and the winter goal does not check for hunger at night. (2) Every wish can be granted, and none is granted for free: "Welcome 2 trade ships" asks for 1 ship, and the two "Store 40" wishes ask you to store more than you have when the wish starts. (3) New wishes point you at the late-game systems: upgrade 2 buildings, make 10 iron, sell the trader 8 of the goods it wants, and land on the far island. (4) The chronicle records more milestones: the first wish granted and every 5th after it, the first upgrade, each landing on an island, each winter with no one hungry, and 50 and 100 settlers. (5) You can upgrade a building only after you have made iron yourself, as the README says. (6) Foresters do not plant on worn paths. (7) The HQ keeps 6 tools back until every voyage on the map has sailed, not only the first. *Fun 2 · Effort M*
 - **Feast Square and wedding feast**: you build a Feast Square and order a wedding feast there. Carriers bring 10 fish, 10 bread and 10 meat. At the next dusk every worker gathers at the square to feast until midnight, then goes to sleep, and 2 new settlers arrive at dawn. You can hold one feast each season. *Fun 3 · Effort M*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 
