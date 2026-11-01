@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *Fun 2 · Effort M · Needs: Sound basics · Approved · Branch: worktree-agent-a76d9a7edc9d5c9a9*
+Nothing right now.
 
 ## Next
 
@@ -43,6 +43,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Work sounds**: chopping, sawing and hammering you hear near the camera. The game makes the sounds in code, like the wind and waves. *2026-11-01*
 - **Hungry workers**: all workers in buildings need food, not just miners. Carriers do not. A worker with no food works at half speed. *2026-11-01*
 - **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *2026-11-01*
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *2026-11-01*

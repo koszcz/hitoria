@@ -229,11 +229,15 @@ Press F3 to see the level, and how much the game draws each frame.
 You hear soft wind and, near the shore, waves. The wind grows louder as gusts pass, and both
 sounds get quieter when you zoom out. The game makes them from noise, so there are no sound files.
 
+You also hear your settlers work near the middle of the screen. Woodcutters chop, the sawmill
+saws, and builders, stonecutters and the toolmaker hammer. Nearer work is louder. Work sounds fade
+as you zoom out, and stop while the game is paused.
+
 A calm tune plays in the background: soft bells over slow chords. The game writes the notes in
 code too. To change how loud the music is, click **Music** in the menu. Each click moves it one
 step from Off to 100%. It starts at 50%.
 
-To mute all sound, music included, click **Sound** in the menu or press M. The browser remembers
+To mute all sound, music and work sounds included, click **Sound** in the menu or press M. The browser remembers
 both choices. Browsers block sound until you click or press a key, so the sound starts then.
 
 ## Code map
@@ -246,7 +250,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
-| `src/sound/` | Wind and wave sound, how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
+| `src/sound/` | Wind and wave sound, work sounds (`work.ts` picks what you hear, `strikes.ts` plays it), how loud each is from what the camera sees, the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
 | `src/ui.ts` | HUD, goal panel and info panel |
 | `src/sailinfo.ts` | The harbour panel's "Sail to settle" part |
