@@ -7,7 +7,8 @@ import { computeTerritory } from './land';
 import { isStore } from './stores';
 import { needsTool, START_TOOLS } from './tools';
 import { SAIL_CARGO } from './voyage';
-import type { Building, Flag, Road, Ship } from './types';
+import type { Building, Flag, Road, Ship, Trader } from './types';
+import { TRADE_EVERY } from './trade';
 import type { WinterState } from './survive';
 import { MAP_VERSION } from '../world';
 
@@ -31,6 +32,8 @@ export interface SaveData {
   goal?: number; // index of the goal the player is on
   winter?: WinterState; // how the survive winter goal is going; older saves wait for the next winter
   ships?: Ship[]; // ships sailing to settle, or tied up; saves from before ships have none
+  trader?: Trader | null; // the trade ship, if it is visiting; older saves have none
+  traderT?: number; // seconds until the next trade ship
 }
 
 export function save(g: Game): SaveData {
@@ -75,6 +78,7 @@ export function save(g: Game): SaveData {
     v: SAVE_VERSION, seed: g.seed, map: g.world.map, time: g.time, pool, nextId: g.nextId, hq: g.hq.id,
     tiles: g.world.tiles.map((t, i) => [t.tree, t.conifer ? 1 : 0, t.rock, t.b, t.flag, t.road, t.crop, t.field, Math.round(g.wear[i] * 100) / 100]),
     buildings, flags, roads, made: { ...g.made }, goal: g.goal, winter: g.winter.state, ships: structuredClone(g.ships),
+    trader: structuredClone(g.trader), traderT: g.traderT,
   };
 }
 
@@ -125,6 +129,8 @@ export function restore(g: Game, d: SaveData) {
   g.goal = d.goal ?? 0;
   g.winter.state = d.winter ?? 'late';
   g.ships = d.ships ?? [];
+  g.trader = d.trader ?? null;
+  g.traderT = d.traderT ?? TRADE_EVERY;
   if (d.v < 5) grantTools(g);
   g.net++;
   computeTerritory(g);

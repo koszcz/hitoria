@@ -1,9 +1,10 @@
-import { Game, BDEFS, BType, GOODS, HOUSE_SIZE, HOUSE_GROW } from './game';
+import { Game, BDEFS, BType, GOODS, Good, HOUSE_SIZE, HOUSE_GROW } from './game';
 import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
 import { openBuildMenu } from './buildmenu/menu';
 import { costText } from './buildmenu/card';
 import type { Level } from './quality/levels';
 import { sailRows } from './sailinfo';
+import { tradeRows, type TradePick } from './tradeinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -23,6 +24,7 @@ export class UI {
   private buttons = new Map<Tool, HTMLButtonElement>();
   private buildBtn!: HTMLButtonElement;
   private infoHtml = ''; // what the building panel shows now
+  private pick: TradePick = { give: null, get: null }; // the goods picked in the trade ship's panel
 
   // The graphics setting, shown on its menu button. main.ts sets it.
   graphics: { choice: string; level: Level } = { choice: 'auto', level: 'high' };
@@ -46,9 +48,14 @@ export class UI {
     }
     // The panel is drawn again as the game runs, so its buttons are handled here.
     $('info').addEventListener('click', (e) => {
-      if (!(e.target as HTMLElement).closest('[data-act="sail"]')) return;
+      const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-act]');
       const b = this.game.buildings.get(this.selected);
-      const why = b && this.game.sail(b);
+      if (!btn || !b) return;
+      const act = btn.dataset.act, good = btn.dataset.good as Good;
+      let why: string | null = null;
+      if (act === 'sail') why = this.game.sail(b);
+      else if (act === 'trade' && this.pick.give && this.pick.get) why = this.game.trade(b, this.pick.give, this.pick.get);
+      else if (act === 'give' || act === 'get') this.pick[act] = this.pick[act] === good ? null : good;
       if (why) this.toast(why);
       this.refresh();
     });
@@ -196,7 +203,7 @@ export class UI {
         if (def.cost[k]) rows.push(`<div><span class="good ${k}"></span>${goodName(k)}: ${b.stock[k]} / ${def.cost[k]}</div>`);
     } else if (g.isStore(b)) {
       if (b.type === 'hq') rows.push(`<div>${x.landRadius(def.radius)}</div>`);
-      if (b.type === 'harbour') rows.push(sailRows(g, b));
+      if (b.type === 'harbour') rows.push(sailRows(g, b), tradeRows(g, b, this.pick));
       for (const k of GOODS) rows.push(`<div>${x.stored} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
     } else {
       if (b.type === 'house') {

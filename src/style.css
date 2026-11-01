@@ -165,6 +165,24 @@ canvas {
 }
 #info button.sail:hover:not(:disabled) { border-color: var(--gold); }
 #info button.sail:disabled { opacity: 0.5; cursor: default; }
+#info .trade-label { margin: 6px 0 2px; color: var(--muted); }
+#info .chips { display: flex; flex-wrap: wrap; gap: 3px; }
+#info button.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  font: inherit;
+  font-size: 12px;
+  color: inherit;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 226, 160, 0.25);
+  border-radius: 5px;
+  cursor: pointer;
+}
+#info button.chip:hover { border-color: rgba(255, 226, 160, 0.6); }
+#info button.chip.on { border-color: var(--gold); background: rgba(40, 60, 110, 0.9); }
+#info .deal { margin: 8px 0 0; font-weight: 600; font-size: 14px; }
 
 #info .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
 #info .bar i { display: block; height: 100%; background: var(--gold); }

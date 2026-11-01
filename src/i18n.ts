@@ -157,6 +157,12 @@ const MESSAGES_PL: Record<string, string> = {
   'No free shore on the other island': 'Na drugiej wyspie nie ma wolnego brzegu',
   '⛵ A ship sets sail for the other island': '⛵ Statek wypływa na drugą wyspę',
   '⚓ Your settlers have landed on the other island': '⚓ Twoi osadnicy wylądowali na drugiej wyspie',
+  // The trade ship
+  '🚢 A trade ship is sailing to your harbour': '🚢 Statek kupiecki płynie do twojego portu',
+  '🚢 The trade ship has tied up at your harbour': '🚢 Statek kupiecki przybił do twojego portu',
+  'No trade ship is here': 'Nie ma tu statku kupieckiego',
+  'Pick two different goods': 'Wybierz dwa różne towary',
+  'Not enough goods to give': 'Za mało towarów do wymiany',
 };
 
 const BTYPES = Object.keys(BDEFS) as BType[];

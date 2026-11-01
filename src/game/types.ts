@@ -106,3 +106,14 @@ export interface Ship {
   cargo: Bag; // goods on board
   land: P; // the tile where the settlers build their harbour
 }
+
+// The trade ship. It sails in from the edge of the map, ties up at a harbour for a while, then
+// sails off again.
+export interface Trader {
+  harbour: number; // the harbour it visits
+  x: number;
+  y: number;
+  path: P[]; // the water tiles still ahead
+  leg: 'in' | 'docked' | 'out';
+  left: number; // seconds it stays tied up
+}

@@ -2,7 +2,7 @@
 // The work itself lives in the other files of this folder, as functions that take the game.
 import type { P } from '../path';
 import { MAP_VERSION, World, W, H } from '../world';
-import { BType, CROP_GROW, bag } from './defs';
+import { BType, CROP_GROW, Good, bag } from './defs';
 import { spawnAnimals, stepAnimal } from './animals';
 import { regrow } from './hunting';
 import { planAutoRoad } from './autoroad';
@@ -24,7 +24,8 @@ import { dockOf } from './harbour';
 import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
 import { START_TOOLS } from './tools';
-import type { Animal, AnimalKind, Building, Flag, Road, Settler, Ship } from './types';
+import { stepTrader, trade, TRADE_EVERY } from './trade';
+import type { Animal, AnimalKind, Building, Flag, Road, Settler, Ship, Trader } from './types';
 
 export class Game {
   world: World;
@@ -36,6 +37,8 @@ export class Game {
   hq: Building;
   pool = 18; // idle settlers inside the HQ
   ships: Ship[] = [];
+  trader: Trader | null = null; // the trade ship, while it visits
+  traderT = TRADE_EVERY; // seconds until the next trade ship sets out, counted while you have a harbour
   time = 0;
   net = 0; // bumped whenever the road network changes
   toasts: string[] = [];
@@ -127,6 +130,11 @@ export class Game {
     return sail(this, b);
   }
 
+  // Swap one deal of `give` for `get` with the trade ship at harbour `b`. Returns why it can't, or null.
+  trade(b: Building, give: Good, get: Good) {
+    return trade(this, b, give, get);
+  }
+
   isStore(b: Building) {
     return isStore(b);
   }
@@ -200,6 +208,7 @@ export class Game {
     for (const s of this.settlers.values()) step(this, s, dt);
     for (const a of this.animals.values()) stepAnimal(this, a, dt);
     stepShips(this, dt);
+    stepTrader(this, dt);
     regrow(this, dt);
   }
 }

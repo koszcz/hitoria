@@ -24,7 +24,7 @@ const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -
 // Every tile reached from `from` by stepping over tiles that pass `ok`, with the number of steps.
 // Steps may go diagonally, but not past a corner that fails `ok`.
 // -1 where it can't be reached.
-function flood(from: P, ok: (x: number, y: number) => boolean) {
+export function flood(from: P, ok: (x: number, y: number) => boolean) {
   const d = new Int32Array(W * H).fill(-1);
   const queue = [from.y * W + from.x];
   d[queue[0]] = 0;
@@ -41,7 +41,7 @@ function flood(from: P, ok: (x: number, y: number) => boolean) {
   return d;
 }
 
-const water = (g: Game) => (x: number, y: number) => g.world.at(x, y).t === 'water';
+export const water = (g: Game) => (x: number, y: number) => g.world.at(x, y).t === 'water';
 
 // Open ground: grass or sand with nothing on it. With `clear`, trees and boulders don't count,
 // because the settlers clear them away when they land.
@@ -89,7 +89,7 @@ export function landingSpot(g: Game, h: Building): { land: P; dock: P } | null {
 }
 
 // The stores on the harbour's island that the ship loads from, the harbour itself first.
-function sources(g: Game, h: Building) {
+export function sources(g: Game, h: Building) {
   const home = homeOf(g, h);
   return [...g.buildings.values()]
     .filter((b) => isStore(b) && homeOf(g, b) === home)
@@ -119,7 +119,7 @@ export function canSail(g: Game, h: Building): string | null {
 }
 
 // The water tiles from `a` to `b`, keeping off the coast where it can.
-function seaPath(g: Game, a: P, b: P) {
+export function seaPath(g: Game, a: P, b: P) {
   const open = (x: number, y: number) => {
     for (const [dx, dy] of DIRS) if (!g.world.inside(x + dx, y + dy) || g.world.at(x + dx, y + dy).t !== 'water') return false;
     return true;
@@ -181,23 +181,28 @@ function unload(g: Game, ship: Ship) {
   ship.cargo = bag();
 }
 
+// Move a ship along its path for `dt` seconds. True once it has reached the end.
+export function sailOn(ship: { x: number; y: number; path: P[] }, dt: number) {
+  let left = SHIP_SPEED * dt;
+  while (left > 0 && ship.path.length) {
+    const n = ship.path[0], d = Math.hypot(n.x - ship.x, n.y - ship.y);
+    if (d <= left) {
+      Object.assign(ship, n);
+      ship.path.shift();
+      left -= d;
+    } else {
+      ship.x += ((n.x - ship.x) / d) * left;
+      ship.y += ((n.y - ship.y) / d) * left;
+      left = 0;
+    }
+  }
+  return !ship.path.length;
+}
+
 export function stepShips(g: Game, dt: number) {
   for (const ship of g.ships) {
     if (ship.leg === 'moored') continue;
-    let left = SHIP_SPEED * dt;
-    while (left > 0 && ship.path.length) {
-      const n = ship.path[0], d = Math.hypot(n.x - ship.x, n.y - ship.y);
-      if (d <= left) {
-        Object.assign(ship, n);
-        ship.path.shift();
-        left -= d;
-      } else {
-        ship.x += ((n.x - ship.x) / d) * left;
-        ship.y += ((n.y - ship.y) / d) * left;
-        left = 0;
-      }
-    }
-    if (ship.path.length) continue;
+    if (!sailOn(ship, dt)) continue;
     const h = g.buildings.get(ship.harbour), dock = h && g.dock(h);
     if (ship.leg === 'back') {
       if (ship.crew) unload(g, ship);

@@ -60,7 +60,7 @@ const EN = {
     mine: 'Never runs dry, unlike the boulders a Quarry breaks.',
     house: 'More settlers mean more carriers, builders and workers. Build more houses to keep growing.',
     monument: 'Your last goal. Build it once your island is thriving.',
-    harbour: 'A ship sails from here to settle the other island. It also stores goods.',
+    harbour: 'A ship sails from here to settle the other island. A trade ship visits every few minutes. It also stores goods.',
     toolmaker: 'Every new worker in a hut needs 1 tool. When the tools you started with run out, new huts wait for one.',
   } as Partial<Record<BType, string>>,
   place: {
@@ -100,7 +100,7 @@ const PL: typeof EN = {
     mine: 'Nigdy się nie wyczerpuje, w przeciwieństwie do głazów, które rozbija Kamieniołom.',
     house: 'Więcej osadników to więcej tragarzy, budowniczych i pracowników. Buduj kolejne domy, by dalej rosnąć.',
     monument: 'Twój ostatni cel. Zbuduj go, gdy twoja wyspa kwitnie.',
-    harbour: 'Stąd statek wypływa, by osiedlić drugą wyspę. Port przechowuje też towary.',
+    harbour: 'Stąd statek wypływa, by osiedlić drugą wyspę. Co kilka minut przypływa statek kupiecki. Port przechowuje też towary.',
     toolmaker: 'Każdy nowy pracownik potrzebuje 1 narzędzia. Gdy skończą się narzędzia z początku gry, nowe budynki czekają na nowe.',
   },
   place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
