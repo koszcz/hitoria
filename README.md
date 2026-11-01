@@ -86,6 +86,21 @@ they make back to it. Settlers never cross the sea on foot. You can sail only on
 The second island has a mountain with coal and iron ore in it. Build your coal and iron mines at
 its foot.
 
+### Trading with the trade ship
+
+About 3 minutes after your first harbour on the home island is finished, a trade ship sails in
+from the open sea. It stays tied up at the pier for about a minute and a half, then sails away.
+The next one comes 3 minutes later.
+
+1. While the trade ship is tied up, click the harbour.
+2. Under **You give**, pick a good you can spare. Under **You get**, pick a good you lack.
+3. The panel shows the deal, such as 4 planks for 1 iron. Press **Trade** to make it. You can
+   trade as often as you like while the ship is there.
+
+The rates are fixed. Each good has a worth, from 1 for logs, stone, water and grain up to 6 for
+tools, and the trader keeps half the worth of what you give. The goods you give come from the
+harbour first, then from your nearest stores. The goods you get go into the harbour.
+
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ, and its flag and roads stay.
 
@@ -221,7 +236,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, and where coal and iron ore lie |
-| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, goals and saving |
+| `src/game/` | Simulation: buildings, demolishing, roads, worn paths, walking distances, settlers, wild animals, hunting, carriers, farm fields, food, harbours and their docks, the trade ship, homes (the HQ and the harbour settlers build on the second island), the voyage to settle it, the tools new workers take, goals and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, water, buildings, settlers, animals, ships, overlays the light for each time of day (`daylight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/seasons/` | The year clock, how the island looks at each point in the year, and when grain grows |
@@ -230,6 +245,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
 | `src/ui.ts` | HUD, goal panel and info panel |
 | `src/sailinfo.ts` | The harbour panel's "Sail to settle" part |
+| `src/tradeinfo.ts` | The harbour panel's "Trade ship" part |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/i18n.ts` | Translations. The Polish building names are in `src/lang/` |
@@ -262,7 +278,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - A monument does no work. Building one is your fifth goal.
 - Goods are stored at the HQ, in storehouses and in harbours.
 - A harbour stands on the shore, up to 4 tiles from open water. A wooden pier runs out to its dock.
-  A ship sails from it once, to settle the second island.
+  A ship sails from it once, to settle the second island. A trade ship visits it every few
+  minutes.
 
 Every building has a flag in front of its door. Flags mark where roads end and where they meet.
 A carrier takes one good from the building that has it and walks it the quickest way, all the way
