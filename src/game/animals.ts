@@ -144,9 +144,11 @@ function flee(g: Game, a: Animal, s: { x: number; y: number }) {
   }
 }
 
+// The path keeps to tiles near home, so a detour around trees or water never leads the animal away.
 function pathTo(g: Game, a: Animal, x: number, y: number) {
   if (!g.world.inside(x, y) || !g.passable(x, y)) return null;
-  const p = findPath(Math.round(a.x), Math.round(a.y), x, y, g.passable, 300);
+  const near = (tx: number, ty: number) => Math.hypot(tx - a.home.x, ty - a.home.y) <= ROAM + 2 && g.passable(tx, ty);
+  const p = findPath(Math.round(a.x), Math.round(a.y), x, y, near, 300);
   return p && p.length ? p : null;
 }
 

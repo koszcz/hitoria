@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-*Empty.*
+- **Day and season clock**: a small dial in the HUD shows the time of day, the season and the day count. *Fun 2 · Effort S*
+- **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *Fun 2 · Effort M · Needs: Day and night light*
+- **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *Fun 2 · Effort S · Needs: Workers sleep at night*
 
 ## Inbox
 
@@ -21,8 +23,6 @@ New ideas go here, not scored yet.
 ## Later
 
 Triaged, but not next.
-
-- **Settlers rest at night**: settlers go home after dark, and work stops until morning. *Fun 1 · Effort M · Needs: Day and night light*
 
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
