@@ -15,7 +15,7 @@ export function setLang(l: Lang) {
   try {
     localStorage.setItem(KEY, l);
   } catch {} // storage may be blocked; the choice then lasts until the page closes
-  if (typeof document !== 'undefined') document.documentElement.lang = l;
+  if (typeof document !== 'undefined' && document.documentElement) document.documentElement.lang = l; // tests may fake a bare document
 }
 
 // The language to start in: the one the player picked last time, or else the first language in

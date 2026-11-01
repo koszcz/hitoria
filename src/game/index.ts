@@ -4,6 +4,7 @@ export * from './types';
 export { Game } from './game';
 export { SAVE_VERSION, type SaveData } from './save';
 export { GOALS } from './goals';
+export type { Entry } from './chronicle';
 export { HUNGRY_AFTER } from './survive';
 export { SAIL_CARGO, SAIL_CREW, lacking } from './voyage';
 export { TRADE_STAY, VALUE, canTrade, dealFor, spare, tradeHarbour } from './trade';

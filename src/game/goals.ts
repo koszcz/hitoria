@@ -1,5 +1,6 @@
 // Peaceful goals the player works through in order, such as "make 50 planks" or "build a monument".
 import { HOUSE_FOOD, type BType } from './defs';
+import { note } from './chronicle';
 import type { Game } from './game';
 import { WINTER_NOTES, watchWinter } from './survive';
 
@@ -46,6 +47,7 @@ export function checkGoals(g: Game) {
   GOALS[g.goal]?.watch?.(g);
   for (let goal = GOALS[g.goal]; goal && goal.have(g) >= goal.need; goal = GOALS[g.goal]) {
     g.toasts.push(`🏆 Goal reached: ${goal.text}`);
+    note(g, { what: 'goal', goal: goal.id });
     g.goal++;
   }
 }

@@ -2,6 +2,7 @@
 import { Good, HOUSE_FOOD, HOUSE_GROW, HOUSE_PANTRY, HOUSE_SIZE } from './defs';
 import { linked } from './construction';
 import type { Game } from './game';
+import { noteBirth } from './chronicle';
 import { addPool, homeOf } from './homes';
 import type { Building } from './types';
 import { MIXED_GROW, pickFood, tasteNew } from './variety';
@@ -40,4 +41,5 @@ export function raise(g: Game, b: Building, dt: number) {
   b.born++;
   addPool(g, homeOf(g, b) ?? g.hq, 1);
   g.toasts.push('👶 A new settler was born');
+  noteBirth(g);
 }

@@ -2,6 +2,7 @@
 // While it is there, you swap spare goods for goods you lack, at fixed rates.
 import type { P } from '../path';
 import { W, H } from '../world';
+import { noteTrader } from './chronicle';
 import type { Good } from './defs';
 import type { Game } from './game';
 import type { Building, Trader } from './types';
@@ -80,6 +81,7 @@ export function stepTrader(g: Game, dt: number) {
   if (t.leg === 'in') {
     t.leg = 'docked';
     g.toasts.push('🚢 The trade ship has tied up at your harbour');
+    noteTrader(g);
     return;
   }
   g.trader = null; // gone over the horizon
