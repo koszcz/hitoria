@@ -33,10 +33,7 @@ Triaged and ready to build, but not next.
 - **Far island**: a third island with its own riches lies farther out, and you sail to settle it. New maps only. Old saves keep their land. *Fun 2 · Effort M*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
-- **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. Keys 1 to 9 cover only the first 9. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
-- **Butterflies**: butterflies float over flower meadows. *Fun 1 · Effort S*
-- **Fireflies**: fireflies glow at the forest edge after dark. *Fun 1 · Effort S · Needs: Day and night light*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
 
 ## Done
@@ -106,3 +103,6 @@ Ideas we decided not to build, and why.
 - **Model loader, trees and rocks**: load detailed 3D models from free CC0 packs, starting with trees and rocks. We prefer the game's own code-built look to the Kenney and Quaternius packs.
 - **Building models**: swap the built-in building shapes for detailed models. We prefer the code-built look, and each building already has its own details.
 - **Settler models**: swap the built-in settler shapes for detailed, animated models. We prefer the code-built look.
+- **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. You decided not to build it.
+- **Butterflies**: butterflies float over flower meadows. You decided not to build it.
+- **Fireflies**: fireflies glow at the forest edge after dark. You decided not to build it.
