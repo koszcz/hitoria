@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *Fun 3 · Effort M · Needs: Harbour, Second island · Approved*
 - **Tools**: a toolmaker that makes the tools new workers need, so you can't grow for free. The toolmaker uses 1 iron and 1 plank for each tool. The HQ starts with enough tools for the first few buildings. *Fun 2 · Effort M · Needs: Population, Smelter · Approved*
+- **Trade ship**: a ship that visits the harbour every few minutes. You pick which spare goods to swap for goods you lack, at fixed rates. *Fun 2 · Effort M · Needs: Harbour · Approved*
 
 ## Inbox
 
@@ -29,11 +31,9 @@ Triaged, but not next.
 - **No player roads**: the road tool, flags, auto-road and the road warning sign go away, because paths form by themselves. Old saves still load. *Fun 2 · Effort M · Needs: Carriers walk free · Approved*
 - **Mountain ranges**: mountains form ridges and valleys instead of round blobs. *Fun 2 · Effort M · Needs: Mountain shape · Approved*
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Needs: Mountain shape*
-- **Sail to settle**: a ship carries settlers and goods from the harbour to settle the other island. It lands, builds a small harbour store there, and claims land around it. *Fun 3 · Effort M · Needs: Harbour, Second island · Approved*
 - **Island riches**: the second island gets mountains, and coal and iron ore lie only in them. The home island has stone only. Old saves keep the ore they have. *Fun 3 · Effort M · Needs: Sail to settle, Coal and iron mines · Approved*
 - **Geologist**: a settler who finds rich spots in mountains, so you place mines for a reason. A mine on a rich spot works twice as fast. The geologist puts up small signs that show what lies below. *Fun 2 · Effort M · Needs: Coal and iron mines · Approved*
 - **Pack donkeys**: when many goods wait to move, a donkey joins the carriers and carries two goods at once along the worn paths. *Fun 2 · Effort M · Needs: No player roads · Approved*
-- **Trade ship**: a ship that visits the harbour every few minutes. You pick which spare goods to swap for goods you lack, at fixed rates. *Fun 2 · Effort M · Needs: Harbour · Approved*
 - **Model loader, trees and rocks**: load detailed 3D models from free CC0 packs by Kenney, starting with trees and rocks. *Fun 2 · Effort M · Approved*
 - **Building models**: swap the built-in building shapes for detailed models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
 - **Settler models**: swap the built-in settler shapes for detailed, animated models. *Fun 2 · Effort M · Needs: Model loader, trees and rocks · Approved*
