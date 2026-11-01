@@ -31,6 +31,8 @@ export class Game {
   world: World;
   buildings = new Map<number, Building>();
   settlers = new Map<number, Settler>();
+  donkeys = new Map<number, Settler>(); // pack donkeys out carrying; not settlers, and not saved
+  metDonkey = false; // the first donkey of a session has been announced
   animals = new Map<number, Animal>(); // wild animals; not saved, a loaded game spawns them again
   hq: Building;
   pool = 18; // idle settlers inside the HQ
@@ -190,6 +192,7 @@ export class Game {
       else if (b.type === 'house') raise(this, b, dt);
     }
     for (const s of this.settlers.values()) step(this, s, dt);
+    for (const d of this.donkeys.values()) step(this, d, dt);
     for (const a of this.animals.values()) stepAnimal(this, a, dt);
     stepShips(this, dt);
     stepTrader(this, dt);

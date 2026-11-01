@@ -161,6 +161,7 @@ const MESSAGES_PL: Record<string, string> = {
   'No free shore on the other island': 'Na drugiej wyspie nie ma wolnego brzegu',
   '⛵ A ship sets sail for the other island': '⛵ Statek wypływa na drugą wyspę',
   '⚓ Your settlers have landed on the other island': '⚓ Twoi osadnicy wylądowali na drugiej wyspie',
+  '🫏 A pack donkey joins your carriers': '🫏 Juczny osioł dołącza do twoich tragarzy',
   // The trade ship
   '🚢 A trade ship is sailing to your harbour': '🚢 Statek kupiecki płynie do twojego portu',
   '🚢 The trade ship has tied up at your harbour': '🚢 Statek kupiecki przybił do twojego portu',

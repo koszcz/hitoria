@@ -57,6 +57,11 @@ export function save(g: Game): SaveData {
       if (also) home.stock[also]++;
     }
   }
+  // A donkey's goods go back to the building they came from. Donkeys are not saved.
+  for (const d of g.donkeys.values()) {
+    const from = d.job && d.carrying ? bs.get(d.job.from) : undefined;
+    if (from) (isStore(from) ? from.stock : from.out)[d.job!.g] += d.load ?? 1;
+  }
   // Everyone out working counts as back in their home.
   let pool = g.pool;
   for (const s of g.settlers.values()) {

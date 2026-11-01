@@ -13,6 +13,7 @@ import { pierTo } from './harbour';
 import { Scenery } from './scenery';
 import { Goods } from './goods';
 import { Animals } from './animals';
+import { Donkeys } from './donkeys';
 import { Ships } from './ships';
 import { Overlays, View } from './overlays';
 import { disposeModel } from './merge';
@@ -52,6 +53,7 @@ export class Renderer {
   private scenery: Scenery;
   private goods: Goods;
   private animals: Animals;
+  private donkeys: Donkeys;
   private ships: Ships;
   private overlays: Overlays;
   private snowfall: Snowfall;
@@ -82,6 +84,7 @@ export class Renderer {
     this.scenery = new Scenery(scene, this.ground);
     this.goods = new Goods(scene);
     this.animals = new Animals(scene, this.ground);
+    this.donkeys = new Donkeys(scene, this.ground);
     this.ships = new Ships(scene);
     this.overlays = new Overlays(scene, this.ground);
     this.snowfall = new Snowfall(scene);
@@ -174,6 +177,7 @@ export class Renderer {
     this.buildings(game, now);
     this.settlers(game, now);
     this.animals.draw(game, now);
+    this.donkeys.draw(game, now, (g, x, y, z, rot) => this.goods.put(g, x, y, z, rot));
     this.ships.draw(game, now);
     this.signs.draw(game);
     this.overlays.draw(game, view);
@@ -225,6 +229,7 @@ export class Renderer {
     this.models.clear();
     this.people.clear();
     this.animals.clear();
+    this.donkeys.clear();
     this.ships.clear();
     this.ground.build(world);
   }

@@ -13,9 +13,9 @@ export function demolish(g: Game, b: Building): string | null {
   if (b === g.hq) return 'The HQ cannot be demolished';
   if (isHome(b)) return 'A landing harbour cannot be demolished';
   const home = homeOf(g, b) ?? g.hq;
-  for (const s of g.settlers.values()) {
+  for (const s of [...g.settlers.values(), ...g.donkeys.values()]) {
     if (s.job?.from !== b.id && s.job?.to !== b.id) continue;
-    cancel(g, s); // a good already picked up goes into the carrier's home
+    cancel(g, s); // goods already picked up go into the carrier's home
     s.tasks = [];
     s.path = null;
     s.walking = false;

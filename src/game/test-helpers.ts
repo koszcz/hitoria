@@ -42,6 +42,7 @@ export function totalGoods(g: Game): Bag {
   for (const b of g.buildings.values())
     for (const k of GOODS) sum[k] += b.stock[k] + b.out[k];
   for (const s of g.settlers.values()) if (s.carrying) sum[s.carrying]++;
+  for (const d of g.donkeys.values()) if (d.carrying) sum[d.carrying] += d.load ?? 1;
   return sum;
 }
 
@@ -54,11 +55,13 @@ export function expectIncomingConsistent(g: Game) {
     r[k]++;
     m.set(id, r);
   };
-  for (const s of g.settlers.values()) {
+  for (const s of [...g.settlers.values(), ...g.donkeys.values()]) {
     if (s.toolFrom) add(going, s.toolFrom, 'tool'); // a new worker coming for a tool
     if (!s.job) continue;
-    add(coming, s.job.to, s.job.g);
-    if (!s.carrying) add(going, s.job.from, s.job.g);
+    for (let i = 0; i < (s.job.n ?? 1); i++) {
+      add(coming, s.job.to, s.job.g);
+      if (!s.carrying) add(going, s.job.from, s.job.g);
+    }
   }
   for (const b of g.buildings.values()) {
     const c = coming.get(b.id) ?? bag(), o = going.get(b.id) ?? bag();

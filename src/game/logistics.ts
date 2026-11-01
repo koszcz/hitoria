@@ -1,6 +1,8 @@
 // Moving goods: what each building wants, and which carrier trips the dispatcher starts.
+// When many goods wait, pack donkeys take the trips that move two goods at once.
 import { BDEFS, GOODS, Good, PILE, RECIPES } from './defs';
 import { hire } from './carriers';
+import { DONKEY_BUSY, DONKEY_LOAD, hireDonkey } from './donkeys';
 import type { Game } from './game';
 import { pantry } from './houses';
 import { isStore } from './stores';
@@ -24,7 +26,22 @@ function missing(b: Building, g: Good) {
   return want(b, g) - b.stock[g] - b.incoming[g];
 }
 
+// Goods waiting to move: finished goods no carrier is coming for, and goods buildings still need.
+export function waiting(g: Game) {
+  let n = 0;
+  for (const b of g.buildings.values()) {
+    if (isStore(b)) continue;
+    for (const k of GOODS) n += (b.built ? b.out[k] - b.sending[k] : 0) + Math.max(0, missing(b, k));
+  }
+  return n;
+}
+
 export function moveGoods(g: Game) {
+  const packs = waiting(g) >= DONKEY_BUSY;
+  // A trip a donkey can take: many goods wait, and both ends have room for a full load.
+  const pack = (left: number, need: number, job: { from: number; to: number; g: Good }) =>
+    packs && left >= DONKEY_LOAD && need >= DONKEY_LOAD && hireDonkey(g, job);
+
   // Finished goods go to the nearest building that needs them, else to the nearest store.
   for (const b of g.buildings.values()) {
     if (isStore(b) || !b.built) continue;
@@ -32,7 +49,9 @@ export function moveGoods(g: Game) {
       while (b.out[k] > b.sending[k]) {
         const to = pickDest(g, b, k);
         if (!to) break;
-        if (!hire(g, { from: b.id, to: to.id, g: k })) return;
+        const job = { from: b.id, to: to.id, g: k };
+        if (pack(b.out[k] - b.sending[k], isStore(to) ? Infinity : missing(to, k), job)) continue;
+        if (!hire(g, job)) return;
       }
   }
 
@@ -47,7 +66,9 @@ export function moveGoods(g: Game) {
       while (missing(b, k) > 0) {
         const s = stores.find((s) => s.stock[k] > s.sending[k]);
         if (!s) break;
-        if (!hire(g, { from: s.id, to: b.id, g: k })) return;
+        const job = { from: s.id, to: b.id, g: k };
+        if (pack(s.stock[k] - s.sending[k], missing(b, k), job)) continue;
+        if (!hire(g, job)) return;
       }
   }
 }

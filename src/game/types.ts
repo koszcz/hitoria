@@ -30,6 +30,7 @@ export interface Job {
   from: number;
   to: number;
   g: Good;
+  n?: number; // how many of the good, 1 if not given; a pack donkey carries 2
 }
 
 export type Task =
@@ -45,6 +46,8 @@ export interface Settler {
   path: P[] | null;
   tasks: Task[];
   carrying: Good | null;
+  load?: number; // how many of `carrying` are in hand, 1 if not given
+  donkey?: boolean; // a pack donkey, not a settler: it lives in the game's `donkeys`
   job: Job | null; // a carrier's current trip
   home: number; // building a worker or builder belongs to
   base: number; // the HQ or landing harbour the settler came out of, and goes back to
