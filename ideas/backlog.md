@@ -5,7 +5,6 @@ How to add and triage ideas: see [README.md](README.md).
 ## Building now
 
 - **Finer mountain mesh**: mountains get more detail, so you see crags and rock faces up close. *Fun 1 · Effort M · Branch: claude/finer-mountain-mesh-e4c9e4*
-- **Gameplay review quick fixes**: four small fixes from the gameplay review, built together. (1) The winter goal counts only workers and mines that are really hungry, not houses waiting to grow, and fishers catch less in winter so stored food matters. (2) A house or worker that gets more than one kind of food grows settlers faster or eats less often, so the bread chain and hunting stay useful. (3) A saved, dated chronicle of milestones, such as the first birth or the tenth trade ship, shows when you load your island. (4) "Build 3 houses" is replaced with a goal that teaches something new, and the game warns you before you use up the tools the ship needs. *Fun 2 · Effort M · Branch: claude/build-eca1e3*
 
 ## Next
 
@@ -38,6 +37,7 @@ Triaged, but not next.
 
 Newest first, with the date it was merged.
 
+- **Gameplay review quick fixes**: four small fixes from the gameplay review, built together. (1) The winter goal counts only workers and mines that are really hungry, not houses waiting to grow, and fishers catch less in winter so stored food matters. (2) A house or worker that gets more than one kind of food grows settlers faster or eats less often, so the bread chain and hunting stay useful. (3) A saved, dated chronicle of milestones, such as the first birth or the tenth trade ship, shows when you load your island. (4) "Build 3 houses" is replaced with a goal that teaches something new, and the game warns you before you use up the tools the ship needs. *2026-11-01*
 - **Fast nights**: the clock runs fast once every worker is in bed, and drops back to normal speed at dawn. It is on by default, and you can turn it off. *2026-11-01*
 - **Workers sleep at night**: after dusk, workers walk home and sleep in houses or the HQ, and work stops until dawn. Carriers and donkeys keep working. *2026-11-01*
 - **Day and season clock**: a small dial in the HUD shows the time of day, the season and the day count. *2026-11-01*
