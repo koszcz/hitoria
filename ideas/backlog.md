@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S · Branch: worktree-agent-a4f659e2f85580367*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S*
 - **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S*
 
 ## Inbox
