@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map · Branch: worktree-agent-add7912cd79ba3c6d*
+Nothing right now.
 
 ## Next
 
@@ -38,6 +38,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *2026-11-02*
 - **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *2026-11-02*
 - **Rates in the info panel**: a building's panel shows what it made and used in the last minute, such as "Made 12 Water" and "Used 1 Fish". Workers' meals and a house's food count as used. *2026-11-02*
 - **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *2026-11-02*

@@ -89,7 +89,7 @@ first, the wish just passes, with no penalty, and a new one comes.
      also stand on the edge of a mountain, if there is open grass in front of its door. From
      there it reaches rich spots deeper in the mountain.
    - Across the water from the bay lies a second island, about 20 tiles across. Farther out, to one side of the bay, lies
-     the far island. To settle them, build a harbour, click it and press **Set sail**. See
+     the far island, about 26 tiles across, the largest of the three. To settle them, build a harbour, click it and press **Set sail**. See
      "Settling the second island" below.
    - The two islands have different themes, chosen at random for each new map. One is a pine
      highland, with dense pine forest and rock cliffs on the shore that faces the open sea. The
@@ -143,9 +143,11 @@ to build, work and carry goods. Buildings on the island get their goods from it 
 they make back to it. Settlers never cross the sea on foot.
 
 Once the ship is back, you can sail a second time, to the far island. It takes another 5
-settlers and the same goods. The far island has a mountain with coal and iron ore too, and all of
-its ore is rich, so every mine there digs twice as fast. Each island gets one crew, so you can
-sail twice in all.
+settlers and the same goods. The far island has a mountain ridge with coal and iron ore too, and
+all of its ore is rich, so every mine there digs twice as fast. Its ridge runs across the island,
+a little towards the shore where the ship lands, so your mines fit near the landing. Walk around
+the ends of the ridge to reach the meadows behind it. Each island gets one crew, so you can sail
+twice in all.
 
 The second island has a mountain ridge with coal and iron ore in it. The ridge runs across the
 middle of the island, with meadows on both sides. Build your coal and iron mines at its foot, and
@@ -343,7 +345,8 @@ second island's mountain, every mountain still holds coal and iron ore. Maps fro
 keep their round mountains. Maps from before the far island have no far island, so their settlers
 sail only once. Maps from before island themes keep islands with no theme. Maps from before the
 bigger map stay 64 by 64 tiles. New maps are 96 by 96, with wide open sea around the land. Maps
-from before the bigger second island keep a second island about 13 tiles across.
+from before the bigger second island keep a second island about 13 tiles across. Maps from before
+the bigger far island keep a far island about 13 tiles across.
 
 ## Graphics
 
@@ -376,7 +379,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
-| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine and meadow themes of the two islands (`themes.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island (`isle.ts`) |
+| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine and meadow themes of the two islands (`themes.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, and where the far island sits (`isle.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |

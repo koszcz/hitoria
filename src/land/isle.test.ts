@@ -60,7 +60,8 @@ describe('bigger second island', () => {
       test('has more forest', () => {
         const trees = (v: World, land: typeof isle) => count(land, (t) => t.tree > 0, v);
         expect(trees(w, isle)).toBeGreaterThan(trees(old, was));
-        if (w.themes!.other === 'pines') expect(trees(w, isle)).toBeGreaterThanOrEqual(80);
+        // From map version 11, pines keep a wider clear foot by the ridge, so mines always fit there.
+        if (w.themes!.other === 'pines') expect(trees(w, isle)).toBeGreaterThanOrEqual(70);
       });
 
       test('has a longer ridge, with at least 1.6 times the ore', () => {
@@ -86,11 +87,12 @@ describe('bigger second island', () => {
         expect(seen.size).toBe(ground.length);
       });
 
-      test('the far island keeps its size, with open sea between it and the second island', () => {
-        const far = landOf(w, 'far');
-        expect(across(w, far, w.far!)).toBeLessThanOrEqual(16);
+      // From map version 11, the far island is bigger too. See src/land/farisle.test.ts.
+      test('on map version 10, the far island keeps its size, with open sea between it and the second island', () => {
+        const v10 = new World(seed, BIG_ISLE_FROM), far = landOf(v10, 'far'), near = landOf(v10, 'other');
+        expect(across(v10, far, v10.far!)).toBeLessThanOrEqual(16);
         let gap = Infinity;
-        for (const a of isle) for (const b of far) gap = Math.min(gap, Math.hypot(a.x - b.x, a.y - b.y));
+        for (const a of near) for (const b of far) gap = Math.min(gap, Math.hypot(a.x - b.x, a.y - b.y));
         expect(gap).toBeGreaterThanOrEqual(4);
       });
 

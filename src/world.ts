@@ -3,8 +3,8 @@ import { ranges, toRidge } from './land/ranges';
 import { THEME_HUE, THEME_LIGHT, drawThemes, meadowPlant, raiseCliffs, themeConifer, themeTree } from './land/themes';
 import type { IsleName, Theme } from './land/themes';
 import { OLD_SIZE, OPEN_SEA, mapSize, surround } from './land/size';
-import { BIG_ISLE_FROM, SMALL_ISLE, farApart, island, isleShape } from './land/isle';
-import type { IsleSize } from './land/isle';
+import { BIG_FAR_FROM, BIG_ISLE_FROM, EDGE_SEA, farShape, island, isleShape, placeFar } from './land/isle';
+import type { FarPlace, IsleSize } from './land/isle';
 
 export { rng };
 
@@ -38,7 +38,8 @@ export interface Tile {
 // 8: the second and far island get two different themes: pine highlands and wild meadows.
 // 9: the map is 96 by 96 tiles. The land stays inside the middle 64 by 64, with open sea around it.
 // 10: the second island is about 20 tiles across, with a longer ridge. It reaches past the middle 64 by 64.
-export const MAP_VERSION = 10;
+// 11: the far island is about 26 tiles across, the largest of the three, with a longer ridge.
+export const MAP_VERSION = 11;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -70,17 +71,10 @@ const BANK = 2.8;
 const BANK_NEAR = 11;
 // No trees or boulders grow this close to the top of the second island's mountain, so mines fit at its foot.
 const ISLE_FOOT = 4;
-// From map version 8, pines grow closer to the mountain on a pine island, leaving a narrower clear foot.
-const PINE_FOOT = 3.5;
-// From map version 7, the far island: how far its centre sits from the start, to one side of the
-// bay. It is the same size as the second island and has a mountain like it.
-const FAR_AWAY = 24;
-// From map version 7, how far the far island may turn from the bay's direction, in degrees. The far
-// island is the size of the old second island, and always has a grove, so it always has trees.
-const FAR_TURN = [50, 130];
-// From map version 7, open sea runs this many tiles wide around the edge of the map, so a ship can
-// sail around the home island to the far island.
-const EDGE_SEA = 3;
+// From map version 8, pines grow closer to the mountain on a pine island, leaving a narrower clear
+// foot. From map version 11, the foot is wider again, so coal and iron mines always fit there.
+const PINE_FOOT = (map: number) => (map >= BIG_FAR_FROM ? 4.5 : 3.5);
+// From map version 7, a far island lies farther out. Its size and place are in farShape and placeFar.
 // The guaranteed grove and quarry near the start: how wide they are.
 const GROVE = 2.8;
 const QUARRY = 1.9;
@@ -97,9 +91,11 @@ export class World {
   // From map version 4, the centre of the second island. Null on older maps.
   isle: { x: number; y: number } | null = null;
   // From map version 7, the centre of the far island, and the way it faces out to sea. Null on older maps.
-  far: { x: number; y: number; out: { x: number; y: number } } | null = null;
+  far: FarPlace | null = null;
   // The size and place of the second island on this map. See isleShape.
   readonly shape: IsleSize;
+  // The size of the far island on this map. See farShape.
+  readonly farShape: IsleSize;
   // From map version 8, the theme of the second and far island. Null on older maps.
   themes: Record<IsleName, Theme> | null = null;
   // 1 on the sea cliffs of a pine island. Cliffs are bare rock with no ore.
@@ -112,7 +108,7 @@ export class World {
     this.ore = new Uint8Array(W * H);
     this.cliff = new Uint8Array(W * H);
     this.start = { x: W / 2, y: H / 2 };
-    const isl = (this.shape = isleShape(map));
+    const isl = (this.shape = isleShape(map)), fsh = (this.farShape = farShape(map));
     // In map version 9, the land is the same as on an old-size map, with open sea all around it.
     if (size > OLD_SIZE && map < BIG_ISLE_FROM) {
       surround(this, new World(seed, map, OLD_SIZE));
@@ -145,8 +141,8 @@ export class World {
     const away = { x: (peak.x - sx) / PEAK_AWAY, y: (peak.y - sy) / PEAK_AWAY };
     const peakEnd = { x: peak.x + away.x * PEAK_RIDGE, y: peak.y + away.y * PEAK_RIDGE };
     const isleEnds = [-1, 1].map((k) => ({ x: islePeak.x - out.y * isl.ridge * k, y: islePeak.y + out.x * isl.ridge * k }));
-    const far = (this.far = map >= 7 ? this.farPlace(seed, out, isle) : null);
-    const { peakAway: fpa, ridge: fr, size: farSize } = SMALL_ISLE;
+    const far = (this.far = map >= 7 ? placeFar(seed, map, W, this.start, out, isle) : null);
+    const { peakAway: fpa, ridge: fr, size: farSize } = fsh;
     const farPeak = far && { x: far.x + far.out.x * fpa, y: far.y + far.out.y * fpa };
     const farEnds = far && [-1, 1].map((k) => ({ x: farPeak!.x - far.out.y * fr * k, y: farPeak!.y + far.out.x * fr * k }));
     const toFarPeakAt = (x: number, y: number) => (farEnds ? toRidge(x, y, farEnds[0], farEnds[1]) : Infinity);
@@ -154,7 +150,7 @@ export class World {
       ({ x: c.x - o.x * s.groveIn - o.y * s.groveSide, y: c.y - o.y * s.groveIn + o.x * s.groveSide, r: s.grove });
     const themes = (this.themes = far && map >= 8 ? drawThemes(seed) : null);
     // The far island always has a grove. From map version 8, a meadow second island gets one too.
-    const groves = [far && groveOf(far, far.out, SMALL_ISLE), themes?.other === 'meadow' ? groveOf(isle, out, isl) : null].filter((c) => !!c);
+    const groves = [far && groveOf(far, far.out, fsh), themes?.other === 'meadow' ? groveOf(isle, out, isl) : null].filter((c) => !!c);
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
     const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : Math.hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
@@ -213,7 +209,7 @@ export class World {
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
         // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
-        const footOf = (isle: IsleName) => (themes?.[isle] === 'pines' ? PINE_FOOT : ISLE_FOOT);
+        const footOf = (isle: IsleName) => (themes?.[isle] === 'pines' ? PINE_FOOT(map) : ISLE_FOOT);
         const foot = (landmarks && toPeakAt(x, y) < PEAK_SIZE + 2.5) || (map >= 5 && toIslePeakAt(x, y) < footOf('other')) ||
           toFarPeakAt(x, y) < footOf('far');
         // From map version 6, the bank of the bay near the start stays clear too, so a harbour fits there.
@@ -267,32 +263,11 @@ export class World {
     };
   }
 
-  // Where the far island sits: to the left or right of the bay, as seen from the start, facing away
-  // from the start. Of the spots that fit inside the sea at the map's edge and keep clear of the
-  // second island, it takes the one farthest from the start. It takes its own random numbers, so
-  // the rest of the map keeps its shape.
-  private farPlace(seed: number, bay: { x: number; y: number }, isle: { x: number; y: number }) {
-    const k = rng(seed ^ 0xfa12)() < 0.5 ? 1 : -1;
-    const room = SMALL_ISLE.size + EDGE_SEA + 2;
-    const fit = (v: number) => Math.max(room, Math.min(this.w - 1 - room, v));
-    const { x: sx, y: sy } = this.start;
-    let best = null, bd = -1;
-    for (let deg = FAR_TURN[0]; deg <= FAR_TURN[1]; deg += 5) {
-      const a = Math.atan2(bay.y, bay.x) + (k * deg * Math.PI) / 180;
-      const out = { x: Math.cos(a), y: Math.sin(a) };
-      const x = fit(sx + out.x * FAR_AWAY), y = fit(sy + out.y * FAR_AWAY), d = Math.hypot(x - sx, y - sy);
-      if (Math.hypot(x - isle.x, y - isle.y) < farApart(this.map) || d <= bd) continue;
-      best = { x, y, out };
-      bd = d;
-    }
-    return best!;
-  }
-
   // Which island the tile at (x, y) is on: 'other' for the second island, 'far' for the far
   // island, or null for neither. A tile counts if it lies within `more` tiles past the island's size.
   isleAt(x: number, y: number, more = 2): 'other' | 'far' | null {
     if (this.isle && Math.hypot(x - this.isle.x, y - this.isle.y) < this.shape.size + more) return 'other';
-    if (this.far && Math.hypot(x - this.far.x, y - this.far.y) < SMALL_ISLE.size + more) return 'far';
+    if (this.far && Math.hypot(x - this.far.x, y - this.far.y) < this.farShape.size + more) return 'far';
     return null;
   }
 
