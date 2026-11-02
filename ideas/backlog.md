@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S · Branch: worktree-agent-adbea6cd20ec61dce*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
+Empty.
 
 ## Inbox
 
