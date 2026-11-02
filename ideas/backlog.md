@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-Empty.
+- **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *Fun 2 · Effort S*
+- **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
+- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 
 ## Inbox
 
@@ -29,9 +31,6 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-- **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *Fun 2 · Effort S*
-- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
-- **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
 - **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *Fun 1 · Effort M*
 - **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
 - **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
