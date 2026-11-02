@@ -3,6 +3,7 @@ import type { P } from '../path';
 import { DOCK_REACH } from './defs';
 import type { Game } from './game';
 import type { Building } from './types';
+import { hypot } from '../math/exact';
 
 // Open water: the tile and all eight around it are water, so a ship has room to turn.
 function open(g: Game, x: number, y: number) {
@@ -17,7 +18,7 @@ export function dockAt(g: Game, x: number, y: number): P | null {
   let best: P | null = null, bd = Infinity;
   for (let dy = -DOCK_REACH; dy <= DOCK_REACH; dy++)
     for (let dx = -DOCK_REACH; dx <= DOCK_REACH; dx++) {
-      const d = Math.hypot(dx, dy);
+      const d = hypot(dx, dy);
       if (d > DOCK_REACH || d >= bd || !open(g, x + dx, y + dy)) continue;
       best = { x: x + dx, y: y + dy };
       bd = d;

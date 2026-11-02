@@ -6,6 +6,7 @@
 import type { World } from '../world';
 import { COVE_FROM } from './cove';
 import { rng } from './noise';
+import { hypot } from '../math/exact';
 
 export type Theme = 'pines' | 'meadow' | 'cove';
 export type IsleName = 'other' | 'far';
@@ -49,7 +50,7 @@ export function raiseCliffs(world: World, isle: IsleShape) {
   const cliffs: number[] = [], { w: W, h: H } = world;
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
-      const dx = x - isle.x, dy = y - isle.y, d = Math.hypot(dx, dy);
+      const dx = x - isle.x, dy = y - isle.y, d = hypot(dx, dy);
       if (world.at(x, y).t === 'water' || world.isleAt(x, y) !== name || d === 0) continue;
       if ((dx * isle.out.x + dy * isle.out.y) / d < CLIFF_FACE || !nearWater(world, x, y)) continue;
       cliffs.push(y * W + x);
@@ -66,7 +67,7 @@ function nearWater(world: World, x: number, y: number) {
   const r = Math.ceil(CLIFF_DEPTH);
   for (let dy = -r; dy <= r; dy++)
     for (let dx = -r; dx <= r; dx++)
-      if (Math.hypot(dx, dy) <= CLIFF_DEPTH && world.inside(x + dx, y + dy) && world.at(x + dx, y + dy).t === 'water') return true;
+      if (hypot(dx, dy) <= CLIFF_DEPTH && world.inside(x + dx, y + dy) && world.at(x + dx, y + dy).t === 'water') return true;
   return false;
 }
 

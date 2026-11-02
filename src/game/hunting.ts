@@ -3,6 +3,7 @@ import { BDEFS, Good } from './defs';
 import { addAnimal, openSpot } from './animals';
 import type { Game } from './game';
 import type { Animal, AnimalKind, Building, Settler, Task } from './types';
+import { hypot } from '../math/exact';
 
 export const HUNT_RANGE = BDEFS.hunter.radius;
 export const ANIMAL_RETURN = 60; // seconds until a caught animal is replaced by a new one
@@ -46,7 +47,7 @@ function nearestPrey(g: Game, b: Building) {
   let best: Animal | null = null, bd = Infinity;
   for (const a of g.animals.values()) {
     if (!PREY.includes(a.kind) || a.hunter || (spared.get(a) ?? 0) > g.time) continue;
-    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    const d = hypot(a.x - b.x, a.y - b.y);
     if (d <= HUNT_RANGE && d < bd) { bd = d; best = a; }
   }
   return best;

@@ -5,6 +5,7 @@ import { rng } from '../world';
 import { isleWith } from '../land/themes';
 import type { Game } from './game';
 import type { Animal, AnimalKind } from './types';
+import { cos, hypot, sin } from '../math/exact';
 
 const HERDS = 3; // deer herds of 2 or 3
 const HARES = 5;
@@ -76,7 +77,7 @@ export function addAnimal(g: Game, kind: AnimalKind, x: number, y: number, rand:
 // Open grass an animal can stand on, away from the HQ.
 function open(g: Game, x: number, y: number) {
   if (!g.world.inside(x, y) || !g.passable(x, y)) return false;
-  return g.world.at(x, y).t === 'grass' && Math.hypot(x - g.hq.x, y - g.hq.y) >= AWAY;
+  return g.world.at(x, y).t === 'grass' && hypot(x - g.hq.x, y - g.hq.y) >= AWAY;
 }
 
 function treesNear(g: Game, x: number, y: number, r: number) {
@@ -116,7 +117,7 @@ export function stepAnimal(g: Game, a: Animal, dt: number) {
   let left = ANIMAL[a.kind].speed * (a.fleeing ? FLEE_SPEED : 1) * dt;
   while (left > 0 && a.path.length) {
     const n = a.path[0];
-    const dx = n.x - a.x, dy = n.y - a.y, d = Math.hypot(dx, dy);
+    const dx = n.x - a.x, dy = n.y - a.y, d = hypot(dx, dy);
     if (d > 0.01) a.facing = dx - dy >= 0 ? 1 : -1;
     if (d <= left) {
       a.x = n.x;
@@ -141,7 +142,7 @@ function roam(g: Game, a: Animal) {
   for (let i = 0; i < 6; i++) {
     const x = a.home.x + Math.round((g.rand() * 2 - 1) * ROAM);
     const y = a.home.y + Math.round((g.rand() * 2 - 1) * ROAM);
-    if (Math.hypot(x - a.home.x, y - a.home.y) > ROAM) continue;
+    if (hypot(x - a.home.x, y - a.home.y) > ROAM) continue;
     const p = pathTo(g, a, x, y);
     if (p) return p;
   }
@@ -150,10 +151,13 @@ function roam(g: Game, a: Animal) {
 
 // Step aside: walk a few tiles straight away from the settler, staying near home.
 function flee(g: Game, a: Animal, s: { x: number; y: number }) {
-  const away = Math.atan2(a.y - s.y, a.x - s.x);
+  const d = hypot(a.x - s.x, a.y - s.y);
+  const ux = d ? (a.x - s.x) / d : 1, uy = d ? (a.y - s.y) / d : 0;
   for (const turn of [0, 0.6, -0.6, 1.2, -1.2, 1.8, -1.8]) {
-    const x = Math.round(a.x + Math.cos(away + turn) * FLEE), y = Math.round(a.y + Math.sin(away + turn) * FLEE);
-    if (Math.hypot(x - a.home.x, y - a.home.y) > ROAM + 2) continue;
+    // The way away from the settler, turned by `turn`.
+    const c = cos(turn), t = sin(turn);
+    const x = Math.round(a.x + (ux * c - uy * t) * FLEE), y = Math.round(a.y + (ux * t + uy * c) * FLEE);
+    if (hypot(x - a.home.x, y - a.home.y) > ROAM + 2) continue;
     const p = pathTo(g, a, x, y);
     if (!p) continue;
     a.path = p;
@@ -166,7 +170,7 @@ function flee(g: Game, a: Animal, s: { x: number; y: number }) {
 // The path keeps to tiles near home, so a detour around trees or water never leads the animal away.
 function pathTo(g: Game, a: Animal, x: number, y: number) {
   if (!g.world.inside(x, y) || !g.passable(x, y)) return null;
-  const near = (tx: number, ty: number) => Math.hypot(tx - a.home.x, ty - a.home.y) <= ROAM + 2 && g.passable(tx, ty);
+  const near = (tx: number, ty: number) => hypot(tx - a.home.x, ty - a.home.y) <= ROAM + 2 && g.passable(tx, ty);
   const p = findPath(g.world, Math.round(a.x), Math.round(a.y), x, y, near, 300);
   return p && p.length ? p : null;
 }
@@ -174,6 +178,6 @@ function pathTo(g: Game, a: Animal, x: number, y: number) {
 function closeSettler(g: Game, a: Animal) {
   const shy = ANIMAL[a.kind].shy;
   for (const s of g.settlers.values())
-    if (!s.inside && Math.hypot(s.x - a.x, s.y - a.y) < shy) return s;
+    if (!s.inside && hypot(s.x - a.x, s.y - a.y) < shy) return s;
   return null;
 }

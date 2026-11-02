@@ -2,6 +2,7 @@
 // mountain ridge runs. From map version 10, the second island is bigger, with a longer ridge. From
 // map version 11, the far island is bigger still, the largest of the three.
 import { rng } from './noise';
+import { cos, hypot, sin } from '../math/exact';
 
 // From map version 10, the second island is about 20 tiles across instead of 13.
 export const BIG_ISLE_FROM = 10;
@@ -65,13 +66,15 @@ export function placeFar(seed: number, map: number, size: number, start: { x: nu
   const k = rng(seed ^ 0xfa12)() < 0.5 ? 1 : -1;
   const room = farShape(map).size + EDGE_SEA + 2;
   const fit = (v: number) => Math.max(room, Math.min(size - 1 - room, v));
+  const len = hypot(bay.x, bay.y), ux = bay.x / len, uy = bay.y / len;
   let best: FarPlace | null = null, bd = -1;
   for (let deg = FAR_TURN[0]; deg <= FAR_TURN[1]; deg += 5) {
-    const a = Math.atan2(bay.y, bay.x) + (k * deg * Math.PI) / 180;
-    const out = { x: Math.cos(a), y: Math.sin(a) };
+    // The bay's direction, turned by `deg` degrees.
+    const a = (k * deg * Math.PI) / 180, c = cos(a), s = sin(a);
+    const out = { x: ux * c - uy * s, y: ux * s + uy * c };
     const x = fit(start.x + out.x * FAR_AWAY(map)), y = fit(start.y + out.y * FAR_AWAY(map));
-    const d = Math.hypot(x - start.x, y - start.y);
-    if (Math.hypot(x - isle.x, y - isle.y) < farApart(map) || d <= bd) continue;
+    const d = hypot(x - start.x, y - start.y);
+    if (hypot(x - isle.x, y - isle.y) < farApart(map) || d <= bd) continue;
     best = { x, y, out };
     bd = d;
   }
@@ -89,9 +92,9 @@ const SLOPE = 0.065;
 // from the noise so its shore is not a perfect circle.
 export function island(h: number, dx: number, dy: number, out: { x: number; y: number }, bump: number, size: number) {
   const past = Math.max(0, dx * out.x + dy * out.y);
-  const side = Math.hypot(dx - out.x * past, dy - out.y * past);
+  const side = hypot(dx - out.x * past, dy - out.y * past);
   const shore = size + STRAIT + 1.2;
   h = Math.min(h, side < size + STRAIT ? 0.22 : side < shore ? 0.32 : 0.62 + (side - shore) * SLOPE);
-  const r = Math.hypot(dx, dy) / size;
+  const r = hypot(dx, dy) / size;
   return r < 1 ? Math.max(h, 0.24 + (1 - r * r) * 0.38 + (bump - 0.5) * 0.08) : h;
 }

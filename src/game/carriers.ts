@@ -6,6 +6,7 @@ import { homeOf } from './homes';
 import { baseOf, despawn, takeSettler } from './settlers';
 import { isStore } from './stores';
 import type { Building, Job, Settler, Task } from './types';
+import { hypot } from '../math/exact';
 
 const carriers = (g: Game) => [...g.settlers.values()].filter((s) => s.role === 'carrier');
 
@@ -85,7 +86,7 @@ export function nearestFree(all: Settler[], b: Building) {
   let best: Settler | null = null, bd = Infinity;
   for (const s of all) {
     if (s.job) continue;
-    const d = Math.hypot(s.x - b.x, s.y - b.y);
+    const d = hypot(s.x - b.x, s.y - b.y);
     if (d < bd) { bd = d; best = s; }
   }
   return best;

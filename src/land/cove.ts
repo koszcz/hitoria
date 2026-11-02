@@ -1,6 +1,7 @@
 // The hidden cove, from map version 12: on the island with the cove theme, a sheltered lagoon cuts
 // deep into the land from the seaward shore, through a narrow mouth, ringed by a sandy shore.
 import { rng } from './noise';
+import { hypot } from '../math/exact';
 import type { IsleSize } from './isle';
 import type { World } from '../world';
 import type { IsleName } from './themes';
@@ -39,8 +40,8 @@ export function coveOf(seed: number, c: { x: number; y: number }, out: { x: numb
     const dx = x - c.x, dy = y - c.y;
     // u runs from the basin's middle out to sea, v across the lagoon.
     const u = dx * out.x + dy * out.y - mid, v = dx * -out.y + dy * out.x - side;
-    const basin = Math.hypot(v, u - Math.max(-long, Math.min(long, u))) - BASIN_WIDE;
-    const mouth = Math.hypot(v, Math.min(0, u)) - MOUTH;
+    const basin = hypot(v, u - Math.max(-long, Math.min(long, u))) - BASIN_WIDE;
+    const mouth = hypot(v, Math.min(0, u)) - MOUTH;
     return Math.min(basin, mouth);
   };
   const carve = (x: number, y: number, h: number) => {

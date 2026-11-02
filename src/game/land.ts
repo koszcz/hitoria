@@ -3,6 +3,7 @@ import { Tile } from '../world';
 import { BDEFS, PATH_SPEED, WEAR_SHOWS } from './defs';
 import type { Game } from './game';
 import { isHome, LANDING_LAND } from './homes';
+import { hypot } from '../math/exact';
 
 export function passable(g: Game, x: number, y: number) {
   const t = g.world.at(x, y);
@@ -36,7 +37,7 @@ export function openGround(g: Game, x: number, y: number) {
 export function near(g: Game, x: number, y: number, r: number, ok: (t: Tile) => boolean) {
   for (let dy = -r; dy <= r; dy++)
     for (let dx = -r; dx <= r; dx++)
-      if (Math.hypot(dx, dy) <= r && g.world.inside(x + dx, y + dy) && ok(g.world.at(x + dx, y + dy))) return true;
+      if (hypot(dx, dy) <= r && g.world.inside(x + dx, y + dy) && ok(g.world.at(x + dx, y + dy))) return true;
   return false;
 }
 
@@ -44,7 +45,7 @@ export function near(g: Game, x: number, y: number, r: number, ok: (t: Tile) => 
 export function nearOre(g: Game, x: number, y: number, r: number) {
   for (let dy = -r; dy <= r; dy++)
     for (let dx = -r; dx <= r; dx++)
-      if (Math.hypot(dx, dy) <= r && g.world.inside(x + dx, y + dy) && g.world.hasOre(x + dx, y + dy)) return true;
+      if (hypot(dx, dy) <= r && g.world.inside(x + dx, y + dy) && g.world.hasOre(x + dx, y + dy)) return true;
   return false;
 }
 
@@ -74,6 +75,6 @@ export function computeTerritory(g: Game) {
     const r = b.type === 'harbour' ? LANDING_LAND : BDEFS[b.type].radius;
     for (let y = b.y - r; y <= b.y + r; y++)
       for (let x = b.x - r; x <= b.x + r; x++)
-        if (g.world.inside(x, y) && Math.hypot(x - b.x, y - b.y) <= r + 0.3) t[y * g.world.w + x] = 1;
+        if (g.world.inside(x, y) && hypot(x - b.x, y - b.y) <= r + 0.3) t[y * g.world.w + x] = 1;
   }
 }

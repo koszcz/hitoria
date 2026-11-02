@@ -27,6 +27,12 @@ const RULES: Rule[] = [
     bad: /\bMath\.random\b|\bDate\.now\b|\bperformance\.now\b/,
     why: 'reads chance or the clock. Use g.rand and game time, so tests give the same result every run.',
   },
+  {
+    files: ['src/world.ts', 'src/land/**/*.ts', 'src/game/**/*.ts'],
+    skip: (file) => file.endsWith('.test.ts'),
+    bad: /\bMath\.(sin|cos|tan|asin|acos|atan2?|sinh|cosh|tanh|exp|expm1|log|log1p|log2|log10|pow|cbrt|hypot)\b|[^/]\*\*/,
+    why: 'uses math that can differ between machines. Use sin, cos and hypot from src/math/exact.ts, and multiply instead of **.',
+  },
 ];
 
 const problems: string[] = [];
