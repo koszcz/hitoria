@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-Empty.
+- **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
+- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
+- **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
 
 ## Inbox
 
@@ -30,9 +32,7 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-- **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
-- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
-- **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
+Empty.
 
 ## Done
 
