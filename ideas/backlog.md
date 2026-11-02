@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-Empty.
+- **Fair winter goal**: the winter goal counts hungry workers on the home island, and on a colony only once it has its own food maker, such as a Fisher's Hut. A starving new colony no longer makes the goal impossible. *Fun 2 · Effort S*
+- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S*
+- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S*
 
 ## Inbox
 
@@ -32,11 +34,8 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 
 Triaged and ready to build, but not next.
 
-- **Fair winter goal**: the winter goal counts hungry workers on the home island, and on a colony only once it has its own food maker, such as a Fisher's Hut. A starving new colony no longer makes the goal impossible. *Fun 2 · Effort S*
-- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
-- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
 - **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
 - **Say where coal and iron lie**: the Coal Mine, Iron Mine and Smelter cards say that coal and iron ore lie only in the mountains of the other islands, before the player builds a Smelter or Toolmaker for nothing. *Fun 1 · Effort S*
