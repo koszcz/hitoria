@@ -32,6 +32,7 @@ Empty.
 
 Triaged and ready to build, but not next.
 
+- **Stop work at a hut**: a hut's info panel has a Stop work button. Its worker walks home and takes the next hut that needs a worker, and nobody is sent to the stopped hut until you press Resume work. The hut keeps its tool, and the choice is saved. Use it when settlers run short, such as to stop a stone mine while you have plenty of stone. *Fun 2 · Effort S*
 - **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
 - **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *Fun 1 · Effort M*
 - **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
