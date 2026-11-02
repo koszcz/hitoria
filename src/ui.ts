@@ -189,12 +189,13 @@ export class UI {
     this.refresh();
   }
 
-  toast(msg: string) {
+  toast(msg: string, ms = 3200) {
     const el = document.createElement('div');
     el.className = 'toast';
     el.textContent = tr(msg);
+    el.style.animationDuration = `${ms}ms`;
     $('toasts').appendChild(el);
-    setTimeout(() => el.remove(), 3200);
+    setTimeout(() => el.remove(), ms);
   }
 
   // The panel at the top left: the goal the player is on now, and how close they are.

@@ -51,6 +51,7 @@ const EN = {
   someNeed: (n: number, all: number, g: Good) => `${n} of ${all} buildings need ${goodName(g)} to be built.`,
   feeds: (g: Good, users: BType[]) =>
     `${goodName(g)} ${goodName(g).endsWith('s') ? 'feed' : 'feeds'} the ${join(users.map(bname), 'and')}.`,
+  workersEat: (g: Good, huts: BType[]) => `${goodName(g)} also feeds the workers in the ${join(huts.map(bname), 'and')}.`,
   worth: {
     woodcutter: "Trees run out unless a Forester's Hut replants them.",
     forester: 'Without one, your woodcutters run out of trees.',
@@ -96,6 +97,7 @@ const PL: typeof EN = {
   everyNeeds: (g) => `Każdy budynek wymaga do budowy materiału: ${goodName(g)}.`,
   someNeed: (n, all, g) => `${n} z ${all} budynków wymaga do budowy materiału: ${goodName(g)}.`,
   feeds: (g, users) => `${goodName(g)} ${PLURAL_PL[g] ? 'zasilają' : 'zasila'}: ${join(users.map(bname), 'i')}.`,
+  workersEat: (g, huts) => `${goodName(g)} jedzą też pracownicy: ${join(huts.map(bname), 'i')}.`,
   worth: {
     woodcutter: 'Drzewa się skończą, chyba że Chata leśnika posadzi nowe.',
     forester: 'Bez niej drwalom skończą się drzewa.',
@@ -146,6 +148,8 @@ const needs = (t: BType): Good[][] => {
   return t === 'house' ? [HOUSE_FOOD] : [];
 };
 export const consumers = (g: Good) => BUILDABLE.filter((t) => eats(t).includes(g));
+// Huts whose worker eats food that carriers bring from your stores.
+export const workerEaters = () => BUILDABLE.filter((t) => hungryWorker(t) && !SELF_FED.includes(t));
 export const buildersOf = (g: Good) => BUILDABLE.filter((t) => BDEFS[t].cost[g]);
 
 // The fixed facts about a building type, shown before you place it.
@@ -175,6 +179,7 @@ export function buildFacts(type: BType): BuildFacts {
     const eat = consumers(out).filter((t) => t !== type);
     if (eat.length) worth.push(x.feeds(out, eat));
     else if (!users.length && out !== 'tool') worth.push(x.unused(out)); // tools go to new workers
+    if (HOUSE_FOOD.includes(out)) worth.push(x.workersEat(out, workerEaters()));
   }
   if (x.worth[type]) worth.push(x.worth[type]!);
 

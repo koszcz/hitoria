@@ -66,7 +66,9 @@ first, the wish just passes, with no penalty, and a new one comes.
      well. Houses turn food into new settlers.
    - Every worker in a hut eats fish, meat or bread now and then. A hungry worker works at half
      speed, and a bowl floats over their hut. A worker who rests or sleeps is not hungry.
-     Carriers and builders need no food.
+     Carriers and builders need no food. A new island reminds you of this at the start, so build
+     a Fisher's Hut early. The Fisher's Hut, Hunter's Lodge and Bakery cards list every hut whose
+     worker eats that food.
    - When food is short, farms, wells and mills get it first, so the food chain keeps running.
      Houses get food last.
    - Mix your food. When a house or worker gets a different food from last time, the house grows
@@ -410,6 +412,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/rateinfo.ts` | The "In the last minute" part of a building's panel: goods made and used |
 | `src/feastinfo.ts` | The Feast Square panel's feast part, and the blessing line in hut panels |
 | `src/buildmenu/` | The build menu |
+| `src/hints/` | The food hint a new island shows at the start (`food.ts`) |
 | `src/islandview/` | Which island's goods the goods bar and build menu show, and the island's name |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/chronicle/` | The island chronicle panel and how its lines read |

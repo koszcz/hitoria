@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *Fun 2 · Effort S · Branch: worktree-agent-aa3779a63ac9c56ce*
+Nothing right now.
 
 ## Next
 
@@ -62,6 +62,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *2026-11-02*
 - **Tools for the Toolmaker first**: a Toolmaker's Workshop that waits for a tool gets the next free tool before any other hut, so the tool chain never stalls. The Toolmaker card says that every new worker needs a tool. *2026-11-02*
 - **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Once a second island has a store, the bar names the island. Goals still count every island. *2026-11-02*
 - **Goods chart**: click the goods bar or press G to see how much of each good your stores held over the last hour, one line per good you pick. The record starts again when you load a game. *2026-11-02*

@@ -22,6 +22,7 @@ import { MusicVolume } from './sound/volume';
 import { WorkSounds } from './sound/strikes';
 import { workMix, workSources } from './sound/work';
 import { installPlaytest } from './playtest/hook';
+import { FOOD_HINT_MS, foodHint } from './hints/food';
 
 setLang(startLang());
 const saves = new Saves();
@@ -68,6 +69,7 @@ const debug = new DebugPanel(() => game, () => {
 });
 renderer.centerOn(game.hq.x, game.hq.y);
 ui.toast(saved ? T().welcomeBack(first!.name) : T().welcome);
+if (!saved) ui.toast(foodHint(), FOOD_HINT_MS);
 if (saved) showChronicle();
 
 const islandName = (g: Game) => T().island(g.seed);
@@ -186,6 +188,7 @@ function newIsland() {
     play(g);
     slotId = null;
     ui.toast(id ? `${T().newIsland} ${KT().brought(KT().keepsakes[id].name)}` : T().newIsland);
+    ui.toast(foodHint(), FOOD_HINT_MS);
   });
 }
 // The file buttons fold away behind a menu button.
