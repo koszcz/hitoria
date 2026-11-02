@@ -2,7 +2,7 @@
 
 export const FEAST_PL: Record<string, string> = {
   'Only a Feast Square can hold a feast': 'Ucztę można wyprawić tylko na Placu biesiadnym',
-  'A wedding feast is already planned': 'Uczta weselna jest już zaplanowana',
+  'A feast is already planned': 'Uczta jest już zaplanowana',
   'You can hold one feast each season': 'Ucztę możesz wyprawić raz na porę roku',
   'At the wedding feast': 'Na uczcie weselnej',
   'Ready to hold a feast': 'Gotowy na ucztę',
@@ -12,4 +12,9 @@ export const FEAST_PL: Record<string, string> = {
   'The newlyweds arrive at dawn': 'Nowożeńcy przybędą o świcie',
   '🎉 The wedding feast has begun': '🎉 Zaczęła się uczta weselna',
   '💍 Two newlyweds joined your village': '💍 Do wioski dołączyło dwoje nowożeńców',
+  'At the religious feast': 'Na uczcie religijnej',
+  'The religious feast is on': 'Trwa uczta religijna',
+  'The blessing comes at dawn': 'Błogosławieństwo przyjdzie o świcie',
+  '🕯️ The religious feast has begun': '🕯️ Zaczęła się uczta religijna',
+  '🙏 The village is blessed: everyone works 25% faster today': '🙏 Wioska jest błogosławiona: dziś wszyscy pracują o 25% szybciej',
 };

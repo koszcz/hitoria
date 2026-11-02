@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast · Branch: worktree-agent-af42644f19212e308*
+Nothing right now.
 
 ## Next
 
@@ -44,6 +44,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *2026-11-02*
 - **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *2026-11-02*
 - **Stop work at a hut**: a hut's info panel has a Stop work button. Its worker walks home and takes the next hut that needs a worker, and nobody is sent to the stopped hut until you press Resume work. The hut keeps its tool, and the choice is saved. Use it when settlers run short, such as to stop a stone mine while you have plenty of stone. *2026-11-02*
 - **Buildings glow at night**: from dusk to dawn, each finished building casts a soft, warm pool of light on the ground around it, and its windows and doorway glow brighter. The glow fades in and out with the daylight. It is a soft fake glow, not real lamps, so the game stays fast. *2026-11-02*

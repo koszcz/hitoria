@@ -28,7 +28,7 @@ export interface Building {
   stopped?: boolean; // you stopped work here, so no worker is sent until you resume it
   level?: number; // 2 once the player has upgraded the building, else 1
   ate?: Good; // the kind of food the house, worker or miner ate last, for the mixed food bonus
-  feast?: { at?: number; eaten?: boolean }; // a Feast Square's ordered feast: the dusk it begins, once the food is in, and whether the food is served
+  feast?: { kind?: FeastKind; at?: number; eaten?: boolean }; // a Feast Square's ordered feast: its kind (a wedding if none), the dusk it begins, once the food is in, and whether the food is served
 }
 
 // One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.
@@ -38,6 +38,8 @@ export interface Job {
   g: Good;
   n?: number; // how many of the good, 1 if not given; a pack donkey carries 2
 }
+
+export type FeastKind = 'wedding' | 'religious'; // a wedding feast brings settlers, a religious feast blesses the village
 
 export type Task =
   | { k: 'walk'; x: number; y: number; adjacent?: boolean; via?: P[] }

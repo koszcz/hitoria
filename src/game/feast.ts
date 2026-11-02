@@ -1,18 +1,39 @@
-// The Feast Square and its wedding feast. You order a feast, carriers bring the food, and at the
-// next dusk every worker gathers at the square until midnight. Two new settlers arrive at dawn.
+// The Feast Square and its feasts. You order a feast, carriers bring the food, and at the next
+// dusk every worker gathers at the square until midnight. At dawn, a wedding feast brings two new
+// settlers, and a religious feast blesses the village for the day.
 import { BEDTIME, DAY_LENGTH, WAKE, nextDusk } from '../seasons/day';
 import { seasonCount } from '../seasons/year';
 import type { Good } from './defs';
 import type { Game } from './game';
+import { bless } from './blessing';
 import { addPool, homeOf } from './homes';
 import { noteFeast } from './chronicle';
-import type { Building, Settler } from './types';
+import type { Building, FeastKind, Settler } from './types';
 import { walkDist } from './walking';
 
-// The food one wedding feast needs.
+// The food one feast needs. Both kinds of feast need the same.
 export const FEAST_FOOD: Partial<Record<Good, number>> = { fish: 10, bread: 10, meat: 10 };
 export const FEAST_NEWCOMERS = 2; // settlers who arrive at dawn after a feast
-export const AT_FEAST = 'At the wedding feast'; // the status of a hut or site while its worker feasts
+// What each kind of feast says: the status of a hut while its worker feasts, the square's status
+// during the feast and until dawn, and the toasts at dusk and dawn.
+export const FEAST_TEXT: Record<FeastKind, { at: string; on: string; after: string; begun: string; dawn: string }> = {
+  wedding: {
+    at: 'At the wedding feast',
+    on: 'The wedding feast is on',
+    after: 'The newlyweds arrive at dawn',
+    begun: '🎉 The wedding feast has begun',
+    dawn: '💍 Two newlyweds joined your village',
+  },
+  religious: {
+    at: 'At the religious feast',
+    on: 'The religious feast is on',
+    after: 'The blessing comes at dawn',
+    begun: '🕯️ The religious feast has begun',
+    dawn: '🙏 The village is blessed: everyone works 25% faster today',
+  },
+};
+export const AT_FEAST = FEAST_TEXT.wedding.at; // the status of a hut or site while its worker feasts at a wedding
+const kindOf = (b: Building): FeastKind => b.feast?.kind ?? 'wedding'; // older saves have only weddings
 const SPREAD = 2; // how far from the square the guests stand, in tiles
 
 // Seconds from the dusk a feast begins to midnight, when it ends, and to dawn, when the newcomers arrive.
@@ -25,16 +46,16 @@ const squares = (g: Game) => [...g.buildings.values()].filter((b) => b.type === 
 export function canFeast(g: Game, b: Building): string | null {
   if (b.type !== 'square') return 'Only a Feast Square can hold a feast';
   if (!b.built) return 'Finish building it first';
-  if (squares(g).some((s) => s.feast)) return 'A wedding feast is already planned';
+  if (squares(g).some((s) => s.feast)) return 'A feast is already planned';
   if (g.feastSeason === seasonCount(g.time)) return 'You can hold one feast each season';
   return null;
 }
 
-// Order a wedding feast at square `b`. Returns why it can't, or null.
-export function orderFeast(g: Game, b: Building): string | null {
+// Order a feast of kind `kind` at square `b`. Returns why it can't, or null.
+export function orderFeast(g: Game, b: Building, kind: FeastKind = 'wedding'): string | null {
   const why = canFeast(g, b);
   if (why) return why;
-  b.feast = {};
+  b.feast = kind === 'wedding' ? {} : { kind };
   g.feastSeason = seasonCount(g.time);
   return null;
 }
@@ -55,12 +76,13 @@ export function feastOn(g: Game): Building | null {
   return null;
 }
 
-// Called often. Sets the feast date once the food is in, serves the food at dusk, and brings
-// the newcomers at dawn.
+// Called often. Sets the feast date once the food is in, serves the food at dusk, and at dawn
+// brings the newcomers or the blessing.
 export function stepFeasts(g: Game) {
   for (const b of squares(g)) {
     if (!b.built) continue;
     const f = b.feast;
+    const x = FEAST_TEXT[kindOf(b)];
     if (!f) {
       b.status = 'Ready to hold a feast';
       continue;
@@ -79,21 +101,24 @@ export function stepFeasts(g: Game) {
     if (!f.eaten) {
       for (const k of Object.keys(FEAST_FOOD) as Good[]) b.stock[k] -= FEAST_FOOD[k]!;
       f.eaten = true;
-      g.toasts.push('🎉 The wedding feast has begun');
+      g.toasts.push(x.begun);
     }
     if (g.time < f.at + UNTIL_MIDNIGHT) {
-      b.status = 'The wedding feast is on';
+      b.status = x.on;
       continue;
     }
     if (g.time < f.at + UNTIL_DAWN) {
-      b.status = 'The newlyweds arrive at dawn';
+      b.status = x.after;
       continue;
     }
-    addPool(g, homeOf(g, b) ?? g.hq, FEAST_NEWCOMERS);
+    if (f.kind === 'religious') bless(g, f.at + UNTIL_DAWN);
+    else {
+      addPool(g, homeOf(g, b) ?? g.hq, FEAST_NEWCOMERS);
+      noteFeast(g);
+    }
     b.feast = undefined;
     b.status = 'Ready to hold a feast';
-    g.toasts.push('💍 Two newlyweds joined your village');
-    noteFeast(g);
+    g.toasts.push(x.dawn);
   }
 }
 
@@ -106,7 +131,7 @@ export function joinFeast(g: Game, s: Settler, post: Building): boolean {
     return false;
   }
   if (s.feast !== sq.id && walkDist(g, sq, post) === Infinity) return false;
-  post.status = AT_FEAST;
+  post.status = FEAST_TEXT[kindOf(sq)].at;
   s.atWork = false;
   s.anim = '';
   if (s.feast === sq.id) {

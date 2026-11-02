@@ -44,6 +44,7 @@ export interface SaveData {
   wish?: WishState | null; // the village wish; older saves start a new one once every goal is reached
   wishesGranted?: number; // village wishes met; older saves have none
   feastSeason?: number; // the season the last feast was ordered in; older saves have none
+  blessedUntil?: number; // when a religious feast's blessing ends; older saves have none
 }
 
 export function save(g: Game): SaveData {
@@ -95,6 +96,7 @@ export function save(g: Game): SaveData {
     signs: [...g.signs.keys()].filter((i) => g.signs[i]),
     chronicle: structuredClone(g.chronicle), tradeVisits: g.tradeVisits, wantedSold: g.wantedSold,
     wish: structuredClone(g.wish), wishesGranted: g.wishesGranted, feastSeason: g.feastSeason,
+    blessedUntil: g.blessedUntil,
   };
 }
 
@@ -154,6 +156,7 @@ export function restore(g: Game, d: SaveData) {
   g.wish = d.wish ?? null;
   g.wishesGranted = d.wishesGranted ?? 0;
   g.feastSeason = d.feastSeason ?? -1;
+  g.blessedUntil = d.blessedUntil ?? 0;
   for (const i of d.signs ?? []) g.signs[i] = 1;
   g.signed++;
   if (d.v < 5) grantTools(g);

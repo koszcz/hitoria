@@ -193,19 +193,22 @@ as a stone mine while you have plenty of stone.
 Nobody is sent to a stopped hut, and carriers bring it no food. The hut keeps its tool, so the
 next worker needs no new one. Your save keeps the choice.
 
-### Wedding feasts
+### Feasts
 
-A Feast Square holds a wedding feast that brings 2 new settlers, with no house needed.
+A Feast Square holds two kinds of feast. A wedding feast brings 2 new settlers, with no house
+needed. A religious feast blesses the village, so every worker and builder works 25% faster for
+the whole next day.
 
 1. Build a Feast Square. It is under Town in the build menu.
-2. Click the finished square and press **Order a wedding feast**.
+2. Click the finished square and press **Order a wedding feast** or **Order a religious feast**.
 3. Carriers bring 10 fish, 10 bread and 10 meat to the square. It gets food after every other
    building.
 4. At the next dusk, every worker and builder feasts at the square until midnight, then goes to
    bed. Carriers keep working.
-5. At dawn, 2 new settlers join your village.
+5. At dawn, a wedding feast brings 2 new settlers. A religious feast blesses the village until
+   midnight. Work goes 25% faster, but walking does not.
 
-You can order one feast each season.
+You can order one feast each season, of either kind.
 
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ.
@@ -351,7 +354,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the Feast Square and its wedding feast (`feast.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -364,7 +367,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/tradeinfo.ts` | The harbour panel's "Trade ship" part |
 | `src/upgradeinfo.ts` | The "Upgrade" part of a hut's or house's panel |
 | `src/stopinfo.ts` | The "Stop work" and "Resume work" button in a hut's panel |
-| `src/feastinfo.ts` | The Feast Square panel's "Wedding feast" part |
+| `src/feastinfo.ts` | The Feast Square panel's feast part, and the blessing line in hut panels |
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/chronicle/` | The island chronicle panel and how its lines read |

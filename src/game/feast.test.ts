@@ -57,8 +57,8 @@ describe('ordering a wedding feast', () => {
     const { g, sq } = feastGame();
     const other = built(placeLinked(g, 'square', g.hq.x - 4, g.hq.y + 3));
     g.orderFeast(sq);
-    expect(g.canFeast(sq)).toBe('A wedding feast is already planned');
-    expect(g.canFeast(other)).toBe('A wedding feast is already planned');
+    expect(g.canFeast(sq)).toBe('A feast is already planned');
+    expect(g.canFeast(other)).toBe('A feast is already planned');
   });
 
   test('you can hold one feast each season', () => {
@@ -175,7 +175,7 @@ describe('saving a feast', () => {
     const h = Game.load(JSON.parse(JSON.stringify(g.save())));
     expect(h.buildings.get(sq.id)!.feast).toEqual({ at });
     expect(h.feastSeason).toBe(g.feastSeason);
-    expect(h.canFeast(h.buildings.get(sq.id)!)).toBe('A wedding feast is already planned');
+    expect(h.canFeast(h.buildings.get(sq.id)!)).toBe('A feast is already planned');
   });
 });
 

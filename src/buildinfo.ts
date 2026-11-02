@@ -63,7 +63,7 @@ const EN = {
     harbour: 'A ship sails from here to settle the other island. A trade ship visits each morning and leaves before sunset. It also stores goods.',
     toolmaker: 'Every new worker in a hut needs 1 tool. When the tools you started with run out, new huts wait for one.',
     geologist: 'Shows you where to put your mines. A mine next to a gold sign digs twice as fast.',
-    square: 'A wedding feast brings 2 new settlers, and it costs no house.',
+    square: 'A wedding feast brings 2 new settlers, and it costs no house. A religious feast makes everyone work 25% faster for a day.',
   } as Partial<Record<BType, string>>,
   place: {
     fisher: 'Build it near water.',
@@ -108,7 +108,7 @@ const PL: typeof EN = {
     harbour: 'Stąd statek wypływa, by osiedlić drugą wyspę. Co rano przypływa statek kupiecki i odpływa przed zachodem słońca. Port przechowuje też towary.',
     toolmaker: 'Każdy nowy pracownik potrzebuje 1 narzędzia. Gdy skończą się narzędzia z początku gry, nowe budynki czekają na nowe.',
     geologist: 'Pokazuje, gdzie stawiać kopalnie. Kopalnia obok złotego znaku wydobywa dwa razy szybciej.',
-    square: 'Uczta weselna sprowadza 2 nowych osadników i nie potrzebuje domu.',
+    square: 'Uczta weselna sprowadza 2 nowych osadników i nie potrzebuje domu. Uczta religijna sprawia, że przez dzień wszyscy pracują o 25% szybciej.',
   },
   place: { fisher: 'Zbuduj ją blisko wody.', mine: 'Zbuduj ją przy górze albo na jej skraju, z trawą przed wejściem.', geologist: 'Zbuduj ją blisko góry.', harbour: `Zbuduj go na brzegu, do ${DOCK_REACH} pól od otwartej wody.` },
   worker: 'Zatrudnia 1 wolnego osadnika.',

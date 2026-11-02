@@ -10,6 +10,7 @@ import { dockAt } from './harbour';
 import { noteRichMine } from './geology';
 import { homeOf, homes } from './homes';
 import { sendHome } from './settlers';
+import { blessing } from './blessing';
 import type { Building } from './types';
 import { ASLEEP, night } from './sleep';
 
@@ -106,7 +107,7 @@ export function construct(g: Game, b: Building, dt: number) {
   }
   builder.anim = 'hammer';
   b.status = 'Under construction';
-  b.progress = Math.min(cap, b.progress + dt / def.buildTime);
+  b.progress = Math.min(cap, b.progress + (dt * blessing(g)) / def.buildTime);
   if (b.progress < 1) return;
 
   b.built = true;

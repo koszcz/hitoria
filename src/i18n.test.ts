@@ -4,6 +4,7 @@ import { BDEFS, BUILDABLE, RECIPES, TOOLS_LOW_NOTE, type BType } from './game';
 import { buildFacts, buildNow } from './buildinfo';
 import { T, buildingName, getLang, goodName, join, knownMessages, plural, setLang, startLang, tr } from './i18n';
 import { flatGame } from './game/test-helpers';
+import { FEAST_TEXT } from './game/feast';
 
 afterEach(() => setLang('en'));
 
@@ -36,6 +37,7 @@ describe('game messages in Polish', () => {
   for (const m of source.matchAll(/toasts\.push\('([^']+)'\)/g)) shown.add(m[1]);
   for (const r of Object.values(RECIPES)) shown.add(r!.doing).add(r!.waiting);
   shown.add(TOOLS_LOW_NOTE); // built from numbers, so the scan can't read it
+  for (const x of Object.values(FEAST_TEXT)) Object.values(x).forEach((m) => shown.add(m)); // toasts kept in a table
   for (const t of Object.keys(BDEFS) as BType[]) [BDEFS[t].name, BDEFS[t].desc].forEach((s) => shown.delete(s));
 
   test('the scan finds the messages', () => {

@@ -4,7 +4,7 @@ import { HOUSE_GROW, HOUSE_SIZE, type BType } from '../game';
 export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   square: {
     name: 'Plac biesiadny',
-    desc: 'Brukowany plac z długimi stołami. Zamów tu ucztę weselną, raz na porę roku. Tragarze przynoszą 10 ryb, 10 bochenków chleba i 10 porcji mięsa, a o następnym zmierzchu wszyscy pracownicy ucztują tu do północy. O świcie przybywa dwoje nowych osadników.',
+    desc: 'Brukowany plac z długimi stołami. Zamów tu jedną ucztę na porę roku: weselną albo religijną. Tragarze przynoszą 10 ryb, 10 bochenków chleba i 10 porcji mięsa, a o następnym zmierzchu wszyscy pracownicy ucztują tu do północy. Po weselu o świcie przybywa dwoje nowych osadników. Po uczcie religijnej przez cały następny dzień wszyscy pracują o 25% szybciej.',
   },
   hq: { name: 'Siedziba', desc: 'Przechowuje wszystkie towary i daje dach wolnym osadnikom.' },
   woodcutter: { name: 'Chata drwala', desc: 'Ścina dorosłe drzewa w pobliżu i dostarcza kłody.' },

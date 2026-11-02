@@ -12,6 +12,7 @@ import { eats, feed } from './meals';
 import { bedtime } from './sleep';
 import type { Building, Settler } from './types';
 import { quicken } from './upgrades';
+import { hasten } from './blessing';
 import { MIXED_DIG, pickFood, tasteNew } from './variety';
 
 export function idle(g: Game, s: Settler) {
@@ -20,11 +21,13 @@ export function idle(g: Game, s: Settler) {
   if (!home) return;
   // A worker who sleeps or rests eats nothing, so they are not hungry. Before real work, they eat,
   // or work at half speed with no food. An upgraded hut's worker works faster, but eats as much for each good they make.
+  // A blessed village works faster too, and also eats as much for each good.
   if (bedtime(g, s, home)) return void (home.hungry = false);
   if (s.role === 'builder') return;
   if (plan(g, s, home)) return void (home.hungry = false);
   if (eats(home)) feed(home, s.tasks);
   quicken(home, s.tasks);
+  hasten(g, s.tasks);
 }
 
 // Give the worker their next piece of work. Returns true when they only rest.

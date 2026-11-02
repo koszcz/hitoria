@@ -31,7 +31,7 @@ import { richAt, richSpots } from './geology';
 import { canUpgrade, upgrade } from './upgrades';
 import { resumeWork, stopWork } from './stopwork';
 import { canFeast, orderFeast, stepFeasts } from './feast';
-import type { Animal, AnimalKind, Building, Settler, Ship, Trader } from './types';
+import type { Animal, AnimalKind, Building, FeastKind, Settler, Ship, Trader } from './types';
 
 export class Game {
   world: World;
@@ -56,6 +56,7 @@ export class Game {
   wish: WishState | null = null; // the village wish, once every goal is reached
   wishesGranted = 0; // village wishes the player has met
   feastSeason = -1; // the season the last feast was ordered in, counted by seasonCount
+  blessedUntil = 0; // the game time a religious feast's blessing ends; workers work faster until then
   winters = { state: 'ready' as WinterState, since: new Map<number, number>() }; // every winter, for the chronicle
   winter = { state: 'late' as WinterState, since: new Map<number, number>() }; // the survive winter goal; `since` is when each house or mine began waiting for food
   wear = new Float32Array(W * H); // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
@@ -209,14 +210,14 @@ export class Game {
     return resumeWork(this, b);
   }
 
-  // Why Feast Square `b` can't hold a wedding feast now, or null if it can.
+  // Why Feast Square `b` can't hold a feast now, or null if it can.
   canFeast(b: Building) {
     return canFeast(this, b);
   }
 
-  // Order a wedding feast at Feast Square `b`. Returns why it can't, or null.
-  orderFeast(b: Building) {
-    return orderFeast(this, b);
+  // Order a wedding or religious feast at Feast Square `b`. Returns why it can't, or null.
+  orderFeast(b: Building, kind: FeastKind = 'wedding') {
+    return orderFeast(this, b, kind);
   }
 
   // Demolish the building on tile `t`. Returns why it can't, or null.
