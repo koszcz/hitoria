@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *Fun 2 · Effort S · Branch: worktree-agent-a8a0d1818e1ee510c*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *Fun 2 · Effort S*
 - **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 
