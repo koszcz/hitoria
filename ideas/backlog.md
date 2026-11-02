@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Island themes**: each new map gives the second and far island two different themes, drawn at random, so they look and play differently. Pine highlands: dense dark pines, sea cliffs on the far shore, and about twice the forest. Wild meadows: wide flower meadows, few trees, and more deer and hares for hunters. Each island keeps its ore ridge and grove, has no name label, and only new maps get themes. *Fun 2 · Effort M · Branch: worktree-agent-a15e7326dcb497e71*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Island themes**: each new map gives the second and far island two different themes, drawn at random, so they look and play differently. Pine highlands: dense dark pines, sea cliffs on the far shore, and about twice the forest. Wild meadows: wide flower meadows, few trees, and more deer and hares for hunters. Each island keeps its ore ridge and grove, has no name label, and only new maps get themes. *Fun 2 · Effort M*
 - **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *Fun 1 · Effort M*
 - **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
 
