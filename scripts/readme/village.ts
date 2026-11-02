@@ -6,10 +6,12 @@ import { clock } from '../../src/seasons/day';
 export const SEED = 214;
 
 // Placed in this order, each on the free spot nearest the HQ. The lookouts in the first round
-// widen the land, so the second round has room.
+// widen the land, so the second round has room. The fisher and the house come first too: the
+// village starts with only as many settlers as it has jobs, so it needs the house's new settlers
+// to carry goods and build.
 const ROUNDS: BType[][] = [
-  ['woodcutter', 'forester', 'sawmill', 'quarry', 'lookout', 'lookout'],
-  ['fisher', 'farm', 'well', 'mill', 'bakery', 'house', 'storehouse', 'mine', 'geologist', 'hunter', 'smelter', 'toolmaker', 'woodcutter'],
+  ['woodcutter', 'forester', 'sawmill', 'quarry', 'lookout', 'lookout', 'fisher', 'house'],
+  ['farm', 'well', 'mill', 'bakery', 'storehouse', 'mine', 'geologist', 'hunter', 'smelter', 'toolmaker', 'woodcutter'],
 ];
 const RADIUS = 9; // how far from the HQ to look for a spot
 const GAP = 2; // free tiles to keep between buildings, so each one is easy to see
