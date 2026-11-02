@@ -5,13 +5,14 @@ import { ART } from '../art';
 import type { SeasonLook } from '../seasons/year';
 
 // Shared by every seasonal material, so one update a frame changes them all.
-const U = {
+export const SEASON_UNIFORMS = {
   uAutumn: { value: 0 },
   uBare: { value: 0 },
   uSnow: { value: 0 },
   uDry: { value: 0 },
   uSnowCol: { value: new THREE.Color(ART.winter) },
 };
+const U = SEASON_UNIFORMS;
 
 export function setSeason(l: SeasonLook) {
   U.uAutumn.value = l.autumn;

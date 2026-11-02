@@ -114,7 +114,7 @@ moon button to turn fast nights off or on. The game remembers your choice.
 
 The island also goes through the four seasons. A full year lasts 20 minutes of game time, and a
 new game starts in spring. Leafy trees turn yellow, orange and red in autumn and lose their leaves
-in winter, when snow falls and covers the land. Grain grows only from spring to autumn. In
+in winter, when snow falls and covers the land and the roofs of your buildings. Grain grows only from spring to autumn. In
 winter, farmers bring in ripe grain but sow nothing, so store grain and food before the snow comes.
 
 A small clock at the top right shows where you are in the day and the year. On its dial, the sun
@@ -353,7 +353,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the Feast Square and its wedding feast (`feast.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
 | `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, the clock in the HUD (`hud.ts`), and fast nights (`fastnight.ts`) |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
