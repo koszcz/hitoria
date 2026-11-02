@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S · Branch: worktree-agent-a68af1fd9af36cdda*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Rates in the info panel**: a building's panel shows how fast it uses and makes goods. *Fun 1 · Effort S*
+Empty.
 
 ## Inbox
 
