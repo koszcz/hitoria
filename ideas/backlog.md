@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S · Branch: worktree-agent-a59781794985951da*
+Nothing right now.
 
 ## Next
 
@@ -67,6 +67,7 @@ Empty.
 
 Newest first, with the date it was merged.
 
+- **Goods chart**: click the goods bar or press G to see how much of each good your stores held over the last hour, one line per good you pick. The record starts again when you load a game. *2026-11-02*
 - **Glow lights the walls**: at night, the walls of each finished building take a soft warm tint from its pool of light, brightest near the ground and the door and fading toward the roof. The tint fades in and out with the glow, and it stays a painted fake, not real lamps. *2026-11-02*
 - **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *2026-11-02*
 - **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *2026-11-02*

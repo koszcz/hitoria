@@ -236,7 +236,7 @@ const EN = {
   pause: 'Pause (space)',
   fastNightTitle: (on: boolean) =>
     `Fast nights: ${on ? 'on' : 'off'}. Once every worker is in bed, the clock runs fast until dawn. Click to turn ${on ? 'off' : 'on'}.`,
-  help: 'Drag to pan · Scroll to zoom · B build · X remove · Right-click to cancel · Ctrl+S save · M mute · F3 diagnostics',
+  help: 'Drag to pan · Scroll to zoom · B build · G goods chart · X remove · Right-click to cancel · Ctrl+S save · M mute · F3 diagnostics',
   helpTouch: 'Drag to pan · Pinch to zoom · Tap twice to build',
   menu: 'Menu',
   done: '✋ Done',
@@ -278,6 +278,7 @@ const EN = {
   saveAsNew: '💾 Save as new',
   autosave: 'Autosave',
   backToGame: '▶️ Back to the game',
+  goodsTitle: 'Show your goods over time (G)',
   noSaves: 'No saved games yet.',
   load: '📂 Load',
   overwrite: '💾 Overwrite',
@@ -326,7 +327,7 @@ const PL: typeof EN = {
   pause: 'Pauza (spacja)',
   fastNightTitle: (on: boolean) =>
     `Szybkie noce: ${on ? 'wł.' : 'wył.'}. Gdy wszyscy robotnicy śpią, zegar biegnie szybko aż do świtu. Kliknij, aby ${on ? 'wyłączyć' : 'włączyć'}.`,
-  help: 'Przeciągnij, by przesunąć · Kółko przybliża · B buduj · X usuń · Prawy przycisk anuluje · Ctrl+S zapis · M wycisz · F3 diagnostyka',
+  help: 'Przeciągnij, by przesunąć · Kółko przybliża · B buduj · G wykres towarów · X usuń · Prawy przycisk anuluje · Ctrl+S zapis · M wycisz · F3 diagnostyka',
   helpTouch: 'Przeciągnij: przesuń · Rozsuń palce: przybliż · Stuknij dwa razy: buduj',
   menu: 'Menu',
   done: '✋ Gotowe',
@@ -368,6 +369,7 @@ const PL: typeof EN = {
   saveAsNew: '💾 Zapisz jako nowy',
   autosave: 'Autozapis',
   backToGame: '▶️ Wróć do gry',
+  goodsTitle: 'Pokaż towary w czasie (G)',
   noSaves: 'Nie masz jeszcze zapisanych gier.',
   load: '📂 Wczytaj',
   overwrite: '💾 Nadpisz',

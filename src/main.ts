@@ -10,6 +10,7 @@ import { Gestures, zoomAt } from './input/gestures';
 import { Saves, type Slot } from './saves';
 import { openSaveMenu } from './savemenu';
 import { openChronicle } from './chronicle/panel';
+import { openGoodsChart } from './goodschart/panel';
 import { T, getLang, setLang, startLang } from './i18n';
 import type { P } from './path';
 import { GraphicsSetting } from './quality/setting';
@@ -284,6 +285,7 @@ window.addEventListener('keydown', (e) => {
     debug.toggle();
   }
   if (e.key === 'b' || e.key === 'B') ui.openBuild();
+  if (e.key === 'g' || e.key === 'G') openGoodsChart(() => game);
   if (e.key === 'x' || e.key === 'X') ui.setPlacing(ui.placing === 'remove' ? null : 'remove');
   const n = Number(e.key);
   if (n >= 1 && n <= BUILDABLE.length) ui.setPlacing(BUILDABLE[n - 1]);

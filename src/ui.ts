@@ -12,6 +12,7 @@ import { upgradeRows } from './upgradeinfo';
 import { stopRows } from './stopinfo';
 import { rateRows } from './rateinfo';
 import { blessedRow, feastRows } from './feastinfo';
+import { openGoodsChart } from './goodschart/panel';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -54,6 +55,7 @@ export class UI {
         this.refresh();
       };
     }
+    $('res').onclick = () => openGoodsChart(() => this.game);
     $('fastnight').onclick = () => {
       this.fastNights.toggle();
       this.refresh();
@@ -95,6 +97,7 @@ export class UI {
     }
     $('help').textContent = document.body.classList.contains('touch') ? x.helpTouch : x.help;
     $('menu').title = x.menu;
+    $('res').title = x.goodsTitle;
     $('done').textContent = x.done;
     document.querySelector<HTMLButtonElement>('#speed [data-speed=pause]')!.title = x.pause;
     this.refresh();
