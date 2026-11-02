@@ -14,6 +14,7 @@ import type { Building, Settler } from './types';
 import { quicken } from './upgrades';
 import { hasten } from './blessing';
 import { MIXED_DIG, pickFood, tasteNew } from './variety';
+import { noteMade, noteUsed } from './rates';
 
 export function idle(g: Game, s: Settler) {
   if (s.role === 'carrier') return carry(g, s);
@@ -25,7 +26,10 @@ export function idle(g: Game, s: Settler) {
   if (bedtime(g, s, home)) return void (home.hungry = false);
   if (s.role === 'builder') return;
   if (plan(g, s, home)) return void (home.hungry = false);
-  if (eats(home)) feed(home, s.tasks);
+  if (eats(home)) {
+    const meal = feed(home, s.tasks);
+    if (meal) noteUsed(g, home, meal, 1);
+  }
   quicken(home, s.tasks);
   hasten(g, s.tasks);
 }
@@ -43,6 +47,7 @@ function plan(g: Game, s: Settler, home: Building): true | void {
   const make = (good: Good, n = 1) => {
     home.out[good] += n;
     g.made[good] += n;
+    noteMade(g, home, good, n);
   };
 
   switch (s.role) {
@@ -166,7 +171,11 @@ function plan(g: Game, s: Settler, home: Building): true | void {
         { k: 'do', f: () => {
           if (HOUSE_FOOD.includes(input) && tasteNew(home, input)) extra = MIXED_DIG;
           home.stock[input]--;
-          if (rc.with) home.stock[rc.with]--;
+          noteUsed(g, home, input, 1);
+          if (rc.with) {
+            home.stock[rc.with]--;
+            noteUsed(g, home, rc.with, 1);
+          }
           home.busy = true;
           home.using = input;
         } },

@@ -23,3 +23,4 @@ export { FEAST_FOOD, FEAST_NEWCOMERS } from './feast';
 export { BLESSED_SPEED, blessed } from './blessing';
 export { canStop } from './stopwork';
 export { KEEPSAKES, bringKeepsake, earnedKeepsakes, type Keepsake, type KeepsakeId } from './keepsakes';
+export { RATE_WINDOW, ratesOf, type Rates } from './rates';

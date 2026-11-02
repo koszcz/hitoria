@@ -31,6 +31,7 @@ import { richAt, richSpots } from './geology';
 import { canUpgrade, upgrade } from './upgrades';
 import { resumeWork, stopWork } from './stopwork';
 import { canFeast, orderFeast, stepFeasts } from './feast';
+import type { RateNote } from './rates';
 import type { Animal, AnimalKind, Building, FeastKind, Settler, Ship, Trader } from './types';
 
 export class Game {
@@ -74,6 +75,7 @@ export class Game {
   trod: Float32Array; // game time of the last footstep on each tile
   wildCount: Record<AnimalKind, number> = { deer: 0, hare: 0, fox: 0 }; // animals of each kind the game began with
   wildT = 0; // seconds the island has been short of animals
+  rates = new Map<number, RateNote[]>(); // each building's goods made and used in the last minute; not saved
   caught: { kind: AnimalKind; home: P }[] = []; // where caught animals lived, oldest first
   nextAnimal = 1; // id for the next wild animal, never reused, so a new animal gets a new model
   rand: () => number; // the game's own random numbers, from the seed, so the same seed plays out the same way

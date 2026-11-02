@@ -6,6 +6,7 @@ import { noteBirth } from './chronicle';
 import { addPool, homeOf } from './homes';
 import type { Building } from './types';
 import { houseSize } from './upgrades';
+import { noteUsed } from './rates';
 import { MIXED_GROW, pickFood, tasteNew } from './variety';
 
 // A house keeps a little food of any kind, but never more than its last settlers need.
@@ -30,6 +31,7 @@ export function raise(g: Game, b: Building, dt: number) {
       return;
     }
     b.stock[food]--;
+    noteUsed(g, b, food, 1);
     b.busy = true;
     b.using = food;
     b.grow = HOUSE_GROW * (tasteNew(b, food) ? MIXED_GROW : 1);

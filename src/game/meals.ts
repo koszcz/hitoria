@@ -37,25 +37,27 @@ export function lunchbox(b: Building, g: Good) {
 }
 
 // The worker is about to do `tasks`. When the last meal is used up, they eat. With no food,
-// every piece of work takes twice as long.
-export function feed(b: Building, tasks: Task[]) {
+// every piece of work takes twice as long. Returns the food they ate, if they ate.
+export function feed(b: Building, tasks: Task[]): Good | null {
   let work = 0;
   for (const t of tasks) if (t.k === 'work') work += t.t;
-  if ((b.fed ?? 0) <= 0) eat(b);
+  const meal = (b.fed ?? 0) <= 0 ? eat(b) : null;
   b.hungry = (b.fed ?? 0) <= 0;
   if (!b.hungry) b.fed! -= work;
   else for (const t of tasks) if (t.k === 'work') t.t *= HUNGRY_PACE;
+  return meal;
 }
 
 // Eat one food from the hut's stock, else from its own pile of finished goods that no carrier is coming for.
 // A new kind of food makes the meal last longer.
-function eat(b: Building) {
+function eat(b: Building): Good | null {
   let k = pickFood(b, (k) => b.stock[k] > 0);
   if (k) b.stock[k]--;
   else {
     k = pickFood(b, (k) => b.out[k] > b.sending[k]);
-    if (!k) return;
+    if (!k) return null;
     b.out[k]--;
   }
   b.fed = (b.fed ?? 0) + MEAL * (tasteNew(b, k) ? MIXED_MEAL : 1);
+  return k;
 }

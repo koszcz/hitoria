@@ -10,6 +10,7 @@ import { FastNights, nightSpeed } from './seasons/fastnight';
 import { wishHtml, wishTitle } from './wishes/panel';
 import { upgradeRows } from './upgradeinfo';
 import { stopRows } from './stopinfo';
+import { rateRows } from './rateinfo';
 import { blessedRow, feastRows } from './feastinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -268,6 +269,7 @@ export class UI {
         if (b.stock[k]) rows.push(`<div>${x.input} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
         if (b.out[k]) rows.push(`<div>${x.ready} <span class="good ${k}"></span>${b.out[k]} ${goodName(k)}</div>`);
       }
+      if (b.type !== 'square') rows.push(rateRows(g, b));
       rows.push(stopRows(b));
       rows.push(upgradeRows(g, b));
     }
