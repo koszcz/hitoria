@@ -17,6 +17,12 @@ export function seasonAt(year: number) {
   return SEASONS[Math.min(3, Math.floor((year - Math.floor(year)) * 4))];
 }
 
+// How many seasons have begun since the first spring, counting from 0. It tells two seasons of
+// the same name apart, such as this spring and next spring.
+export function seasonCount(time: number) {
+  return Math.floor((time / YEAR_LENGTH + START) * 4);
+}
+
 // Grain grows only in the warm months. In winter the fields rest, so food must be stored ahead.
 export function fieldsGrow(time: number) {
   return !isWinter(time);

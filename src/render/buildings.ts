@@ -11,6 +11,7 @@ import { hut } from './huts';
 import { harbourHouse } from './harbour';
 import { LOOKS } from './looks';
 import { mine } from './mines';
+import { feastSquare } from './square';
 
 let dotTex: THREE.Texture | undefined;
 const dot = () => (dotTex ??= softDot());
@@ -162,6 +163,9 @@ export function makeBuilding(type: BType, built: boolean, paint = CANVAS): Model
     }
     case 'harbour':
       harbourHouse(g, model, wall, roof);
+      break;
+    case 'square':
+      feastSquare(g, wall, roof);
       break;
     case 'mill': {
       // A tapered white tower with a turning cap and four lattice sails.

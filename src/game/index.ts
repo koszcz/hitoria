@@ -19,3 +19,4 @@ export { START_TOOLS, TOOLS_LOW, TOOLS_LOW_NOTE, needsTool } from './tools';
 export { RICH_SPEED } from './geology';
 export { HOUSE_EXTRA, UPGRADE_COST, UPGRADE_PACE, houseSize, upgradable, upgraded } from './upgrades';
 export { MEAL, SELF_FED, hungryWorker } from './meals';
+export { FEAST_FOOD, FEAST_NEWCOMERS } from './feast';

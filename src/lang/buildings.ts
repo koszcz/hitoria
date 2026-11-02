@@ -2,6 +2,10 @@
 import { HOUSE_GROW, HOUSE_SIZE, type BType } from '../game';
 
 export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
+  square: {
+    name: 'Plac biesiadny',
+    desc: 'Brukowany plac z długimi stołami. Zamów tu ucztę weselną, raz na porę roku. Tragarze przynoszą 10 ryb, 10 bochenków chleba i 10 porcji mięsa, a o następnym zmierzchu wszyscy pracownicy ucztują tu do północy. O świcie przybywa dwoje nowych osadników.',
+  },
   hq: { name: 'Siedziba', desc: 'Przechowuje wszystkie towary i daje dach wolnym osadnikom.' },
   woodcutter: { name: 'Chata drwala', desc: 'Ścina dorosłe drzewa w pobliżu i dostarcza kłody.' },
   forester: { name: 'Chata leśnika', desc: 'Sadzi sadzonki, z których wyrastają nowe drzewa.' },

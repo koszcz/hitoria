@@ -24,3 +24,9 @@ export function isNight(time: number) {
   const f = clock(time);
   return f >= BEDTIME || f < WAKE;
 }
+
+// The game time of the next dusk, when workers go to bed. If it is dusk right now, the next one is tomorrow.
+export function nextDusk(time: number) {
+  const left = BEDTIME - clock(time);
+  return time + (left > 0 ? left : left + 1) * DAY_LENGTH;
+}

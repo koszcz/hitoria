@@ -27,6 +27,7 @@ export interface Building {
   hungry?: boolean; // the worker had no food for their last piece of work, so they work at half speed
   level?: number; // 2 once the player has upgraded the building, else 1
   ate?: Good; // the kind of food the house, worker or miner ate last, for the mixed food bonus
+  feast?: { at?: number; eaten?: boolean }; // a Feast Square's ordered feast: the dusk it begins, once the food is in, and whether the food is served
 }
 
 // One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.
@@ -59,6 +60,7 @@ export interface Settler {
   inside: boolean;
   asleep?: number; // the building a worker or builder sleeps in tonight, once they are in bed
   atWork: boolean;
+  feast?: number; // the Feast Square a worker is feasting at tonight, once they are there
   returning: boolean;
   walking: boolean;
   anim: Anim;

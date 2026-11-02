@@ -9,6 +9,7 @@ import { drawClock } from './seasons/hud';
 import { FastNights, nightSpeed } from './seasons/fastnight';
 import { wishHtml, wishTitle } from './wishes/panel';
 import { upgradeRows } from './upgradeinfo';
+import { feastRows } from './feastinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -64,6 +65,7 @@ export class UI {
       let why: string | null = null;
       if (act === 'sail') why = this.game.sail(b);
       else if (act === 'upgrade') why = this.game.upgrade(b);
+      else if (act === 'feast') why = this.game.orderFeast(b);
       else if (act === 'trade' && this.pick.give && this.pick.get) why = this.game.trade(b, this.pick.give, this.pick.get);
       else if (act === 'give' || act === 'get') this.pick[act] = this.pick[act] === good ? null : good;
       if (why) this.toast(why);
@@ -257,7 +259,8 @@ export class UI {
       }
       if (g.richAt(b.type, b.x, b.y)) rows.push(`<div>${x.richSpot}</div>`);
       if (b.hungry && b.worker) rows.push(`<div class="hungry">${x.hungry}</div>`);
-      for (const k of GOODS) {
+      if (b.type === 'square') rows.push(feastRows(g, b));
+      else for (const k of GOODS) {
         if (b.stock[k]) rows.push(`<div>${x.input} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
         if (b.out[k]) rows.push(`<div>${x.ready} <span class="good ${k}"></span>${b.out[k]} ${goodName(k)}</div>`);
       }

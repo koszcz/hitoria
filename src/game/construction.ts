@@ -68,6 +68,7 @@ export function addBuilding(g: Game, type: BType, x: number, y: number) {
 }
 
 export function builtStatus(b: Building) {
+  if (b.type === 'square') return 'Ready to hold a feast';
   return BDEFS[b.type].worker ? 'Waiting for a worker' : 'Storing goods';
 }
 

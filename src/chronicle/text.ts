@@ -15,6 +15,7 @@ const EN = {
   landed: { other: 'Settlers landed on the other island', far: 'Settlers landed on the far island' },
   winter: 'A whole winter passed with no one hungry',
   settlers: (n: number) => `The island reached ${n} settlers`,
+  feast: 'The first wedding feast brought two newlyweds',
   title: 'Island chronicle',
   empty: 'Nothing has happened on this island yet.',
 };
@@ -29,6 +30,7 @@ const PL: typeof EN = {
   landed: { other: 'Osadnicy wylądowali na drugiej wyspie', far: 'Osadnicy wylądowali na dalekiej wyspie' },
   winter: 'Minęła cała zima i nikt nie był głodny',
   settlers: (n) => `Wyspa ma już ${n} osadników`,
+  feast: 'Pierwsza uczta weselna sprowadziła dwoje nowożeńców',
   title: 'Kronika wyspy',
   empty: 'Na tej wyspie nic się jeszcze nie wydarzyło.',
 };
@@ -53,5 +55,6 @@ function lineOf(x: typeof EN, e: Entry): string {
     case 'landed': return x.landed[e.isle];
     case 'winter': return x.winter;
     case 'settlers': return x.settlers(e.n);
+    case 'feast': return x.feast;
   }
 }

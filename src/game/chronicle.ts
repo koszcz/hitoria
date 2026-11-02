@@ -18,7 +18,8 @@ export type Milestone =
   | { what: 'upgrade' } // the first building was upgraded
   | { what: 'landed'; isle: 'other' | 'far' } // settlers landed on an island
   | { what: 'winter' } // a whole winter passed with no one hungry
-  | { what: 'settlers'; n: number }; // the island reached n settlers
+  | { what: 'settlers'; n: number } // the island reached n settlers
+  | { what: 'feast' }; // the first wedding feast brought newcomers
 export type Entry = Milestone & { day: number };
 
 // Write `m` into the chronicle with today's date.
@@ -51,6 +52,11 @@ export function noteWish(g: Game) {
 // A building was upgraded. Only the first upgrade is noted.
 export function noteUpgrade(g: Game) {
   if (!g.chronicle.some((e) => e.what === 'upgrade')) note(g, { what: 'upgrade' });
+}
+
+// A wedding feast brought its newcomers. Only the first feast is noted.
+export function noteFeast(g: Game) {
+  if (!g.chronicle.some((e) => e.what === 'feast')) note(g, { what: 'feast' });
 }
 
 // Called often. Notes each settler milestone the first time the island reaches it.

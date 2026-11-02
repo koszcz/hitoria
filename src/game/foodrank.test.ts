@@ -25,6 +25,7 @@ describe('food rank', () => {
     for (const t of ['farm', 'well', 'mill'] as const) expect(foodRank(t)).toBe(0);
     for (const t of ['woodcutter', 'sawmill', 'mine', 'smelter'] as const) expect(foodRank(t)).toBe(1);
     expect(foodRank('house')).toBe(2);
+    expect(foodRank('square')).toBe(3);
   });
 });
 

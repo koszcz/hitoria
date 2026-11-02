@@ -6,6 +6,7 @@ import { DONKEY_BUSY, DONKEY_LOAD, hireDonkey } from './donkeys';
 import type { Game } from './game';
 import { pantry } from './houses';
 import { foodRank } from './foodrank';
+import { feastWant } from './feast';
 import { eats, forCarriers, lunchbox } from './meals';
 import { isStore } from './stores';
 import type { Building } from './types';
@@ -15,6 +16,7 @@ import { W } from '../world';
 function want(b: Building, g: Good) {
   if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
   if (b.type === 'house') return pantry(b, g);
+  if (b.type === 'square') return feastWant(b, g);
   if (eats(b) && HOUSE_FOOD.includes(g)) return lunchbox(b, g);
   const rc = RECIPES[b.type];
   if (rc?.with === g) return PILE;

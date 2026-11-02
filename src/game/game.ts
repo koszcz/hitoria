@@ -29,6 +29,7 @@ import { noteSettlers, type Entry } from './chronicle';
 import { stepTrader, trade } from './trade';
 import { richAt, richSpots } from './geology';
 import { canUpgrade, upgrade } from './upgrades';
+import { canFeast, orderFeast, stepFeasts } from './feast';
 import type { Animal, AnimalKind, Building, Settler, Ship, Trader } from './types';
 
 export class Game {
@@ -53,6 +54,7 @@ export class Game {
   goal = 0; // index in GOALS of the goal the player is on
   wish: WishState | null = null; // the village wish, once every goal is reached
   wishesGranted = 0; // village wishes the player has met
+  feastSeason = -1; // the season the last feast was ordered in, counted by seasonCount
   winters = { state: 'ready' as WinterState, since: new Map<number, number>() }; // every winter, for the chronicle
   winter = { state: 'late' as WinterState, since: new Map<number, number>() }; // the survive winter goal; `since` is when each house or mine began waiting for food
   wear = new Float32Array(W * H); // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
@@ -196,6 +198,16 @@ export class Game {
     return upgrade(this, b);
   }
 
+  // Why Feast Square `b` can't hold a wedding feast now, or null if it can.
+  canFeast(b: Building) {
+    return canFeast(this, b);
+  }
+
+  // Order a wedding feast at Feast Square `b`. Returns why it can't, or null.
+  orderFeast(b: Building) {
+    return orderFeast(this, b);
+  }
+
   // Demolish the building on tile `t`. Returns why it can't, or null.
   removeAt(t: P) {
     return removeAt(this, t);
@@ -213,6 +225,7 @@ export class Game {
       watchTools(this);
       noteWinters(this);
       noteSettlers(this);
+      stepFeasts(this);
     }
     this.growT -= dt;
     if (this.growT <= 0) {

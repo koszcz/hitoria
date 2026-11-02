@@ -4,6 +4,7 @@ import { isNight } from '../seasons/day';
 import { W } from '../world';
 import type { Game } from './game';
 import { isHome } from './homes';
+import { joinFeast } from './feast';
 import { giveUp } from './settlers';
 import type { Building, Settler } from './types';
 import { walkFrom } from './walking';
@@ -41,6 +42,7 @@ export function bedFor(g: Game, b: Building): Building | null {
 export function bedtime(g: Game, s: Settler, post: Building): boolean {
   if (night(g)) {
     if (s.asleep) return true;
+    if (joinFeast(g, s, post)) return true;
     post.status = ASLEEP;
     s.atWork = false;
     s.anim = '';
