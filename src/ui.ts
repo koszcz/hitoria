@@ -13,6 +13,7 @@ import { stopRows } from './stopinfo';
 import { rateRows } from './rateinfo';
 import { blessedRow, feastRows } from './feastinfo';
 import { openGoodsChart } from './goodschart/panel';
+import { isleView } from './islandview/view';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -41,6 +42,8 @@ export class UI {
   muted = false;
   // The music volume, 0..1, shown on its menu button. main.ts sets it.
   music = 0.5;
+  // The tile the camera looks at, so the goods bar shows that island's goods. main.ts sets it.
+  look = () => ({ x: this.game.hq.x, y: this.game.hq.y });
 
   constructor(public game: Game) {
     this.drawBar();
@@ -145,12 +148,19 @@ export class UI {
     }
   }
 
+  // The goods and name of the island the camera looks at.
+  private view() {
+    const at = this.look(), v = isleView(this.game, at.x, at.y);
+    return { stored: v.stored, isle: v.label };
+  }
+
   openBuild() {
     const current = this.placing && this.placing !== 'remove' ? this.placing : null;
     openBuildMenu({
       game: this.game,
       current,
       touch: document.body.classList.contains('touch'),
+      ...this.view(),
       pick: (type) => this.setPlacing(type),
     });
   }
@@ -218,8 +228,9 @@ export class UI {
     while (g.toasts.length) this.toast(g.toasts.shift()!);
 
     const x = T();
-    const stored = g.stored;
+    const { stored, isle } = this.view();
     $('res').innerHTML =
+      (isle ? `<div class="pill isle">🏝️ ${isle}</div>` : '') +
       GOODS.map((k) => `<div class="pill${stored[k] ? '' : ' none'}" title="${goodName(k)}"><span class="good ${k}"></span><b>${stored[k]}</b></div>`).join('') +
       `<div class="pill">🧑‍🌾 ${x.settlers(g.idle, g.settlers.size)}</div>`;
 

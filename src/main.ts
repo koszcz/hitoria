@@ -51,6 +51,7 @@ const nav = navigator as Navigator & { deviceMemory?: number };
 const graphics = new GraphicsSetting({ touch: matchMedia('(pointer: coarse)').matches, cores: nav.hardwareConcurrency, memory: nav.deviceMemory });
 renderer.setGraphics(GRAPHICS[graphics.level]);
 const ui = new UI(game);
+ui.look = () => renderer.screenToTile(innerWidth / 2, innerHeight / 2);
 ui.graphics = graphics;
 const mute = new MuteChoice();
 const musicVolume = new MusicVolume();

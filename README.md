@@ -147,6 +147,11 @@ The new harbour is the island's home, like the HQ. Its idle settlers wait there 
 to build, work and carry goods. Buildings on the island get their goods from it and bring what
 they make back to it. Settlers never cross the sea on foot.
 
+Each island uses only the goods in its own stores. The goods bar and the build menu show the goods
+of the island the camera looks at, and name that island, such as "Second island". Pan to another
+island to see its goods. Over open sea, or over an island with no store yet, they show the home
+island. Goals and wishes still count the goods on every island.
+
 Once the ship is back, you can sail a second time, to the far island. It takes another 5
 settlers and the same goods. The far island has a mountain ridge with coal and iron ore too, and
 all of its ore is rich, so every mine there digs twice as fast. Its ridge runs across the island,
@@ -388,7 +393,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine, meadow and cove themes of the two islands (`themes.ts`), the hidden cove's lagoon (`cove.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, and where the far island sits (`isle.ts`) |
 | `src/math/` | Sine, cosine and distance that give the same result on every computer, so a seed always makes the same map (`exact.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea and in the hidden cove (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`) and on their walls (`walllight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -404,6 +409,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/rateinfo.ts` | The "In the last minute" part of a building's panel: goods made and used |
 | `src/feastinfo.ts` | The Feast Square panel's feast part, and the blessing line in hut panels |
 | `src/buildmenu/` | The build menu |
+| `src/islandview/` | Which island's goods the goods bar and build menu show, and the island's name |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/chronicle/` | The island chronicle panel and how its lines read |
 | `src/goodschart/` | The goods chart panel, and where each good's line runs (`lines.ts`) |

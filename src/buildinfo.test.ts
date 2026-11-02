@@ -139,6 +139,13 @@ describe('build card notes about your game', () => {
     expect(buildNow(g, 'lookout').warn).toEqual([]);
   });
 
+  test('a hut warns when the island the player looks at has no tools, even with tools back home', () => {
+    const g = flatGame();
+    const island = { ...g.stored, tool: 0 };
+    expect(g.stored.tool).toBe(20);
+    expect(buildNow(g, 'woodcutter', island).warn).toEqual(["You have no tools left. Its worker will wait until a Toolmaker's Workshop makes one."]);
+  });
+
   test('a house explains how it grows your settlers', () => {
     expect(buildFacts('house').makes).toBe('A family home. It turns one fish, meat or bread into a new settler every 40 s, up to 4 settlers. A different food from last time grows the settler faster.');
     expect(buildFacts('house').worth).toContain('More settlers mean more carriers, builders and workers. Build more houses to keep growing.');

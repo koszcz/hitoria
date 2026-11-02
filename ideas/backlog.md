@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Goals still count every island. *Fun 3 · Effort M · Branch: worktree-agent-a341b5682ebbff8ed*
+Nothing right now.
 
 ## Next
 
@@ -63,6 +63,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Once a second island has a store, the bar names the island. Goals still count every island. *2026-11-02*
 - **Goods chart**: click the goods bar or press G to see how much of each good your stores held over the last hour, one line per good you pick. The record starts again when you load a game. *2026-11-02*
 - **Glow lights the walls**: at night, the walls of each finished building take a soft warm tint from its pool of light, brightest near the ground and the door and fading toward the roof. The tint fades in and out with the glow, and it stays a painted fake, not real lamps. *2026-11-02*
 - **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *2026-11-02*

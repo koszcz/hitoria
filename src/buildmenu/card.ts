@@ -7,10 +7,10 @@ import { keyFor } from './groups';
 export const costText = (cost: Partial<Bag>) =>
   GOODS.filter((g) => cost[g]).map((g) => `<span class="good ${g}"></span>${cost[g]}`).join(' ');
 
-export function cardHtml(game: Game, type: BType) {
+export function cardHtml(game: Game, type: BType, stored: Bag = game.stored) {
   const def = BDEFS[type];
   const facts = buildFacts(type);
-  const now = buildNow(game, type);
+  const now = buildNow(game, type, stored);
   const key = keyFor(type);
   const items = (xs: string[]) => xs.map((x) => `<li>${x}</li>`).join('');
   const x = T();

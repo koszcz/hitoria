@@ -1,4 +1,4 @@
-import { Game, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, DOCK_REACH, HOUSE_FOOD, WELL_DRAW, needsTool, MEAL, SELF_FED, hungryWorker } from './game';
+import { Game, type Bag, BDEFS, BUILDABLE, BType, Good, MINES, RECIPES, CROP_GROW, DOCK_REACH, HOUSE_FOOD, WELL_DRAW, needsTool, MEAL, SELF_FED, hungryWorker } from './game';
 import { getLang, goodName, buildingName, buildingDesc, join, plural } from './i18n';
 
 const bname = (t: BType) => buildingName(t);
@@ -195,7 +195,8 @@ export interface BuildNow {
   warn: string[];
 }
 
-export function buildNow(game: Game, type: BType): BuildNow {
+// `stored` is the goods on the island the player looks at.
+export function buildNow(game: Game, type: BType, stored: Bag = game.stored): BuildNow {
   const count = (t: BType) => {
     let built = 0, planned = 0;
     for (const b of game.buildings.values()) if (b.type === t) b.built ? built++ : planned++;
@@ -207,10 +208,10 @@ export function buildNow(game: Game, type: BType): BuildNow {
 
   const warn: string[] = [];
   for (const from of needs(type))
-    if (from.every((g) => !game.stored[g] && producers(g).every((t) => !count(t).all)))
+    if (from.every((g) => !stored[g] && producers(g).every((t) => !count(t).all)))
       warn.push(x.noInput(from, [...new Set(from.flatMap(producers))]));
   if (type === 'forester' && !count('woodcutter').all) warn.push(x.noWoodcutter);
   if (!game.pool && BDEFS[type].worker) warn.push(x.noIdle);
-  if (needsTool(type) && !game.stored.tool) warn.push(x.noTool);
+  if (needsTool(type) && !stored.tool) warn.push(x.noTool);
   return { have, warn };
 }

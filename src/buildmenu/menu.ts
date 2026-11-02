@@ -1,7 +1,7 @@
 // The build menu: a dialog that lists the buildings by group. Pick one to place it on the map.
 // With a mouse, hovering shows a building's details and a click picks it. On a touch screen the
 // first tap shows the details and a second tap, or the Build button, picks it.
-import { BDEFS, type BType, type Game } from '../game';
+import { BDEFS, type Bag, type BType, type Game } from '../game';
 import { T, buildingName } from '../i18n';
 import { GROUPS, canPay } from './groups';
 import { cardHtml, costText } from './card';
@@ -10,6 +10,8 @@ export interface BuildMenuOptions {
   game: Game;
   current: BType | null; // the building already picked, shown first
   touch: boolean;
+  stored: Bag; // the goods on the island the camera looks at
+  isle: string; // that island's name, or '' while only one island has a store
   pick(type: BType): void;
 }
 
@@ -18,7 +20,7 @@ export function openBuildMenu(o: BuildMenuOptions) {
   const x = T();
   const box = document.createElement('div');
   box.id = 'buildmenu';
-  const stored = o.game.stored;
+  const stored = o.stored;
   const groups = GROUPS.map(({ group, types }) =>
     `<h4>${x.groups[group]}</h4><div class="tiles">` +
     types.map((t) =>
@@ -28,7 +30,7 @@ export function openBuildMenu(o: BuildMenuOptions) {
     `</div>`).join('');
   box.innerHTML = `
     <div class="panel">
-      <header><h2>${x.buildMenu}</h2><button class="close" title="${x.close}">✕</button></header>
+      <header><h2>${x.buildMenu}${o.isle ? ` · ${o.isle}` : ''}</h2><button class="close" title="${x.close}">✕</button></header>
       <div class="body">
         <div class="list">${groups}</div>
         <div class="details"><div class="card"></div><button class="go"></button></div>
@@ -40,7 +42,7 @@ export function openBuildMenu(o: BuildMenuOptions) {
 
   const show = (t: BType) => {
     shown = t;
-    card.innerHTML = cardHtml(o.game, t);
+    card.innerHTML = cardHtml(o.game, t, stored);
     go.textContent = x.buildIt(buildingName(t));
     for (const b of box.querySelectorAll<HTMLElement>('.tile')) b.classList.toggle('shown', b.dataset.type === t);
   };
