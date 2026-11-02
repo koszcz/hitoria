@@ -41,6 +41,8 @@ describe('island themes', () => {
       const w = new World(seed);
       const pines = tilesOf(w, pinesOf(w)), meadow = tilesOf(w, meadowOf(w));
       const trees = (ts: typeof pines) => ts.filter((t) => w.tiles[t.i].tree).length;
+      // Trees for each tile of land, since the second island is bigger than the far island.
+      const forest = (ts: typeof pines) => trees(ts) / ts.filter((t) => w.tiles[t.i].t !== 'water').length;
 
       test('gives the two islands two different themes', () => {
         expect(w.themes).toEqual(drawThemes(seed));
@@ -51,10 +53,10 @@ describe('island themes', () => {
         expect(w.themeAt(w.start.x, w.start.y)).toBeNull();
       });
 
-      test('the pine island has dense pines, at least twice the trees of the meadow island', () => {
+      test('the pine island has dense pines, at least twice as dense as on the meadow island', () => {
         const pineTrees = pines.filter((t) => w.tiles[t.i].tree);
         expect(pineTrees.length).toBeGreaterThanOrEqual(40);
-        expect(pineTrees.length).toBeGreaterThanOrEqual(2 * trees(meadow));
+        expect(forest(pines)).toBeGreaterThanOrEqual(2 * forest(meadow));
         const conifers = pineTrees.filter((t) => w.tiles[t.i].conifer).length;
         expect(conifers / pineTrees.length).toBeGreaterThanOrEqual(0.85);
       });
@@ -75,7 +77,7 @@ describe('island themes', () => {
 
       test('the meadow island has few trees but keeps a grove, and wide flower meadows', () => {
         expect(trees(meadow)).toBeGreaterThanOrEqual(3);
-        expect(trees(meadow)).toBeLessThanOrEqual(15);
+        expect(forest(meadow)).toBeLessThanOrEqual(0.1);
         const open = meadow.filter((t) => w.tiles[t.i].t === 'grass' && !w.tiles[t.i].tree);
         const flowers = open.filter((t) => w.tiles[t.i].plant === 'flowers').length;
         expect(flowers / open.length).toBeGreaterThanOrEqual(0.4);

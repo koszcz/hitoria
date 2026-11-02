@@ -43,7 +43,9 @@ describe('map size', () => {
 
   for (const seed of SEEDS)
     describe(`seed ${seed}`, () => {
-      const old = new World(seed, LAST_SMALL), now = new World(seed);
+      // Map version 9 is the bigger map with the land of the last 64 by 64 map. From version 10,
+      // the second island is bigger and reaches past it. See src/land/isle.test.ts.
+      const old = new World(seed, LAST_SMALL), now = new World(seed, BIG_FROM);
 
       test('the land is the land of the last 64 by 64 map, moved into the middle', () => {
         for (let y = 0; y < OLD_SIZE; y++)

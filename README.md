@@ -7,7 +7,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 - **Changelog:** https://koszcz.github.io/hitoria/changelog.html shows what changed, with screenshots.
 - **Backlog dashboard:** https://koszcz.github.io/hitoria/backlog.html shows the ideas and what is being built.
 
-![A village around the HQ keep, beside a bay and between rocky, sharp-peaked mountains. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left. At the top right, the clock shows winter, day 5](docs/screenshot.jpg)
+![A village around the HQ keep, beside a bay, with a rocky, sharp-peaked mountain in front of it and boulders all around. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, a well, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. Bowls float over a few huts whose workers are hungry. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left. At the top right, the clock shows winter, day 5](docs/screenshot.jpg)
 
 ## How to play
 
@@ -88,7 +88,7 @@ first, the wish just passes, with no penalty, and a new one comes.
      or coal and iron ore. A mine's panel says when it sits next to a rich spot. A mine can
      also stand on the edge of a mountain, if there is open grass in front of its door. From
      there it reaches rich spots deeper in the mountain.
-   - Across the water from the bay lies a second island. Farther out, to one side of the bay, lies
+   - Across the water from the bay lies a second island, about 20 tiles across. Farther out, to one side of the bay, lies
      the far island. To settle them, build a harbour, click it and press **Set sail**. See
      "Settling the second island" below.
    - The two islands have different themes, chosen at random for each new map. One is a pine
@@ -147,8 +147,9 @@ settlers and the same goods. The far island has a mountain with coal and iron or
 its ore is rich, so every mine there digs twice as fast. Each island gets one crew, so you can
 sail twice in all.
 
-The second island has a mountain with coal and iron ore in it. Build your coal and iron mines at
-its foot.
+The second island has a mountain ridge with coal and iron ore in it. The ridge runs across the
+middle of the island, with meadows on both sides. Build your coal and iron mines at its foot, and
+walk around the ends of the ridge to reach the far side.
 
 ### Trading with the trade ship
 
@@ -341,7 +342,8 @@ on the same land it was saved on, even though new games get the new map. On maps
 second island's mountain, every mountain still holds coal and iron ore. Maps from before mountain ranges
 keep their round mountains. Maps from before the far island have no far island, so their settlers
 sail only once. Maps from before island themes keep islands with no theme. Maps from before the
-bigger map stay 64 by 64 tiles. New maps are 96 by 96, with the same islands and wide open sea around them.
+bigger map stay 64 by 64 tiles. New maps are 96 by 96, with wide open sea around the land. Maps
+from before the bigger second island keep a second island about 13 tiles across.
 
 ## Graphics
 
@@ -374,7 +376,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
-| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine and meadow themes of the two islands (`themes.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`) |
+| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine and meadow themes of the two islands (`themes.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island (`isle.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |

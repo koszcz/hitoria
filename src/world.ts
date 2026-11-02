@@ -2,7 +2,9 @@ import { rng, noise } from './land/noise';
 import { ranges, toRidge } from './land/ranges';
 import { THEME_HUE, THEME_LIGHT, drawThemes, meadowPlant, raiseCliffs, themeConifer, themeTree } from './land/themes';
 import type { IsleName, Theme } from './land/themes';
-import { OLD_SIZE, mapSize, surround } from './land/size';
+import { OLD_SIZE, OPEN_SEA, mapSize, surround } from './land/size';
+import { BIG_ISLE_FROM, SMALL_ISLE, farApart, island, isleShape } from './land/isle';
+import type { IsleSize } from './land/isle';
 
 export { rng };
 
@@ -35,7 +37,8 @@ export interface Tile {
 // 7: a far island lies farther out, to one side of the bay, with rich coal and iron in its mountain.
 // 8: the second and far island get two different themes: pine highlands and wild meadows.
 // 9: the map is 96 by 96 tiles. The land stays inside the middle 64 by 64, with open sea around it.
-export const MAP_VERSION = 9;
+// 10: the second island is about 20 tiles across, with a longer ridge. It reaches past the middle 64 by 64.
+export const MAP_VERSION = 10;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -50,25 +53,17 @@ const BAY_WIDTH = 1.8;
 // From map version 3, land rises at most this much per tile where the generator flattens it, so
 // the flat parts slope into the mountains around them.
 const SLOPE = 0.065;
-// From map version 4, the second island: how far past the head of the bay its centre sits, how
-// wide it is, and how wide the strait of water around it is. The strait runs on out to the open sea.
-const ISLE_AWAY = 14;
-const ISLE_SIZE = 6.5;
-const STRAIT = 3.5;
-// From map version 5, the second island's mountain: how far past the island's centre its top sits,
-// away from the home island, how high the top is, and how much lower each tile out from the top is.
-// Its sides are steep, so the strait to the home island stays as wide as before.
-const ISLE_PEAK_AWAY = 1.5;
+// From map version 4, the second island. Its size and place are in isleShape.
+// From map version 5, the island's mountain: how high its top is, and how much lower each tile out
+// from the top is. Its sides are steep, so the strait to the home island stays as wide as before.
 const ISLE_PEAK = 0.98;
 const ISLE_PEAK_SLOPE = 0.12;
 // From map version 6, natural ridges are flat this close to the start, and full height
 // CALM_FADE tiles further out.
 const CALM = 6;
 const CALM_FADE = 10;
-// From map version 6, how many tiles the start mountain's ridge runs on away from the start, and
-// how many tiles the second island's ridge runs each way from its top.
+// From map version 6, how many tiles the start mountain's ridge runs on away from the start.
 const PEAK_RIDGE = 4;
-const ISLE_RIDGE = 1.5;
 // From map version 6, no trees or boulders grow on the bay's bank this far past its water, up to
 // BANK_NEAR tiles from the start.
 const BANK = 2.8;
@@ -80,15 +75,9 @@ const PINE_FOOT = 3.5;
 // From map version 7, the far island: how far its centre sits from the start, to one side of the
 // bay. It is the same size as the second island and has a mountain like it.
 const FAR_AWAY = 24;
-// From map version 7, how far the far island may turn from the bay's direction, in degrees, and how
-// far its centre stays from the second island's centre.
+// From map version 7, how far the far island may turn from the bay's direction, in degrees. The far
+// island is the size of the old second island, and always has a grove, so it always has trees.
 const FAR_TURN = [50, 130];
-const FAR_APART = 21;
-// From map version 7, a grove on the far island, so it always has trees: how far it sits towards the
-// home side of the island's centre and off to one side, and how wide it is.
-const FAR_GROVE_IN = 2.5;
-const FAR_GROVE_SIDE = 3.5;
-const FAR_GROVE = 2;
 // From map version 7, open sea runs this many tiles wide around the edge of the map, so a ship can
 // sail around the home island to the far island.
 const EDGE_SEA = 3;
@@ -109,6 +98,8 @@ export class World {
   isle: { x: number; y: number } | null = null;
   // From map version 7, the centre of the far island, and the way it faces out to sea. Null on older maps.
   far: { x: number; y: number; out: { x: number; y: number } } | null = null;
+  // The size and place of the second island on this map. See isleShape.
+  readonly shape: IsleSize;
   // From map version 8, the theme of the second and far island. Null on older maps.
   themes: Record<IsleName, Theme> | null = null;
   // 1 on the sea cliffs of a pine island. Cliffs are bare rock with no ore.
@@ -121,8 +112,9 @@ export class World {
     this.ore = new Uint8Array(W * H);
     this.cliff = new Uint8Array(W * H);
     this.start = { x: W / 2, y: H / 2 };
-    // From map version 9, the land is the same as on an old-size map, with open sea all around it.
-    if (size > OLD_SIZE) {
+    const isl = (this.shape = isleShape(map));
+    // In map version 9, the land is the same as on an old-size map, with open sea all around it.
+    if (size > OLD_SIZE && map < BIG_ISLE_FROM) {
       surround(this, new World(seed, map, OLD_SIZE));
       return;
     }
@@ -134,14 +126,17 @@ export class World {
     const landmarks = map >= 2, smooth = map >= 3;
     const grove = { x: sx + 6, y: sy - 4 }, quarry = { x: sx - 5, y: sy + 5 };
     const { peak, bay, out } = this.landmarks(seed);
-    const isle = { x: bay.x + out.x * ISLE_AWAY, y: bay.y + out.y * ISLE_AWAY };
+    const isle = { x: bay.x + out.x * isl.away, y: bay.y + out.y * isl.away };
     if (map >= 4) this.isle = isle;
-    const islePeak = { x: isle.x + out.x * ISLE_PEAK_AWAY, y: isle.y + out.y * ISLE_PEAK_AWAY };
+    const islePeak = { x: isle.x + out.x * isl.peakAway, y: isle.y + out.y * isl.peakAway };
     // From map version 6, natural mountains fold into ranges, and both guaranteed mountains are
     // short ridges. The start mountain's ridge runs on away from the start. The second island's
     // ridge runs across the island, along its far side.
+    // From map version 10, the map is bigger than the home island's land, which still fades out
+    // into sea as on an old-size map.
+    const big = map >= BIG_ISLE_FROM, span = OLD_SIZE / 2;
     const lay = (x: number, y: number) => {
-      const d = Math.hypot(x - sx, y - sy) / (W / 2);
+      const d = Math.hypot(x - sx, y - sy) / span;
       return n1(x, y) * 0.55 + n2(x, y) * 0.3 + n3(x, y) * 0.15 + 0.2 - d * d * 0.55;
     };
     // Ridges fade out towards the start, so the HQ's land stays gentle.
@@ -149,16 +144,17 @@ export class World {
     const ranged = map >= 6, shape = ranged ? ranges(seed, lay, calm, W, H) : null;
     const away = { x: (peak.x - sx) / PEAK_AWAY, y: (peak.y - sy) / PEAK_AWAY };
     const peakEnd = { x: peak.x + away.x * PEAK_RIDGE, y: peak.y + away.y * PEAK_RIDGE };
-    const isleEnds = [-1, 1].map((k) => ({ x: islePeak.x - out.y * ISLE_RIDGE * k, y: islePeak.y + out.x * ISLE_RIDGE * k }));
+    const isleEnds = [-1, 1].map((k) => ({ x: islePeak.x - out.y * isl.ridge * k, y: islePeak.y + out.x * isl.ridge * k }));
     const far = (this.far = map >= 7 ? this.farPlace(seed, out, isle) : null);
-    const farPeak = far && { x: far.x + far.out.x * ISLE_PEAK_AWAY, y: far.y + far.out.y * ISLE_PEAK_AWAY };
-    const farEnds = far && [-1, 1].map((k) => ({ x: farPeak!.x - far.out.y * ISLE_RIDGE * k, y: farPeak!.y + far.out.x * ISLE_RIDGE * k }));
+    const { peakAway: fpa, ridge: fr, size: farSize } = SMALL_ISLE;
+    const farPeak = far && { x: far.x + far.out.x * fpa, y: far.y + far.out.y * fpa };
+    const farEnds = far && [-1, 1].map((k) => ({ x: farPeak!.x - far.out.y * fr * k, y: farPeak!.y + far.out.x * fr * k }));
     const toFarPeakAt = (x: number, y: number) => (farEnds ? toRidge(x, y, farEnds[0], farEnds[1]) : Infinity);
-    const groveOf = (c: { x: number; y: number }, o: { x: number; y: number }) =>
-      ({ x: c.x - o.x * FAR_GROVE_IN - o.y * FAR_GROVE_SIDE, y: c.y - o.y * FAR_GROVE_IN + o.x * FAR_GROVE_SIDE });
+    const groveOf = (c: { x: number; y: number }, o: { x: number; y: number }, s: IsleSize) =>
+      ({ x: c.x - o.x * s.groveIn - o.y * s.groveSide, y: c.y - o.y * s.groveIn + o.x * s.groveSide, r: s.grove });
     const themes = (this.themes = far && map >= 8 ? drawThemes(seed) : null);
     // The far island always has a grove. From map version 8, a meadow second island gets one too.
-    const groves = [far && groveOf(far, far.out), themes?.other === 'meadow' ? groveOf(isle, out) : null].filter((c) => !!c);
+    const groves = [far && groveOf(far, far.out, SMALL_ISLE), themes?.other === 'meadow' ? groveOf(isle, out, isl) : null].filter((c) => !!c);
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
     const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : Math.hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
@@ -187,19 +183,21 @@ export class World {
           if (toBay < BAY_WIDTH) h = Math.min(h, 0.24);
           else if (toBay < BAY_WIDTH + 1.2) h = Math.min(h, 0.32);
         }
-        if (map >= 4) h = this.island(h, x - isle.x, y - isle.y, out, n3(x, y));
+        // From map version 10, the home island's land ends where an old-size map would end.
+        if (big) h = Math.min(h, this.edgeSea(Math.min(x - sx, y - sy, sx - 1 - x, sy - 1 - y) + span));
+        if (map >= 4) h = island(h, x - isle.x, y - isle.y, out, n3(x, y), isl.size);
         // The second island's mountain rises past its middle, so the near shore stays free for a harbour.
         if (map >= 5) h = Math.max(h, ISLE_PEAK - toIslePeakAt(x, y) * ISLE_PEAK_SLOPE);
         if (far) {
-          h = this.island(h, x - far.x, y - far.y, far.out, n2(x, y));
+          h = island(h, x - far.x, y - far.y, far.out, n2(x, y), farSize);
           h = Math.max(h, ISLE_PEAK - toFarPeakAt(x, y) * ISLE_PEAK_SLOPE);
-          const edge = Math.min(x, y, W - 1 - x, H - 1 - y);
-          h = Math.min(h, 0.22 + Math.max(0, edge - EDGE_SEA + 1) * 0.08);
+          h = Math.min(h, this.edgeSea(Math.min(x, y, W - 1 - x, H - 1 - y)));
         }
+        if (big) h = Math.max(h, OPEN_SEA);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, col: '' });
         // Older maps have ore in every mountain. From map 5, only the second island's mountain holds it.
-        const rich = map < 5 || this.isleAt(x, y, ISLE_SIZE) !== null;
+        const rich = map < 5 || this.isleAt(x, y, 0) !== null;
         if (t === 'mountain' && rich) this.ore[y * W + x] = 1;
       }
     }
@@ -222,7 +220,7 @@ export class World {
         const bank = ranged && near < BANK_NEAR && toRidge(x, y, bay, bayEnd) < BAY_WIDTH + BANK;
         if (tile.t !== 'grass' || near < 3.5 || foot || bank) continue;
         const theme = this.themeAt(x, y);
-        if (groves.some((c) => Math.hypot(x - c.x, y - c.y) < FAR_GROVE)) tile.tree = rand() < 0.8 ? 1 : 0;
+        if (groves.some((c) => Math.hypot(x - c.x, y - c.y) < c.r)) tile.tree = rand() < 0.8 ? 1 : 0;
         else if (theme) tile.tree = themeTree(theme, forest(x, y), rand) ? 1 : 0;
         else if (Math.hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
         else if (Math.hypot(x - quarry.x, y - quarry.y) < QUARRY) tile.rock = 4 + Math.floor(rand() * 3);
@@ -275,7 +273,7 @@ export class World {
   // the rest of the map keeps its shape.
   private farPlace(seed: number, bay: { x: number; y: number }, isle: { x: number; y: number }) {
     const k = rng(seed ^ 0xfa12)() < 0.5 ? 1 : -1;
-    const room = ISLE_SIZE + EDGE_SEA + 2;
+    const room = SMALL_ISLE.size + EDGE_SEA + 2;
     const fit = (v: number) => Math.max(room, Math.min(this.w - 1 - room, v));
     const { x: sx, y: sy } = this.start;
     let best = null, bd = -1;
@@ -283,7 +281,7 @@ export class World {
       const a = Math.atan2(bay.y, bay.x) + (k * deg * Math.PI) / 180;
       const out = { x: Math.cos(a), y: Math.sin(a) };
       const x = fit(sx + out.x * FAR_AWAY), y = fit(sy + out.y * FAR_AWAY), d = Math.hypot(x - sx, y - sy);
-      if (Math.hypot(x - isle.x, y - isle.y) < FAR_APART || d <= bd) continue;
+      if (Math.hypot(x - isle.x, y - isle.y) < farApart(this.map) || d <= bd) continue;
       best = { x, y, out };
       bd = d;
     }
@@ -291,30 +289,23 @@ export class World {
   }
 
   // Which island the tile at (x, y) is on: 'other' for the second island, 'far' for the far
-  // island, or null for neither. A tile counts if it lies within `reach` of the island's centre.
-  isleAt(x: number, y: number, reach = ISLE_SIZE + 2): 'other' | 'far' | null {
-    if (this.isle && Math.hypot(x - this.isle.x, y - this.isle.y) < reach) return 'other';
-    if (this.far && Math.hypot(x - this.far.x, y - this.far.y) < reach) return 'far';
+  // island, or null for neither. A tile counts if it lies within `more` tiles past the island's size.
+  isleAt(x: number, y: number, more = 2): 'other' | 'far' | null {
+    if (this.isle && Math.hypot(x - this.isle.x, y - this.isle.y) < this.shape.size + more) return 'other';
+    if (this.far && Math.hypot(x - this.far.x, y - this.far.y) < SMALL_ISLE.size + more) return 'far';
     return null;
+  }
+
+  // The highest the land may be `edge` tiles in from the edge of the land, so open sea runs
+  // EDGE_SEA tiles wide around it. Past the edge, the sea floor goes on sloping down.
+  private edgeSea(edge: number) {
+    return 0.22 + Math.max(0, edge - EDGE_SEA + 1) * 0.08;
   }
 
   // The theme of the island the tile at (x, y) is on, or null for the home island and older maps.
   themeAt(x: number, y: number): Theme | null {
     const isle = this.themes && this.isleAt(x, y);
     return isle ? this.themes![isle] : null;
-  }
-
-  // The height of land near the second island, which is `dx, dy` from the island's centre. The
-  // strait lowers the home island's coast into sea, with a sandy shore and a bank like the bay's.
-  // The island rises from a sandy beach to a low,
-  // grassy middle, with `bump` from the noise so its shore is not a perfect circle.
-  private island(h: number, dx: number, dy: number, out: { x: number; y: number }, bump: number) {
-    const past = Math.max(0, dx * out.x + dy * out.y);
-    const side = Math.hypot(dx - out.x * past, dy - out.y * past);
-    const shore = ISLE_SIZE + STRAIT + 1.2;
-    h = Math.min(h, side < ISLE_SIZE + STRAIT ? 0.22 : side < shore ? 0.32 : 0.62 + (side - shore) * SLOPE);
-    const r = Math.hypot(dx, dy) / ISLE_SIZE;
-    return r < 1 ? Math.max(h, 0.24 + (1 - r * r) * 0.38 + (bump - 0.5) * 0.08) : h;
   }
 
   // Plants use their own random numbers, so adding them moves no tree or boulder on a map.

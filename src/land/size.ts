@@ -10,7 +10,7 @@ export const BIG_FROM = 9;
 // tile, from no higher than EDGE_SEA, to OPEN_SEA at the deepest.
 const SEA_FALL = 0.05;
 const EDGE_SEA = 0.22;
-const OPEN_SEA = -0.35;
+export const OPEN_SEA = -0.35;
 
 // How many tiles across and down a map of generator version `map` is.
 export const mapSize = (map: number) => (map >= BIG_FROM ? BIG_SIZE : OLD_SIZE);
