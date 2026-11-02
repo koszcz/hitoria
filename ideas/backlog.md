@@ -20,12 +20,8 @@ New ideas go here, not scored yet.
 
 - **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them.
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back.
-- **Choose where the ship sails**: when you send a ship to settle, you pick which island it sails to, instead of the ship always landing on the nearest shore.
-- **Warn when a building cuts off the HQ**: the game refuses or warns when a new building blocks the last path between other buildings and the HQ, and the build spots skip such tiles. From the 2026-11-02 playtests (Marek, Ola).
 - **Fix Save as new**: "Save as new" adds a second save instead of overwriting the current one. From the 2026-11-02 playtests (Zosia).
-- **Supply a new colony**: the player can send goods and food to a settled island, or the game says plainly that each island needs its own Fisher. Today colony mines wait for food for good. From the 2026-11-02 playtests (Ola, Zosia, Tomek).
 - **Say where coal and iron lie**: the Coal Mine and Iron Mine cards say that ore lies only in the mountains of the other island, before the player builds a Smelter or Toolmaker for nothing. From the 2026-11-02 playtests (Ola, Marek).
-- **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek).
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek).
 - **Quarry says when boulders are out of reach**: the quarry panel says the boulders it cannot walk to, instead of "No boulders in range" while boulders lie in range. From the 2026-11-02 playtests (Tomek, Ola).
 - **Explain bought iron and upgrades**: the Upgrade panel says that bought iron does not count until you make iron in your own Smelter. From the 2026-11-02 playtests (Tomek).
@@ -51,7 +47,8 @@ New ideas go here, not scored yet.
 
 Triaged, but with open questions. Run `/refine` on one to settle them.
 
-Empty.
+- **Supply a new colony**: the player can send goods and food to a settled island, or the game says plainly that each island needs its own Fisher. Today colony mines wait for food for good. From the 2026-11-02 playtests (Ola, Zosia, Tomek). *Fun 3 · Effort M · Open: ship goods between islands, or only a clear hint? If ships, how does the player choose what goes?*
+- **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: send more settlers, let a colony grow its own, or only fix the hint? Refine together with Supply a new colony.*
 
 ## Later
 
@@ -61,6 +58,8 @@ Triaged and ready to build, but not next.
 - **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
+- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S*
+- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
 
 ## Done
 
