@@ -2,6 +2,7 @@ import { rng, noise } from './land/noise';
 import { ranges, toRidge } from './land/ranges';
 import { THEME_HUE, THEME_LIGHT, drawThemes, meadowPlant, raiseCliffs, themeConifer, themeTree } from './land/themes';
 import type { IsleName, Theme } from './land/themes';
+import { OLD_SIZE, mapSize, surround } from './land/size';
 
 export { rng };
 
@@ -23,9 +24,6 @@ export interface Tile {
   col: string; // precomputed ground colour
 }
 
-export const W = 64;
-export const H = 64;
-
 // Which version of the map generator to use. A saved game stores only what changed on the map,
 // so loading it must build exactly the same land as when it was saved. Any change to the land a
 // seed makes needs a new version here, and the old versions must keep building the same land.
@@ -36,7 +34,8 @@ export const H = 64;
 // 6: mountains form ranges, with ridges and valleys instead of round peaks.
 // 7: a far island lies farther out, to one side of the bay, with rich coal and iron in its mountain.
 // 8: the second and far island get two different themes: pine highlands and wild meadows.
-export const MAP_VERSION = 8;
+// 9: the map is 96 by 96 tiles. The land stays inside the middle 64 by 64, with open sea around it.
+export const MAP_VERSION = 9;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -99,10 +98,13 @@ const QUARRY = 1.9;
 
 export class World {
   tiles: Tile[] = [];
-  territory = new Uint8Array(W * H);
+  // How many tiles across and down the map is. See mapSize.
+  readonly w: number;
+  readonly h: number;
+  territory: Uint8Array;
   // 1 where coal and iron ore lie in a mountain tile. The generator lays it down, so saves don't store it.
-  ore = new Uint8Array(W * H);
-  start = { x: W / 2, y: H / 2 };
+  ore: Uint8Array;
+  start: { x: number; y: number };
   // From map version 4, the centre of the second island. Null on older maps.
   isle: { x: number; y: number } | null = null;
   // From map version 7, the centre of the far island, and the way it faces out to sea. Null on older maps.
@@ -110,12 +112,24 @@ export class World {
   // From map version 8, the theme of the second and far island. Null on older maps.
   themes: Record<IsleName, Theme> | null = null;
   // 1 on the sea cliffs of a pine island. Cliffs are bare rock with no ore.
-  cliff = new Uint8Array(W * H);
+  cliff: Uint8Array;
 
-  constructor(seed: number, readonly map = MAP_VERSION) {
+  // `size` is for the generator itself: a bigger map lays its land out on an old-size map first.
+  constructor(seed: number, readonly map = MAP_VERSION, size = mapSize(map)) {
+    const W = (this.w = size), H = (this.h = size);
+    this.territory = new Uint8Array(W * H);
+    this.ore = new Uint8Array(W * H);
+    this.cliff = new Uint8Array(W * H);
+    this.start = { x: W / 2, y: H / 2 };
+    // From map version 9, the land is the same as on an old-size map, with open sea all around it.
+    if (size > OLD_SIZE) {
+      surround(this, new World(seed, map, OLD_SIZE));
+      return;
+    }
     const rand = rng(seed);
-    const n1 = noise(rand, 16), n2 = noise(rand, 8), n3 = noise(rand, 4);
-    const forest = noise(rand, 7), rocks = noise(rand, 5), tint = noise(rand, 3);
+    const field = (cell: number) => noise(rand, cell, W, H);
+    const n1 = field(16), n2 = field(8), n3 = field(4);
+    const forest = field(7), rocks = field(5), tint = field(3);
     const { x: sx, y: sy } = this.start;
     const landmarks = map >= 2, smooth = map >= 3;
     const grove = { x: sx + 6, y: sy - 4 }, quarry = { x: sx - 5, y: sy + 5 };
@@ -132,7 +146,7 @@ export class World {
     };
     // Ridges fade out towards the start, so the HQ's land stays gentle.
     const calm = (x: number, y: number) => Math.min(1, Math.max(0, (Math.hypot(x - sx, y - sy) - CALM) / CALM_FADE));
-    const ranged = map >= 6, shape = ranged ? ranges(seed, lay, calm) : null;
+    const ranged = map >= 6, shape = ranged ? ranges(seed, lay, calm, W, H) : null;
     const away = { x: (peak.x - sx) / PEAK_AWAY, y: (peak.y - sy) / PEAK_AWAY };
     const peakEnd = { x: peak.x + away.x * PEAK_RIDGE, y: peak.y + away.y * PEAK_RIDGE };
     const isleEnds = [-1, 1].map((k) => ({ x: islePeak.x - out.y * ISLE_RIDGE * k, y: islePeak.y + out.x * ISLE_RIDGE * k }));
@@ -262,7 +276,7 @@ export class World {
   private farPlace(seed: number, bay: { x: number; y: number }, isle: { x: number; y: number }) {
     const k = rng(seed ^ 0xfa12)() < 0.5 ? 1 : -1;
     const room = ISLE_SIZE + EDGE_SEA + 2;
-    const fit = (v: number) => Math.max(room, Math.min(W - 1 - room, v));
+    const fit = (v: number) => Math.max(room, Math.min(this.w - 1 - room, v));
     const { x: sx, y: sy } = this.start;
     let best = null, bd = -1;
     for (let deg = FAR_TURN[0]; deg <= FAR_TURN[1]; deg += 5) {
@@ -308,9 +322,9 @@ export class World {
   // Forest edges get bushes. Open grass gets meadows of tall grass and patches of flowers.
   private sowPlants(seed: number) {
     const rand = rng(seed ^ 0x5eed);
-    const meadow = noise(rand, 6), bloom = noise(rand, 4);
-    for (let y = 0; y < H; y++)
-      for (let x = 0; x < W; x++) {
+    const meadow = noise(rand, 6, this.w, this.h), bloom = noise(rand, 4, this.w, this.h);
+    for (let y = 0; y < this.h; y++)
+      for (let x = 0; x < this.w; x++) {
         const t = this.at(x, y), r = rand();
         if (t.t === 'sand') t.plant = this.nearWater(x, y) && r < 0.5 ? 'reeds' : r > 0.92 ? 'pebbles' : '';
         else if (t.t === 'mountain') t.plant = r < 0.14 ? 'pebbles' : '';
@@ -328,19 +342,19 @@ export class World {
 
   // Do coal and iron ore lie in the tile at (x, y)?
   hasOre(x: number, y: number) {
-    return this.at(x, y).t === 'mountain' && this.ore[y * W + x] === 1;
+    return this.at(x, y).t === 'mountain' && this.ore[y * this.w + x] === 1;
   }
 
   inside(x: number, y: number) {
-    return x >= 0 && y >= 0 && x < W && y < H;
+    return x >= 0 && y >= 0 && x < this.w && y < this.h;
   }
 
   at(x: number, y: number) {
-    return this.tiles[y * W + x];
+    return this.tiles[y * this.w + x];
   }
 
   private hAt(x: number, y: number) {
-    return this.at(Math.max(0, Math.min(W - 1, x)), Math.max(0, Math.min(H - 1, y))).h;
+    return this.at(Math.max(0, Math.min(this.w - 1, x)), Math.max(0, Math.min(this.h - 1, y))).h;
   }
 
   // Grown trees on this tile and the eight around it.

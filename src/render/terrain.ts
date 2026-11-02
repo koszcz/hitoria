@@ -1,6 +1,6 @@
 // The island's ground, the sea around it and the dashed border of your land.
 import * as THREE from 'three';
-import { World, W, H } from '../world';
+import { World } from '../world';
 import { ART } from '../art';
 import { grade, hash } from './kit';
 import { groundHeight } from './elevation';
@@ -17,9 +17,9 @@ export class Terrain {
   grain = grainTexture();
 
   private world: World | null = null;
-  private corners = new Float32Array((W + 1) * (H + 1));
+  private corners = new Float32Array(0);
   private relief!: Relief;
-  private cornerCol = new Float32Array((W + 1) * (H + 1) * 3);
+  private cornerCol = new Float32Array(0);
   private water!: THREE.Mesh;
   private border = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineDashedMaterial({ color: '#ffeaa0', dashSize: 0.18, gapSize: 0.12, transparent: true, opacity: 0.9 }));
   private c = new THREE.Color();
@@ -43,7 +43,9 @@ export class Terrain {
 
   build(world: World) {
     this.world = world;
-    const C = this.corners;
+    const { w: W, h: H } = world;
+    const C = (this.corners = new Float32Array((W + 1) * (H + 1)));
+    this.cornerCol = new Float32Array((W + 1) * (H + 1) * 3);
     for (let j = 0; j <= H; j++)
       for (let i = 0; i <= W; i++) {
         let sum = 0, n = 0;
@@ -107,7 +109,7 @@ export class Terrain {
   // Corner colours blend the four tiles around them, and each fine point blends its corners.
   // Slope and height then add rock and snow. `wear` turns grass and sand toward dirt.
   paint(wear: Float32Array) {
-    const world = this.world!, CC = this.cornerCol;
+    const world = this.world!, CC = this.cornerCol, { w: W, h: H } = world;
     const col = this.mesh.geometry.attributes.color as THREE.BufferAttribute;
     const trail = this.mesh.geometry.attributes.wear as THREE.BufferAttribute;
     const base = new Map<number, THREE.Color>();
@@ -172,7 +174,7 @@ export class Terrain {
   }
 
   drawBorder() {
-    const world = this.world!;
+    const world = this.world!, { w: W, h: H } = world;
     const inT = (x: number, y: number) => world.inside(x, y) && world.territory[y * W + x] === 1;
     const pts: number[] = [];
     const seg = (ax: number, ay: number, bx: number, by: number) => {

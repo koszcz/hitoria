@@ -339,7 +339,8 @@ Each save records which version of the map it was made on. A save from before a 
 on the same land it was saved on, even though new games get the new map. On maps from before the
 second island's mountain, every mountain still holds coal and iron ore. Maps from before mountain ranges
 keep their round mountains. Maps from before the far island have no far island, so their settlers
-sail only once. Maps from before island themes keep islands with no theme.
+sail only once. Maps from before island themes keep islands with no theme. Maps from before the
+bigger map stay 64 by 64 tiles. New maps are 96 by 96, with the same islands and wide open sea around them.
 
 ## Graphics
 
@@ -372,7 +373,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
-| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), and the pine and meadow themes of the two islands (`themes.ts`) |
+| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine and meadow themes of the two islands (`themes.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |

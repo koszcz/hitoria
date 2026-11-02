@@ -3,7 +3,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, GOODS, bag } from '.';
 import { findPath } from '../path';
-import { W } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import { demolish } from './demolish';
 import { landingSpot, lacking, SAIL_CARGO, SAIL_CREW } from './voyage';
 import type { Building } from './types';
@@ -25,7 +25,7 @@ function settle(seed = 1) {
 
 // Is there a way over land, ignoring trees and boulders, from a to b?
 const byLand = (g: Game, a: { x: number; y: number }, b: { x: number; y: number }) =>
-  !!findPath(a.x, a.y, b.x, b.y, (x, y) => g.world.at(x, y).t !== 'water', W * W);
+  !!findPath(g.world, a.x, a.y, b.x, b.y, (x, y) => g.world.at(x, y).t !== 'water', W * W);
 
 describe('getting ready to sail', () => {
   test('needs a finished harbour', () => {

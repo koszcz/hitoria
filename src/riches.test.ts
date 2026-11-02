@@ -1,12 +1,13 @@
 // Island riches: coal and iron ore lie only in the second island's mountains. Older maps keep
 // ore in every mountain, so old saves keep the mines they could build.
 import { describe, expect, test } from 'bun:test';
-import { World, W, H } from './world';
+import { World } from './world';
 
 const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
 
 // The tiles of the land piece that holds (x, y), as a set of tile indexes.
 function landAt(w: World, x: number, y: number) {
+  const W = w.w;
   const seen = new Set([y * W + x]);
   const todo = [y * W + x];
   while (todo.length) {
@@ -22,8 +23,8 @@ function landAt(w: World, x: number, y: number) {
   return seen;
 }
 
-const all = (f: (x: number, y: number) => void) => {
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) f(x, y);
+const all = (w: World, f: (x: number, y: number) => void) => {
+  for (let y = 0; y < w.h; y++) for (let x = 0; x < w.w; x++) f(x, y);
 };
 
 describe('island riches', () => {
@@ -34,8 +35,8 @@ describe('island riches', () => {
 
       test('the second island has mountains, and every one holds ore, except sea cliffs', () => {
         let rich = 0;
-        all((x, y) => {
-          if (home.has(y * W + x) || w.at(x, y).t !== 'mountain' || w.cliff[y * W + x]) return;
+        all(w, (x, y) => {
+          if (home.has(y * w.w + x) || w.at(x, y).t !== 'mountain' || w.cliff[y * w.w + x]) return;
           expect(w.hasOre(x, y)).toBe(true);
           rich++;
         });
@@ -43,13 +44,13 @@ describe('island riches', () => {
       });
 
       test('the home island has stone only', () => {
-        all((x, y) => {
-          if (home.has(y * W + x)) expect(w.hasOre(x, y)).toBe(false);
+        all(w, (x, y) => {
+          if (home.has(y * w.w + x)) expect(w.hasOre(x, y)).toBe(false);
         });
       });
 
       test('only mountains hold ore', () => {
-        all((x, y) => {
+        all(w, (x, y) => {
           if (w.at(x, y).t !== 'mountain') expect(w.hasOre(x, y)).toBe(false);
         });
       });
@@ -59,7 +60,7 @@ describe('island riches', () => {
     for (const map of [1, 2, 3, 4]) {
       const w = new World(1, map);
       let mountains = 0;
-      all((x, y) => {
+      all(w, (x, y) => {
         if (w.at(x, y).t !== 'mountain') return;
         mountains++;
         expect(w.hasOre(x, y)).toBe(true);

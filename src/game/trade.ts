@@ -3,7 +3,6 @@
 // goes is in tradeday.ts. What it wants and sells is in wants.ts.
 import type { P } from '../path';
 import { dayNumber } from '../seasons/day';
-import { W, H } from '../world';
 import { noteTrader } from './chronicle';
 import type { Good } from './defs';
 import type { Game } from './game';
@@ -38,7 +37,7 @@ export function tradeHarbour(g: Game): Building | null {
 
 // The water tile on the edge of the map that is the shortest sail from `dock`.
 function seaEdge(g: Game, dock: P): P | null {
-  const d = flood(dock, water(g));
+  const d = flood(g.world, dock, water(g)), { w: W, h: H } = g.world;
   let best: P | null = null, bd = Infinity;
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {

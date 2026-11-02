@@ -1,6 +1,5 @@
 // Farm fields: the tiles a farm keeps for its grain, so nothing else can take them.
 import type { P } from '../path';
-import { W } from '../world';
 import { BDEFS, FARM_FIELDS } from './defs';
 import type { Game } from './game';
 import type { Building } from './types';
@@ -14,7 +13,7 @@ export function pickFields(g: Game, x: number, y: number, withCrops = false): P[
   for (let ty = y - r; ty <= y + r; ty++)
     for (let tx = x - r; tx <= x + r; tx++) {
       const d = Math.hypot(tx - x, ty - y);
-      if (d > r || !g.world.inside(tx, ty) || !g.world.territory[ty * W + tx]) continue;
+      if (d > r || !g.world.inside(tx, ty) || !g.world.territory[ty * g.world.w + tx]) continue;
       if (Math.abs(tx - x) <= 1 && ty >= y - 1 && ty <= y + 2) continue; // next to the farm or its doorstep
       const t = g.world.at(tx, ty);
       if (t.t !== 'grass' || t.tree || t.rock || t.b || t.field) continue;

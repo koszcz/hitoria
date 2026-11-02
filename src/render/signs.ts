@@ -2,7 +2,6 @@
 // or a lump of coal and a lump of iron ore. A rich spot gets a gold sign with a gold knob on top.
 import * as THREE from 'three';
 import type { Game } from '../game';
-import { W } from '../world';
 import { add } from './kit';
 import { disposeModel, mergeModel } from './merge';
 import type { Terrain } from './terrain';
@@ -27,7 +26,7 @@ export class Signs {
     const g = (this.group = new THREE.Group());
     game.signs.forEach((s, i) => {
       if (!s) return;
-      const x = i % W, y = (i / W) | 0;
+      const x = i % game.world.w, y = (i / game.world.w) | 0;
       const t = game.world.at(x, y);
       if (t.t !== 'mountain' || t.b) return;
       const rich = game.rich[i] === 1;

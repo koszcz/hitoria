@@ -1,7 +1,8 @@
 // Saving a game and loading it back.
 import { describe, expect, test } from 'bun:test';
 import { Game, SAVE_VERSION, bag, type SaveData } from '.';
-import { MAP_VERSION, World, W } from '../world';
+import { MAP_VERSION, World } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import type { Building } from './types';
 import { flatGame, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
 
@@ -104,10 +105,12 @@ describe('save and load', () => {
   test('records the map version, and a save from before map versions loads on the old map', () => {
     const d = new Game(1).save();
     expect(d.map).toBe(MAP_VERSION);
-    const old = { ...d, v: 2, map: undefined };
+    // Saves from before map version 9 hold a 64 by 64 map.
+    const small = new Game(1, 8).save();
+    const old = { ...small, v: 2, map: undefined };
     expect(Game.load(old).world.tiles.map((t) => t.t)).toEqual(new World(1, 1).tiles.map((t) => t.t));
     // Version 3 saves came after the map changed, so they load on map 2.
-    const v3 = { ...d, v: 3, map: undefined };
+    const v3 = { ...small, v: 3, map: undefined };
     expect(Game.load(v3).world.tiles.map((t) => t.t)).toEqual(new World(1, 2).tiles.map((t) => t.t));
     expect(Game.load(d).world.tiles.map((t) => t.t)).toEqual(new World(1).tiles.map((t) => t.t));
   });

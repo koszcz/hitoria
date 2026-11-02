@@ -1,8 +1,7 @@
 // Sailing to settle: a ship takes settlers and goods from a harbour to the other island, and later
 // to the far island. There they build a harbour of their own, which becomes their home and claims
 // the land around it.
-import { findPath, type P } from '../path';
-import { W, H } from '../world';
+import { findPath, type P, type Size } from '../path';
 import { BDEFS, GOODS, Good, bag, type Bag } from './defs';
 import { note } from './chronicle';
 import { addBuilding } from './construction';
@@ -27,7 +26,8 @@ const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -
 // Every tile reached from `from` by stepping over tiles that pass `ok`, with the number of steps.
 // Steps may go diagonally, but not past a corner that fails `ok`.
 // -1 where it can't be reached.
-export function flood(from: P, ok: (x: number, y: number) => boolean) {
+export function flood(size: Size, from: P, ok: (x: number, y: number) => boolean) {
+  const { w: W, h: H } = size;
   const d = new Int32Array(W * H).fill(-1);
   const queue = [from.y * W + from.x];
   d[queue[0]] = 0;
@@ -67,7 +67,7 @@ function room(g: Game, x: number, y: number) {
   const near = (nx: number, ny: number) =>
     Math.hypot(nx - x, ny - y) <= LANDING_LAND && (nx !== x || ny !== y) && free(g, nx, ny, cleared(x, y, nx, ny));
   let n = 0;
-  for (const d of flood({ x, y: y + 1 }, near)) if (d >= 0) n++;
+  for (const d of flood(g.world, { x, y: y + 1 }, near)) if (d >= 0) n++;
   return n;
 }
 
@@ -76,8 +76,8 @@ function room(g: Game, x: number, y: number) {
 export function landingSpot(g: Game, h: Building): { land: P; dock: P } | null {
   const from = g.dock(h);
   if (!from) return null;
-  const home = flood(h, (x, y) => g.world.at(x, y).t !== 'water');
-  const sea = flood(from, water(g));
+  const home = flood(g.world, h, (x, y) => g.world.at(x, y).t !== 'water');
+  const sea = flood(g.world, from, water(g)), { w: W, h: H } = g.world;
   let best: { land: P; dock: P } | null = null, bd = Infinity;
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
@@ -127,7 +127,7 @@ export function seaPath(g: Game, a: P, b: P) {
     for (const [dx, dy] of DIRS) if (!g.world.inside(x + dx, y + dy) || g.world.at(x + dx, y + dy).t !== 'water') return false;
     return true;
   };
-  return findPath(a.x, a.y, b.x, b.y, water(g), W * H, (x, y) => (open(x, y) ? 0.7 : 1), 0.7) ?? [];
+  return findPath(g.world, a.x, a.y, b.x, b.y, water(g), g.world.w * g.world.h, (x, y) => (open(x, y) ? 0.7 : 1), 0.7) ?? [];
 }
 
 // Load the ship at harbour `h` and send it off. Returns why it can't sail, or null once it has.

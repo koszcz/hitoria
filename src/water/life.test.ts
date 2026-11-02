@@ -1,7 +1,10 @@
 import { describe, expect, test } from 'bun:test';
 import { JUMP, JUMP_HIGH, PADDLE, SPLASH, duckAt, ducksHome, fishAt, fishPause, pickSpots } from './life';
 import { landDistance } from './shore';
-import { World, W, H } from '../world';
+import { World } from '../world';
+import { BIG_SIZE as W } from '../land/size';
+
+const H = W;
 
 const world = new World(1);
 const dist = landDistance(world, W, H);

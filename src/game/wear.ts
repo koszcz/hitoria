@@ -1,5 +1,4 @@
 // Worn paths: each footstep wears the grass toward dirt, and paths nobody walks fade back to grass.
-import { W } from '../world';
 import { FADE_DELAY, FADE_TIME, WEAR_FULL, WEAR_SHOWS, WEAR_STEP } from './defs';
 import type { Game } from './game';
 
@@ -20,7 +19,7 @@ function wearable(g: Game, x: number, y: number) {
 // A settler stepped onto (x, y).
 export function tread(g: Game, x: number, y: number) {
   if (!wearable(g, x, y)) return;
-  const i = y * W + x, was = g.wear[i];
+  const i = y * g.world.w + x, was = g.wear[i];
   g.wear[i] = Math.min(1, was + WEAR_STEP);
   g.trod[i] = g.time;
   if (shade(g.wear[i]) !== shade(was)) g.worn++;

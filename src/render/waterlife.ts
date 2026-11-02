@@ -1,7 +1,7 @@
 // Fish that leap out of the sea now and then with a splash, and flocks of ducks paddling
 // near the shore. Ducks fly south for the winter.
 import * as THREE from 'three';
-import { World, W, H } from '../world';
+import { World } from '../world';
 import { landDistance } from '../water/shore';
 import { SPLASH, duckAt, ducksHome, fishAt, pickSpots, type Spot } from '../water/life';
 import { add, hash } from './kit';
@@ -25,6 +25,7 @@ export class Waterlife {
   // `home` is the start of the game: the fish and ducks live mostly near it, where the player looks.
   build(world: World, home: Spot) {
     this.clear();
+    const { w: W, h: H } = world;
     const dist = landDistance(world, W, H);
     // Fish leap a little way out from the beach; ducks keep to calm water near it.
     for (const spot of pickSpots(dist, W, home, 2, 6, 5, FISH, 1)) {

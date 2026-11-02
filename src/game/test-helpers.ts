@@ -1,6 +1,5 @@
 import { expect } from 'bun:test';
 import { Game, GOODS, Bag, bag } from './index';
-import { W } from '../world';
 import { placeSite } from './construction';
 import { DAY_LENGTH, clock } from '../seasons/day';
 
@@ -96,11 +95,11 @@ export function wallOff(g: Game, b: { x: number; y: number }) {
 }
 
 // Is the tile at (x, y) part of your land?
-export const inside = (g: Game, x: number, y: number) => !!g.world.territory[y * W + x];
+export const inside = (g: Game, x: number, y: number) => !!g.world.territory[y * g.world.w + x];
 
 // A new game on a real map, with a finished harbour on the first shore spot that fits one.
 export function harbourGame(seed = 1, built = true) {
-  const g = new Game(seed);
+  const g = new Game(seed), W = g.world.w;
   for (let i = 0; i < W * W; i++) {
     const x = i % W, y = Math.floor(i / W);
     if (g.canPlace('harbour', x, y)) continue;

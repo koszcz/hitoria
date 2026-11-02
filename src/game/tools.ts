@@ -8,7 +8,6 @@ import { isStore } from './stores';
 import type { Building, Settler, Task } from './types';
 import { SAIL_CARGO } from './voyage';
 import { walkFrom } from './walking';
-import { W } from '../world';
 
 export const START_TOOLS = 20; // tools in the HQ at the start
 export const NO_TOOL = 'Waiting for a tool'; // the status of a hut whose worker waits for one
@@ -29,7 +28,7 @@ export function toolStore(g: Game, b: Building): Building | null {
   let best: Building | null = null, bd = Infinity;
   for (const s of g.buildings.values()) {
     if (!isStore(s) || s.stock.tool <= s.sending.tool) continue;
-    const d = dist[s.y * W + s.x];
+    const d = dist[s.y * g.world.w + s.x];
     if (d < bd) { bd = d; best = s; }
   }
   const home = homeOf(g, b) || g.hq;

@@ -1,6 +1,6 @@
 // Mountain ranges: from map version 6, mountains form long ridges with valleys between them.
 import { describe, expect, test } from 'bun:test';
-import { World, W, H } from '../world';
+import { World } from '../world';
 import { toRidge } from './ranges';
 
 const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
@@ -9,9 +9,10 @@ const BIG = 10;
 
 // Every piece of mountain on the map, as lists of tiles. Tiles touching sideways are one piece.
 function mountains(w: World) {
+  const W = w.w;
   const seen = new Set<number>();
   const pieces: { x: number; y: number }[][] = [];
-  for (let i = 0; i < W * H; i++) {
+  for (let i = 0; i < w.tiles.length; i++) {
     if (seen.has(i) || w.tiles[i].t !== 'mountain') continue;
     const piece: { x: number; y: number }[] = [];
     const todo = [i];
@@ -84,8 +85,8 @@ describe('mountain ranges', () => {
     for (const seed of SEEDS) {
       const w = new World(seed, map);
       const hill = (x: number, y: number) => w.inside(x, y) && w.at(x, y).t === 'mountain';
-      for (let y = 0; y < H; y++)
-        for (let x = 0; x < W; x++) {
+      for (let y = 0; y < w.h; y++)
+        for (let x = 0; x < w.w; x++) {
           if (w.at(x, y).t === 'mountain' || w.at(x, y).t === 'water') continue;
           const across = ([dx, dy]: number[]) =>
             [1, -1].every((k) => [1, 2, 3, 4].some((r) => hill(x + dx * r * k, y + dy * r * k)));
@@ -106,8 +107,8 @@ describe('mountain ranges', () => {
   for (const seed of SEEDS)
     test(`seed ${seed} has no cliff anywhere in its mountains`, () => {
       const w = new World(seed);
-      let step = 0;
-      for (let y = 0; y < H; y++)
+      let step = 0, W = w.w;
+      for (let y = 0; y < w.h; y++)
         for (let x = 0; x < W; x++)
           for (const [nx, ny] of [[x + 1, y], [x, y + 1]])
             if (w.inside(nx, ny) && !w.cliff[y * W + x] && !w.cliff[ny * W + nx] &&

@@ -1,7 +1,7 @@
 // The Game class: all the state of one settlement, and the actions the player and the main loop call.
 // The work itself lives in the other files of this folder, as functions that take the game.
 import type { P } from '../path';
-import { MAP_VERSION, World, W, H, rng } from '../world';
+import { MAP_VERSION, World, rng } from '../world';
 import { BType, CROP_GROW, Good, bag } from './defs';
 import { spawnAnimals, stepAnimal } from './animals';
 import { regrow } from './hunting';
@@ -59,10 +59,10 @@ export class Game {
   blessedUntil = 0; // the game time a religious feast's blessing ends; workers work faster until then
   winters = { state: 'ready' as WinterState, since: new Map<number, number>() }; // every winter, for the chronicle
   winter = { state: 'late' as WinterState, since: new Map<number, number>() }; // the survive winter goal; `since` is when each house or mine began waiting for food
-  wear = new Float32Array(W * H); // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
+  wear: Float32Array; // how worn each tile is by footsteps, 0 = grass, 1 = a dirt path
   worn = 0; // bumped whenever a tile's wear changes enough to see
   rich: Uint8Array; // 1 on the mountain tiles that are rich spots; the seed makes them, so saves don't store them
-  signs = new Uint8Array(W * H); // 1 where a geologist has put up a sign
+  signs: Uint8Array; // 1 where a geologist has put up a sign
   signed = 0; // bumped whenever a geologist puts up signs
 
   // Internal state for the files in this folder. Code outside src/game/ should not touch it.
@@ -71,7 +71,7 @@ export class Game {
   snubbed = new Map<number, number>(); // unreachable tiles -> retry time
   walks = new Map<number, { t: number; d: Float32Array }>(); // walking distances from each building
   ground: { t: number; kind: Uint8Array; cost: Float32Array } | null = null; // what each tile is to a walker
-  trod = new Float32Array(W * H); // game time of the last footstep on each tile
+  trod: Float32Array; // game time of the last footstep on each tile
   wildCount: Record<AnimalKind, number> = { deer: 0, hare: 0, fox: 0 }; // animals of each kind the game began with
   wildT = 0; // seconds the island has been short of animals
   caught: { kind: AnimalKind; home: P }[] = []; // where caught animals lived, oldest first
@@ -82,6 +82,10 @@ export class Game {
 
   constructor(readonly seed: number, map = MAP_VERSION) {
     this.world = new World(seed, map);
+    const tiles = this.world.w * this.world.h;
+    this.wear = new Float32Array(tiles);
+    this.signs = new Uint8Array(tiles);
+    this.trod = new Float32Array(tiles);
     this.rand = rng(seed ^ 0x9a3e);
     this.rich = richSpots(this.world, seed);
     const { x, y } = this.world.start;

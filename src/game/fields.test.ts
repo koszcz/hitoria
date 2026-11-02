@@ -1,7 +1,7 @@
 // Farms keep their own fields: where a farm may go, which tiles it takes, and what may not use them.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { W } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import { flatGame, placeBare, placeLinked, run, runUntil } from './test-helpers';
 
 const fieldsOf = (g: Game, id: number) => g.world.tiles.flatMap((t, i) => (t.field === id ? [i] : []));

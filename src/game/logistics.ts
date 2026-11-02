@@ -11,7 +11,6 @@ import { eats, forCarriers, lunchbox } from './meals';
 import { isStore } from './stores';
 import type { Building } from './types';
 import { walkFrom } from './walking';
-import { W } from '../world';
 
 function want(b: Building, g: Good) {
   if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
@@ -68,8 +67,8 @@ export function moveGoods(g: Game) {
     if (isStore(b) || !GOODS.some((k) => missing(b, k) > 0)) continue;
     const dist = walkFrom(g, b);
     const stores = [...g.buildings.values()]
-      .filter((s) => isStore(s) && at(dist, s) < Infinity)
-      .sort((p, q) => at(dist, p) - at(dist, q));
+      .filter((s) => isStore(s) && at(g, dist, s) < Infinity)
+      .sort((p, q) => at(g, dist, p) - at(g, dist, q));
     for (const k of GOODS)
       while (missing(b, k) > 0) {
         const s = stores.find((s) => s.stock[k] > s.sending[k]);
@@ -88,16 +87,16 @@ function pickDest(g: Game, from: Building, good: Good) {
   const rank = (b: Building) => (HOUSE_FOOD.includes(good) ? foodRank(b.type) : 0);
   let best: Building | undefined, bd = Infinity;
   for (const b of g.buildings.values()) {
-    if (b === from || isStore(b) || missing(b, good) <= 0 || at(dist, b) === Infinity) continue;
-    if (!best || rank(b) < rank(best) || (rank(b) === rank(best) && at(dist, b) < bd)) { bd = at(dist, b); best = b; }
+    if (b === from || isStore(b) || missing(b, good) <= 0 || at(g, dist, b) === Infinity) continue;
+    if (!best || rank(b) < rank(best) || (rank(b) === rank(best) && at(g, dist, b) < bd)) { bd = at(g, dist, b); best = b; }
   }
   if (best) return best;
   bd = Infinity;
   for (const b of g.buildings.values()) {
-    if (isStore(b) && at(dist, b) < bd) { bd = at(dist, b); best = b; }
+    if (isStore(b) && at(g, dist, b) < bd) { bd = at(g, dist, b); best = b; }
   }
   return best;
 }
 
 // How far it is to walk into building `b`, read from a map of walking distances.
-const at = (dist: Float32Array, b: Building) => dist[b.y * W + b.x];
+const at = (g: Game, dist: Float32Array, b: Building) => dist[b.y * g.world.w + b.x];

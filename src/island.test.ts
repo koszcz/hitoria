@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { World, W, H } from './world';
+import { World } from './world';
 
 const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
 // The HQ's land reaches 9 tiles.
@@ -7,6 +7,7 @@ const LAND = 9;
 
 // Every piece of land on the map, as lists of tile indexes. Land touching sideways or diagonally is one piece.
 function landmasses(w: World) {
+  const { w: W, h: H } = w;
   const seen = new Set<number>();
   const pieces: number[][] = [];
   for (let i = 0; i < W * H; i++) {
@@ -32,12 +33,12 @@ function landmasses(w: World) {
 }
 
 function islands(w: World) {
-  const home = w.start.y * W + w.start.x;
+  const home = w.start.y * w.w + w.start.x;
   const pieces = landmasses(w);
   return { home: pieces.find((p) => p.includes(home))!, others: pieces.filter((p) => !p.includes(home)) };
 }
 
-const distance = (a: number, b: number) => Math.hypot((a % W) - (b % W), Math.floor(a / W) - Math.floor(b / W));
+const distance = (w: World, a: number, b: number) => Math.hypot((a % w.w) - (b % w.w), Math.floor(a / w.w) - Math.floor(b / w.w));
 
 describe('second island', () => {
   for (const seed of SEEDS) {
@@ -45,21 +46,21 @@ describe('second island', () => {
       const w = new World(seed);
       const { home, others } = islands(w);
       const island = others.sort((a, b) => b.length - a.length)[0] ?? [];
-      const start = w.start.y * W + w.start.x;
+      const start = w.start.y * w.w + w.start.x;
 
       test('has a second island big enough for a small settlement', () => {
         expect(island.length).toBeGreaterThanOrEqual(80);
       });
 
       test('puts the island outside the HQ land, but near it', () => {
-        const nearest = Math.min(...island.map((i) => distance(i, start)));
+        const nearest = Math.min(...island.map((i) => distance(w, i, start)));
         expect(nearest).toBeGreaterThan(LAND);
         expect(nearest).toBeLessThan(20);
       });
 
       test('keeps at least 3 tiles of water between the island and the home island', () => {
         let gap = Infinity;
-        for (const i of island) for (const j of home) gap = Math.min(gap, distance(i, j));
+        for (const i of island) for (const j of home) gap = Math.min(gap, distance(w, i, j));
         expect(gap).toBeGreaterThanOrEqual(3);
       });
 

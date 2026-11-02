@@ -1,7 +1,11 @@
 // Trees, plants, rocks and grain fields, redrawn each frame so they sway in the wind.
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
-import { World, W, H } from '../world';
+import { World } from '../world';
+import { BIG_SIZE } from '../land/size';
+
+// Room for one tree, plant or field on every tile of the biggest map.
+const TILES = BIG_SIZE * BIG_SIZE;
 import { wind, flutter } from '../wind';
 import { ART } from '../art';
 import { grade, hash } from './kit';
@@ -31,7 +35,7 @@ export class Scenery {
     const tree = (geo: THREE.BufferGeometry, leafy = true) => {
       const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, flatShading: true });
       seasonTree(mat, leafy);
-      const m = new THREE.InstancedMesh(geo, mat, W * H);
+      const m = new THREE.InstancedMesh(geo, mat, TILES);
       m.castShadow = m.receiveShadow = true;
       m.frustumCulled = false;
       scene.add(m);
@@ -39,7 +43,7 @@ export class Scenery {
     };
     this.trees = [tree(broadleaf()), tree(conifer(), false), tree(birch()), tree(blossom())];
     const plant = (geo: THREE.BufferGeometry, shadow = false) => {
-      const m = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, flatShading: true }), W * H);
+      const m = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, flatShading: true }), TILES);
       m.castShadow = shadow;
       m.receiveShadow = true;
       m.frustumCulled = false;
@@ -50,7 +54,7 @@ export class Scenery {
     this.petals = plant(flowerParts(true));
     const stone = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.85, flatShading: true });
     seasonTree(stone, false); // snow settles on top of rocks too
-    this.rocks = new THREE.InstancedMesh(boulder(), stone, W * H * 3);
+    this.rocks = new THREE.InstancedMesh(boulder(), stone, TILES * 3);
     this.rocks.castShadow = this.rocks.receiveShadow = true;
     this.rocks.frustumCulled = false;
     scene.add(this.rocks);
@@ -61,10 +65,10 @@ export class Scenery {
       const sx = ((i % 4) - 1.5) * 0.2 + (hash(i, 3) - 0.5) * 0.08, sz = (Math.floor(i / 4) - 1.5) * 0.2 + (hash(3, i) - 0.5) * 0.08;
       stalks.push(new THREE.BoxGeometry(0.025, 0.3, 0.025).translate(sx, 0.15, sz), new THREE.BoxGeometry(0.04, 0.07, 0.04).translate(sx, 0.31, sz));
     }
-    this.crops = new THREE.InstancedMesh(mergeGeometries(stalks), new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), W * H);
+    this.crops = new THREE.InstancedMesh(mergeGeometries(stalks), new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), TILES);
     this.crops.castShadow = this.crops.receiveShadow = true;
     this.fields = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.92, 0.92).rotateX(-Math.PI / 2),
-      new THREE.MeshStandardMaterial({ color: '#6b4a2c', roughness: 1, polygonOffset: true, polygonOffsetFactor: -1 }), W * H);
+      new THREE.MeshStandardMaterial({ color: '#6b4a2c', roughness: 1, polygonOffset: true, polygonOffsetFactor: -1 }), TILES);
     this.fields.receiveShadow = true;
     for (const m of [this.crops, this.fields]) {
       m.frustumCulled = false;
@@ -85,6 +89,7 @@ export class Scenery {
     const nt = [0, 0, 0, 0];
     const np = Object.fromEntries(KINDS.map((k) => [k, 0])) as Record<Kind, number>;
     let nr = 0, nc = 0, nf = 0, ns = 0;
+    const { w: W, h: H } = world;
     for (let y = 0; y < H; y++)
       for (let x = 0; x < W; x++) {
         const t = world.at(x, y);

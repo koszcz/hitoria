@@ -2,7 +2,6 @@
 // themes, drawn at random, so they look and play differently. Pine highlands have dense pines,
 // sea cliffs on the far shore and dark ground. Wild meadows have few trees, wide flower meadows
 // and brighter ground, and more deer and hares live there.
-import { W, H } from '../world';
 import type { World } from '../world';
 import { rng } from './noise';
 
@@ -33,7 +32,7 @@ const CLIFF = 0.76;
 // facing `isle`. Cliffs hold no ore, and `world.cliff` marks them.
 export function raiseCliffs(world: World, isle: IsleShape) {
   const name = world.isleAt(isle.x, isle.y);
-  const cliffs: number[] = [];
+  const cliffs: number[] = [], { w: W, h: H } = world;
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       const dx = x - isle.x, dy = y - isle.y, d = Math.hypot(dx, dy);

@@ -1,7 +1,7 @@
 // White foam where the sea meets the land: a fringe along the waterline, and small waves that
 // roll in toward the beach and fade.
 import * as THREE from 'three';
-import { World, W, H } from '../world';
+import { World } from '../world';
 import { shoreBand } from '../water/shore';
 import { noiseField } from './textures';
 import { SEA, type Terrain } from './terrain';
@@ -22,6 +22,7 @@ export class Foam {
       this.scene.remove(this.mesh);
       this.mesh.geometry.dispose();
     }
+    const { w: W, h: H } = world;
     const tiles = shoreBand(world, W, H), n = STEPS + 1;
     const pos = new Float32Array(tiles.length * n * n * 3), depth = new Float32Array(tiles.length * n * n);
     const idx: number[] = [];

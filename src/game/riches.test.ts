@@ -2,9 +2,11 @@
 // old saves keep their ore at home.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { W, H } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import type { Building } from './types';
 import { harbourGame, inside, runUntil } from './test-helpers';
+
+const H = W;
 
 const ORE_MINES = ['coalmine', 'ironmine'] as const;
 
@@ -40,7 +42,7 @@ describe('island riches in play', () => {
   });
 
   test('a save from an older map keeps coal and iron in the home mountains', () => {
-    const d = new Game(1).save();
+    const d = new Game(1, 8).save();
     const old = Game.load({ ...d, map: 4 });
     expect(old.world.map).toBe(4);
     for (const type of ORE_MINES) expect(spots(old, type).length).toBeGreaterThan(0);

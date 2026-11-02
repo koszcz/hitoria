@@ -1,7 +1,7 @@
 // A new game, and where buildings may go.
 import { describe, expect, test } from 'bun:test';
 import { Game, BDEFS, bag } from '.';
-import { W } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import { flatGame, inside, placeBare, placeLinked, runUntil } from './test-helpers';
 import { START_TOOLS } from './tools';
 

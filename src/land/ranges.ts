@@ -1,6 +1,5 @@
 // Mountain ranges, from map version 6. High ground folds into long, bending ridges that run side
 // by side with valleys between them, and the guaranteed mountains stretch into short ridges.
-import { W, H } from '../world';
 import { rng, noise } from './noise';
 
 // Ridges start to show on land this high, and are full strength from FULL up.
@@ -26,10 +25,10 @@ const SMOOTH = 4;
 // Shapes land heights into ridges and valleys. `base` gives the land height at (x, y) before
 // the ridges, and the returned function gives it after. Ridges rise only from high land.
 // `strength` gives how strongly ridges show at (x, y), from 0 to 1, so they can fade out where
-// the land must stay gentle. It takes its own random numbers, so the rest of the map keeps its shape.
-export function ranges(seed: number, base: (x: number, y: number) => number, strength: (x: number, y: number) => number) {
+// the land must stay gentle. The map is `W` by `H` tiles. It takes its own random numbers, so the rest of the map keeps its shape.
+export function ranges(seed: number, base: (x: number, y: number) => number, strength: (x: number, y: number) => number, W: number, H: number) {
   const rand = rng(seed ^ 0x7a9e);
-  const angle = rand() * Math.PI, bend = noise(rand, BEND_CELL);
+  const angle = rand() * Math.PI, bend = noise(rand, BEND_CELL, W, H);
   const ax = Math.cos(angle), ay = Math.sin(angle);
   let land = new Float64Array(W * H);
   for (let y = 0; y < H; y++)
@@ -42,12 +41,12 @@ export function ranges(seed: number, base: (x: number, y: number) => number, str
       const cut = Math.max(DROP, CARVE * (h - VALLEY));
       land[y * W + x] = h + on * (crest * LIFT - (1 - crest) * cut);
     }
-  for (let i = 0; i < SMOOTH; i++) land = blur(land);
+  for (let i = 0; i < SMOOTH; i++) land = blur(land, W, H);
   return (x: number, y: number) => land[y * W + x];
 }
 
 // Each height becomes the average of itself and the heights around it.
-function blur(v: Float64Array) {
+function blur(v: Float64Array, W: number, H: number) {
   const out = new Float64Array(W * H);
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {

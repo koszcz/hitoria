@@ -2,10 +2,12 @@
 // crew to the island nobody has settled yet. The far island's ore is rich, so its mines dig faster.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { W, H } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import { isRich } from './geology';
 import { landingSpot, SAIL_CARGO, SAIL_CREW } from './voyage';
 import { harbourGame, runUntil } from './test-helpers';
+
+const H = W;
 
 const colonies = (g: Game) => [...g.buildings.values()].filter((b) => b.landed);
 
@@ -26,7 +28,7 @@ function settleOnce(seed = 1, map?: number) {
 
 // A new game on an older map, with a finished harbour on the first shore spot that fits one.
 function harbourOn(seed: number, map: number) {
-  const g = new Game(seed, map);
+  const g = new Game(seed, map), { w: W, h: H } = g.world;
   for (let i = 0; i < W * H; i++) {
     const x = i % W, y = Math.floor(i / W);
     if (g.canPlace('harbour', x, y)) continue;

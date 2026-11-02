@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'bun:test';
-import { World, W, H, MAP_VERSION, rng } from './world';
+import { World, MAP_VERSION, rng } from './world';
+import { BIG_SIZE as W } from './land/size';
 import { toIso, fromIso } from './iso';
+
+const H = W;
 
 // A short hash of the land, to check that a map version keeps building the same map. Numbers are
 // rounded first, because Math.hypot can differ in the last digit between the Mac and the Linux

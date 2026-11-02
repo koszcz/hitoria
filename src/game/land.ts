@@ -1,5 +1,5 @@
 // What the ground allows: where settlers walk, where buildings and plants may go, and which land is yours.
-import { W, Tile } from '../world';
+import { Tile } from '../world';
 import { BDEFS, PATH_SPEED, WEAR_SHOWS } from './defs';
 import type { Game } from './game';
 import { isHome, LANDING_LAND } from './homes';
@@ -12,7 +12,7 @@ export function passable(g: Game, x: number, y: number) {
 // How fast settlers walk on a tile, as a multiplier. Worn grass is faster the more worn it is.
 export function walkSpeed(g: Game, x: number, y: number) {
   const t = g.world.at(x, y);
-  return 1 + (PATH_SPEED - 1) * g.wear[y * W + x];
+  return 1 + (PATH_SPEED - 1) * g.wear[y * g.world.w + x];
 }
 
 export function walkCost(g: Game, x: number, y: number) {
@@ -51,7 +51,7 @@ export function nearOre(g: Game, x: number, y: number, r: number) {
 // Free grass in your land where a tree can grow. Farm fields are kept for grain, and worn paths for walking.
 export function plantable(g: Game, t: Tile, x: number, y: number) {
   return t.t === 'grass' && !t.tree && !t.crop && !t.field && !t.rock && !t.b
-    && !!g.world.territory[y * W + x] && g.wear[y * W + x] < WEAR_SHOWS && !besideBuilding(g, x, y);
+    && !!g.world.territory[y * g.world.w + x] && g.wear[y * g.world.w + x] < WEAR_SHOWS && !besideBuilding(g, x, y);
 }
 
 // Trees next to a building could wall in its door, so nothing is planted there.
@@ -74,6 +74,6 @@ export function computeTerritory(g: Game) {
     const r = b.type === 'harbour' ? LANDING_LAND : BDEFS[b.type].radius;
     for (let y = b.y - r; y <= b.y + r; y++)
       for (let x = b.x - r; x <= b.x + r; x++)
-        if (g.world.inside(x, y) && Math.hypot(x - b.x, y - b.y) <= r + 0.3) t[y * W + x] = 1;
+        if (g.world.inside(x, y) && Math.hypot(x - b.x, y - b.y) <= r + 0.3) t[y * g.world.w + x] = 1;
   }
 }

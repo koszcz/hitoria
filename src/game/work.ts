@@ -1,6 +1,6 @@
 // What a settler does next when they have nothing to do: each worker's job at their hut, and which tile to work on.
 import type { P } from '../path';
-import { W, Tile } from '../world';
+import { Tile } from '../world';
 import { BDEFS, Good, HOUSE_FOOD, PILE, RECIPES, WELL_DRAW, WINTER_FISHING } from './defs';
 import { carry } from './carriers';
 import type { Game } from './game';
@@ -207,7 +207,7 @@ function plan(g: Game, s: Settler, home: Building): true | void {
 
 // Mark a tile as taken, so no other worker heads there. If the walk fails, skip the tile for a while.
 function claim(g: Game, s: Settler, at: P) {
-  const i = at.y * W + at.x;
+  const i = at.y * g.world.w + at.x;
   g.claimed.add(i);
   s.onAbort = () => {
     g.claimed.delete(i);
@@ -224,7 +224,7 @@ function findTile(g: Game, b: Building, r: number, ok: (t: Tile, x: number, y: n
     for (let x = b.x - r; x <= b.x + r; x++) {
       if (!g.world.inside(x, y)) continue;
       const d = Math.hypot(x - b.x, y - b.y);
-      const i = y * W + x;
+      const i = y * g.world.w + x;
       if (d > r || g.claimed.has(i) || (g.snubbed.get(i) ?? 0) > g.time) continue;
       if (!ok(g.world.at(x, y), x, y)) continue;
       if (random) cands.push({ x, y });

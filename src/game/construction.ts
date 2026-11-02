@@ -1,6 +1,5 @@
 // Placing buildings and building them: where they may go, and how builders turn materials into a building.
 import { findPath } from '../path';
-import { W } from '../world';
 import { noteBuilt } from './chronicle';
 import { BDEFS, BType, FARM_FIELDS, GOODS, MINES, ORE_MINES, bag } from './defs';
 import { claimFields, pickFields } from './fields';
@@ -19,7 +18,7 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   const t = g.world.at(x, y);
   if (t.b) return 'Occupied';
   if (isDoorstep(g, x, y)) return 'In front of the door of another building';
-  if (!g.world.territory[y * W + x]) return 'Outside your land';
+  if (!g.world.territory[y * g.world.w + x]) return 'Outside your land';
   // A mine may also stand on the mountain's edge. The check below for open ground in front of
   // its door keeps it out of the middle of the mountain.
   if (t.t !== 'grass' && !(MINES.includes(type) && t.t === 'mountain')) return 'Needs flat grass';
@@ -33,11 +32,11 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   if (type === 'harbour' && !dockAt(g, x, y)) return 'Must be on the shore by open water';
   const fields = type === 'farm' ? pickFields(g, x, y) : [];
   if (type === 'farm' && fields.length < FARM_FIELDS) return 'No room for its fields';
-  if (!openGround(g, x, y + 1) || !g.world.territory[(y + 1) * W + x]) return 'No room in front of its door';
+  if (!openGround(g, x, y + 1) || !g.world.territory[(y + 1) * g.world.w + x]) return 'No room in front of its door';
   // Players can't fell trees themselves, so a door walled in by trees would never be reached.
   // Saplings count too, because they grow into trees.
   const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && passable(g, tx, ty) && !g.world.at(tx, ty).tree;
-  const fromHome = (h: Building) => !!findPath(h.x, h.y + 1, x, y + 1, reach);
+  const fromHome = (h: Building) => !!findPath(g.world, h.x, h.y + 1, x, y + 1, reach);
   if (!homes(g).some(fromHome)) return 'Settlers cannot walk there';
   return BDEFS[type] ? null : 'Unknown building';
 }

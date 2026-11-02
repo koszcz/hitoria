@@ -1,14 +1,13 @@
 // The island as text, for a play tester who cannot look at the screen: a map of the land around a
 // point, and the places where a building could go, with what lies around each one.
 import { BDEFS, type BType, type Game } from '../game';
-import { H, W } from '../world';
 
 export const LEGEND = 'H HQ · B building · # farm field · T tree · t sapling · o boulder · ^ mountain · ~ water · : sand · . grass · - outside your land';
 
 // One character per tile. Columns and rows are numbered, so the tester can read coordinates.
 export function mapText(g: Game, cx: number, cy: number, r = 10): string {
   const xs: number[] = [];
-  for (let x = cx - r; x <= cx + r; x++) if (x >= 0 && x < W) xs.push(x);
+  for (let x = cx - r; x <= cx + r; x++) if (x >= 0 && x < g.world.w) xs.push(x);
   const head = (digit: (x: number) => string) => '    ' + xs.map(digit).join('');
   const lines = [head((x) => String(Math.floor(x / 10) % 10)), head((x) => String(x % 10))];
   for (let y = cy - r; y <= cy + r; y++) {
@@ -23,7 +22,7 @@ function tileChar(g: Game, x: number, y: number) {
   if (t.b) return g.buildings.get(t.b)?.type === 'hq' ? 'H' : 'B';
   if (t.t === 'water') return '~';
   if (t.t === 'mountain') return '^';
-  if (!g.world.territory[y * W + x]) return '-';
+  if (!g.world.territory[y * g.world.w + x]) return '-';
   if (t.field) return '#';
   if (t.tree >= 1) return 'T';
   if (t.tree > 0) return 't';
@@ -57,7 +56,7 @@ export interface Spot {
 
 // The free places for a building, nearest to (nx, ny) first.
 export function spots(g: Game, type: BType, n = 5, nx = g.hq.x, ny = g.hq.y): Spot[] {
-  const found: Spot[] = [];
+  const found: Spot[] = [], { w: W, h: H } = g.world;
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       if (!g.world.inside(x, y) || !g.world.territory[y * W + x]) continue;

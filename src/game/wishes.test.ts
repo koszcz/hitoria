@@ -6,7 +6,7 @@ import { beginWish, wishChoices, wishUntil } from './wishes';
 import { HOUSE_FOOD } from './defs';
 import { trade } from './trade';
 import { traderDeal } from './wants';
-import { W } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import { flatGame, harbourGame, placeBare, run, runUntil } from './test-helpers';
 
 // A game with every goal reached, so the village starts wishing at the next check.

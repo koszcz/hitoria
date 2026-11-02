@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *Fun 1 · Effort M · Branch: worktree-agent-a8530568b87f7ca22*
+Nothing right now.
 
 ## Next
 
@@ -41,6 +41,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *2026-11-02*
 - **Island themes**: each new map gives the second and far island two different themes, drawn at random, so they look and play differently. Pine highlands: dense dark pines, sea cliffs on the far shore, and about twice the forest. Wild meadows: wide flower meadows, few trees, and more deer and hares for hunters. Each island keeps its ore ridge and grove, has no name label, and only new maps get themes. *2026-11-02*
 - **Fresh island with a keepsake**: when you start a new island, you pick one keepsake you earned on the old one and bring it along. Each keepsake comes from a goal: the Builder's crate (20 planks and 10 stone) from "Make 50 planks", Old friends (6 more settlers) from "Grow to 30 settlers", the Full larder (20 fish and 10 bread) from the winter goal, and the Iron chest (5 iron and 8 tools) from "Make 10 iron". The new island's chronicle notes the keepsake and where it came from. *2026-11-02*
 - **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *2026-11-02*

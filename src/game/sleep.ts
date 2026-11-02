@@ -1,7 +1,6 @@
 // Sleep: after dusk, workers and builders walk to the nearest bed and stay inside until dawn.
 // A bed is in the HQ, a landing harbour or a finished house. Carriers and donkeys keep working.
 import { isNight } from '../seasons/day';
-import { W } from '../world';
 import type { Game } from './game';
 import { isHome } from './homes';
 import { joinFeast } from './feast';
@@ -31,7 +30,7 @@ export function bedFor(g: Game, b: Building): Building | null {
   let best: Building | null = null, bd = Infinity;
   for (const h of g.buildings.values()) {
     if (!isBed(h)) continue;
-    const dist = d[h.y * W + h.x];
+    const dist = d[h.y * g.world.w + h.x];
     if (dist < bd) { bd = dist; best = h; }
   }
   return best;

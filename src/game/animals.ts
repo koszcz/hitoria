@@ -1,7 +1,7 @@
 // Wild animals: where they live when a game starts, how they roam, and how they step aside for settlers.
 // Hunters catch them; see hunting.ts.
 import { findPath } from '../path';
-import { rng, W, H } from '../world';
+import { rng } from '../world';
 import type { Game } from './game';
 import type { Animal, AnimalKind } from './types';
 
@@ -59,7 +59,7 @@ export function openSpot(g: Game, kind: AnimalKind, rand: () => number, where = 
     : kind === 'fox' ? (x: number, y: number) => treesNear(g, x, y, 1) > 0
     : () => true;
   for (let i = 0; i < 400; i++) {
-    const x = Math.floor(rand() * W), y = Math.floor(rand() * H);
+    const x = Math.floor(rand() * g.world.w), y = Math.floor(rand() * g.world.h);
     if (open(g, x, y) && ok(x, y) && where(x, y)) return { x, y };
   }
   return null;
@@ -166,7 +166,7 @@ function flee(g: Game, a: Animal, s: { x: number; y: number }) {
 function pathTo(g: Game, a: Animal, x: number, y: number) {
   if (!g.world.inside(x, y) || !g.passable(x, y)) return null;
   const near = (tx: number, ty: number) => Math.hypot(tx - a.home.x, ty - a.home.y) <= ROAM + 2 && g.passable(tx, ty);
-  const p = findPath(Math.round(a.x), Math.round(a.y), x, y, near, 300);
+  const p = findPath(g.world, Math.round(a.x), Math.round(a.y), x, y, near, 300);
   return p && p.length ? p : null;
 }
 

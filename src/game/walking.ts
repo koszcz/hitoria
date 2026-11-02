@@ -1,6 +1,5 @@
 // Walking distances on foot: how far every tile is from a building, with worn paths cheaper.
 // Carriers use them to pick the nearest store, and a building counts as linked when the HQ can walk to it.
-import { W, H } from '../world';
 import type { Game } from './game';
 import { passable, walkCost } from './land';
 import type { Building } from './types';
@@ -15,14 +14,14 @@ const DX = [1, -1, 0, 0, 1, 1, -1, -1], DY = [0, 0, 1, -1, 1, -1, 1, -1];
 export function walkFrom(g: Game, b: Building): Float32Array {
   const kept = g.walks.get(b.id);
   if (kept && g.time - kept.t < FRESH) return kept.d;
-  const d = flood(g, b.y * W + b.x);
+  const d = flood(g, b.y * g.world.w + b.x);
   g.walks.set(b.id, { t: g.time, d });
   return d;
 }
 
 // The walking cost from building `a` into building `b`. Infinity when there is no way.
 export function walkDist(g: Game, a: Building, b: Building) {
-  return walkFrom(g, a)[b.y * W + b.x];
+  return walkFrom(g, a)[b.y * g.world.w + b.x];
 }
 
 // What each tile is to a walker, worked out once for every map made in the same FRESH window.
@@ -31,6 +30,7 @@ type Ground = { t: number; kind: Uint8Array; cost: Float32Array };
 
 function ground(g: Game): Ground {
   if (g.ground && g.time - g.ground.t < FRESH) return g.ground;
+  const { w: W, h: H } = g.world;
   const kind = new Uint8Array(W * H), cost = new Float32Array(W * H);
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
@@ -49,7 +49,7 @@ function ground(g: Game): Ground {
 // Dijkstra over the tiles settlers can walk on, starting at tile `start`.
 // Diagonal steps may not cut blocked corners, the same as the paths settlers walk.
 function flood(g: Game, start: number) {
-  const { kind, cost } = ground(g);
+  const { kind, cost } = ground(g), { w: W, h: H } = g.world;
   const d = new Float32Array(W * H).fill(Infinity);
   const heap = new Heap(d);
   d[start] = 0;

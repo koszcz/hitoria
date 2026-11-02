@@ -2,9 +2,12 @@
 // and wild meadows, so they look and play differently. Older maps have no themes.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '../game';
-import { World, W, H } from '../world';
+import { World } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import { drawThemes } from './themes';
 import type { IsleName } from './themes';
+
+const H = W;
 
 const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
 

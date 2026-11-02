@@ -1,7 +1,10 @@
 // The far island: a third island farther out than the second one, to one side of the bay, with
 // coal and iron ore in its mountain. Older maps have no far island.
 import { describe, expect, test } from 'bun:test';
-import { World, W, H } from './world';
+import { World } from './world';
+import { BIG_SIZE as W } from './land/size';
+
+const H = W;
 
 const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
 

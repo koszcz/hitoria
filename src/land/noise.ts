@@ -1,5 +1,4 @@
 // Random numbers from a seed, and smooth noise built on them. The map generator uses both.
-import { W, H } from '../world';
 
 export function rng(seed: number) {
   return () => {
@@ -10,8 +9,8 @@ export function rng(seed: number) {
   };
 }
 
-// Smooth value noise over a lattice of `cell`-sized squares.
-export function noise(rand: () => number, cell: number) {
+// Smooth value noise over a lattice of `cell`-sized squares, for a map `W` by `H` tiles.
+export function noise(rand: () => number, cell: number, W: number, H: number) {
   const gw = Math.ceil(W / cell) + 2;
   const gh = Math.ceil(H / cell) + 2;
   const g = Array.from({ length: gw * gh }, rand);

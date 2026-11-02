@@ -1,13 +1,14 @@
-import { W, H } from './world';
-
 export type P = { x: number; y: number };
+// How many tiles across and down the map is. A World fits this.
+export type Size = { readonly w: number; readonly h: number };
 
 const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
 // 8-directional A*. The goal tile is always enterable (so settlers can walk into a building
 // or up to a tree); diagonal moves may not cut blocked corners. `cost` scales the price of
-// entering a tile and must stay within [minCost, 1].
+// entering a tile and must stay within [minCost, 1]. The search stays inside a map of `size`.
 export function findPath(
+  size: Size,
   sx: number, sy: number, gx: number, gy: number,
   passable: (x: number, y: number) => boolean,
   maxNodes = 6000,
@@ -15,6 +16,7 @@ export function findPath(
   minCost = 0.6,
 ): P[] | null {
   if (sx === gx && sy === gy) return [];
+  const { w: W, h: H } = size;
   const N = W * H;
   const g = new Float32Array(N).fill(Infinity);
   const f = new Float32Array(N);

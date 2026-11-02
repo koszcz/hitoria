@@ -1,7 +1,7 @@
 // Worn paths: footsteps wear grass into dirt, worn ground is faster to walk on, and unused paths fade.
 import { describe, expect, test } from 'bun:test';
 import { Game, FADE_DELAY, FADE_TIME, PATH_SPEED, WEAR_STEP } from '.';
-import { W } from '../world';
+import { BIG_SIZE as W } from '../land/size';
 import { findPath } from '../path';
 import { walkCost, walkSpeed } from './land';
 import { takeSettler, step } from './settlers';
@@ -101,7 +101,7 @@ describe('worn paths', () => {
     const { x, y } = g.hq;
     // A worn path that bows one tile north of the straight line.
     for (let i = 0; i <= 10; i++) g.wear[(y - 3) * W + x + i] = 1;
-    const p = findPath(x, y - 2, x + 10, y - 2, g.passable, 6000, (a, b) => walkCost(g, a, b))!;
+    const p = findPath(g.world, x, y - 2, x + 10, y - 2, g.passable, 6000, (a, b) => walkCost(g, a, b))!;
     expect(p.filter((n) => n.y === y - 3).length).toBeGreaterThan(5);
   });
 

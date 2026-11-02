@@ -75,7 +75,7 @@ export function step(g: Game, s: Settler, dt: number) {
     }
   } else {
     if (!s.path) {
-      const p = t.via ? [...t.via] : findPath(Math.round(s.x), Math.round(s.y), t.x, t.y, g.passable, 6000, (x, y) => walkCost(g, x, y));
+      const p = t.via ? [...t.via] : findPath(g.world, Math.round(s.x), Math.round(s.y), t.x, t.y, g.passable, 6000, (x, y) => walkCost(g, x, y));
       if (!p) return abort(s);
       if (t.adjacent) p.pop();
       s.path = p;
