@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-Empty.
+- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
+- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
+- **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
 
 ## Inbox
 
@@ -32,10 +34,7 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 
 Triaged and ready to build, but not next.
 
-- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
-- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
-- **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
 - **Say where coal and iron lie**: the Coal Mine, Iron Mine and Smelter cards say that coal and iron ore lie only in the mountains of the other islands, before the player builds a Smelter or Toolmaker for nothing. *Fun 1 · Effort S*
 - **Quarry says when boulders are out of reach**: when boulders lie in range but the quarry worker cannot walk to any of them, the quarry panel says "Boulders in range, but none it can reach" instead of "No boulders in range". *Fun 1 · Effort S*
 - **Explain bought iron and upgrades**: the Upgrade panel says that upgrades unlock once you make iron in your own Smelter, and that bought iron does not unlock them. *Fun 1 · Effort S*
