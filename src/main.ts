@@ -216,9 +216,8 @@ function updateSound() {
   work.set(workMix(workSources(game), { ...c, zoom: renderer.cam.zoom, muted: mute.muted || ui.paused }));
 }
 
-let hover: P | null = null;
+let hover: P | null = null, previewKey = '';
 let fields: P[] = []; // fields the farm under the cursor would take
-let previewKey = '';
 const keys = new Set<string>();
 const gestures = new Gestures(renderer);
 
@@ -368,6 +367,7 @@ function frame(now: number) {
   if (key !== previewKey) {
     previewKey = key;
     fields = placeOk ? game.planFields(placing!, hover!.x, hover!.y) : [];
+    ui.hintPlace(placeOk ? placing : null, hover?.x, hover?.y);
   }
   renderer.draw(game, { hover, placing, placeOk, tool, fields, selected: ui.selected }, now / 1000);
   updateSound();

@@ -286,6 +286,21 @@ canvas {
   cursor: pointer;
 }
 #done[hidden] { display: none; }
+/* A note about the spot under the cursor while you place a building, such as taking a forester's ground. */
+#placehint {
+  position: fixed;
+  bottom: calc(136px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  font-size: 13px;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+}
+#placehint[hidden] { display: none; }
 body.touch .build .key, body.touch #buildmenu kbd { display: none; } /* no keyboard on a touch screen */
 body.touch .build { row-gap: 0; }
 

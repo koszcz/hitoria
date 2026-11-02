@@ -15,6 +15,7 @@ export { SELL_LIMIT, stockLeft, traderDeal } from './wants';
 export { LANDING_LAND } from './homes';
 export { ROAM, ANIMAL } from './animals';
 export { HUNT_RANGE, ANIMAL_RETURN } from './hunting';
+export { TREES_LOW, TREES_LOW_NOTE } from './forestry';
 export { START_TOOLS, TOOLS_LOW, TOOLS_LOW_NOTE, needsTool } from './tools';
 export { RICH_SPEED } from './geology';
 export { HOUSE_EXTRA, UPGRADE_COST, UPGRADE_PACE, houseSize, upgradable, upgraded } from './upgrades';

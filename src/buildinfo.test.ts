@@ -51,6 +51,7 @@ describe('build card facts', () => {
   test('worth names who uses the goods', () => {
     expect(buildFacts('sawmill').worth).toContain('Every building needs Planks.');
     expect(buildFacts('woodcutter').worth).toContain('Logs feed the Sawmill.');
+    expect(buildFacts('woodcutter').worth).toContain("Trees run out unless a Forester's Hut nearby replants them.");
     expect(buildFacts('mill').worth).toContain('Flour feeds the Bakery.');
     expect(buildFacts('fisher').worth).toContain('Fish feeds the Stone Mine, House, Coal Mine and Iron Mine.');
     expect(buildFacts('bakery').worth).toContain('Bread feeds the Stone Mine, House, Coal Mine and Iron Mine.');

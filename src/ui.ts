@@ -14,6 +14,7 @@ import { rateRows } from './rateinfo';
 import { blessedRow, feastRows } from './feastinfo';
 import { openGoodsChart } from './goodschart/panel';
 import { isleView } from './islandview/view';
+import { foresterRoomHint } from './hints/forester';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -181,6 +182,15 @@ export class UI {
     this.placing = type;
     if (type) this.selected = 0;
     this.refresh();
+  }
+
+  // The hint above the Done button while you place a building on an allowed spot, or none.
+  // main.ts calls it when the spot under the cursor changes, with null when there is no allowed spot.
+  hintPlace(type: BType | null, x = 0, y = 0) {
+    const text = type && this.game.takesForesterRoom(type, x, y) ? foresterRoomHint() : '';
+    const el = $('placehint');
+    el.hidden = !text;
+    if (el.textContent !== text) el.textContent = text;
   }
 
   select(id: number) {

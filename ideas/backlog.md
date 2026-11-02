@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S · Branch: worktree-agent-a4f659e2f85580367*
+Nothing right now.
 
 ## Next
 
@@ -59,6 +59,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *2026-11-02*
 - **Fair winter goal**: the winter goal counts hungry workers on the home island, and on a colony only once it has its own food maker, such as a Fisher's Hut. A starving new colony no longer makes the goal impossible. *2026-11-02*
 - **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *2026-11-02*
 - **Tools for the Toolmaker first**: a Toolmaker's Workshop that waits for a tool gets the next free tool before any other hut, so the tool chain never stalls. The Toolmaker card says that every new worker needs a tool. *2026-11-02*

@@ -25,6 +25,7 @@ import { dockOf } from './harbour';
 import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
 import { START_TOOLS, watchTools } from './tools';
+import { takesForesterRoom, watchTrees } from './forestry';
 import { noteSettlers, type Entry } from './chronicle';
 import { stepTrader, trade } from './trade';
 import { richAt, richSpots } from './geology';
@@ -53,6 +54,7 @@ export class Game {
   tradeVisits = 0; // trade ships that have tied up since the game began
   wantedSold = 0; // goods the trade ships wanted that you gave them
   toolsLow = false; // the low tools warning was shown, and tools have not risen since
+  treesLow = new Set<number>(); // woodcutters warned that their trees run out; not saved
   made = bag(); // every good the settlement has made since the game began
   goal = 0; // index in GOALS of the goal the player is on
   wish: WishState | null = null; // the village wish, once every goal is reached
@@ -183,6 +185,11 @@ export class Game {
     return type === 'farm' ? pickFields(this, x, y) : [];
   }
 
+  // Would a building placed here take ground a forester could plant on?
+  takesForesterRoom(type: BType, x: number, y: number) {
+    return takesForesterRoom(this, type, x, y);
+  }
+
   // The goal the player is on now, with its progress, or null once every goal is reached.
   goalNow() {
     return goalNow(this);
@@ -243,6 +250,7 @@ export class Game {
       checkGoals(this);
       checkWishes(this);
       watchTools(this);
+      watchTrees(this);
       noteWinters(this);
       noteSettlers(this);
       stepFeasts(this);

@@ -53,7 +53,7 @@ const EN = {
     `${goodName(g)} ${goodName(g).endsWith('s') ? 'feed' : 'feeds'} the ${join(users.map(bname), 'and')}.`,
   workersEat: (g: Good, huts: BType[]) => `${goodName(g)} also feeds the workers in the ${join(huts.map(bname), 'and')}.`,
   worth: {
-    woodcutter: "Trees run out unless a Forester's Hut replants them.",
+    woodcutter: "Trees run out unless a Forester's Hut nearby replants them.",
     forester: 'Without one, your woodcutters run out of trees.',
     quarry: 'Boulders run out. A Stone Mine never does.',
     lookout: `Grows your land by ${BDEFS.lookout.radius} tiles around the tower, so you have room for more buildings.`,
@@ -99,7 +99,7 @@ const PL: typeof EN = {
   feeds: (g, users) => `${goodName(g)} ${PLURAL_PL[g] ? 'zasilają' : 'zasila'}: ${join(users.map(bname), 'i')}.`,
   workersEat: (g, huts) => `${goodName(g)} jedzą też pracownicy: ${join(huts.map(bname), 'i')}.`,
   worth: {
-    woodcutter: 'Drzewa się skończą, chyba że Chata leśnika posadzi nowe.',
+    woodcutter: 'Drzewa się skończą, chyba że pobliska Chata leśnika posadzi nowe.',
     forester: 'Bez niej drwalom skończą się drzewa.',
     quarry: 'Głazy się kończą. Kopalnia kamienia nigdy.',
     lookout: `Poszerza twoje ziemie o ${BDEFS.lookout.radius} pól wokół wieży, więc masz miejsce na więcej budynków.`,

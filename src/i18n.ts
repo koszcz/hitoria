@@ -7,6 +7,8 @@ import { UPGRADES_PL } from './lang/upgrades';
 import { ISLES_PL } from './lang/isles';
 import { FEAST_PL } from './lang/feast';
 import { STOPWORK_PL } from './lang/stopwork';
+import { TREES_PL } from './lang/trees';
+import { GOOD_EN, GOOD_PL } from './lang/goods';
 
 export type Lang = 'en' | 'pl';
 export const LANGS: Lang[] = ['en', 'pl'];
@@ -63,12 +65,6 @@ export const buildingName = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].name :
 export const buildingDesc = (t: BType) => (lang === 'pl' ? BUILDING_PL[t].desc : BDEFS[t].desc);
 
 // Goods as a label, as in "Planks: 4".
-const GOOD_EN: Record<Good, string> = {
-  log: 'Logs', plank: 'Planks', stone: 'Stone', fish: 'Fish', grain: 'Grain', flour: 'Flour', bread: 'Bread', water: 'Water', coal: 'Coal', ore: 'Iron Ore', meat: 'Meat', iron: 'Iron', tool: 'Tools',
-};
-const GOOD_PL: Record<Good, string> = {
-  log: 'Kłody', plank: 'Deski', stone: 'Kamień', fish: 'Ryby', grain: 'Zboże', flour: 'Mąka', bread: 'Chleb', water: 'Woda', coal: 'Węgiel', ore: 'Ruda żelaza', meat: 'Mięso', iron: 'Żelazo', tool: 'Narzędzia',
-};
 export const goodName = (g: Good) => (lang === 'pl' ? GOOD_PL : GOOD_EN)[g];
 
 // Fixed messages from the game (statuses and reasons it refuses something), in Polish.
@@ -188,6 +184,7 @@ const MESSAGES_PL: Record<string, string> = {
   ...ISLES_PL,
   ...FEAST_PL,
   ...STOPWORK_PL,
+  ...TREES_PL,
   [TOOLS_LOW_NOTE]: `⚠️ Zostało tylko ${TOOLS_LOW} narzędzi. Statek potrzebuje ${SAIL_CARGO.tool}, by zasiedlić drugą wyspę`,
 };
 
