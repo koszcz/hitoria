@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S · Branch: worktree-agent-aa5acee21fe8ebe48*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S*
+Empty.
 
 ## Inbox
 
