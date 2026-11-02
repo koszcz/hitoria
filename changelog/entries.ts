@@ -42,13 +42,30 @@ export const ROOT = resolve(import.meta.dir, '..');
 export const ENTRIES = `${ROOT}/changelog/entries`;
 export const SHOTS = `${ROOT}/changelog/shots`;
 
+// The commit that added each entry file. One git call reads them all, because a call for each
+// entry is slow.
+let added: Map<string, string> | undefined;
+
+function addedCommits(): Map<string, string> {
+  const r = Bun.spawnSync(
+    ['git', 'log', '--no-renames', '--diff-filter=A', '--format=%h', '--name-only', '--', 'changelog/entries'],
+    { cwd: ROOT, stderr: 'ignore' },
+  );
+  const map = new Map<string, string>();
+  let commit = '';
+  for (const line of r.stdout.toString().split('\n')) {
+    const file = line.match(/^changelog\/entries\/(.+)\.md$/);
+    if (file) {
+      if (!map.has(file[1])) map.set(file[1], commit);
+    } else if (line.trim()) commit = line.trim();
+  }
+  return map;
+}
+
 // The commit that added this entry file, or undefined while it is not committed yet.
 function addedIn(id: string): string | undefined {
-  const r = Bun.spawnSync(['git', 'log', '-1', '--diff-filter=A', '--format=%h', '--', `changelog/entries/${id}.md`], {
-    cwd: ROOT,
-    stderr: 'ignore',
-  });
-  return r.stdout.toString().trim() || undefined;
+  added ??= addedCommits();
+  return added.get(id);
 }
 
 export function parseEntry(id: string, text: string): Entry {
