@@ -5,6 +5,7 @@ import { BDEFS, MINES } from './defs';
 import type { Game } from './game';
 import type { Building } from './types';
 import type { P } from '../path';
+import { hypot } from '../math/exact';
 
 export const RICH_SPEED = 2; // how many times faster a mine next to a rich spot digs
 const REACH = 2; // a mountain tile this close to grass can have a mine beside it
@@ -35,7 +36,7 @@ export function richSpots(world: World, seed: number) {
     const some = edge.filter(ok);
     if (some.length && !some.some((i) => rich[i])) patch(some[Math.floor(rand() * some.length)]);
   };
-  sure((i) => Math.hypot((i % W) - sx, ((i / W) | 0) - sy) < HOME_REACH);
+  sure((i) => hypot((i % W) - sx, ((i / W) | 0) - sy) < HOME_REACH);
   sure((i) => world.ore[i] === 1);
   // All the ore on the far island is rich.
   for (let i = 0; i < W * H; i++) if (world.ore[i] && world.isleAt(i % W, (i / W) | 0) === 'far') rich[i] = 1;
@@ -45,7 +46,7 @@ export function richSpots(world: World, seed: number) {
 function byGrass(world: World, x: number, y: number) {
   for (let dy = -REACH; dy <= REACH; dy++)
     for (let dx = -REACH; dx <= REACH; dx++)
-      if (Math.hypot(dx, dy) <= REACH && world.inside(x + dx, y + dy) && world.at(x + dx, y + dy).t === 'grass') return true;
+      if (hypot(dx, dy) <= REACH && world.inside(x + dx, y + dy) && world.at(x + dx, y + dy).t === 'grass') return true;
   return false;
 }
 
@@ -58,7 +59,7 @@ export function richAt(g: Game, type: Building['type'], x: number, y: number) {
   const r = BDEFS[type].radius;
   for (let dy = -r; dy <= r; dy++)
     for (let dx = -r; dx <= r; dx++)
-      if (Math.hypot(dx, dy) <= r && g.world.inside(x + dx, y + dy) && isRich(g, x + dx, y + dy)) return true;
+      if (hypot(dx, dy) <= r && g.world.inside(x + dx, y + dy) && isRich(g, x + dx, y + dy)) return true;
   return false;
 }
 

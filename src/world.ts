@@ -5,6 +5,7 @@ import type { IsleName, Theme } from './land/themes';
 import { OLD_SIZE, OPEN_SEA, mapSize, surround } from './land/size';
 import { BIG_FAR_FROM, BIG_ISLE_FROM, EDGE_SEA, farShape, island, isleShape, placeFar } from './land/isle';
 import type { FarPlace, IsleSize } from './land/isle';
+import { cos, hypot, sin } from './math/exact';
 
 export { rng };
 
@@ -132,11 +133,11 @@ export class World {
     // into sea as on an old-size map.
     const big = map >= BIG_ISLE_FROM, span = OLD_SIZE / 2;
     const lay = (x: number, y: number) => {
-      const d = Math.hypot(x - sx, y - sy) / span;
+      const d = hypot(x - sx, y - sy) / span;
       return n1(x, y) * 0.55 + n2(x, y) * 0.3 + n3(x, y) * 0.15 + 0.2 - d * d * 0.55;
     };
     // Ridges fade out towards the start, so the HQ's land stays gentle.
-    const calm = (x: number, y: number) => Math.min(1, Math.max(0, (Math.hypot(x - sx, y - sy) - CALM) / CALM_FADE));
+    const calm = (x: number, y: number) => Math.min(1, Math.max(0, (hypot(x - sx, y - sy) - CALM) / CALM_FADE));
     const ranged = map >= 6, shape = ranged ? ranges(seed, lay, calm, W, H) : null;
     const away = { x: (peak.x - sx) / PEAK_AWAY, y: (peak.y - sy) / PEAK_AWAY };
     const peakEnd = { x: peak.x + away.x * PEAK_RIDGE, y: peak.y + away.y * PEAK_RIDGE };
@@ -152,23 +153,23 @@ export class World {
     // The far island always has a grove. From map version 8, a meadow second island gets one too.
     const groves = [far && groveOf(far, far.out, fsh), themes?.other === 'meadow' ? groveOf(isle, out, isl) : null].filter((c) => !!c);
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
-    const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : Math.hypot(x - peak.x, y - peak.y));
+    const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
-      ranged ? toRidge(x, y, isleEnds[0], isleEnds[1]) : Math.hypot(x - islePeak.x, y - islePeak.y);
+      ranged ? toRidge(x, y, isleEnds[0], isleEnds[1]) : hypot(x - islePeak.x, y - islePeak.y);
 
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
         let h = shape ? shape(x, y) : lay(x, y);
-        const near = Math.hypot(x - sx, y - sy);
+        const near = hypot(x - sx, y - sy);
         if (near < 8) h = h * (near / 8) + 0.5 * (1 - near / 8);
         const toPeak = toPeakAt(x, y);
         // The bay runs from its head straight out to the open sea, with a sandy shore.
         const along = Math.max(0, (x - bay.x) * out.x + (y - bay.y) * out.y);
-        const toBay = Math.hypot(x - bay.x - out.x * along, y - bay.y - out.y * along);
+        const toBay = hypot(x - bay.x - out.x * along, y - bay.y - out.y * along);
         if (smooth) {
           h = Math.min(h, 0.62 + Math.max(0, near - OPEN + 1) * SLOPE); // room to build
           for (const [c, r] of [[grove, GROVE], [quarry, QUARRY]] as const)
-            h = Math.min(h, 0.6 + Math.max(0, Math.hypot(x - c.x, y - c.y) - r) * SLOPE);
+            h = Math.min(h, 0.6 + Math.max(0, hypot(x - c.x, y - c.y) - r) * SLOPE);
           h = Math.max(h, PEAK - toPeak * SLOPE);
           // A sandy shore, then a bank up to foothill height, so mountains can stand close to it.
           const shore = BAY_WIDTH + 1.2;
@@ -203,8 +204,8 @@ export class World {
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
         const tile = this.at(x, y);
-        const near = Math.hypot(x - sx, y - sy);
-        if (Math.hypot(x - grove.x, y - grove.y) < GROVE || Math.hypot(x - quarry.x, y - quarry.y) < QUARRY) {
+        const near = hypot(x - sx, y - sy);
+        if (hypot(x - grove.x, y - grove.y) < GROVE || hypot(x - quarry.x, y - quarry.y) < QUARRY) {
           tile.t = 'grass';
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
@@ -216,10 +217,10 @@ export class World {
         const bank = ranged && near < BANK_NEAR && toRidge(x, y, bay, bayEnd) < BAY_WIDTH + BANK;
         if (tile.t !== 'grass' || near < 3.5 || foot || bank) continue;
         const theme = this.themeAt(x, y);
-        if (groves.some((c) => Math.hypot(x - c.x, y - c.y) < c.r)) tile.tree = rand() < 0.8 ? 1 : 0;
+        if (groves.some((c) => hypot(x - c.x, y - c.y) < c.r)) tile.tree = rand() < 0.8 ? 1 : 0;
         else if (theme) tile.tree = themeTree(theme, forest(x, y), rand) ? 1 : 0;
-        else if (Math.hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
-        else if (Math.hypot(x - quarry.x, y - quarry.y) < QUARRY) tile.rock = 4 + Math.floor(rand() * 3);
+        else if (hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
+        else if (hypot(x - quarry.x, y - quarry.y) < QUARRY) tile.rock = 4 + Math.floor(rand() * 3);
         else if ((forest(x, y) > 0.56 && rand() < 0.75) || rand() < 0.025) tile.tree = 1;
         else if ((rocks(x, y) > 0.74 && rand() < 0.5) || (this.nearMountain(x, y) && rand() < 0.3))
           tile.rock = 3 + Math.floor(rand() * 4);
@@ -255,9 +256,9 @@ export class World {
     const peakAngle = side(flip ? 55 : 235);
     const bayAngle = side(flip ? 235 : 55);
     const { x: sx, y: sy } = this.start;
-    const out = { x: Math.cos(bayAngle), y: Math.sin(bayAngle) };
+    const out = { x: cos(bayAngle), y: sin(bayAngle) };
     return {
-      peak: { x: sx + Math.cos(peakAngle) * PEAK_AWAY, y: sy + Math.sin(peakAngle) * PEAK_AWAY },
+      peak: { x: sx + cos(peakAngle) * PEAK_AWAY, y: sy + sin(peakAngle) * PEAK_AWAY },
       bay: { x: sx + out.x * BAY_AWAY, y: sy + out.y * BAY_AWAY },
       out,
     };
@@ -266,8 +267,8 @@ export class World {
   // Which island the tile at (x, y) is on: 'other' for the second island, 'far' for the far
   // island, or null for neither. A tile counts if it lies within `more` tiles past the island's size.
   isleAt(x: number, y: number, more = 2): 'other' | 'far' | null {
-    if (this.isle && Math.hypot(x - this.isle.x, y - this.isle.y) < this.shape.size + more) return 'other';
-    if (this.far && Math.hypot(x - this.far.x, y - this.far.y) < this.farShape.size + more) return 'far';
+    if (this.isle && hypot(x - this.isle.x, y - this.isle.y) < this.shape.size + more) return 'other';
+    if (this.far && hypot(x - this.far.x, y - this.far.y) < this.farShape.size + more) return 'far';
     return null;
   }
 

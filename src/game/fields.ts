@@ -3,6 +3,7 @@ import type { P } from '../path';
 import { BDEFS, FARM_FIELDS } from './defs';
 import type { Game } from './game';
 import type { Building } from './types';
+import { hypot } from '../math/exact';
 
 // The fields a farm at (x, y) would take: the nearest free grass in its reach. Tiles next to the
 // farm or its doorstep stay free, so the farm and its door can always be reached. `withCrops` lets
@@ -12,7 +13,7 @@ export function pickFields(g: Game, x: number, y: number, withCrops = false): P[
   const found: (P & { d: number })[] = [];
   for (let ty = y - r; ty <= y + r; ty++)
     for (let tx = x - r; tx <= x + r; tx++) {
-      const d = Math.hypot(tx - x, ty - y);
+      const d = hypot(tx - x, ty - y);
       if (d > r || !g.world.inside(tx, ty) || !g.world.territory[ty * g.world.w + tx]) continue;
       if (Math.abs(tx - x) <= 1 && ty >= y - 1 && ty <= y + 2) continue; // next to the farm or its doorstep
       const t = g.world.at(tx, ty);
