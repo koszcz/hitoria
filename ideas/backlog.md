@@ -20,20 +20,15 @@ New ideas go here, not scored yet.
 - **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them.
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back.
 - **Choose where the ship sails**: when you send a ship to settle, you pick which island it sails to, instead of the ship always landing on the nearest shore.
-- **Show goods per island**: the stock bar and build menu show the goods of the island you look at, not every island added together, so a site on a new island no longer waits for goods that sit back home. From the 2026-11-02 playtests, all four testers.
 - **Warn when a building cuts off the HQ**: the game refuses or warns when a new building blocks the last path between other buildings and the HQ, and the build spots skip such tiles. From the 2026-11-02 playtests (Marek, Ola).
 - **Fix Save as new**: "Save as new" adds a second save instead of overwriting the current one. From the 2026-11-02 playtests (Zosia).
 - **Supply a new colony**: the player can send goods and food to a settled island, or the game says plainly that each island needs its own Fisher. Today colony mines wait for food for good. From the 2026-11-02 playtests (Ola, Zosia, Tomek).
 - **Say where coal and iron lie**: the Coal Mine and Iron Mine cards say that ore lies only in the mountains of the other island, before the player builds a Smelter or Toolmaker for nothing. From the 2026-11-02 playtests (Ola, Marek).
-- **Tools for the Toolmaker first**: the Toolmaker's Workshop gets the first free tool, and the game says early that more settlers need more tools. Marek ended with 153 idle settlers. From the 2026-11-02 playtests (Marek, Tomek).
 - **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek).
-- **Fair winter goal**: the winter goal does not fail because miners on an unfed colony go hungry while home has plenty of food. From the 2026-11-02 playtests (Tomek).
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek).
 - **Quarry says when boulders are out of reach**: the quarry panel says the boulders it cannot walk to, instead of "No boulders in range" while boulders lie in range. From the 2026-11-02 playtests (Tomek, Ola).
-- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester, the game warns before they do, and houses do not fill a forester's planting ground without a hint. From the 2026-11-02 playtests (Ola, Marek, Tomek).
 - **Explain bought iron and upgrades**: the Upgrade panel says that bought iron does not count until you make iron in your own Smelter. From the 2026-11-02 playtests (Tomek).
 - **Demolish without surprises**: a worker sent home by demolition keeps the log they carry, the game warns that a finished building's materials are lost, and it says the tool goes back to your stores. From the 2026-11-02 playtests (Zosia, Marek).
-- **Food hint at the start**: the first goal or a message points a new player at food, since every worker is hungry from the first minute. The Fisher card lists every worker who eats fish. From the 2026-11-02 playtests (Ola).
 - **Explain the voyage**: the sail panel says how many goods the settlers take, and the landing message says they cleared trees and boulders into logs and stone. From the 2026-11-02 playtests (Tomek, Zosia).
 - **Show chain ratios**: the cards say how many woodcutters feed one sawmill and how many farms feed one mill, and that one well makes plenty of water. From the 2026-11-02 playtests (Ola, Marek).
 - **Tool warning only before sailing**: the "ship needs 6 tools" warning stops once the ship has sailed, and it names the island the next ship sails to. From the 2026-11-02 playtests (Ola, Zosia, Tomek).
@@ -61,7 +56,11 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-Empty.
+- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Goals still count every island. *Fun 3 · Effort M*
+- **Tools for the Toolmaker first**: a Toolmaker's Workshop that waits for a tool gets the next free tool before any other hut, so the tool chain never stalls. The Toolmaker card says that every new worker needs a tool. *Fun 2 · Effort S*
+- **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *Fun 2 · Effort S*
+- **Fair winter goal**: the winter goal counts hungry workers on the home island, and on a colony only once it has its own food maker, such as a Fisher's Hut. A starving new colony no longer makes the goal impossible. *Fun 2 · Effort S*
+- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S*
 
 ## Done
 
