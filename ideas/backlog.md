@@ -4,12 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M · Branch: worktree-agent-aafcb5cf4e7809775*
+Nothing right now.
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
+- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
 
