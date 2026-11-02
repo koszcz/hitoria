@@ -80,6 +80,7 @@ first, the wish just passes, with no penalty, and a new one comes.
      rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
    - Every new worker in a hut needs a tool. The HQ starts with 20 tools. When they run out, a
      toolmaker's workshop makes more from iron and planks. Until then, a new hut waits for a tool.
+     The workshop gets the next free tool before any other hut.
      Iron comes only from the other island, so the game warns you when 8 tools are left before
      you settle it. The ship needs 6.
    - Some mountain tiles are rich spots. A mine next to a rich spot digs twice as fast. Build a
@@ -438,6 +439,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - When a hut gets its worker, the worker takes 1 tool from the nearest store, and the hut keeps
   it. Scouts, builders and carriers need no tool. Demolishing a hut puts its tool back in your
   stores.
+- When tools are short, a finished Toolmaker's Workshop that waits for a tool gets the next free
+  tool before any other hut, so the tool chain never stalls.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish, but only about half as
   many in winter. A fisher by a hidden cove's lagoon fishes there first and brings home 2 fish
   from each catch.

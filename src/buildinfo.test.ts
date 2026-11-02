@@ -67,7 +67,7 @@ describe('build card facts', () => {
   test('the toolmaker says what tools are for, and huts say their worker takes a tool', () => {
     const shop = buildFacts('toolmaker');
     expect(shop.makes).toBe('Turns 1 Iron and 1 Plank into 1 Tool every 8 s. That is up to 8 a minute.');
-    expect(shop.worth).toEqual(['Every new worker in a hut needs 1 tool. When the tools you started with run out, new huts wait for one.']);
+    expect(shop.worth).toEqual(['Every new worker in a hut needs 1 tool. When the tools you started with run out, new huts wait for one. The workshop gets the next free tool before any other hut.']);
     expect(buildFacts('woodcutter').needs).toContain('Takes 1 idle settler as its worker, and 1 tool from your stores.');
     expect(buildFacts('lookout').needs).toContain('Takes 1 idle settler as its worker.');
   });

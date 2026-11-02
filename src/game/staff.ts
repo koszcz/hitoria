@@ -18,7 +18,7 @@ export function staff(g: Game) {
   if (night(g)) return nightStatus(g);
   // Houses come first, because only they bring in more settlers.
   for (const b of g.buildings.values()) if (b.type === 'house' && !sendBuilder(g, b)) break;
-  for (const b of g.buildings.values()) {
+  for (const b of toolmakersFirst(g)) {
     if (!sendBuilder(g, b)) continue;
     const role = BDEFS[b.type].worker;
     if (b.built && role && !b.worker && !b.stopped) {
@@ -49,6 +49,14 @@ export function staff(g: Game) {
       ];
     }
   }
+}
+
+// Every building, with finished Toolmaker's Workshops first, so a workshop that waits for a
+// tool gets the next free one and the tool chain never stalls. Sites keep their order.
+function toolmakersFirst(g: Game): Building[] {
+  const all = [...g.buildings.values()];
+  const first = (b: Building) => b.built && b.type === 'toolmaker';
+  return [...all.filter(first), ...all.filter((b) => !first(b))];
 }
 
 // Send a builder to a site that a home can walk to and has none yet.
