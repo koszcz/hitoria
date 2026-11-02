@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Feast Square and wedding feast**: you build a Feast Square and order a wedding feast there. Carriers bring 10 fish, 10 bread and 10 meat. At the next dusk every worker gathers at the square to feast until midnight, then goes to sleep, and 2 new settlers arrive at dawn. You can hold one feast each season. *Fun 3 · Effort M · Branch: worktree-agent-a0964dd02d3d9c927*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Feast Square and wedding feast**: you build a Feast Square and order a wedding feast there. Carriers bring 10 fish, 10 bread and 10 meat. At the next dusk every worker gathers at the square to feast until midnight, then goes to sleep, and 2 new settlers arrive at dawn. You can hold one feast each season. *Fun 3 · Effort M*
 - **Buildings glow at night**: from dusk to dawn, each finished building casts a soft, warm pool of light on the ground around it, and its windows and doorway glow brighter. The glow fades in and out with the daylight. It is a soft fake glow, not real lamps, so the game stays fast. *Fun 2 · Effort S*
 - **Stop work at a hut**: a hut's info panel has a Stop work button. Its worker walks home and takes the next hut that needs a worker, and nobody is sent to the stopped hut until you press Resume work. The hut keeps its tool, and the choice is saved. Use it when settlers run short, such as to stop a stone mine while you have plenty of stone. *Fun 2 · Effort S*
 
