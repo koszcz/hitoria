@@ -11,6 +11,8 @@ Nothing right now.
 At most 3 ideas, in the order we build them.
 
 - **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *Fun 2 · Effort S · Needs: Island themes*
+- **Glow lights the walls**: at night, the walls of each finished building take a soft warm tint from its pool of light, brightest near the ground and the door and fading toward the roof. The tint fades in and out with the glow, and it stays a painted fake, not real lamps. *Fun 1 · Effort S · Needs: Buildings glow at night*
+- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 
 ## Inbox
 
@@ -29,7 +31,6 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
