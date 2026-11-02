@@ -13,6 +13,7 @@ At most 3 ideas, in the order we build them.
 - **Feast Square and wedding feast**: you build a Feast Square and order a wedding feast there. Carriers bring 10 fish, 10 bread and 10 meat. At the next dusk every worker gathers at the square to feast until midnight, then goes to sleep, and 2 new settlers arrive at dawn. You can hold one feast each season. *Fun 3 · Effort M*
 - **Buildings glow at night**: from dusk to dawn, each finished building casts a soft, warm pool of light on the ground around it, and its windows and doorway glow brighter. The glow fades in and out with the daylight. It is a soft fake glow, not real lamps, so the game stays fast. *Fun 2 · Effort S*
 - **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
+- **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *Fun 2 · Effort S*
 
 ## Inbox
 
