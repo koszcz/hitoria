@@ -70,6 +70,16 @@ export function shadeOf(hex: string, k: number) {
 // Each material from `mat()` remembers its settings other than colour under this key, so
 // `mergeModel` knows which parts can share one material.
 export const EXTRA = 'extra';
+
+// Lit window glass. Every material made with these settings is kept in `GLASS_MATS`, so the
+// night glow can brighten all windows at once.
+export const GLASS = { emissive: '#ffa040', emissiveIntensity: 0.35 };
+const GLASS_KEY = JSON.stringify(GLASS);
+export const GLASS_MATS = new Set<THREE.MeshStandardMaterial>();
+const noteGlass = (m: THREE.Material, extra: string) => {
+  if (extra === GLASS_KEY) GLASS_MATS.add(m as THREE.MeshStandardMaterial);
+};
+
 const mats = new Map<string, THREE.Material>();
 export function mat(color: string, extra: THREE.MeshStandardMaterialParameters = {}) {
   const key = color + JSON.stringify(extra);
@@ -77,6 +87,7 @@ export function mat(color: string, extra: THREE.MeshStandardMaterialParameters =
   if (!m) {
     mats.set(key, (m = new THREE.MeshStandardMaterial({ color: grade(color), roughness: 0.85, ...extra })));
     m.userData[EXTRA] = JSON.stringify(extra);
+    noteGlass(m, m.userData[EXTRA]);
   }
   return m;
 }
@@ -85,7 +96,10 @@ export function mat(color: string, extra: THREE.MeshStandardMaterialParameters =
 const vertexMats = new Map<string, THREE.Material>();
 export function vertexMat(extra: string) {
   let m = vertexMats.get(extra);
-  if (!m) vertexMats.set(extra, (m = new THREE.MeshStandardMaterial({ roughness: 0.85, ...JSON.parse(extra), vertexColors: true })));
+  if (!m) {
+    vertexMats.set(extra, (m = new THREE.MeshStandardMaterial({ roughness: 0.85, ...JSON.parse(extra), vertexColors: true })));
+    noteGlass(m, extra);
+  }
   return m;
 }
 

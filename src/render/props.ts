@@ -1,7 +1,7 @@
 // Pieces that building models are made of: a timber-framed house, and props such as logs,
 // crates, barrels and saplings.
 import * as THREE from 'three';
-import { add, shadeOf } from './kit';
+import { add, GLASS, shadeOf } from './kit';
 import type { Model } from './buildings';
 import { dressWalls, type Walls } from './walls';
 
@@ -74,25 +74,25 @@ export function house(g: THREE.Group, model: Model, o: House) {
   }
 
   // Door with a frame and a stone step; a shuttered window beside it and one on the side.
+  const dx = o.bigDoor ? 0 : door * w;
+  model.door = new THREE.Vector3((o.x ?? 0) + dx, lift + 0.2, (o.z ?? 0) + d + 0.04);
   if (o.bigDoor) {
     add(at, new THREE.BoxGeometry(0.34, 0.34, 0.02), beam, 0, 0.22, d + 0.008);
     for (const s of [-1, 1]) add(at, new THREE.BoxGeometry(0.14, 0.3, 0.025), '#6a4628', s * 0.075, 0.2, d + 0.014);
     add(at, new THREE.BoxGeometry(0.28, 0.025, 0.03), beam, 0, 0.2, d + 0.03);
   } else {
-    const dx = door * w;
     add(at, new THREE.BoxGeometry(0.17, 0.27, 0.02), beam, dx, 0.185, d + 0.008);
     add(at, new THREE.BoxGeometry(0.12, 0.23, 0.025), '#6a4628', dx, 0.165, d + 0.014);
     if (!lift) add(at, new THREE.BoxGeometry(0.2, 0.04, 0.08), '#a39b8f', dx, 0.03, d + 0.06);
   }
-  const glass = { emissive: '#ffa040', emissiveIntensity: 0.35 };
   const shutter = shadeOf(o.shutter ?? roof, 0.85);
   if (win !== null) {
     const wx = win * w, wy = 0.05 + h * 0.62;
-    add(at, new THREE.BoxGeometry(0.1, 0.1, 0.02), '#ffd88a', wx, wy, d + 0.012, glass);
+    add(at, new THREE.BoxGeometry(0.1, 0.1, 0.02), '#ffd88a', wx, wy, d + 0.012, GLASS);
     for (const s of [-1, 1]) add(at, new THREE.BoxGeometry(0.045, 0.11, 0.015), shutter, wx + s * 0.075, wy, d + 0.016);
     add(at, new THREE.BoxGeometry(0.13, 0.02, 0.04), beam, wx, wy - 0.06, d + 0.02);
   }
-  add(at, new THREE.BoxGeometry(0.02, 0.09, 0.09), '#ffd88a', w + 0.012, 0.05 + h * 0.3, d * 0.35, glass);
+  add(at, new THREE.BoxGeometry(0.02, 0.09, 0.09), '#ffd88a', w + 0.012, 0.05 + h * 0.3, d * 0.35, GLASS);
   return at;
 }
 

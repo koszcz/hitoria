@@ -4,7 +4,8 @@ import { BDEFS, BType } from '../game';
 import { ART } from '../art';
 import { RIGHT } from './kit';
 import { iconTexture, softDot } from './textures';
-import { add, shadeOf } from './kit';
+import { add, GLASS, shadeOf } from './kit';
+import { addGlow } from './glow';
 import { mergeModel } from './merge';
 import { barrel, crate, house, logPile } from './props';
 import { hut } from './huts';
@@ -38,6 +39,7 @@ export interface Model {
   cloth?: THREE.Object3D;
   sails?: THREE.Object3D;
   chimney?: THREE.Vector3; // where smoke rises from while the building works
+  door?: THREE.Vector3; // the doorway, which glows at night
   spin?: THREE.Object3D; // a saw blade that turns while the building works
 }
 
@@ -175,7 +177,8 @@ export function makeBuilding(type: BType, built: boolean, paint = CANVAS): Model
       add(g, new THREE.ConeGeometry(0.28, 0.4, 14), roof, 0, 1.29, 0);
       add(g, new THREE.CylinderGeometry(0.24, 0.24, 0.06, 14), shadeOf(roof, 0.75), 0, 1.11, 0);
       add(g, new THREE.BoxGeometry(0.13, 0.25, 0.03), '#6a4628', 0, 0.17, 0.3);
-      add(g, new THREE.BoxGeometry(0.07, 0.09, 0.02), '#ffd88a', 0, 0.75, 0.25, { emissive: '#ffa040', emissiveIntensity: 0.35 });
+      add(g, new THREE.BoxGeometry(0.07, 0.09, 0.02), '#ffd88a', 0, 0.75, 0.25, GLASS);
+      model.door = new THREE.Vector3(0, 0.17, 0.33);
       add(g, new THREE.CylinderGeometry(0.035, 0.035, 0.18, 8).rotateX(Math.PI / 2), '#4a3220', 0, 1.08, 0.27);
       const sails = new THREE.Group();
       sails.position.set(0, 1.08, 0.36);
@@ -197,6 +200,7 @@ export function makeBuilding(type: BType, built: boolean, paint = CANVAS): Model
     case 'coalmine':
     case 'ironmine':
       mine(g, type, roof);
+      model.door = new THREE.Vector3(0, 0.17, 0.3);
       break;
     case 'house': {
       // A cottage with a vegetable patch, a picket fence and washing on a line.
@@ -230,6 +234,7 @@ export function makeBuilding(type: BType, built: boolean, paint = CANVAS): Model
       hut(g, model, type, wall, roof);
   }
   mergeModel(g, [model.cloth, model.sails, model.spin]);
+  addGlow(model, paint.dot());
   const icon = new THREE.Sprite(new THREE.SpriteMaterial({ map: paint.icon(type), depthTest: false, transparent: true }));
   icon.scale.setScalar(0.3);
   icon.renderOrder = 12;
@@ -255,6 +260,7 @@ export function iconTex(type: BType) {
 
 export function ghostify(g: THREE.Object3D) {
   g.traverse((o) => {
+    if (o.userData.glow) o.visible = false;
     const m = o as THREE.Mesh;
     if (!m.isMesh) return;
     m.material = (m.material as THREE.Material).clone();

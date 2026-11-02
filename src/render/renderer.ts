@@ -19,6 +19,7 @@ import { Overlays, View } from './overlays';
 import { disposeModel } from './merge';
 import { GRAPHICS, type Graphics } from '../quality/levels';
 import { daylightAt } from './daylight';
+import { glowAt, setGlow } from './glow';
 import { clock } from '../seasons/day';
 import { seasonLook, yearAt, type SeasonLook } from '../seasons/year';
 import { setSeason } from './seasonal';
@@ -222,9 +223,10 @@ export class Renderer {
     sc.updateProjectionMatrix();
   }
 
-  // Sets the sun, sky and background for the time of day.
+  // Sets the sun, sky, background and building glow for the time of day.
   private light(time: number) {
     const l = daylightAt(clock(time));
+    setGlow(glowAt(clock(time)));
     this.sun.color.copy(l.sun);
     this.sun.intensity = l.sunPower;
     this.hemi.color.copy(l.hemiSky);
