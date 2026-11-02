@@ -24,6 +24,7 @@ import { isStore, stored } from './stores';
 import { dockOf } from './harbour';
 import { idleTotal, poolOf } from './homes';
 import { canSail, sail, stepShips } from './voyage';
+import type { Isle } from './isles';
 import { START_TOOLS, watchTools } from './tools';
 import { takesForesterRoom, watchTrees } from './forestry';
 import { noteSettlers, type Entry } from './chronicle';
@@ -149,13 +150,13 @@ export class Game {
     return dockOf(this, b);
   }
 
-  // Why settlers can't sail from harbour `b` to settle the other island, or null if they can.
-  canSail(b: Building) {
-    return canSail(this, b);
+  // Why settlers can't sail from harbour `b` to settle island `to`, or the nearest, or null if they can.
+  canSail(b: Building, to?: Isle) {
+    return canSail(this, b, to);
   }
 
-  sail(b: Building) {
-    return sail(this, b);
+  sail(b: Building, to?: Isle) {
+    return sail(this, b, to);
   }
 
   // Swap one deal of `give` for `get` with the trade ship at harbour `b`. Returns why it can't, or null.

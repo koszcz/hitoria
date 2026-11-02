@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S · Branch: worktree-agent-aa5acee21fe8ebe48*
+Nothing right now.
 
 ## Next
 
@@ -59,6 +59,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *2026-11-02*
 - **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *2026-11-02*
 - **Fair winter goal**: the winter goal counts hungry workers on the home island, and on a colony only once it has its own food maker, such as a Fisher's Hut. A starving new colony no longer makes the goal impossible. *2026-11-02*
 - **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *2026-11-02*

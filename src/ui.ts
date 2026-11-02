@@ -1,4 +1,4 @@
-import { Game, BDEFS, BType, GOODS, FeastKind, Good, HOUSE_GROW, houseSize } from './game';
+import { Game, BDEFS, BType, GOODS, FeastKind, Good, Isle, HOUSE_GROW, houseSize } from './game';
 import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
 import { openBuildMenu } from './buildmenu/menu';
 import { costText } from './buildmenu/card';
@@ -71,7 +71,7 @@ export class UI {
       if (!btn || !b) return;
       const act = btn.dataset.act, good = btn.dataset.good as Good;
       let why: string | null = null;
-      if (act === 'sail') why = this.game.sail(b);
+      if (act === 'sail') why = this.game.sail(b, btn.dataset.isle as Isle | undefined);
       else if (act === 'upgrade') why = this.game.upgrade(b);
       else if (act === 'feast') why = this.game.orderFeast(b, btn.dataset.kind as FeastKind);
       else if (act === 'stop') why = this.game.stopWork(b);

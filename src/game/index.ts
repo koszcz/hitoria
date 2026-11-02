@@ -8,7 +8,7 @@ export { WISHES, WISH_MIN_TIME } from './wishes';
 export type { Entry } from './chronicle';
 export { HUNGRY_AFTER } from './survive';
 export { SAIL_CARGO, SAIL_CREW, lacking, landingSpot } from './voyage';
-export { onFar } from './isles';
+export { onFar, openIsles, type Isle } from './isles';
 export { VALUE, canTrade, dealFor, spare, tradeHarbour } from './trade';
 export { untilSail } from './tradeday';
 export { SELL_LIMIT, stockLeft, traderDeal } from './wants';

@@ -4,6 +4,8 @@
 export const ISLES_PL: Record<string, string> = {
   '⛵ A ship sets sail for the far island': '⛵ Statek wypływa na daleką wyspę',
   '⚓ Your settlers have landed on the far island': '⚓ Twoi osadnicy wylądowali na dalekiej wyspie',
+  'No free shore on the far island': 'Na dalekiej wyspie nie ma wolnego brzegu',
+  'Settlers already live on that island': 'Na tej wyspie już mieszkają osadnicy',
   'Fishing in the cove': 'Łowi ryby w zatoczce',
   'Fishing in the cove, slowly in the cold': 'Łowi ryby w zatoczce, powoli w zimnie',
 };

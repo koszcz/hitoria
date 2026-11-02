@@ -16,5 +16,16 @@ export function landable(g: Game, x: number, y: number) {
   return !!isle && !landings(g).some((b) => g.world.isleAt(b.x, b.y) === isle);
 }
 
+// An island that settlers sail to.
+export type Isle = 'other' | 'far';
+
+// The islands a ship may still sail to, in the order the harbour panel lists them. On maps with a
+// far island, that is each island nobody has settled yet. Older maps name no islands.
+export function openIsles(g: Game): Isle[] {
+  if (!g.world.far) return [];
+  const settled = new Set(landings(g).map((b) => g.world.isleAt(b.x, b.y)));
+  return (['other', 'far'] as Isle[]).filter((i) => !settled.has(i));
+}
+
 // Is the tile at (x, y) on the far island?
 export const onFar = (g: Game, x: number, y: number) => g.world.isleAt(x, y) === 'far';

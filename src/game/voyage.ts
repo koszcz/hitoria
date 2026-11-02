@@ -8,7 +8,7 @@ import { addBuilding } from './construction';
 import type { Game } from './game';
 import { dockAt } from './harbour';
 import { addPool, homeOf, LANDING_LAND, poolOf } from './homes';
-import { landable, landings, onFar, voyages } from './isles';
+import { landable, landings, onFar, openIsles, voyages, type Isle } from './isles';
 import { computeTerritory } from './land';
 import { isStore } from './stores';
 import type { Building, Ship } from './types';
@@ -73,8 +73,9 @@ function room(g: Game, x: number, y: number) {
 }
 
 // Where a ship from harbour `h` lands: the free shore on other land that is the shortest sail away,
-// with room around it to build. On maps with a far island, it lands only on an island nobody has settled.
-export function landingSpot(g: Game, h: Building): { land: P; dock: P } | null {
+// with room around it to build. On maps with a far island, it lands only on an island nobody has settled,
+// and only on island `to` when you pick one. Older maps have no far island, so they ignore `to`.
+export function landingSpot(g: Game, h: Building, to?: Isle): { land: P; dock: P } | null {
   const from = g.dock(h);
   if (!from) return null;
   const home = flood(g.world, h, (x, y) => g.world.at(x, y).t !== 'water');
@@ -83,6 +84,7 @@ export function landingSpot(g: Game, h: Building): { land: P; dock: P } | null {
   for (let y = 0; y < H; y++)
     for (let x = 0; x < W; x++) {
       if (home[y * W + x] >= 0 || !freeShore(g, x, y) || !landable(g, x, y)) continue;
+      if (to && g.world.far && g.world.isleAt(x, y) !== to) continue;
       const dock = dockAt(g, x, y);
       const d = dock ? sea[dock.y * W + dock.x] : -1;
       if (d < 0 || d >= bd || room(g, x, y) < ROOM) continue;
@@ -112,13 +114,14 @@ export function lacking(g: Game, h: Building): Partial<Bag> {
 // Settlers sail once to each island, one ship at a time. If they could not land, they may try again.
 export const sailed = (g: Game) => g.ships.some((s) => s.leg !== 'moored') || landings(g).length >= voyages(g);
 
-// Why the ship can't sail from harbour `h` now, or null if it can.
-export function canSail(g: Game, h: Building): string | null {
+// Why the ship can't sail from harbour `h` now, to island `to` if you pick one, or null if it can.
+export function canSail(g: Game, h: Building, to?: Isle): string | null {
   if (h.type !== 'harbour' || !h.built) return 'Build the harbour first';
   if (h.landed || sailed(g)) return 'Your settlers have already sailed';
+  if (to && g.world.far && !openIsles(g).includes(to)) return 'Settlers already live on that island';
   if (poolOf(g, homeOf(g, h) ?? g.hq) < SAIL_CREW) return 'Needs more idle settlers';
   if (Object.keys(lacking(g, h)).length) return 'Needs more goods in your stores';
-  if (!landingSpot(g, h)) return 'No free shore on the other island';
+  if (!landingSpot(g, h, to)) return to === 'far' && g.world.far ? 'No free shore on the far island' : 'No free shore on the other island';
   return null;
 }
 
@@ -131,11 +134,12 @@ export function seaPath(g: Game, a: P, b: P) {
   return findPath(g.world, a.x, a.y, b.x, b.y, water(g), g.world.w * g.world.h, (x, y) => (open(x, y) ? 0.7 : 1), 0.7) ?? [];
 }
 
-// Load the ship at harbour `h` and send it off. Returns why it can't sail, or null once it has.
-export function sail(g: Game, h: Building): string | null {
-  const why = canSail(g, h);
+// Load the ship at harbour `h` and send it off, to island `isle` if you pick one, or else to the
+// nearest free shore. Returns why it can't sail, or null once it has.
+export function sail(g: Game, h: Building, isle?: Isle): string | null {
+  const why = canSail(g, h, isle);
   if (why) return why;
-  const to = landingSpot(g, h)!, from = g.dock(h)!;
+  const to = landingSpot(g, h, isle)!, from = g.dock(h)!;
   const cargo = bag(SAIL_CARGO);
   for (const k of GOODS) {
     let left = cargo[k];

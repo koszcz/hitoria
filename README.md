@@ -95,7 +95,7 @@ first, the wish just passes, with no penalty, and a new one comes.
      also stand on the edge of a mountain, if there is open grass in front of its door. From
      there it reaches rich spots deeper in the mountain.
    - Across the water from the bay lies a second island, about 20 tiles across. Farther out, to one side of the bay, lies
-     the far island, about 26 tiles across, the largest of the three. To settle them, build a harbour, click it and press **Set sail**. See
+     the far island, about 26 tiles across, the largest of the three. To settle them, build a harbour, click it and press the Sail button for the island you want. See
      "Settling the second island" below.
    - The two islands have different themes, chosen at random for each new map from three:
      - Pine highland: dense pine forest and rock cliffs on the shore that faces the open sea.
@@ -144,8 +144,10 @@ south for the winter. They are only there to look at.
 1. Build a harbour on the shore by the bay.
 2. Gather 5 idle settlers in the HQ and 12 planks, 8 stone and 6 tools in your stores. Click the harbour to
    see what is still missing.
-3. Press **Set sail**. A ship takes the settlers and goods to the nearest free shore on the
-   second island.
+3. Pick an island. The panel has one button for each island nobody has settled yet: **Sail to
+   the other island** and **Sail to the far island**. A ship takes the settlers and goods to the
+   nearest free shore on the island you pick. Older saves, with no far island, have one **Set
+   sail** button.
 4. The settlers clear the trees and boulders around them, which gives them logs and stone. They
    build a harbour of their own and claim the land 6 tiles around it. The ship sails home.
 
@@ -158,7 +160,7 @@ of the island the camera looks at, and name that island, such as "Second island"
 island to see its goods. Over open sea, or over an island with no store yet, they show the home
 island. Goals and wishes still count the goods on every island.
 
-Once the ship is back, you can sail a second time, to the far island. It takes another 5
+Once the ship is back, you can sail a second time, to the island nobody has settled yet. It takes another 5
 settlers and the same goods. The far island has a mountain ridge with coal and iron ore too, and
 all of its ore is rich, so every mine there digs twice as fast. Its ridge runs across the island,
 a little towards the shore where the ship lands, so your mines fit near the landing. Walk around
@@ -399,7 +401,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine, meadow and cove themes of the two islands (`themes.ts`), the hidden cove's lagoon (`cove.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, and where the far island sits (`isle.ts`) |
 | `src/math/` | Sine, cosine and distance that give the same result on every computer, so a seed always makes the same map (`exact.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`), the warning before a woodcutter runs out of trees and which buildings take a forester's ground (`forestry.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and the islands you can still sail to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`), the warning before a woodcutter runs out of trees and which buildings take a forester's ground (`forestry.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea and in the hidden cove (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`) and on their walls (`walllight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -408,7 +410,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/sound/` | Work sounds (`work.ts` picks what you hear, `strikes.ts` plays it), the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
 | `src/ui.ts` | HUD, goal panel and info panel |
-| `src/sailinfo.ts` | The harbour panel's "Sail to settle" part |
+| `src/sailinfo.ts` | The harbour panel's "Sail to settle" part, with a Sail button for each island nobody has settled |
 | `src/tradeinfo.ts` | The harbour panel's "Trade ship" part |
 | `src/upgradeinfo.ts` | The "Upgrade" part of a hut's or house's panel |
 | `src/stopinfo.ts` | The "Stop work" and "Resume work" button in a hut's panel |
