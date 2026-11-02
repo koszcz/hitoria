@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Goals still count every island. *Fun 3 · Effort M · Branch: worktree-agent-a341b5682ebbff8ed*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Goals still count every island. *Fun 3 · Effort M*
 - **Tools for the Toolmaker first**: a Toolmaker's Workshop that waits for a tool gets the next free tool before any other hut, so the tool chain never stalls. The Toolmaker card says that every new worker needs a tool. *Fun 2 · Effort S*
 - **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *Fun 2 · Effort S*
 
