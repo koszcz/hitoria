@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *Fun 2 · Effort S · Needs: Island themes · Branch: worktree-agent-a1adf986a4b3f61a4*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *Fun 2 · Effort S · Needs: Island themes*
 - **Glow lights the walls**: at night, the walls of each finished building take a soft warm tint from its pool of light, brightest near the ground and the door and fading toward the roof. The tint fades in and out with the glow, and it stays a painted fake, not real lamps. *Fun 1 · Effort S · Needs: Buildings glow at night*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 
