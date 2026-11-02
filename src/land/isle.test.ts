@@ -3,10 +3,13 @@
 import { describe, expect, test } from 'bun:test';
 import { World, MAP_VERSION } from '../world';
 import { BIG_ISLE, BIG_ISLE_FROM, SMALL_ISLE, isleShape } from './isle';
+import { COVE_FROM } from './cove';
 import type { IsleName } from './themes';
 
 const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
 const LAST_SMALL = BIG_ISLE_FROM - 1;
+// The last map before the hidden cove, which cuts a lagoon into one island. See cove.test.ts.
+const BEFORE_COVE = COVE_FROM - 1;
 
 // Every land tile of one island, as { x, y, i }, where i is the tile's index.
 function landOf(w: World, isle: IsleName) {
@@ -42,7 +45,7 @@ describe('island shape by map version', () => {
 describe('bigger second island', () => {
   for (const seed of SEEDS)
     describe(`seed ${seed}`, () => {
-      const w = new World(seed), old = new World(seed, LAST_SMALL);
+      const w = new World(seed, BEFORE_COVE), old = new World(seed, LAST_SMALL);
       const isle = landOf(w, 'other'), was = landOf(old, 'other');
 
       test('is about 20 tiles across, where it was about 13', () => {

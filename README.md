@@ -91,9 +91,12 @@ first, the wish just passes, with no penalty, and a new one comes.
    - Across the water from the bay lies a second island, about 20 tiles across. Farther out, to one side of the bay, lies
      the far island, about 26 tiles across, the largest of the three. To settle them, build a harbour, click it and press **Set sail**. See
      "Settling the second island" below.
-   - The two islands have different themes, chosen at random for each new map. One is a pine
-     highland, with dense pine forest and rock cliffs on the shore that faces the open sea. The
-     other is a wild meadow, with flowers, a small grove and more deer and hares for hunters.
+   - The two islands have different themes, chosen at random for each new map from three:
+     - Pine highland: dense pine forest and rock cliffs on the shore that faces the open sea.
+     - Wild meadow: flowers, a small grove and more deer and hares for hunters.
+     - Hidden cove: a sheltered lagoon cut deep into the island from the open sea, ringed by sand
+       and reeds. A fisher who fishes from its shore brings home 2 fish from each catch, and more
+       ducks and jumping fish gather there.
 
 Settlers must be able to walk from the HQ, or from a harbour they built on the second island, to
 every building. If water, mountains or trees cut a
@@ -126,7 +129,8 @@ moves across the light half by day and the moon across the dark half by night. N
 you see the season, a bar that fills as the season goes on, and the day count.
 
 The sea is alive too. Foam runs along the beaches, fish leap out of the water now and then, and
-ducks paddle near the shore. The ducks fly south for the winter. They are only there to look at.
+ducks paddle near the shore. More of both gather in the lagoon of a hidden cove. The ducks fly
+south for the winter. They are only there to look at.
 
 ### Settling the second island
 
@@ -343,7 +347,8 @@ Each save records which version of the map it was made on. A save from before a 
 on the same land it was saved on, even though new games get the new map. On maps from before the
 second island's mountain, every mountain still holds coal and iron ore. Maps from before mountain ranges
 keep their round mountains. Maps from before the far island have no far island, so their settlers
-sail only once. Maps from before island themes keep islands with no theme. Maps from before the
+sail only once. Maps from before island themes keep islands with no theme. Maps from before the hidden cove
+only have the pine and meadow themes. Maps from before the
 bigger map stay 64 by 64 tiles. New maps are 96 by 96, with wide open sea around the land. Maps
 from before the bigger second island keep a second island about 13 tiles across. Maps from before
 the bigger far island keep a far island about 13 tiles across.
@@ -379,10 +384,10 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
-| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine and meadow themes of the two islands (`themes.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, and where the far island sits (`isle.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`) and saving |
+| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine, meadow and cove themes of the two islands (`themes.ts`), the hidden cove's lagoon (`cove.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, and where the far island sits (`isle.ts`) |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea and in the hidden cove (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
 | `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, the clock in the HUD (`hud.ts`), and fast nights (`fastnight.ts`) |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
@@ -424,7 +429,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
   it. Scouts, builders and carriers need no tool. Demolishing a hut puts its tool back in your
   stores.
 - Farm → grain → Mill → flour → Bakery → bread. A fisher catches fish, but only about half as
-  many in winter.
+  many in winter. A fisher by a hidden cove's lagoon fishes there first and brings home 2 fish
+  from each catch.
 - A hunter catches deer and hares up to 7 tiles from the Hunter's Lodge and brings home meat.
   Foxes are left alone.
 - A well draws water on any flat grass. The bakery needs 1 flour and 1 water for each loaf.

@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *Fun 2 · Effort S · Needs: Island themes · Branch: worktree-agent-a1adf986a4b3f61a4*
+Nothing right now.
 
 ## Next
 
@@ -38,6 +38,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *2026-11-02*
 - **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *2026-11-02*
 - **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *2026-11-02*
 - **Rates in the info panel**: a building's panel shows what it made and used in the last minute, such as "Made 12 Water" and "Used 1 Fish". Workers' meals and a house's food count as used. *2026-11-02*

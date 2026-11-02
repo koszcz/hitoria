@@ -35,7 +35,7 @@ export const BDEFS: Record<BType, BDef> = {
   sawmill: { name: 'Sawmill', icon: '🪚', desc: 'Saws logs into planks.', cost: { plank: 2, stone: 2 }, buildTime: 9, worker: 'sawyer', radius: 0 },
   lookout: { name: 'Lookout Tower', icon: '🔭', desc: 'Expands your land. No soldiers, just a view.', cost: { plank: 3, stone: 3 }, buildTime: 10, worker: 'scout', radius: 7 },
   storehouse: { name: 'Storehouse', icon: '📦', desc: 'Stores spare goods close to where they are made and needed.', cost: { plank: 3, stone: 2 }, buildTime: 8, worker: null, radius: 0 },
-  fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore. In winter it catches about half as many.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5 },
+  fisher: { name: "Fisher's Hut", icon: '🎣', desc: 'Catches fish from the water nearby. Build it close to the shore. In winter it catches about half as many. By a hidden cove it catches twice as many.', cost: { plank: 2 }, buildTime: 6, worker: 'fisher', radius: 5 },
   farm: { name: 'Farm', icon: '🌾', desc: 'Sows grain on free grass nearby and harvests it when it is ripe.', cost: { plank: 3, stone: 1 }, buildTime: 8, worker: 'farmer', radius: 3 },
   well: { name: 'Well', icon: '🪣', desc: 'Draws water from the ground. Build it on any flat grass.', cost: { plank: 2, stone: 1 }, buildTime: 6, worker: 'drawer', radius: 0 },
   mill: { name: 'Mill', icon: '⚙️', desc: 'Grinds grain into flour.', cost: { plank: 2, stone: 3 }, buildTime: 9, worker: 'miller', radius: 0 },

@@ -5,9 +5,13 @@ import { Game } from '../game';
 import { World } from '../world';
 import { BIG_SIZE as W } from '../land/size';
 import { drawThemes } from './themes';
+import { COVE_FROM } from './cove';
 import type { IsleName } from './themes';
 
 const H = W;
+// The pines and the meadow on the last map before the hidden cove, where both islands have one of
+// them. The cove's own tests are in cove.test.ts.
+const MAP = COVE_FROM - 1;
 
 const SEEDS = [1, 2, 3, 7, 42, 99, 12345, 987654321];
 
@@ -23,7 +27,7 @@ const lightOf = (col: string) => Number(/, ([\d.]+)%\)$/.exec(col)![1]);
 
 describe('island themes', () => {
   test('both themes come up across seeds, on either island', () => {
-    const seen = new Set(SEEDS.map((s) => drawThemes(s).other));
+    const seen = new Set(SEEDS.map((s) => drawThemes(s, MAP).other));
     expect([...seen].sort()).toEqual(['meadow', 'pines']);
   });
 
@@ -38,14 +42,14 @@ describe('island themes', () => {
 
   for (const seed of SEEDS)
     describe(`seed ${seed}`, () => {
-      const w = new World(seed);
+      const w = new World(seed, MAP);
       const pines = tilesOf(w, pinesOf(w)), meadow = tilesOf(w, meadowOf(w));
       const trees = (ts: typeof pines) => ts.filter((t) => w.tiles[t.i].tree).length;
       // Trees for each tile of land, since the second island is bigger than the far island.
       const forest = (ts: typeof pines) => trees(ts) / ts.filter((t) => w.tiles[t.i].t !== 'water').length;
 
       test('gives the two islands two different themes', () => {
-        expect(w.themes).toEqual(drawThemes(seed));
+        expect(w.themes).toEqual(drawThemes(seed, MAP));
         expect(w.themes!.other).not.toBe(w.themes!.far);
       });
 
@@ -96,7 +100,7 @@ describe('island themes', () => {
       });
 
       test('more deer and hares live on the meadow island than on the pine island', () => {
-        const g = new Game(seed);
+        const g = new Game(seed, MAP);
         const count = (isle: IsleName) =>
           [...g.animals.values()].filter((a) => a.kind !== 'fox' && g.world.isleAt(a.x, a.y) === isle).length;
         expect(count(meadowOf(w))).toBeGreaterThanOrEqual(6);
@@ -105,7 +109,7 @@ describe('island themes', () => {
     });
 
   test('an old map gets no meadow animals, so it has fewer', () => {
-    const g7 = new Game(1, 7), g8 = new Game(1);
+    const g7 = new Game(1, 7), g8 = new Game(1, MAP);
     expect(g8.animals.size - g7.animals.size).toBeGreaterThanOrEqual(6);
   });
 });

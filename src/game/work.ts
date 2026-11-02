@@ -15,6 +15,7 @@ import { quicken } from './upgrades';
 import { hasten } from './blessing';
 import { MIXED_DIG, pickFood, tasteNew } from './variety';
 import { noteMade, noteUsed } from './rates';
+import { COVE_CATCH, byCove } from './cove';
 
 export function idle(g: Game, s: Settler) {
   if (s.role === 'carrier') return carry(g, s);
@@ -99,18 +100,22 @@ function plan(g: Game, s: Settler, home: Building): true | void {
     }
     case 'fisher': {
       if (home.out.fish >= PILE) return rest(2, 'Full, waiting for a carrier');
-      const at = findTile(g, home, r, (t, x, y) => t.t !== 'water' && g.passable(x, y) && near(g, x, y, 1, (n) => n.t === 'water'));
+      const shore = (t: Tile, x: number, y: number) => t.t !== 'water' && g.passable(x, y) && near(g, x, y, 1, (n) => n.t === 'water');
+      // A fisher in reach of the hidden cove fishes from its shore, where each catch brings home more fish.
+      const cove = findTile(g, home, r, (t, x, y) => shore(t, x, y) && byCove(g, x, y));
+      const at = cove ?? findTile(g, home, r, shore);
       if (!at) return rest(3, 'No shore in range');
       // Fish bite slowly in the cold, so a fisher catches half as many in winter.
       const cold = isWinter(g.time);
-      home.status = cold ? 'Fishing, slowly in the cold' : 'Fishing';
+      home.status = cove ? (cold ? 'Fishing in the cove, slowly in the cold' : 'Fishing in the cove')
+        : cold ? 'Fishing, slowly in the cold' : 'Fishing';
       const i = claim(g, s, at);
       s.tasks = [
         { k: 'walk', ...at },
         { k: 'work', t: cold ? 6 * WINTER_FISHING : 6, anim: 'fish' },
         { k: 'do', f: () => { g.claimed.delete(i); s.carrying = 'fish'; } },
         { k: 'walk', x: home.x, y: home.y },
-        { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; make('fish'); } },
+        { k: 'do', f: () => { s.carrying = null; s.onAbort = null; s.inside = true; make('fish', cove ? COVE_CATCH : 1); } },
         { k: 'work', t: 2 },
       ];
       return;

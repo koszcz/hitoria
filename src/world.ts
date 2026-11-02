@@ -1,6 +1,7 @@
 import { rng, noise } from './land/noise';
 import { ranges, toRidge } from './land/ranges';
-import { THEME_HUE, THEME_LIGHT, drawThemes, meadowPlant, raiseCliffs, themeConifer, themeTree } from './land/themes';
+import { THEME_HUE, THEME_LIGHT, drawThemes, isleWith, meadowPlant, raiseCliffs, themeConifer, themeTree } from './land/themes';
+import { coveOf, sinkSpecks } from './land/cove';
 import type { IsleName, Theme } from './land/themes';
 import { OLD_SIZE, OPEN_SEA, mapSize, surround } from './land/size';
 import { BIG_FAR_FROM, BIG_ISLE_FROM, EDGE_SEA, farShape, island, isleShape, placeFar } from './land/isle';
@@ -39,7 +40,8 @@ export interface Tile {
 // 9: the map is 96 by 96 tiles. The land stays inside the middle 64 by 64, with open sea around it.
 // 10: the second island is about 20 tiles across, with a longer ridge. It reaches past the middle 64 by 64.
 // 11: the far island is about 26 tiles across, the largest of the three, with a longer ridge.
-export const MAP_VERSION = 11;
+// 12: a third theme, the hidden cove, with a lagoon cut deep into the island. Each island gets one of three themes.
+export const MAP_VERSION = 12;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -100,6 +102,8 @@ export class World {
   themes: Record<IsleName, Theme> | null = null;
   // 1 on the sea cliffs of a pine island. Cliffs are bare rock with no ore.
   cliff: Uint8Array;
+  // 1 on the water of the hidden cove's lagoon. See cove.ts.
+  cove: Uint8Array;
 
   // `size` is for the generator itself: a bigger map lays its land out on an old-size map first.
   constructor(seed: number, readonly map = MAP_VERSION, size = mapSize(map)) {
@@ -107,6 +111,7 @@ export class World {
     this.territory = new Uint8Array(W * H);
     this.ore = new Uint8Array(W * H);
     this.cliff = new Uint8Array(W * H);
+    this.cove = new Uint8Array(W * H);
     this.start = { x: W / 2, y: H / 2 };
     const isl = (this.shape = isleShape(map)), fsh = (this.farShape = farShape(map));
     // In map version 9, the land is the same as on an old-size map, with open sea all around it.
@@ -148,9 +153,12 @@ export class World {
     const toFarPeakAt = (x: number, y: number) => (farEnds ? toRidge(x, y, farEnds[0], farEnds[1]) : Infinity);
     const groveOf = (c: { x: number; y: number }, o: { x: number; y: number }, s: IsleSize) =>
       ({ x: c.x - o.x * s.groveIn - o.y * s.groveSide, y: c.y - o.y * s.groveIn + o.x * s.groveSide, r: s.grove });
-    const themes = (this.themes = far && map >= 8 ? drawThemes(seed) : null);
+    const themes = (this.themes = far && map >= 8 ? drawThemes(seed, map) : null);
     // The far island always has a grove. From map version 8, a meadow second island gets one too.
     const groves = [far && groveOf(far, far.out, fsh), themes?.other === 'meadow' ? groveOf(isle, out, isl) : null].filter((c) => !!c);
+    // From map version 12, the island with the cove theme has a lagoon cut into it.
+    const coveIsle = isleWith(themes, 'cove');
+    const cove = coveIsle && (coveIsle === 'other' ? coveOf(seed, isle, out, isl) : coveOf(seed, far!, far!.out, fsh));
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
     const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : Math.hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
@@ -189,15 +197,19 @@ export class World {
           h = Math.max(h, ISLE_PEAK - toFarPeakAt(x, y) * ISLE_PEAK_SLOPE);
           h = Math.min(h, this.edgeSea(Math.min(x, y, W - 1 - x, H - 1 - y)));
         }
+        if (cove && this.isleAt(x, y) === coveIsle) h = cove.carve(x, y, h);
         if (big) h = Math.max(h, OPEN_SEA);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, col: '' });
         // Older maps have ore in every mountain. From map 5, only the second island's mountain holds it.
         const rich = map < 5 || this.isleAt(x, y, 0) !== null;
         if (t === 'mountain' && rich) this.ore[y * W + x] = 1;
+        if (t === 'water' && cove && this.isleAt(x, y) === coveIsle && cove.past(x, y) < 0) this.cove[y * W + x] = 1;
       }
     }
-    if (themes) raiseCliffs(this, themes.other === 'pines' ? { ...isle, out } : far!);
+    if (coveIsle) sinkSpecks(this, coveIsle);
+    const pines = isleWith(themes, 'pines');
+    if (pines) raiseCliffs(this, pines === 'other' ? { ...isle, out } : far!);
 
     // Guaranteed starting resources so every seed is playable.
     for (let y = 0; y < H; y++) {
@@ -292,7 +304,8 @@ export class World {
     for (let y = 0; y < this.h; y++)
       for (let x = 0; x < this.w; x++) {
         const t = this.at(x, y), r = rand();
-        if (t.t === 'sand') t.plant = this.nearWater(x, y) && r < 0.5 ? 'reeds' : r > 0.92 ? 'pebbles' : '';
+        // Reeds grow thick around the hidden cove's lagoon.
+        if (t.t === 'sand') t.plant = this.nearWater(x, y) && r < (this.nearCove(x, y) ? 0.9 : 0.5) ? 'reeds' : r > 0.92 ? 'pebbles' : '';
         else if (t.t === 'mountain') t.plant = r < 0.14 ? 'pebbles' : '';
         else if (t.t === 'grass') {
           const woods = this.treesAround(x, y);
@@ -336,6 +349,13 @@ export class World {
     for (let dy = -1; dy <= 1; dy++)
       for (let dx = -1; dx <= 1; dx++)
         if (this.inside(x + dx, y + dy) && this.at(x + dx, y + dy).t === 'water') return true;
+    return false;
+  }
+
+  private nearCove(x: number, y: number) {
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++)
+        if (this.inside(x + dx, y + dy) && this.cove[(y + dy) * this.w + x + dx]) return true;
     return false;
   }
 

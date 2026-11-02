@@ -1,15 +1,17 @@
 // Fish that leap out of the sea now and then with a splash, and flocks of ducks paddling
-// near the shore. Ducks fly south for the winter.
+// near the shore. More of both gather in the hidden cove's lagoon. Ducks fly south for the winter.
 import * as THREE from 'three';
 import { World } from '../world';
 import { landDistance } from '../water/shore';
-import { SPLASH, duckAt, ducksHome, fishAt, pickSpots, type Spot } from '../water/life';
+import { SPLASH, duckAt, ducksHome, fishAt, inCove, pickSpots, type Spot } from '../water/life';
 import { add, hash } from './kit';
 import { disposeModel, mergeModel } from './merge';
 import { SEA } from './terrain';
 
 const FISH = 14; // fish spots on the map
 const FLOCKS = 6; // duck flocks on the map
+const COVE_FISH = 5; // more fish spots in the hidden cove's lagoon
+const COVE_FLOCKS = 2; // more duck flocks there
 const SCALE = 1.6; // drawn larger than true scale, like the settlers, so you can spot them
 
 interface Fish { g: THREE.Group; ring: THREE.Mesh; spot: Spot }
@@ -28,14 +30,21 @@ export class Waterlife {
     const { w: W, h: H } = world;
     const dist = landDistance(world, W, H);
     // Fish leap a little way out from the beach; ducks keep to calm water near it.
-    for (const spot of pickSpots(dist, W, home, 2, 6, 5, FISH, 1)) {
+    const cove = inCove(dist, world.cove, W);
+    const fish = pickSpots(dist, W, home, 2, 6, 5, FISH, 1);
+    const flocks = pickSpots(dist, W, home, 2, 4, 5, FLOCKS, 2);
+    if (cove) {
+      fish.push(...pickSpots(cove.dist, W, cove.mid, 1, 8, 2, COVE_FISH, 3));
+      flocks.push(...pickSpots(cove.dist, W, cove.mid, 2, 8, 2.5, COVE_FLOCKS, 4));
+    }
+    for (const spot of fish) {
       const ring = new THREE.Mesh(new THREE.RingGeometry(0.8, 1, 20).rotateX(-Math.PI / 2), this.ringMat.clone());
       ring.renderOrder = 1;
       const f = { g: makeFish(), ring, spot };
       this.fish.push(f);
       this.scene.add(f.g, ring);
     }
-    pickSpots(dist, W, home, 2, 4, 5, FLOCKS, 2).forEach((spot, flock) => {
+    flocks.forEach((spot, flock) => {
       const size = 2 + Math.floor(hash(flock, 31) * 3);
       for (let k = 0; k < size; k++) {
         const d = makeDuck(k === 0 && hash(flock, 32) < 0.7);

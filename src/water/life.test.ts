@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { JUMP, JUMP_HIGH, PADDLE, SPLASH, duckAt, ducksHome, fishAt, fishPause, pickSpots } from './life';
+import { JUMP, JUMP_HIGH, PADDLE, SPLASH, duckAt, ducksHome, fishAt, fishPause, inCove, pickSpots } from './life';
 import { landDistance } from './shore';
 import { World } from '../world';
 import { BIG_SIZE as W } from '../land/size';
@@ -131,5 +131,25 @@ describe('ducks', () => {
   test('they are away while snow lies on the ground', () => {
     expect(ducksHome(0)).toBe(true);
     expect(ducksHome(1)).toBe(false);
+  });
+});
+
+describe('fish and ducks in the hidden cove', () => {
+  // Seed 1 has the cove on its second island.
+  const cove = inCove(dist, world.cove, W)!;
+
+  test('pick spots only in the lagoon', () => {
+    const fish = pickSpots(cove.dist, W, cove.mid, 1, 8, 2, 5, 3), ducks = pickSpots(cove.dist, W, cove.mid, 2, 8, 2.5, 2, 4);
+    expect(fish.length).toBe(5);
+    expect(ducks.length).toBe(2);
+    for (const s of [...fish, ...ducks]) expect(world.cove[Math.floor(s.y) * W + Math.floor(s.x)]).toBe(1);
+  });
+
+  test('the middle lies on the cove island', () => {
+    expect(world.isleAt(cove.mid.x, cove.mid.y)).toBe('other');
+  });
+
+  test('a map without a lagoon has no cove spots', () => {
+    expect(inCove(dist, new Uint8Array(W * H), W)).toBeNull();
   });
 });

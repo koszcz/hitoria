@@ -17,7 +17,7 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
     name: 'Port',
     desc: 'Drewniane molo na brzegu, przy którym mogą cumować statki. Przechowuje towary jak magazyn. Zbuduj go przy otwartej wodzie.',
   },
-  fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu. Zimą łowi mniej więcej o połowę mniej.' },
+  fisher: { name: 'Chata rybaka', desc: 'Łowi ryby w pobliskiej wodzie. Zbuduj ją blisko brzegu. Zimą łowi mniej więcej o połowę mniej. Przy ukrytej zatoczce łowi dwa razy więcej.' },
   hunter: { name: 'Chata myśliwego', desc: 'Poluje na jelenie i zające w pobliżu i przynosi mięso. Zwierzęta powoli wracają.' },
   farm: { name: 'Gospodarstwo', desc: 'Sieje zboże na wolnej trawie w pobliżu i zbiera je, gdy dojrzeje.' },
   well: { name: 'Studnia', desc: 'Czerpie wodę z ziemi. Zbuduj ją na dowolnej płaskiej trawie.' },

@@ -2,6 +2,7 @@
 // Hunters catch them; see hunting.ts.
 import { findPath } from '../path';
 import { rng } from '../world';
+import { isleWith } from '../land/themes';
 import type { Game } from './game';
 import type { Animal, AnimalKind } from './types';
 
@@ -26,7 +27,7 @@ export function spawnAnimals(g: Game) {
   }
   // The meadow island gets more deer and hares, for hunters. They take their own random numbers,
   // so the other animals keep their places.
-  const meadow = g.world.themes && (g.world.themes.other === 'meadow' ? 'other' : 'far');
+  const meadow = isleWith(g.world.themes, 'meadow');
   if (meadow) {
     const more = rng(g.seed ^ 0xdee7), on = (x: number, y: number) => g.world.isleAt(x, y) === meadow;
     for (let i = 0; i < MEADOW_HERDS; i++) spawnHerd(g, more, on);

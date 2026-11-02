@@ -100,3 +100,20 @@ export function duckAt(spot: Spot, f: number, k: number, now: number): Paddle {
 
 // Ducks fly south for the winter: none on the water once snow lies on the ground.
 export const ducksHome = (snow: number) => snow < 0.3;
+
+// --- the hidden cove ---------------------------------------------------------
+
+// Fish and ducks gather in the hidden cove's lagoon, where `cove` marks the water. Returns a copy
+// of `dist` where every tile outside the lagoon counts as land, so pickSpots picks spots in the
+// lagoon only, and the lagoon's middle. Returns null when the map has no lagoon.
+export function inCove(dist: Uint8Array, cove: Uint8Array, w: number): { dist: Uint8Array; mid: Spot } | null {
+  const only = dist.map((d, i) => (cove[i] ? d : 0));
+  let n = 0, x = 0, y = 0;
+  cove.forEach((c, i) => {
+    if (!c) return;
+    n++;
+    x += (i % w) + 0.5;
+    y += Math.floor(i / w) + 0.5;
+  });
+  return n ? { dist: only, mid: { x: x / n, y: y / n } } : null;
+}
