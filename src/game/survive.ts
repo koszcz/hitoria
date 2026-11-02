@@ -1,10 +1,12 @@
 // The survive winter goal: it watches a whole winter and fails it if a hut worker or miner goes hungry too long.
 // Houses don't count: a house waiting for food only waits to grow a settler, and no one in it goes hungry.
-// Nights don't count either, because everyone sleeps.
+// Nights don't count either, because everyone sleeps. On a colony, hunger counts only once the
+// colony has its own finished food maker, so a new colony that starves does not spoil the goal.
 import { isNight } from '../seasons/day';
 import { isWinter } from '../seasons/year';
 import { note } from './chronicle';
 import type { Game } from './game';
+import { isleOf, type Isle } from './islandstock';
 import { eats } from './meals';
 import type { Building } from './types';
 
@@ -30,6 +32,17 @@ const MINES = new Set(['mine', 'coalmine', 'ironmine']);
 const waiting = (b: Building) =>
   b.built && ((MINES.has(b.type) && b.status === 'Waiting for food') || (eats(b) && !!b.hungry));
 
+// The buildings that make the food that workers eat: fish, meat and bread.
+const FOOD_MAKERS = new Set(['fisher', 'hunter', 'bakery']);
+
+// The islands where hunger counts for the winter goal: the home island, and each colony with a
+// finished food maker of its own.
+export function fedIsles(g: Game): Set<Isle> {
+  const isles = new Set<Isle>(['home']);
+  for (const b of g.buildings.values()) if (b.built && FOOD_MAKERS.has(b.type)) isles.add(isleOf(g, b.x, b.y));
+  return isles;
+}
+
 export type WinterWatch = { state: WinterState; since: Map<number, number> };
 
 // Follow winter watch `w` one step. Returns true when a whole winter has just passed with no one
@@ -49,8 +62,9 @@ function follow(g: Game, w: WinterWatch, quiet = false): boolean {
     return false;
   }
   for (const id of w.since.keys()) if (!g.buildings.has(id)) w.since.delete(id);
+  const counted = fedIsles(g);
   for (const b of g.buildings.values()) {
-    if (!waiting(b)) {
+    if (!waiting(b) || !counted.has(isleOf(g, b.x, b.y))) {
       w.since.delete(b.id);
       continue;
     }

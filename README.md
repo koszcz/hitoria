@@ -33,7 +33,9 @@ Only goods your settlers make count toward a goal, not the goods you start with.
 The winter goal counts one whole winter, from the first snow to spring. A settler goes hungry
 when a hut worker has no food, or a mine waits for food, for more than 20 seconds. A house that
 waits for food does not count, because no one in it goes hungry. Nights do not count either,
-because everyone sleeps. If someone goes hungry, try again next winter.
+because everyone sleeps. On another island, hunger counts only once that island has its own
+finished Fisher's Hut, Hunter's Lodge or Bakery, so a new colony that starves does not spoil the
+goal. If someone goes hungry, try again next winter.
 
 Goals 7 to 10 send you to the other island, because coal and iron ore lie only in its mountains.
 The settle goal is reached when your settlers' ship lands there and they build their harbour.

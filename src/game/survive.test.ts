@@ -1,9 +1,9 @@
 // The last goal: get through a whole winter with no hut worker or miner going hungry.
 import { describe, expect, test } from 'bun:test';
 import { Game, GOALS, HUNGRY_AFTER } from '.';
-import { watchWinter } from './survive';
+import { fedIsles, watchWinter } from './survive';
 import { seasonAt, yearAt } from '../seasons/year';
-import { flatGame, placeLinked, run, runUntil, setClock } from './test-helpers';
+import { flatGame, harbourGame, placeBare, placeLinked, run, runUntil, setClock } from './test-helpers';
 import { BEDTIME } from '../seasons/day';
 
 const WINTER = GOALS.findIndex((x) => x.id === 'winter');
@@ -141,5 +141,65 @@ describe('survive winter goal', () => {
     delete d.winter;
     const g2 = Game.load(d);
     expect(g2.goalNow()?.note).toBe('Winter has begun. Get ready for the next one');
+  });
+});
+
+// A game on the winter goal, two seconds into a winter day, with settlers landed on the second
+// island and a starving hut worker there. The tests step only the goal, so nothing feeds the hut.
+function starvingColony() {
+  const { g, h } = harbourGame(1);
+  expect(g.sail(h)).toBeNull();
+  runUntil(g, () => [...g.buildings.values()].some((b) => b.landed && b.built), 400);
+  const colony = [...g.buildings.values()].find((b) => b.landed)!;
+  g.goal = WINTER;
+  skipTo(g, 'winter');
+  setClock(g, 0.5);
+  g.winter.state = 'watch';
+  const hut = placeBare(g, 'forester', colony.x + 1, colony.y + 1);
+  Object.assign(hut, { built: true, progress: 1, hungry: true });
+  return { g, colony, hut };
+}
+
+// Step only the winter goal for `seconds`.
+function watchFor(g: Game, seconds: number) {
+  for (let t = 0; t < seconds; t++, g.time++) watchWinter(g);
+}
+
+describe('fair winter goal on a colony', () => {
+  test('hunger on the home island always counts', () => {
+    const { g } = harbourGame(1);
+    expect([...fedIsles(g)]).toEqual(['home']);
+  });
+
+  test('a starving colony with no food maker does not spoil the winter', () => {
+    const { g } = starvingColony();
+    watchFor(g, HUNGRY_AFTER + 2);
+    expect(g.winter.state).toBe('watch');
+  });
+
+  test('a food maker still being built does not make the colony count', () => {
+    const { g, colony } = starvingColony();
+    placeBare(g, 'fisher', colony.x - 1, colony.y + 1);
+    expect([...fedIsles(g)]).toEqual(['home']);
+    watchFor(g, HUNGRY_AFTER + 2);
+    expect(g.winter.state).toBe('watch');
+  });
+
+  for (const maker of ['fisher', 'hunter', 'bakery'] as const)
+    test(`once the colony has a finished ${maker}, its hungry workers count`, () => {
+      const { g, colony } = starvingColony();
+      const b = placeBare(g, maker, colony.x - 1, colony.y + 1);
+      Object.assign(b, { built: true, progress: 1 });
+      expect([...fedIsles(g)]).toEqual(['home', 'other']);
+      watchFor(g, HUNGRY_AFTER + 2);
+      expect(g.winter.state).toBe('hungry');
+    });
+
+  test('a food maker on the home island does not make the colony count', () => {
+    const { g } = starvingColony();
+    const b = placeBare(g, 'fisher', g.hq.x + 3, g.hq.y + 3);
+    Object.assign(b, { built: true, progress: 1 });
+    watchFor(g, HUNGRY_AFTER + 2);
+    expect(g.winter.state).toBe('watch');
   });
 });
