@@ -13,6 +13,7 @@ import { computeTerritory } from './land';
 import { isStore } from './stores';
 import type { Building, Ship } from './types';
 import { walkDist } from './walking';
+import { hypot } from '../math/exact';
 
 // Who and what the ship takes. The settlers build their harbour from part of the goods.
 export const SAIL_CREW = 5;
@@ -60,12 +61,12 @@ function freeShore(g: Game, x: number, y: number) {
 }
 
 // The tiles around a harbour at (x, y) that its settlers clear when they land.
-const cleared = (x: number, y: number, nx: number, ny: number) => Math.hypot(nx - x, ny - y) <= CLEAR;
+const cleared = (x: number, y: number, nx: number, ny: number) => hypot(nx - x, ny - y) <= CLEAR;
 
 // How much open ground the settlers can walk to from the doorstep of a harbour at (x, y), in its land.
 function room(g: Game, x: number, y: number) {
   const near = (nx: number, ny: number) =>
-    Math.hypot(nx - x, ny - y) <= LANDING_LAND && (nx !== x || ny !== y) && free(g, nx, ny, cleared(x, y, nx, ny));
+    hypot(nx - x, ny - y) <= LANDING_LAND && (nx !== x || ny !== y) && free(g, nx, ny, cleared(x, y, nx, ny));
   let n = 0;
   for (const d of flood(g.world, { x, y: y + 1 }, near)) if (d >= 0) n++;
   return n;
@@ -191,7 +192,7 @@ function unload(g: Game, ship: Ship) {
 export function sailOn(ship: { x: number; y: number; path: P[] }, dt: number) {
   let left = SHIP_SPEED * dt;
   while (left > 0 && ship.path.length) {
-    const n = ship.path[0], d = Math.hypot(n.x - ship.x, n.y - ship.y);
+    const n = ship.path[0], d = hypot(n.x - ship.x, n.y - ship.y);
     if (d <= left) {
       Object.assign(ship, n);
       ship.path.shift();

@@ -7,6 +7,7 @@ import type { Building, Settler } from './types';
 import { addPool, homeOf, isHome, poolOf } from './homes';
 import { tread } from './wear';
 import { idle } from './work';
+import { hypot } from '../math/exact';
 
 // A settler comes out of the home that can walk to building `to`. The HQ sends one when no home
 // can, or when `to` is not given.
@@ -87,7 +88,7 @@ export function step(g: Game, s: Settler, dt: number) {
     while (left > 0 && s.path.length) {
       const n = s.path[0];
       const dx = n.x - s.x, dy = n.y - s.y;
-      const d = Math.hypot(dx, dy);
+      const d = hypot(dx, dy);
       if (d > 0.01) s.facing = dx - dy >= 0 ? 1 : -1;
       if (d <= left) {
         s.x = n.x;

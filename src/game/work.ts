@@ -15,6 +15,7 @@ import { quicken } from './upgrades';
 import { hasten } from './blessing';
 import { MIXED_DIG, pickFood, tasteNew } from './variety';
 import { noteMade, noteUsed } from './rates';
+import { hypot } from '../math/exact';
 
 export function idle(g: Game, s: Settler) {
   if (s.role === 'carrier') return carry(g, s);
@@ -232,7 +233,7 @@ function findTile(g: Game, b: Building, r: number, ok: (t: Tile, x: number, y: n
   for (let y = b.y - r; y <= b.y + r; y++) {
     for (let x = b.x - r; x <= b.x + r; x++) {
       if (!g.world.inside(x, y)) continue;
-      const d = Math.hypot(x - b.x, y - b.y);
+      const d = hypot(x - b.x, y - b.y);
       const i = y * g.world.w + x;
       if (d > r || g.claimed.has(i) || (g.snubbed.get(i) ?? 0) > g.time) continue;
       if (!ok(g.world.at(x, y), x, y)) continue;

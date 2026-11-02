@@ -1,6 +1,7 @@
 // How big the map is. From map version 9, new maps are 96 by 96 tiles, with open sea around the
 // home island. Older maps stay 64 by 64, so their saves load the same land.
 import type { World } from '../world';
+import { hypot } from '../math/exact';
 
 export const OLD_SIZE = 64;
 export const BIG_SIZE = 96;
@@ -25,7 +26,7 @@ export function surround(world: World, land: World) {
       const lx = x - rim, ly = y - rim;
       if (!land.inside(lx, ly)) {
         const ex = Math.max(0, Math.min(land.w - 1, lx)), ey = Math.max(0, Math.min(land.h - 1, ly));
-        const h = Math.max(OPEN_SEA, Math.min(land.at(ex, ey).h, EDGE_SEA) - Math.hypot(lx - ex, ly - ey) * SEA_FALL);
+        const h = Math.max(OPEN_SEA, Math.min(land.at(ex, ey).h, EDGE_SEA) - hypot(lx - ex, ly - ey) * SEA_FALL);
         world.tiles.push({ t: 'water', h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, col: '' });
         continue;
       }
