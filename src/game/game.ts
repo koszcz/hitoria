@@ -29,6 +29,7 @@ import { noteSettlers, type Entry } from './chronicle';
 import { stepTrader, trade } from './trade';
 import { richAt, richSpots } from './geology';
 import { canUpgrade, upgrade } from './upgrades';
+import { resumeWork, stopWork } from './stopwork';
 import { canFeast, orderFeast, stepFeasts } from './feast';
 import type { Animal, AnimalKind, Building, Settler, Ship, Trader } from './types';
 
@@ -196,6 +197,16 @@ export class Game {
   // Spend iron and tools to upgrade building `b`. Returns why it can't, or null.
   upgrade(b: Building) {
     return upgrade(this, b);
+  }
+
+  // Stop work at hut `b`: its worker walks home. Returns why it can't, or null.
+  stopWork(b: Building) {
+    return stopWork(this, b);
+  }
+
+  // Resume work at hut `b`, so a worker is sent again. Returns why it can't, or null.
+  resumeWork(b: Building) {
+    return resumeWork(this, b);
   }
 
   // Why Feast Square `b` can't hold a wedding feast now, or null if it can.

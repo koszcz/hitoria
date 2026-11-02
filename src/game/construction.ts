@@ -67,7 +67,10 @@ export function addBuilding(g: Game, type: BType, x: number, y: number) {
   return b;
 }
 
+export const STOPPED = 'Work stopped'; // the status of a hut where you stopped work
+
 export function builtStatus(b: Building) {
+  if (b.stopped) return STOPPED;
   if (b.type === 'square') return 'Ready to hold a feast';
   return BDEFS[b.type].worker ? 'Waiting for a worker' : 'Storing goods';
 }

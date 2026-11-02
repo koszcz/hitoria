@@ -25,6 +25,7 @@ export interface Building {
   tooled?: boolean; // a worker brought this hut its tool, which stays here
   fed?: number; // seconds of work the worker's last meal is still good for
   hungry?: boolean; // the worker had no food for their last piece of work, so they work at half speed
+  stopped?: boolean; // you stopped work here, so no worker is sent until you resume it
   level?: number; // 2 once the player has upgraded the building, else 1
   ate?: Good; // the kind of food the house, worker or miner ate last, for the mixed food bonus
   feast?: { at?: number; eaten?: boolean }; // a Feast Square's ordered feast: the dusk it begins, once the food is in, and whether the food is served

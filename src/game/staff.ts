@@ -11,7 +11,7 @@ import { ASLEEP, night } from './sleep';
 // Nobody leaves home for work at night. Huts and sites with nobody yet say so.
 function nightStatus(g: Game) {
   for (const b of g.buildings.values())
-    if (b.built ? BDEFS[b.type].worker && !b.worker : !b.builder) b.status = ASLEEP;
+    if (b.built ? BDEFS[b.type].worker && !b.worker && !b.stopped : !b.builder) b.status = ASLEEP;
 }
 
 export function staff(g: Game) {
@@ -21,7 +21,7 @@ export function staff(g: Game) {
   for (const b of g.buildings.values()) {
     if (!sendBuilder(g, b)) continue;
     const role = BDEFS[b.type].worker;
-    if (b.built && role && !b.worker) {
+    if (b.built && role && !b.worker && !b.stopped) {
       if (b.status === ASLEEP) b.status = builtStatus(b);
       const store = lacksTool(b) ? toolStore(g, b) : null;
       if (lacksTool(b) && !store) {

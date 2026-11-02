@@ -9,6 +9,7 @@ import { drawClock } from './seasons/hud';
 import { FastNights, nightSpeed } from './seasons/fastnight';
 import { wishHtml, wishTitle } from './wishes/panel';
 import { upgradeRows } from './upgradeinfo';
+import { stopRows } from './stopinfo';
 import { feastRows } from './feastinfo';
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -66,6 +67,8 @@ export class UI {
       if (act === 'sail') why = this.game.sail(b);
       else if (act === 'upgrade') why = this.game.upgrade(b);
       else if (act === 'feast') why = this.game.orderFeast(b);
+      else if (act === 'stop') why = this.game.stopWork(b);
+      else if (act === 'resume') why = this.game.resumeWork(b);
       else if (act === 'trade' && this.pick.give && this.pick.get) why = this.game.trade(b, this.pick.give, this.pick.get);
       else if (act === 'give' || act === 'get') this.pick[act] = this.pick[act] === good ? null : good;
       if (why) this.toast(why);
@@ -264,6 +267,7 @@ export class UI {
         if (b.stock[k]) rows.push(`<div>${x.input} <span class="good ${k}"></span>${b.stock[k]} ${goodName(k)}</div>`);
         if (b.out[k]) rows.push(`<div>${x.ready} <span class="good ${k}"></span>${b.out[k]} ${goodName(k)}</div>`);
       }
+      rows.push(stopRows(b));
       rows.push(upgradeRows(g, b));
     }
     info.hidden = false;

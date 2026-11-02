@@ -17,6 +17,7 @@ function want(b: Building, g: Good) {
   if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
   if (b.type === 'house') return pantry(b, g);
   if (b.type === 'square') return feastWant(b, g);
+  if (b.stopped && HOUSE_FOOD.includes(g)) return 0; // nobody works there to eat it
   if (eats(b) && HOUSE_FOOD.includes(g)) return lunchbox(b, g);
   const rc = RECIPES[b.type];
   if (rc?.with === g) return PILE;
