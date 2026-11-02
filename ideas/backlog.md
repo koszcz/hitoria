@@ -12,8 +12,7 @@ At most 3 ideas, in the order we build them.
 
 - **Feast Square and wedding feast**: you build a Feast Square and order a wedding feast there. Carriers bring 10 fish, 10 bread and 10 meat. At the next dusk every worker gathers at the square to feast until midnight, then goes to sleep, and 2 new settlers arrive at dawn. You can hold one feast each season. *Fun 3 · Effort M*
 - **Buildings glow at night**: from dusk to dawn, each finished building casts a soft, warm pool of light on the ground around it, and its windows and doorway glow brighter. The glow fades in and out with the daylight. It is a soft fake glow, not real lamps, so the game stays fast. *Fun 2 · Effort S*
-- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
-- **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *Fun 2 · Effort S*
+- **Stop work at a hut**: a hut's info panel has a Stop work button. Its worker walks home and takes the next hut that needs a worker, and nobody is sent to the stopped hut until you press Resume work. The hut keeps its tool, and the choice is saved. Use it when settlers run short, such as to stop a stone mine while you have plenty of stone. *Fun 2 · Effort S*
 
 ## Inbox
 
@@ -32,7 +31,8 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-- **Stop work at a hut**: a hut's info panel has a Stop work button. Its worker walks home and takes the next hut that needs a worker, and nobody is sent to the stopped hut until you press Resume work. The hut keeps its tool, and the choice is saved. Use it when settlers run short, such as to stop a stone mine while you have plenty of stone. *Fun 2 · Effort S*
+- **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *Fun 2 · Effort S*
+- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
 - **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *Fun 2 · Effort S · Needs: Feast Square and wedding feast*
 - **Bigger map**: new maps are 96 by 96 tiles, with more open sea around the home island. The home island and the two islands keep today's size. Old saves stay 64 by 64. *Fun 1 · Effort M*
 - **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
