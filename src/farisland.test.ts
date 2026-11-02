@@ -56,12 +56,13 @@ describe('far island', () => {
       });
 
       test('has a sandy beach and trees', () => {
-        expect([...island].filter((i) => w.tiles[i].t === 'sand').length).toBeGreaterThanOrEqual(8);
+        // A pine island has sea cliffs instead of sand on its far shore, so its beach is shorter.
+        expect([...island].filter((i) => w.tiles[i].t === 'sand').length).toBeGreaterThanOrEqual(6);
         expect([...island].filter((i) => w.tiles[i].tree).length).toBeGreaterThanOrEqual(5);
       });
 
-      test('has a mountain, and every mountain tile on it holds ore', () => {
-        const mountains = [...island].filter((i) => w.tiles[i].t === 'mountain');
+      test('has a mountain, and every mountain tile on it holds ore, except sea cliffs', () => {
+        const mountains = [...island].filter((i) => w.tiles[i].t === 'mountain' && !w.cliff[i]);
         expect(mountains.length).toBeGreaterThanOrEqual(6);
         for (const i of mountains) expect(w.hasOre(at(i).x, at(i).y)).toBe(true);
       });

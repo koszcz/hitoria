@@ -32,10 +32,10 @@ describe('island riches', () => {
       const w = new World(seed);
       const home = landAt(w, w.start.x, w.start.y);
 
-      test('the second island has mountains, and every one holds ore', () => {
+      test('the second island has mountains, and every one holds ore, except sea cliffs', () => {
         let rich = 0;
         all((x, y) => {
-          if (home.has(y * W + x) || w.at(x, y).t !== 'mountain') return;
+          if (home.has(y * W + x) || w.at(x, y).t !== 'mountain' || w.cliff[y * W + x]) return;
           expect(w.hasOre(x, y)).toBe(true);
           rich++;
         });

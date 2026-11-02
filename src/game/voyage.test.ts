@@ -10,6 +10,9 @@ import type { Building } from './types';
 import { walkFrom } from './walking';
 import { harbourGame, inside, placeBare, run, runUntil, totalGoods } from './test-helpers';
 
+// A seed whose second island has the pine highlands theme, so it is thick with trees.
+const WOODED = 3;
+
 const landed = (g: Game) => [...g.buildings.values()].find((b) => b.landed);
 
 // Sail, and run until the settlers have built their harbour on the other island.
@@ -92,7 +95,7 @@ describe('the voyage', () => {
   });
 
   test('clears the trees and boulders around the new harbour, for logs and stone', () => {
-    const { g, h } = harbourGame();
+    const { g, h } = harbourGame(WOODED);
     const spot = landingSpot(g, h)!.land;
     const around: { tree: number; rock: number }[] = [];
     for (let dy = -2; dy <= 2; dy++)
@@ -173,7 +176,7 @@ describe('the new settlement', () => {
   });
 
   test('takes its building goods from the landing harbour, and stores its own goods there', () => {
-    const { g, colony } = settle();
+    const { g, colony } = settle(WOODED);
     const at = spotNear(g, colony, 'woodcutter');
     const hut = g.place('woodcutter', at.x, at.y);
     runUntil(g, () => hut.built, 120);

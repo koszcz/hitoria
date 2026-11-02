@@ -9,20 +9,13 @@ const HERDS = 3; // deer herds of 2 or 3
 const HARES = 5;
 const FOXES = 3;
 const AWAY = 6; // animals start at least this far from the HQ
+// From map version 8, extra deer herds and hares that live on the meadow island.
+const MEADOW_HERDS = 2;
+const MEADOW_HARES = 4;
 
 export function spawnAnimals(g: Game) {
   const rand = rng(g.seed ^ 0xa11a);
-  for (let i = 0; i < HERDS; i++) {
-    const c = openSpot(g, 'deer', rand);
-    if (!c) continue;
-    const size = 2 + Math.floor(rand() * 2);
-    for (let k = 0, n = 0; k < 20 && n < size; k++) {
-      const x = c.x + Math.floor(rand() * 3) - 1, y = c.y + Math.floor(rand() * 3) - 1;
-      if (!open(g, x, y) || [...g.animals.values()].some((a) => a.x === x && a.y === y)) continue;
-      addAnimal(g, 'deer', x, y, rand);
-      n++;
-    }
-  }
+  for (let i = 0; i < HERDS; i++) spawnHerd(g, rand);
   for (let i = 0; i < HARES; i++) {
     const c = openSpot(g, 'hare', rand);
     if (c) addAnimal(g, 'hare', c.x, c.y, rand);
@@ -31,18 +24,43 @@ export function spawnAnimals(g: Game) {
     const c = openSpot(g, 'fox', rand);
     if (c) addAnimal(g, 'fox', c.x, c.y, rand);
   }
+  // The meadow island gets more deer and hares, for hunters. They take their own random numbers,
+  // so the other animals keep their places.
+  const meadow = g.world.themes && (g.world.themes.other === 'meadow' ? 'other' : 'far');
+  if (meadow) {
+    const more = rng(g.seed ^ 0xdee7), on = (x: number, y: number) => g.world.isleAt(x, y) === meadow;
+    for (let i = 0; i < MEADOW_HERDS; i++) spawnHerd(g, more, on);
+    for (let i = 0; i < MEADOW_HARES; i++) {
+      const c = openSpot(g, 'hare', more, on);
+      if (c) addAnimal(g, 'hare', c.x, c.y, more);
+    }
+  }
   g.wildCount = { deer: 0, hare: 0, fox: 0 };
   for (const a of g.animals.values()) g.wildCount[a.kind]++;
 }
 
+// A herd of 2 or 3 deer around a random open spot that `where` allows.
+function spawnHerd(g: Game, rand: () => number, where = (_x: number, _y: number) => true) {
+  const c = openSpot(g, 'deer', rand, where);
+  if (!c) return;
+  const size = 2 + Math.floor(rand() * 2);
+  for (let k = 0, n = 0; k < 20 && n < size; k++) {
+    const x = c.x + Math.floor(rand() * 3) - 1, y = c.y + Math.floor(rand() * 3) - 1;
+    if (!open(g, x, y) || [...g.animals.values()].some((a) => a.x === x && a.y === y)) continue;
+    addAnimal(g, 'deer', x, y, rand);
+    n++;
+  }
+}
+
 // A random spot where this kind of animal likes to live: deer in the open, foxes at the forest edge.
-export function openSpot(g: Game, kind: AnimalKind, rand: () => number) {
+// `where` can limit it further, such as to one island.
+export function openSpot(g: Game, kind: AnimalKind, rand: () => number, where = (_x: number, _y: number) => true) {
   const ok = kind === 'deer' ? (x: number, y: number) => treesNear(g, x, y, 2) === 0
     : kind === 'fox' ? (x: number, y: number) => treesNear(g, x, y, 1) > 0
     : () => true;
   for (let i = 0; i < 400; i++) {
     const x = Math.floor(rand() * W), y = Math.floor(rand() * H);
-    if (open(g, x, y) && ok(x, y)) return { x, y };
+    if (open(g, x, y) && ok(x, y) && where(x, y)) return { x, y };
   }
   return null;
 }

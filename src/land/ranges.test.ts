@@ -101,6 +101,7 @@ describe('mountain ranges', () => {
   });
 
   // The second island's mountain was built this steep on purpose. Ridges are never steeper.
+  // Sea cliffs on a pine island are cliffs on purpose, so they don't count.
   const STEEPEST = 0.121;
   for (const seed of SEEDS)
     test(`seed ${seed} has no cliff anywhere in its mountains`, () => {
@@ -109,7 +110,8 @@ describe('mountain ranges', () => {
       for (let y = 0; y < H; y++)
         for (let x = 0; x < W; x++)
           for (const [nx, ny] of [[x + 1, y], [x, y + 1]])
-            if (w.inside(nx, ny) && (w.at(x, y).t === 'mountain' || w.at(nx, ny).t === 'mountain'))
+            if (w.inside(nx, ny) && !w.cliff[y * W + x] && !w.cliff[ny * W + nx] &&
+              (w.at(x, y).t === 'mountain' || w.at(nx, ny).t === 'mountain'))
               step = Math.max(step, Math.abs(w.at(x, y).h - w.at(nx, ny).h));
       expect(step).toBeLessThan(STEEPEST);
     });

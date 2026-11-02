@@ -1,5 +1,7 @@
 import { rng, noise } from './land/noise';
 import { ranges, toRidge } from './land/ranges';
+import { THEME_HUE, THEME_LIGHT, drawThemes, meadowPlant, raiseCliffs, themeConifer, themeTree } from './land/themes';
+import type { IsleName, Theme } from './land/themes';
 
 export { rng };
 
@@ -33,7 +35,8 @@ export const H = 64;
 // 5: the second island gets a mountain, and coal and iron ore lie only there.
 // 6: mountains form ranges, with ridges and valleys instead of round peaks.
 // 7: a far island lies farther out, to one side of the bay, with rich coal and iron in its mountain.
-export const MAP_VERSION = 7;
+// 8: the second and far island get two different themes: pine highlands and wild meadows.
+export const MAP_VERSION = 8;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -73,6 +76,8 @@ const BANK = 2.8;
 const BANK_NEAR = 11;
 // No trees or boulders grow this close to the top of the second island's mountain, so mines fit at its foot.
 const ISLE_FOOT = 4;
+// From map version 8, pines grow closer to the mountain on a pine island, leaving a narrower clear foot.
+const PINE_FOOT = 3.5;
 // From map version 7, the far island: how far its centre sits from the start, to one side of the
 // bay. It is the same size as the second island and has a mountain like it.
 const FAR_AWAY = 24;
@@ -102,6 +107,10 @@ export class World {
   isle: { x: number; y: number } | null = null;
   // From map version 7, the centre of the far island, and the way it faces out to sea. Null on older maps.
   far: { x: number; y: number; out: { x: number; y: number } } | null = null;
+  // From map version 8, the theme of the second and far island. Null on older maps.
+  themes: Record<IsleName, Theme> | null = null;
+  // 1 on the sea cliffs of a pine island. Cliffs are bare rock with no ore.
+  cliff = new Uint8Array(W * H);
 
   constructor(seed: number, readonly map = MAP_VERSION) {
     const rand = rng(seed);
@@ -131,10 +140,11 @@ export class World {
     const farPeak = far && { x: far.x + far.out.x * ISLE_PEAK_AWAY, y: far.y + far.out.y * ISLE_PEAK_AWAY };
     const farEnds = far && [-1, 1].map((k) => ({ x: farPeak!.x - far.out.y * ISLE_RIDGE * k, y: farPeak!.y + far.out.x * ISLE_RIDGE * k }));
     const toFarPeakAt = (x: number, y: number) => (farEnds ? toRidge(x, y, farEnds[0], farEnds[1]) : Infinity);
-    const farGrove = far && {
-      x: far.x - far.out.x * FAR_GROVE_IN - far.out.y * FAR_GROVE_SIDE,
-      y: far.y - far.out.y * FAR_GROVE_IN + far.out.x * FAR_GROVE_SIDE,
-    };
+    const groveOf = (c: { x: number; y: number }, o: { x: number; y: number }) =>
+      ({ x: c.x - o.x * FAR_GROVE_IN - o.y * FAR_GROVE_SIDE, y: c.y - o.y * FAR_GROVE_IN + o.x * FAR_GROVE_SIDE });
+    const themes = (this.themes = far && map >= 8 ? drawThemes(seed) : null);
+    // The far island always has a grove. From map version 8, a meadow second island gets one too.
+    const groves = [far && groveOf(far, far.out), themes?.other === 'meadow' ? groveOf(isle, out) : null].filter((c) => !!c);
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
     const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : Math.hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
@@ -179,6 +189,7 @@ export class World {
         if (t === 'mountain' && rich) this.ore[y * W + x] = 1;
       }
     }
+    if (themes) raiseCliffs(this, themes.other === 'pines' ? { ...isle, out } : far!);
 
     // Guaranteed starting resources so every seed is playable.
     for (let y = 0; y < H; y++) {
@@ -190,18 +201,22 @@ export class World {
           tile.h = Math.min(0.6, Math.max(0.42, tile.h));
         }
         // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
-        const foot = (landmarks && toPeakAt(x, y) < PEAK_SIZE + 2.5) || (map >= 5 && toIslePeakAt(x, y) < ISLE_FOOT) ||
-          toFarPeakAt(x, y) < ISLE_FOOT;
+        const footOf = (isle: IsleName) => (themes?.[isle] === 'pines' ? PINE_FOOT : ISLE_FOOT);
+        const foot = (landmarks && toPeakAt(x, y) < PEAK_SIZE + 2.5) || (map >= 5 && toIslePeakAt(x, y) < footOf('other')) ||
+          toFarPeakAt(x, y) < footOf('far');
         // From map version 6, the bank of the bay near the start stays clear too, so a harbour fits there.
         const bank = ranged && near < BANK_NEAR && toRidge(x, y, bay, bayEnd) < BAY_WIDTH + BANK;
         if (tile.t !== 'grass' || near < 3.5 || foot || bank) continue;
-        if (farGrove && Math.hypot(x - farGrove.x, y - farGrove.y) < FAR_GROVE) tile.tree = rand() < 0.8 ? 1 : 0;
+        const theme = this.themeAt(x, y);
+        if (groves.some((c) => Math.hypot(x - c.x, y - c.y) < FAR_GROVE)) tile.tree = rand() < 0.8 ? 1 : 0;
+        else if (theme) tile.tree = themeTree(theme, forest(x, y), rand) ? 1 : 0;
         else if (Math.hypot(x - grove.x, y - grove.y) < GROVE && rand() < 0.8) tile.tree = 1;
         else if (Math.hypot(x - quarry.x, y - quarry.y) < QUARRY) tile.rock = 4 + Math.floor(rand() * 3);
         else if ((forest(x, y) > 0.56 && rand() < 0.75) || rand() < 0.025) tile.tree = 1;
         else if ((rocks(x, y) > 0.74 && rand() < 0.5) || (this.nearMountain(x, y) && rand() < 0.3))
           tile.rock = 3 + Math.floor(rand() * 4);
-        tile.conifer = tile.tree > 0 && (tile.h > 0.52 ? rand() < 0.8 : rand() < 0.25);
+        if (theme) tile.conifer = tile.tree > 0 && themeConifer(theme, rand);
+        else tile.conifer = tile.tree > 0 && (tile.h > 0.52 ? rand() < 0.8 : rand() < 0.25);
       }
     }
 
@@ -210,9 +225,10 @@ export class World {
         const tile = this.at(x, y);
         const slope = (tile.h - this.hAt(x - 1, y)) * 1.0 + (tile.h - this.hAt(x, y - 1)) * 0.4;
         const light = Math.max(-9, Math.min(9, slope * 110));
-        const k = tint(x, y);
+        const k = tint(x, y), theme = this.themeAt(x, y);
+        const hue = theme ? THEME_HUE[theme] : 0, lit = theme ? THEME_LIGHT[theme] : 0;
         tile.col =
-          tile.t === 'grass' ? `hsl(${86 + k * 26}, ${40 + k * 12}%, ${35 + k * 8 + light}%)`
+          tile.t === 'grass' ? `hsl(${86 + hue + k * 26}, ${40 + k * 12}%, ${35 + lit + k * 8 + light}%)`
           : tile.t === 'sand' ? `hsl(44, 50%, ${67 + light}%)`
           : tile.t === 'mountain' ? `hsl(28, 13%, ${42 + light}%)`
           : '';
@@ -268,6 +284,12 @@ export class World {
     return null;
   }
 
+  // The theme of the island the tile at (x, y) is on, or null for the home island and older maps.
+  themeAt(x: number, y: number): Theme | null {
+    const isle = this.themes && this.isleAt(x, y);
+    return isle ? this.themes![isle] : null;
+  }
+
   // The height of land near the second island, which is `dx, dy` from the island's centre. The
   // strait lowers the home island's coast into sea, with a sandy shore and a bank like the bay's.
   // The island rises from a sandy beach to a low,
@@ -296,6 +318,7 @@ export class World {
           const woods = this.treesAround(x, y);
           if (woods >= 4) t.plant = r < 0.35 ? 'fern' : r < 0.5 ? 'mushrooms' : r < 0.57 ? 'log' : r < 0.72 ? 'bush' : '';
           else if (woods >= 1) t.plant = r < 0.3 ? 'bush' : r < 0.48 ? 'fern' : r < 0.68 ? 'grass' : '';
+          else if (this.themeAt(x, y) === 'meadow') t.plant = meadowPlant(r);
           else if (bloom(x, y) > 0.6 && r < 0.75) t.plant = 'flowers';
           else if (meadow(x, y) > 0.45 && r < 0.65) t.plant = 'grass';
           else t.plant = r < 0.05 ? 'bush' : r < 0.12 ? 'flowers' : r < 0.2 ? 'grass' : '';

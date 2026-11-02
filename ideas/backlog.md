@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Island themes**: each new map gives the second and far island two different themes, drawn at random, so they look and play differently. Pine highlands: dense dark pines, sea cliffs on the far shore, and about twice the forest. Wild meadows: wide flower meadows, few trees, and more deer and hares for hunters. Each island keeps its ore ridge and grove, has no name label, and only new maps get themes. *Fun 2 · Effort M · Branch: worktree-agent-a15e7326dcb497e71*
+Nothing right now.
 
 ## Next
 
@@ -42,6 +42,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Island themes**: each new map gives the second and far island two different themes, drawn at random, so they look and play differently. Pine highlands: dense dark pines, sea cliffs on the far shore, and about twice the forest. Wild meadows: wide flower meadows, few trees, and more deer and hares for hunters. Each island keeps its ore ridge and grove, has no name label, and only new maps get themes. *2026-11-02*
 - **Fresh island with a keepsake**: when you start a new island, you pick one keepsake you earned on the old one and bring it along. Each keepsake comes from a goal: the Builder's crate (20 planks and 10 stone) from "Make 50 planks", Old friends (6 more settlers) from "Grow to 30 settlers", the Full larder (20 fish and 10 bread) from the winter goal, and the Iron chest (5 iron and 8 tools) from "Make 10 iron". The new island's chronicle notes the keepsake and where it came from. *2026-11-02*
 - **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *2026-11-02*
 - **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *2026-11-02*

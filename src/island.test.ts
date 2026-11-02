@@ -64,7 +64,8 @@ describe('second island', () => {
       });
 
       test('gives the island a sandy beach and trees', () => {
-        expect(island.filter((i) => w.tiles[i].t === 'sand').length).toBeGreaterThanOrEqual(8);
+        // A pine island has sea cliffs instead of sand on its far shore, so its beach is shorter.
+        expect(island.filter((i) => w.tiles[i].t === 'sand').length).toBeGreaterThanOrEqual(6);
         expect(island.filter((i) => w.tiles[i].tree).length).toBeGreaterThanOrEqual(5);
       });
     });
