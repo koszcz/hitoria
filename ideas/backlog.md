@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M · Branch: worktree-agent-ab884093f27b70637*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M*
+Empty.
 
 ## Inbox
 
