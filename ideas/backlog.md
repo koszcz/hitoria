@@ -10,58 +10,55 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
-- **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
+- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Goals still count every island. *Fun 3 · Effort M*
+- **Tools for the Toolmaker first**: a Toolmaker's Workshop that waits for a tool gets the next free tool before any other hut, so the tool chain never stalls. The Toolmaker card says that every new worker needs a tool. *Fun 2 · Effort S*
+- **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *Fun 2 · Effort S*
 
 ## Inbox
 
 New ideas go here, not scored yet.
 
-- **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them.
-- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back.
-- **Choose where the ship sails**: when you send a ship to settle, you pick which island it sails to, instead of the ship always landing on the nearest shore.
-- **Show goods per island**: the stock bar and build menu show the goods of the island you look at, not every island added together, so a site on a new island no longer waits for goods that sit back home. From the 2026-11-02 playtests, all four testers.
-- **Warn when a building cuts off the HQ**: the game refuses or warns when a new building blocks the last path between other buildings and the HQ, and the build spots skip such tiles. From the 2026-11-02 playtests (Marek, Ola).
-- **Fix Save as new**: "Save as new" adds a second save instead of overwriting the current one. From the 2026-11-02 playtests (Zosia).
-- **Supply a new colony**: the player can send goods and food to a settled island, or the game says plainly that each island needs its own Fisher. Today colony mines wait for food for good. From the 2026-11-02 playtests (Ola, Zosia, Tomek).
-- **Say where coal and iron lie**: the Coal Mine and Iron Mine cards say that ore lies only in the mountains of the other island, before the player builds a Smelter or Toolmaker for nothing. From the 2026-11-02 playtests (Ola, Marek).
-- **Tools for the Toolmaker first**: the Toolmaker's Workshop gets the first free tool, and the game says early that more settlers need more tools. Marek ended with 153 idle settlers. From the 2026-11-02 playtests (Marek, Tomek).
-- **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek).
-- **Fair winter goal**: the winter goal does not fail because miners on an unfed colony go hungry while home has plenty of food. From the 2026-11-02 playtests (Tomek).
-- **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek).
-- **Quarry says when boulders are out of reach**: the quarry panel says the boulders it cannot walk to, instead of "No boulders in range" while boulders lie in range. From the 2026-11-02 playtests (Tomek, Ola).
-- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester, the game warns before they do, and houses do not fill a forester's planting ground without a hint. From the 2026-11-02 playtests (Ola, Marek, Tomek).
-- **Explain bought iron and upgrades**: the Upgrade panel says that bought iron does not count until you make iron in your own Smelter. From the 2026-11-02 playtests (Tomek).
-- **Demolish without surprises**: a worker sent home by demolition keeps the log they carry, the game warns that a finished building's materials are lost, and it says the tool goes back to your stores. From the 2026-11-02 playtests (Zosia, Marek).
-- **Food hint at the start**: the first goal or a message points a new player at food, since every worker is hungry from the first minute. The Fisher card lists every worker who eats fish. From the 2026-11-02 playtests (Ola).
-- **Explain the voyage**: the sail panel says how many goods the settlers take, and the landing message says they cleared trees and boulders into logs and stone. From the 2026-11-02 playtests (Tomek, Zosia).
-- **Show chain ratios**: the cards say how many woodcutters feed one sawmill and how many farms feed one mill, and that one well makes plenty of water. From the 2026-11-02 playtests (Ola, Marek).
-- **Tool warning only before sailing**: the "ship needs 6 tools" warning stops once the ship has sailed, and it names the island the next ship sails to. From the 2026-11-02 playtests (Ola, Zosia, Tomek).
-- **Warn of a hunter with no animals**: placing a Hunter's Lodge warns when no animals live in its range, before you pay. From the 2026-11-02 playtests (Marek, Tomek).
-- **Show the door tile**: placing a building shows its door tile, and "No room in front of its door" points at the blocked tile. From the 2026-11-02 playtests (Ola, Marek).
-- **Clearer goal and wish text**: every goal shows in the panel before it is reached, the winter goal says what counts, and a missed wish says it was missed, not "passed". From the 2026-11-02 playtests (Ola).
-- **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola).
-- **Monument status**: the finished Monument no longer says "Storing goods". From the 2026-11-02 playtests (Ola, Zosia, Tomek).
-- **Monument card wording**: the Monument card no longer says "Your last goal", since the winter goal comes after it. From the 2026-11-02 playtests (Ola).
-- **Group birth messages**: births show as one line, such as "12 settlers born", instead of one line each that drowns out goal messages. From the 2026-11-02 playtests (Marek).
-- **Clearer trade picks**: pressing a good in the trade panel always selects it, and a player can trade more than one at a time. From the 2026-11-02 playtests (Tomek).
-- **Save and load fixes**: the game says loading sends workers home, the save card counts every settler, the open save list redraws after a save, a seed link warns before it drops the running game, and New always offers "Stay on this island". From the 2026-11-02 playtests (Zosia).
-- **Polish text fixes**: Polish uses correct plurals such as "1 ryba", one word for Upgrade, and a Polish name for autosaves. From the 2026-11-02 playtests (Zosia, Ola).
-- **Status text that keeps up**: a stopped hut no longer receives raw goods, and the Fisher stops saying "slowly in the cold" when spring comes. From the 2026-11-02 playtests (Zosia).
-- **F3 diagnostics fixes**: loading a save clears the snapshot timeline, the "Looks stuck" time keeps counting, and a worker waiting at their own hut is not flagged as stuck. From the 2026-11-02 playtests (Zosia, Marek).
-- **Playtest helper fixes**: `playtest.press('trade')` finds the Trade button, harbour spots count nearby water, and `playtest.spots()` skips unreachable boulders, skips tiles that cut off paths and counts free grass for farms. From the 2026-11-02 playtests (Tomek, Ola, Marek).
+Empty.
 
 ## Needs thought
 
 Triaged, but with open questions. Run `/refine` on one to settle them.
 
-Empty.
+- **Supply a new colony**: the player can send goods and food to a settled island, or the game says plainly that each island needs its own Fisher. Today colony mines wait for food for good. From the 2026-11-02 playtests (Ola, Zosia, Tomek). *Fun 3 · Effort M · Open: ship goods between islands, or only a clear hint? If ships, how does the player choose what goes?*
+- **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: send more settlers, let a colony grow its own, or only fix the hint? Refine together with Supply a new colony.*
+- **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: do workers carry their own goods, do sites and the feast jump the queue, or does a stronger hint to build houses do?*
+- **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola). *Fun 1 · Effort M · Open: should a season last a whole number of days, which changes the year's length and winter food, or should only the clock and messages explain it?*
+- **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them. *Fun 2 · Effort M · Open: "keepsake" already names the bonus you take to a new island, so what is this called? Do decorations cost goods or a builder, and do they carry to a new island?*
 
 ## Later
 
 Triaged and ready to build, but not next.
 
-Empty.
+- **Fair winter goal**: the winter goal counts hungry workers on the home island, and on a colony only once it has its own food maker, such as a Fisher's Hut. A starving new colony no longer makes the goal impossible. *Fun 2 · Effort S*
+- **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S*
+- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
+- **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
+- **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *Fun 2 · Effort S*
+- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
+- **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
+- **Say where coal and iron lie**: the Coal Mine, Iron Mine and Smelter cards say that coal and iron ore lie only in the mountains of the other islands, before the player builds a Smelter or Toolmaker for nothing. *Fun 1 · Effort S*
+- **Quarry says when boulders are out of reach**: when boulders lie in range but the quarry worker cannot walk to any of them, the quarry panel says "Boulders in range, but none it can reach" instead of "No boulders in range". *Fun 1 · Effort S*
+- **Explain bought iron and upgrades**: the Upgrade panel says that upgrades unlock once you make iron in your own Smelter, and that bought iron does not unlock them. *Fun 1 · Effort S*
+- **Demolish without surprises**: a worker sent home by a demolition keeps the goods they carry and brings them to a store. The Remove button says that a finished building's materials are lost, and that the goods inside and its tool go back to your stores. *Fun 1 · Effort S*
+- **Explain the voyage**: the sail panel says how many settlers and goods the ship takes and that they build their harbour from part of the goods. The landing message says they cleared trees and boulders into logs and stone. *Fun 1 · Effort S*
+- **Show chain ratios**: the cards say how many woodcutters keep one sawmill busy, how many farms keep one mill busy, and that one well makes plenty of water. The numbers come from the real work times in the code. *Fun 1 · Effort S*
+- **Tool warning only before sailing**: the "ship needs 6 tools" warning counts only the tools on the island whose harbour sails next, stops once no voyage is left from there, and names the island the next ship sails to. *Fun 1 · Effort S*
+- **Warn of a hunter with no animals**: while you place a Hunter's Lodge, the placement hint says "No animals in range" when none live within its reach, before you pay. *Fun 1 · Effort S*
+- **Show the door tile**: while you place a building, its door tile shows as a marker. When the spot is refused with "No room in front of its door", the marker turns red on the blocked tile. *Fun 1 · Effort S*
+- **Clearer goal and wish text**: the goal panel lists every goal in order, done, current and still to come, so no goal is reached unseen. The winter goal says "Keep every worker fed through one whole winter. Nights don't count." A missed wish says "Wish missed", not "The wish passed". *Fun 1 · Effort S*
+- **Group birth messages**: births within a few seconds of each other show as one line, such as "12 settlers born", instead of one line each that drowns out goal messages. *Fun 1 · Effort S*
+- **Clearer trade picks**: pressing a good in the trade panel always selects it, and a new ship starts with nothing selected. A "Trade 5" button next to Trade makes up to 5 swaps at once. *Fun 1 · Effort S*
+- **Save and load fixes**: the game says that loading sends workers home, the save card counts settlers on every island, the open save list redraws after a save, a seed link asks before it drops the running game, and New always offers "Stay on this island". *Fun 1 · Effort S*
+- **Polish text fixes**: Polish uses correct plurals after numbers, such as "1 ryba" and "2 ryby", one word for Upgrade, and "Autozapis" as the name of autosaves. *Fun 1 · Effort S*
+- **Status text that keeps up**: carriers bring no raw goods to a hut whose work is stopped, and the Fisher stops saying "slowly in the cold" as soon as spring comes. *Fun 1 · Effort S*
+- **F3 diagnostics fixes**: loading a save clears the snapshot timeline, the "Looks stuck" time keeps counting, and a worker waiting at their own hut is not flagged as stuck. *Fun 1 · Effort S*
+- **Playtest helper fixes**: `playtest.press('trade')` finds the Trade button, harbour spots count nearby water, and `playtest.spots()` skips unreachable boulders, skips tiles that cut off paths and counts free grass for farms. *Fun 1 · Effort S*
+- **Monument text fixes**: the finished Monument's panel says it stands finished instead of "Storing goods", and its card no longer says "Your last goal", since the winter goal comes after it. *Fun 1 · Effort S*
 
 ## Done
 
@@ -151,3 +148,4 @@ Ideas we decided not to build, and why.
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. You decided not to build it.
 - **Butterflies**: butterflies float over flower meadows. You decided not to build it.
 - **Fireflies**: fireflies glow at the forest edge after dark. You decided not to build it.
+- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. Every tester in the 2026-11-02 playtests already struggled with food, so this would make the hardest part harder.
