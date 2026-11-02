@@ -10,7 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
-Empty.
+- **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
+- **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
+- **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *Fun 2 · Effort S · Needs: Island themes*
 
 ## Inbox
 
@@ -29,9 +31,6 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-- **Bigger second island**: the second island is about 20 tiles across, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
-- **Bigger far island**: the far island is about 26 tiles across, the largest of the three, with wider meadows, more forest and a longer mountain ridge with more ore. New maps only. *Fun 2 · Effort S · Needs: Bigger map*
-- **Hidden cove theme**: a third island theme, a sheltered lagoon cut deep into the island and ringed by sand and reeds. Fishers by the cove catch more, and ducks and jumping fish gather there. *Fun 2 · Effort S · Needs: Island themes*
 - **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S*
 - **Goods chart**: a panel that shows how much of each good you have over time. *Fun 1 · Effort S*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
