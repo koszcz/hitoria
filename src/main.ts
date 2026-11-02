@@ -1,7 +1,9 @@
 import { crashed, watch, reportProblem } from './report';
 import { diag } from './diag';
 import { DebugPanel } from './debug';
-import { Game, BUILDABLE, BType } from './game';
+import { Game, BUILDABLE, BType, bringKeepsake } from './game';
+import { pickKeepsake } from './keepsake/panel';
+import { KT } from './keepsake/text';
 import { Renderer } from './render/renderer';
 import { UI } from './ui';
 import { Gestures, zoomAt } from './input/gestures';
@@ -169,12 +171,20 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
       setLang(getLang() === 'pl' ? 'en' : 'pl');
       return ui.relabel();
     }
-    if (!confirm(T().confirmNew)) return;
-    autosave(); // a safety copy, in case the player forgot
-    play(new Game(Math.floor(Math.random() * 1e9)));
-    slotId = null;
-    ui.toast(T().newIsland);
+    if (confirm(T().confirmNew)) newIsland();
   };
+}
+
+// Start a new island. If the player earned keepsakes here, they first pick one to bring along.
+function newIsland() {
+  pickKeepsake(game, ui, (id) => {
+    autosave(); // a safety copy, in case the player forgot
+    const g = new Game(Math.floor(Math.random() * 1e9));
+    if (id) bringKeepsake(g, id, game.seed);
+    play(g);
+    slotId = null;
+    ui.toast(id ? `${T().newIsland} ${KT().brought(KT().keepsakes[id].name)}` : T().newIsland);
+  });
 }
 // The file buttons fold away behind a menu button.
 document.getElementById('menu')!.onclick = () => document.getElementById('file')!.classList.toggle('open');

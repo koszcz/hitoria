@@ -1,6 +1,7 @@
 // How a chronicle entry reads, in the player's language.
 import { GOALS, type Entry } from '../game';
-import { buildingName, getLang, tr } from '../i18n';
+import { T, buildingName, getLang, tr } from '../i18n';
+import { KT } from '../keepsake/text';
 
 const goalText = (id: string) => GOALS.find((x) => x.id === id)?.text ?? id;
 
@@ -56,5 +57,6 @@ function lineOf(x: typeof EN, e: Entry): string {
     case 'winter': return x.winter;
     case 'settlers': return x.settlers(e.n);
     case 'feast': return x.feast;
+    case 'keepsake': return KT().chronicle(KT().keepsakes[e.id]?.name ?? e.id, T().island(e.from));
   }
 }

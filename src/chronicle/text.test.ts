@@ -43,6 +43,12 @@ describe('chronicle lines', () => {
     expect(t({ day: 1, what: 'settlers', n: 50 })).toBe('Wyspa ma już 50 osadników');
   });
 
+  test('a keepsake reads with its name and the island it came from', () => {
+    expect(entryText({ day: 1, what: 'keepsake', id: 'chest', from: 42 }).text).toBe('The island began with a keepsake from Island 42: Iron chest');
+    setLang('pl');
+    expect(entryText({ day: 1, what: 'keepsake', id: 'chest', from: 42 }).text).toBe('Wyspa zaczęła się od pamiątki z „Wyspa 42”: Żelazna skrzynia');
+  });
+
   test('a goal that no longer exists still shows its id', () => {
     expect(entryText({ day: 2, what: 'goal', goal: 'houses' }).text).toBe('Goal reached: houses');
   });

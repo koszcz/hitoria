@@ -210,6 +210,21 @@ the whole next day.
 
 You can order one feast each season, of either kind.
 
+### Bringing a keepsake
+
+When you start a new island with **New** in the ☰ menu, you can bring one keepsake from the old
+island. You earn each keepsake by reaching a goal:
+
+| Keepsake | Earned by | What the new island starts with |
+| --- | --- | --- |
+| Builder's crate | Make 50 planks | 20 more planks and 10 more stone |
+| Old friends | Grow to 30 settlers | 6 more settlers |
+| Full larder | Get through a winter with no one hungry | 20 fish and 10 bread |
+| Iron chest | Make 10 iron | 5 iron and 8 more tools |
+
+Pick one in the dialog, or press **Stay on this island** to keep playing. If you have not earned
+a keepsake yet, the new island starts at once.
+
 Placed a building in the wrong spot? Pick the Remove tool (`X`) and click it. Its goods go back
 to the HQ.
 
@@ -303,12 +318,13 @@ The save buttons are in the ☰ menu at the top right.
   over a save, delete one, or change how often the game autosaves.
 - **Autosave** runs every minute by default, and when you close the tab. You can also set it to
   every 5 minutes, or turn it off. The game keeps the 3 newest autosaves and writes over the oldest.
-- **New** starts a fresh island. It makes an autosave of the old island first.
+- **New** starts a fresh island. It makes an autosave of the old island first. If you reached
+  goals on the old island, you first pick one keepsake to bring along. See "Bringing a keepsake".
 - Opening the page continues from your newest save.
 - When you load a save, the island chronicle opens. It lists the island's milestones by day, such
   as the first birth, the first of each building, each goal, every tenth trade ship, the first
   wish granted and every fifth after it, the first upgrade, each landing on an island, each winter
-  with no one hungry, and reaching 50 and 100 settlers.
+  with no one hungry, reaching 50 and 100 settlers, and the keepsake the island began with.
 
 The save keeps the map, buildings, worn paths, every good, your goals, the village wish, the chronicle and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
@@ -354,7 +370,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), and the ridges and valleys of mountain ranges (`ranges.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), mixed food (`variety.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -371,6 +387,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/buildmenu/` | The build menu |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/chronicle/` | The island chronicle panel and how its lines read |
+| `src/keepsake/` | The dialog where you pick a keepsake for a new island, and how keepsakes read |
 | `src/wishes/` | The goal panel once every goal is reached: the village wish, its progress and its season |
 | `src/i18n.ts` | Translations. The Polish building names and village wishes are in `src/lang/` |
 | `src/main.ts` | Input, camera, fixed-step game loop |

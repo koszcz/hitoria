@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Fresh island with a keepsake**: you start a new map that keeps one reward from the last one. *Fun 2 · Effort M · Branch: worktree-agent-ab884093f27b70637*
+Nothing right now.
 
 ## Next
 
@@ -44,6 +44,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Fresh island with a keepsake**: when you start a new island, you pick one keepsake you earned on the old one and bring it along. Each keepsake comes from a goal: the Builder's crate (20 planks and 10 stone) from "Make 50 planks", Old friends (6 more settlers) from "Grow to 30 settlers", the Full larder (20 fish and 10 bread) from the winter goal, and the Iron chest (5 iron and 8 tools) from "Make 10 iron". The new island's chronicle notes the keepsake and where it came from. *2026-11-02*
 - **Religious feast**: the Feast Square can also hold a religious feast, for the same food and on the same night schedule. It blesses the village, so every worker works 25% faster for the whole next day. *2026-11-02*
 - **Snow on buildings**: in winter, snow covers the roofs and other top faces of buildings, the same way it covers trees and rocks. It comes and goes with the same snow level as the ground. *2026-11-02*
 - **Stop work at a hut**: a hut's info panel has a Stop work button. Its worker walks home and takes the next hut that needs a worker, and nobody is sent to the stopped hut until you press Resume work. The hut keeps its tool, and the choice is saved. Use it when settlers run short, such as to stop a stone mine while you have plenty of stone. *2026-11-02*

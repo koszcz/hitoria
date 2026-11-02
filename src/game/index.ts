@@ -22,3 +22,4 @@ export { MEAL, SELF_FED, hungryWorker } from './meals';
 export { FEAST_FOOD, FEAST_NEWCOMERS } from './feast';
 export { BLESSED_SPEED, blessed } from './blessing';
 export { canStop } from './stopwork';
+export { KEEPSAKES, bringKeepsake, earnedKeepsakes, type Keepsake, type KeepsakeId } from './keepsakes';

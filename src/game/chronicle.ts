@@ -3,6 +3,7 @@
 import { dayNumber } from '../seasons/day';
 import type { BType } from './defs';
 import type { Game } from './game';
+import type { KeepsakeId } from './keepsakes';
 
 export const TRADE_MILESTONE = 10; // every this many trade ships gets a line in the chronicle
 export const WISH_MILESTONE = 5; // the first wish granted, and every this many, get a line
@@ -19,7 +20,8 @@ export type Milestone =
   | { what: 'landed'; isle: 'other' | 'far' } // settlers landed on an island
   | { what: 'winter' } // a whole winter passed with no one hungry
   | { what: 'settlers'; n: number } // the island reached n settlers
-  | { what: 'feast' }; // the first wedding feast brought newcomers
+  | { what: 'feast' } // the first wedding feast brought newcomers
+  | { what: 'keepsake'; id: KeepsakeId; from: number }; // the island began with a keepsake from the island with seed `from`
 export type Entry = Milestone & { day: number };
 
 // Write `m` into the chronicle with today's date.

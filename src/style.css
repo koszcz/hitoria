@@ -524,7 +524,7 @@ body.touch .build { row-gap: 0; }
   #buildmenu .panel { max-height: 100%; border-radius: 10px 10px 0 0; }
 }
 
-#chronicle {
+#chronicle, #keepsake {
   position: fixed;
   inset: 0;
   display: grid;
@@ -532,7 +532,7 @@ body.touch .build { row-gap: 0; }
   background: rgba(0, 0, 0, 0.55);
   z-index: 90;
 }
-#chronicle .panel {
+#chronicle .panel, #keepsake .panel {
   width: min(480px, calc(100vw - 32px));
   max-height: calc(100vh - 64px);
   display: flex;
@@ -542,14 +542,14 @@ body.touch .build { row-gap: 0; }
   border: 1px solid var(--edge);
   border-radius: 10px;
 }
-#chronicle h2 { margin: 0 0 10px; color: var(--gold); font-family: Georgia, serif; }
+#chronicle h2, #keepsake h2 { margin: 0 0 10px; color: var(--gold); font-family: Georgia, serif; }
 #chronicle ul { list-style: none; margin: 0 0 12px; padding: 0; overflow-y: auto; }
 #chronicle li { display: flex; gap: 12px; padding: 6px 8px; border-radius: 6px; }
 #chronicle li:nth-child(odd) { background: rgba(0, 0, 0, 0.18); }
 #chronicle li b { flex: none; width: 5.5em; color: var(--gold); font-weight: normal; }
 #chronicle li.empty { color: var(--muted); }
-#chronicle .actions { display: flex; justify-content: flex-end; }
-#chronicle button {
+#chronicle .actions, #keepsake .actions { display: flex; justify-content: flex-end; }
+#chronicle button, #keepsake button {
   font: inherit;
   color: inherit;
   cursor: pointer;
@@ -558,5 +558,13 @@ body.touch .build { row-gap: 0; }
   border-radius: 6px;
   padding: 5px 9px;
 }
-#chronicle button:hover { border-color: var(--gold); }
+#chronicle button:hover, #keepsake button:hover { border-color: var(--gold); }
 #info .upgraded { margin-top: 6px; color: var(--gold); }
+
+/* The keepsake dialog: one button for each reward the player can bring to a new island. */
+#keepsake p { margin: 0 0 10px; color: var(--muted); }
+#keepsake .choices { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; overflow-y: auto; }
+#keepsake .choices button { display: flex; gap: 10px; align-items: center; text-align: left; padding: 8px 10px; }
+#keepsake .choices .icon { font-size: 24px; }
+#keepsake .choices span { display: flex; flex-direction: column; }
+#keepsake .choices small { color: var(--muted); }
