@@ -10,8 +10,9 @@ How to add and triage ideas: see [README.md](README.md).
 
 At most 3 ideas, in the order we build them.
 
-- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
-- **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
+- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Goals still count every island. *Fun 3 · Effort M*
+- **Tools for the Toolmaker first**: a Toolmaker's Workshop that waits for a tool gets the next free tool before any other hut, so the tool chain never stalls. The Toolmaker card says that every new worker needs a tool. *Fun 2 · Effort S*
+- **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *Fun 2 · Effort S*
 
 ## Inbox
 
@@ -56,11 +57,10 @@ Empty.
 
 Triaged and ready to build, but not next.
 
-- **Show goods per island**: the stock bar and build menu show the goods of the island the camera looks at, not every island added together, so a site on a new island no longer waits for goods that sit back home. Goals still count every island. *Fun 3 · Effort M*
-- **Tools for the Toolmaker first**: a Toolmaker's Workshop that waits for a tool gets the next free tool before any other hut, so the tool chain never stalls. The Toolmaker card says that every new worker needs a tool. *Fun 2 · Effort S*
-- **Food hint at the start**: a message at the start of a new island says that workers eat fish, meat or bread and points the player at a Fisher's Hut. The Fisher card lists every worker who eats fish. *Fun 2 · Effort S*
 - **Fair winter goal**: the winter goal counts hungry workers on the home island, and on a colony only once it has its own food maker, such as a Fisher's Hut. A starving new colony no longer makes the goal impossible. *Fun 2 · Effort S*
 - **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *Fun 2 · Effort S*
+- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
+- **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
 
 ## Done
 
