@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. *Fun 1 · Effort S · Branch: worktree-agent-adbea6cd20ec61dce*
+Nothing right now.
 
 ## Next
 
@@ -17,6 +17,7 @@ Empty.
 New ideas go here, not scored yet.
 
 - **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them.
+- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back.
 - **Choose where the ship sails**: when you send a ship to settle, you pick which island it sails to, instead of the ship always landing on the nearest shore.
 
 ## Needs thought
