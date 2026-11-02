@@ -18,8 +18,7 @@ At most 3 ideas, in the order we build them.
 
 New ideas go here, not scored yet.
 
-- **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them.
-- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back.
+Empty.
 
 ## Needs thought
 
@@ -29,6 +28,7 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 - **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: send more settlers, let a colony grow its own, or only fix the hint? Refine together with Supply a new colony.*
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: do workers carry their own goods, do sites and the feast jump the queue, or does a stronger hint to build houses do?*
 - **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola). *Fun 1 · Effort M · Open: should a season last a whole number of days, which changes the year's length and winter food, or should only the clock and messages explain it?*
+- **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them. *Fun 2 · Effort M · Open: "keepsake" already names the bonus you take to a new island, so what is this called? Do decorations cost goods or a builder, and do they carry to a new island?*
 
 ## Later
 
@@ -147,3 +147,4 @@ Ideas we decided not to build, and why.
 - **Hotkeys for every building**: the last 3 buildings in the build menu get a hotkey too. You decided not to build it.
 - **Butterflies**: butterflies float over flower meadows. You decided not to build it.
 - **Fireflies**: fireflies glow at the forest edge after dark. You decided not to build it.
+- **Fish that run out**: shore fish thin out when a fisher overfishes, then slowly come back. Every tester in the 2026-11-02 playtests already struggled with food, so this would make the hardest part harder.
