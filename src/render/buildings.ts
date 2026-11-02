@@ -8,6 +8,7 @@ import { add, GLASS, shadeOf } from './kit';
 import { addGlow } from './glow';
 import { mergeModel } from './merge';
 import { snowOnTop } from './rooftops';
+import { lightWalls } from './walllight';
 import { barrel, crate, house, logPile } from './props';
 import { hut } from './huts';
 import { harbourHouse } from './harbour';
@@ -236,7 +237,8 @@ export function makeBuilding(type: BType, built: boolean, paint = CANVAS): Model
       hut(g, model, type, wall, roof);
   }
   mergeModel(g, [model.cloth, model.sails, model.spin]);
-  snowOnTop(g);
+  lightWalls(g, model.door);
+  snowOnTop(g, true);
   addGlow(model, paint.dot());
   const icon = new THREE.Sprite(new THREE.SpriteMaterial({ map: paint.icon(type), depthTest: false, transparent: true }));
   icon.scale.setScalar(0.3);

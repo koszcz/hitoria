@@ -107,7 +107,8 @@ goods it made and used in the last minute, so you can see how fast it works.
 Days and nights pass as you play. A full day lasts 8 minutes of game time, and a new game starts
 in the morning. The light turns orange at dawn and dusk, and blue at night.
 From dusk to dawn, each finished building casts a soft, warm pool of light on the ground, and
-its windows and doorway glow.
+its windows and doorway glow. The light also tints its walls, brightest near the ground and the
+door and fading toward the roof.
 
 Workers and builders sleep at night. When dusk ends, each one finishes the work in hand and walks
 to the nearest bed: the HQ, a finished house or the harbour on the second island. Their hut or
@@ -388,7 +389,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/math/` | Sine, cosine and distance that give the same result on every computer, so a seed always makes the same map (`exact.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and which island each one goes to (`isles.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
-| `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea and in the hidden cove (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
+| `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea and in the hidden cove (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`) and on their walls (`walllight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
 | `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, the clock in the HUD (`hud.ts`), and fast nights (`fastnight.ts`) |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
