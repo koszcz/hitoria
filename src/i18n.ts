@@ -8,6 +8,7 @@ import { ISLES_PL } from './lang/isles';
 import { FEAST_PL } from './lang/feast';
 import { BOATS_PL } from './lang/boats';
 import { STOPWORK_PL } from './lang/stopwork';
+import { PLACING_PL } from './lang/placing';
 import { TREES_PL } from './lang/trees';
 import { GOOD_EN, GOOD_PL } from './lang/goods';
 
@@ -142,24 +143,7 @@ const MESSAGES_PL: Record<string, string> = {
   'Every mountain nearby is surveyed': 'Wszystkie pobliskie góry są zbadane',
   '⭐ Your geologist found a rich spot': '⭐ Twój geolog znalazł bogate złoże',
   '⭐ A rich spot! This mine digs twice as fast': '⭐ Bogate złoże! Ta kopalnia wydobywa dwa razy szybciej',
-  // Why a building can't go here
-  'Outside the map': 'Poza mapą',
-  Occupied: 'Zajęte',
-  'Outside your land': 'Poza twoimi ziemiami',
-  'Needs flat grass': 'Potrzebna płaska trawa',
-  'A tree is in the way': 'Przeszkadza drzewo',
-  'A boulder is in the way': 'Przeszkadza głaz',
-  'Must be next to a mountain': 'Musi stać przy górze',
-  'Coal and iron lie only in the mountains of the other island': 'Węgiel i żelazo są tylko w górach drugiej wyspy',
-  'Must be near water': 'Musi stać blisko wody',
-  'Must be near a mountain': 'Musi stać blisko góry',
-  'Must be on the shore by open water': 'Musi stać na brzegu przy otwartej wodzie',
-  'In front of the door of another building': 'Przed drzwiami innego budynku',
-  'No room in front of its door': 'Brak miejsca przed drzwiami',
-  'Settlers cannot walk there': 'Osadnicy tu nie dojdą',
-  'No room for its fields': 'Brak miejsca na pola',
-  'This is a farm field': 'Tu jest pole farmy',
-  'Unknown building': 'Nieznany budynek',
+  ...PLACING_PL,
   // Removing
   'Nothing to remove here': 'Nie ma tu nic do usunięcia',
   'The HQ cannot be demolished': 'Siedziby nie można zburzyć',

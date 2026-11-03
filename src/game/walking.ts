@@ -14,7 +14,7 @@ const DX = [1, -1, 0, 0, 1, 1, -1, -1], DY = [0, 0, 1, -1, 1, -1, 1, -1];
 export function walkFrom(g: Game, b: Building): Float32Array {
   const kept = g.walks.get(b.id);
   if (kept && g.time - kept.t < FRESH) return kept.d;
-  const d = flood(g, b.y * g.world.w + b.x);
+  const d = flood(g, b.y * g.world.w + b.x, ground(g));
   g.walks.set(b.id, { t: g.time, d });
   return d;
 }
@@ -24,12 +24,25 @@ export function walkDist(g: Game, a: Building, b: Building) {
   return walkFrom(g, a)[b.y * g.world.w + b.x];
 }
 
+// The walking cost from building `b` to every tile on the map as it is right now, with tile `block`
+// closed too if given. Nothing is kept, so it also sees buildings placed a moment ago or while paused.
+// It answers "what if" questions, such as whether a new building would cut a path.
+export function walkNow(g: Game, b: Building, block = -1): Float32Array {
+  const now = readGround(g);
+  if (block >= 0) now.kind[block] = BLOCKED;
+  return flood(g, b.y * g.world.w + b.x, now);
+}
+
 // What each tile is to a walker, worked out once for every map made in the same FRESH window.
 const BLOCKED = 0, OPEN = 1, INTO = 2; // INTO: a building, which you walk into but not through
 type Ground = { t: number; kind: Uint8Array; cost: Float32Array };
 
 function ground(g: Game): Ground {
   if (g.ground && g.time - g.ground.t < FRESH) return g.ground;
+  return (g.ground = readGround(g));
+}
+
+function readGround(g: Game): Ground {
   const { w: W, h: H } = g.world;
   const kind = new Uint8Array(W * H), cost = new Float32Array(W * H);
   for (let y = 0; y < H; y++)
@@ -43,13 +56,13 @@ function ground(g: Game): Ground {
         cost[i] = 1;
       }
     }
-  return (g.ground = { t: g.time, kind, cost });
+  return { t: g.time, kind, cost };
 }
 
 // Dijkstra over the tiles settlers can walk on, starting at tile `start`.
 // Diagonal steps may not cut blocked corners, the same as the paths settlers walk.
-function flood(g: Game, start: number) {
-  const { kind, cost } = ground(g), { w: W, h: H } = g.world;
+function flood(g: Game, start: number, { kind, cost }: Ground) {
+  const { w: W, h: H } = g.world;
   const d = new Float32Array(W * H).fill(Infinity);
   const heap = new Heap(d);
   d[start] = 0;

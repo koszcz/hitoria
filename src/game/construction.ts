@@ -6,6 +6,7 @@ import { claimFields, pickFields } from './fields';
 import type { Game } from './game';
 import { computeTerritory, isDoorstep, near, nearOre, openGround, passable } from './land';
 import { dockAt } from './harbour';
+import { CUTS_OFF, cutsOff } from './cutoff';
 import { noteRichMine } from './geology';
 import { homeOf, homes } from './homes';
 import { sendHome } from './settlers';
@@ -38,6 +39,7 @@ export function canPlace(g: Game, type: BType, x: number, y: number): string | n
   const reach = (tx: number, ty: number) => (tx !== x || ty !== y) && passable(g, tx, ty) && !g.world.at(tx, ty).tree;
   const fromHome = (h: Building) => !!findPath(g.world, h.x, h.y + 1, x, y + 1, reach);
   if (!homes(g).some(fromHome)) return 'Settlers cannot walk there';
+  if (cutsOff(g, x, y)) return CUTS_OFF;
   return BDEFS[type] ? null : 'Unknown building';
 }
 
