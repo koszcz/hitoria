@@ -23,6 +23,7 @@ import { WorkSounds } from './sound/strikes';
 import { workMix, workSources } from './sound/work';
 import { installPlaytest } from './playtest/hook';
 import { FOOD_HINT_MS, foodHint } from './hints/food';
+import { hideLoading } from './loading/screen';
 
 setLang(startLang());
 const saves = new Saves();
@@ -121,32 +122,30 @@ function load(slot: Slot) {
   showChronicle();
 }
 
-// The loaded island's milestones, with the game paused until the player closes them.
-function showChronicle() {
-  if (!game.chronicle.length) return;
+// Pause the game while a panel is open. The panel calls done when the player closes it.
+function pauseFor(open: (done: () => void) => void) {
   const wasPaused = ui.paused;
   ui.paused = true;
   ui.refresh();
-  openChronicle(game.chronicle, () => {
+  open(() => {
     ui.paused = wasPaused;
     ui.refresh();
   });
 }
 
+// The loaded island's milestones, with the game paused until the player closes them.
+function showChronicle() {
+  if (game.chronicle.length) pauseFor((done) => openChronicle(game.chronicle, done));
+}
+
 function showSaves() {
-  const wasPaused = ui.paused;
-  ui.paused = true;
-  ui.refresh();
-  openSaveMenu(saves, {
+  pauseFor((done) => openSaveMenu(saves, {
     save: (name, id) => save(name, id),
     load,
     current: () => slotId,
     defaultName: () => saves.get(slotId ?? '')?.name ?? islandName(game),
-    closed: () => {
-      ui.paused = wasPaused;
-      ui.refresh();
-    },
-  });
+    closed: done,
+  }));
 }
 
 for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) {
@@ -395,6 +394,7 @@ function frame(now: number) {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+requestAnimationFrame(hideLoading); // runs right after the first frame is drawn
 
 Object.assign(window, { game, diag, renderer, music, work }); // handy for poking at state from the console
 installPlaytest({ game: () => game, ui, click });

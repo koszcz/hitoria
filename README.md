@@ -418,6 +418,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/feastinfo.ts` | The Feast Square panel's feast part, and the blessing line in hut panels |
 | `src/buildmenu/` | The build menu |
 | `src/hints/` | The food hint a new island shows at the start (`food.ts`), and the placement hint for a forester's ground (`forester.ts`) |
+| `src/loading/` | The loading screen that covers the page until the island is drawn |
 | `src/islandview/` | Which island's goods the goods bar and build menu show, and the island's name |
 | `src/saves.ts` | Save slots in the browser's local storage |
 | `src/chronicle/` | The island chronicle panel and how its lines read |
