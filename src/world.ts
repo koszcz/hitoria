@@ -42,7 +42,8 @@ export interface Tile {
 // 10: the second island is about 20 tiles across, with a longer ridge. It reaches past the middle 64 by 64.
 // 11: the far island is about 26 tiles across, the largest of the three, with a longer ridge.
 // 12: a third theme, the hidden cove, with a lagoon cut deep into the island. Each island gets one of three themes.
-export const MAP_VERSION = 12;
+// 13: the map is 128 by 128 tiles. The second and far island are both about 32 tiles across.
+export const MAP_VERSION = 13;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;

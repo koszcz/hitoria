@@ -2,7 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, SAVE_VERSION, bag, type SaveData } from '.';
 import { MAP_VERSION, World } from '../world';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import type { Building } from './types';
 import { flatGame, runUntil, totalGoods, expectIncomingConsistent, placeLinked } from './test-helpers';
 

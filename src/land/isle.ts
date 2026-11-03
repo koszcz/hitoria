@@ -1,6 +1,7 @@
 // The shape of the second island and the far island: how big each is, where it sits, and how its
 // mountain ridge runs. From map version 10, the second island is bigger, with a longer ridge. From
-// map version 11, the far island is bigger still, the largest of the three.
+// map version 11, the far island is bigger still, the largest of the three. From map version 13,
+// both are about 32 tiles across, the same size.
 import { rng } from './noise';
 import { cos, hypot, sin } from '../math/exact';
 
@@ -35,17 +36,26 @@ export const BIG_FAR_FROM = 11;
 // long, with room to walk around both ends. Its `away` is not used: see FAR_AWAY.
 export const BIG_FAR: IsleSize = { size: 13, away: 0, peakAway: -2, ridge: 6, groveIn: 8, groveSide: 6, grove: 4 };
 
+// From map version 13, the map is 128 by 128 tiles, and both islands share one shape. Each is about
+// 32 tiles across, about half the home island's land: its shore lies a little inside `size`. Its
+// ridge is twice as long as on version 10, with room to walk around both ends. The ridge sits
+// towards the home island, as far from the near shore as on older maps, so coal and iron mines
+// still fit in a landing harbour's land. The grove sits on the far side. The island sits farther
+// out, so its strait to the home island stays as wide as before.
+export const HUGE_ISLES_FROM = 13;
+export const HUGE_ISLE: IsleSize = { size: 17.5, away: 24, peakAway: -6.5, ridge: 9, groveIn: -8, groveSide: 5, grove: 6 };
+
 // The shape of the second island on a map of generator version `map`.
-export const isleShape = (map: number) => (map >= BIG_ISLE_FROM ? BIG_ISLE : SMALL_ISLE);
+export const isleShape = (map: number) => (map >= HUGE_ISLES_FROM ? HUGE_ISLE : map >= BIG_ISLE_FROM ? BIG_ISLE : SMALL_ISLE);
 // The shape of the far island on a map of generator version `map`.
-export const farShape = (map: number) => (map >= BIG_FAR_FROM ? BIG_FAR : SMALL_ISLE);
+export const farShape = (map: number) => (map >= HUGE_ISLES_FROM ? HUGE_ISLE : map >= BIG_FAR_FROM ? BIG_FAR : SMALL_ISLE);
 
 // How far the far island's centre stays from the second island's centre. Both islands keep about
 // 8 tiles of sea between them.
-const farApart = (map: number) => (map >= BIG_FAR_FROM ? 31 : map >= BIG_ISLE_FROM ? 25 : 21);
-// How far the far island's centre sits from the start. From map version 11, it sits farther out, so
-// the strait to the home island stays about as wide.
-const FAR_AWAY = (map: number) => (map >= BIG_FAR_FROM ? 31 : 24);
+const farApart = (map: number) => (map >= HUGE_ISLES_FROM ? 43 : map >= BIG_FAR_FROM ? 31 : map >= BIG_ISLE_FROM ? 25 : 21);
+// How far the far island's centre sits from the start. From map versions 11 and 13, it sits farther
+// out, so the strait to the home island stays about as wide.
+const FAR_AWAY = (map: number) => (map >= HUGE_ISLES_FROM ? 35 : map >= BIG_FAR_FROM ? 31 : 24);
 // How far the far island may turn from the bay's direction, in degrees.
 const FAR_TURN = [50, 130];
 // Open sea runs this many tiles wide around the edge of the map.

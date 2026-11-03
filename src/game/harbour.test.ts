@@ -1,7 +1,7 @@
 // The harbour: it stands on the shore by open water, keeps a dock for ships, and stores goods.
 import { describe, expect, test } from 'bun:test';
 import { Game, BUILDABLE, DOCK_REACH } from '.';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { dockAt } from './harbour';
 import { flatGame, placeLinked, runUntil } from './test-helpers';
 

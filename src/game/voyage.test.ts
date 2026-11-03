@@ -3,7 +3,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game, GOODS, bag } from '.';
 import { findPath } from '../path';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { demolish } from './demolish';
 import { landingSpot, lacking, SAIL_CARGO, SAIL_CREW } from './voyage';
 import type { Building } from './types';

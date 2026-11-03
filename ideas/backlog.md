@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Bigger islands**: the second island and the far island each have about half the home island's land, about 32 tiles across, on a 128 by 128 map. Their mountains, forests and ore grow with them, and both islands are the same size. New maps only. *Fun 2 · Effort M · Branch: worktree-agent-a7786f101ed4b4186*
+Nothing right now.
 
 ## Next
 
@@ -59,6 +59,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Bigger islands**: the second island and the far island each have about half the home island's land, about 32 tiles across, on a 128 by 128 map. Their mountains, forests and ore grow with them, and both islands are the same size. New maps only. *2026-11-03*
 - **Rising house prices**: each House costs 1 more plank and 1 more stone than the last, counting every House on all islands, so the 20th costs 22 planks and 21 stone. A site keeps the price it had when you placed it, and removing a House lowers the next price. Other buildings keep their price, and none costs iron or tools. *2026-11-03*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *2026-11-03*
 - **Binaural sounds**: work sounds come from where they happen, panned left or right and louder when near. On a computer you hear from the mouse pointer, and on a phone from the middle of the screen. Panning follows each sound's place on the screen, left or right of the listening point. When the pointer leaves the window, you hear from the middle of the screen. *2026-11-03*

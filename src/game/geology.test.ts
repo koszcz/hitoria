@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
 import { BDEFS, BUILDABLE } from './defs';
 import { RICH_SPEED, richSpots, survey } from './geology';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { flatGame, placeLinked, run, runUntil } from './test-helpers';
 
 // A block of mountain from (x0, y0) to (x1, y1), with no rich spots unless `rich` is set.

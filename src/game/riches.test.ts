@@ -2,7 +2,7 @@
 // old saves keep their ore at home.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import type { Building } from './types';
 import { harbourGame, inside, runUntil } from './test-helpers';
 

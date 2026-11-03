@@ -3,7 +3,7 @@
 // smaller far island.
 import { describe, expect, test } from 'bun:test';
 import { World, MAP_VERSION } from '../world';
-import { BIG_FAR, BIG_FAR_FROM, SMALL_ISLE, farShape } from './isle';
+import { BIG_FAR, BIG_FAR_FROM, HUGE_ISLES_FROM, SMALL_ISLE, farShape } from './isle';
 import { COVE_FROM } from './cove';
 import type { IsleName } from './themes';
 
@@ -36,10 +36,10 @@ const count = (w: World, land: { i: number }[], ok: (t: World['tiles'][number], 
   land.filter((t) => ok(w.tiles[t.i], t.i)).length;
 
 describe('far island shape by map version', () => {
-  test('new maps have the bigger far island', () => {
+  test('maps from version 11 to 12 have the bigger far island', () => {
     expect(MAP_VERSION).toBeGreaterThanOrEqual(BIG_FAR_FROM);
-    expect(farShape(MAP_VERSION)).toBe(BIG_FAR);
-    expect(new World(1).farShape).toBe(BIG_FAR);
+    for (let map = BIG_FAR_FROM; map < HUGE_ISLES_FROM; map++) expect(farShape(map)).toBe(BIG_FAR);
+    expect(new World(1, BEFORE_COVE).farShape).toBe(BIG_FAR);
   });
 
   test('older maps keep the smaller far island', () => {

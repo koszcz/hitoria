@@ -2,7 +2,7 @@
 // wider meadows, more forest and a longer ridge with more ore. Older maps keep the smaller island.
 import { describe, expect, test } from 'bun:test';
 import { World, MAP_VERSION } from '../world';
-import { BIG_ISLE, BIG_ISLE_FROM, SMALL_ISLE, isleShape } from './isle';
+import { BIG_ISLE, BIG_ISLE_FROM, HUGE_ISLES_FROM, SMALL_ISLE, isleShape } from './isle';
 import { COVE_FROM } from './cove';
 import type { IsleName } from './themes';
 
@@ -30,10 +30,10 @@ const count = (land: { i: number }[], ok: (t: World['tiles'][number], i: number)
   land.filter((t) => ok(w.tiles[t.i], t.i)).length;
 
 describe('island shape by map version', () => {
-  test('new maps have the bigger second island', () => {
+  test('maps from version 10 to 12 have the bigger second island', () => {
     expect(MAP_VERSION).toBeGreaterThanOrEqual(BIG_ISLE_FROM);
-    expect(isleShape(MAP_VERSION)).toBe(BIG_ISLE);
-    expect(new World(1).shape).toBe(BIG_ISLE);
+    for (let map = BIG_ISLE_FROM; map < HUGE_ISLES_FROM; map++) expect(isleShape(map)).toBe(BIG_ISLE);
+    expect(new World(1, BEFORE_COVE).shape).toBe(BIG_ISLE);
   });
 
   test('older maps keep the smaller second island', () => {

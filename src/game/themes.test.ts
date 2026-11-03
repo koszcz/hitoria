@@ -2,7 +2,7 @@
 // still leave room for coal and iron mines once settlers land there.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { harbourGame, inside, runUntil } from './test-helpers';
 import { SAIL_CARGO, SAIL_CREW } from './voyage';
 

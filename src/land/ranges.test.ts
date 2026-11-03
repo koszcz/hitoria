@@ -98,7 +98,9 @@ describe('mountain ranges', () => {
 
   test('valleys of low land lie between the ridges, far more than on older maps', () => {
     expect(valleys(RANGES)).toBeGreaterThan(valleys(5) * 2);
-    expect(valleys()).toBeGreaterThan(valleys(5) * 1.8);
+    // From map version 13, the bigger map draws its noise over more tiles, so the same seeds
+    // give other ranges, with a few fewer valleys.
+    expect(valleys()).toBeGreaterThan(valleys(5) * 1.6);
   });
 
   // The second island's mountain was built this steep on purpose. Ridges are never steeper.

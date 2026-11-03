@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
 import { BDEFS, BUILDABLE, GOODS, RECIPES, type BType } from './defs';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { flatGame, runUntil, expectIncomingConsistent, placeBare, placeLinked } from './test-helpers';
 
 const ORE_MINES = [['coalmine', 'coal'], ['ironmine', 'ore']] as const;

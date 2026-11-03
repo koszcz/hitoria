@@ -2,7 +2,7 @@
 // coal and iron ore in its mountain. Older maps have no far island.
 import { describe, expect, test } from 'bun:test';
 import { World } from './world';
-import { BIG_SIZE as W } from './land/size';
+import { HUGE_SIZE as W } from './land/size';
 
 const H = W;
 

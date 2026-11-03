@@ -1,6 +1,6 @@
 // Huts and workshops that make goods.
 import { describe, expect, test } from 'bun:test';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { flatGame, run, runUntil, totalGoods, placeLinked } from './test-helpers';
 
 describe('production', () => {

@@ -1,7 +1,7 @@
 // Worn paths: footsteps wear grass into dirt, worn ground is faster to walk on, and unused paths fade.
 import { describe, expect, test } from 'bun:test';
 import { Game, FADE_DELAY, FADE_TIME, PATH_SPEED, WEAR_STEP } from '.';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { findPath } from '../path';
 import { walkCost, walkSpeed } from './land';
 import { takeSettler, step } from './settlers';

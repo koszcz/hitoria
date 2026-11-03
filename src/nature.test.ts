@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { World, Plant } from './world';
-import { BIG_SIZE as W } from './land/size';
+import { HUGE_SIZE as W } from './land/size';
 import { Game } from './game';
 import { wind, flutter } from './wind';
 import { flatGame, run } from './game/test-helpers';

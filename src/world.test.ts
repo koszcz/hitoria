@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { World, MAP_VERSION, rng } from './world';
-import { BIG_SIZE as W } from './land/size';
+import { HUGE_SIZE as W } from './land/size';
 import { toIso, fromIso } from './iso';
 
 const H = W;

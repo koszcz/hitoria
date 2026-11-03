@@ -2,7 +2,7 @@
 // crew to the island nobody has settled yet. The far island's ore is rich, so its mines dig faster.
 import { describe, expect, test } from 'bun:test';
 import { Game } from '.';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 import { isRich } from './geology';
 import { landingSpot, SAIL_CARGO, SAIL_CREW } from './voyage';
 import { harbourGame, runUntil } from './test-helpers';

@@ -2,10 +2,10 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { World } from '../world';
-import { BIG_SIZE } from '../land/size';
+import { HUGE_SIZE } from '../land/size';
 
 // Room for one tree, plant or field on every tile of the biggest map.
-const TILES = BIG_SIZE * BIG_SIZE;
+const TILES = HUGE_SIZE * HUGE_SIZE;
 import { wind, flutter } from '../wind';
 import { ART } from '../art';
 import { grade, hash } from './kit';

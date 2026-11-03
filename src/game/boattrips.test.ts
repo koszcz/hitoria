@@ -111,7 +111,7 @@ describe('fetching goods by boat', () => {
     const { g, h, colony } = boatGame();
     g.setWant(colony, 'fish', 10);
     runUntil(g, () => h.trip?.leg === 'carry', 200);
-    run(g, 5);
+    run(g, 0.5);
     const g2 = Game.load(JSON.parse(JSON.stringify(g.save())));
     const h2 = g2.buildings.get(h.id)!, c2 = g2.buildings.get(colony.id)!;
     expect(h2.trip).toMatchObject({ leg: 'carry', load: 10, g: 'fish' });

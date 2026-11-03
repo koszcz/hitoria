@@ -96,8 +96,9 @@ first, the wish just passes, with no penalty, and a new one comes.
      or coal and iron ore. A mine's panel says when it sits next to a rich spot. A mine can
      also stand on the edge of a mountain, if there is open grass in front of its door. From
      there it reaches rich spots deeper in the mountain.
-   - Across the water from the bay lies a second island, about 20 tiles across. Farther out, to one side of the bay, lies
-     the far island, about 26 tiles across, the largest of the three. To settle them, build a harbour, click it and press the Sail button for the island you want. See
+   - Across the water from the bay lies a second island. Farther out, to one side of the bay, lies
+     the far island. On new maps, both are about 32 tiles across, each with about half the land
+     of your home island. To settle them, build a harbour, click it and press the Sail button for the island you want. See
      "Settling the second island" below.
    - The two islands have different themes, chosen at random for each new map from three:
      - Pine highland: dense pine forest and rock cliffs on the shore that faces the open sea.
@@ -168,12 +169,12 @@ island. Goals and wishes still count the goods on every island.
 Once the ship is back, you can sail a second time, to the island nobody has settled yet. It takes another 5
 settlers and the same goods. The far island has a mountain ridge with coal and iron ore too, and
 all of its ore is rich, so every mine there digs twice as fast. Its ridge runs across the island,
-a little towards the shore where the ship lands, so your mines fit near the landing. Walk around
+towards the shore that faces your home island, where the ship lands, so your mines fit near the landing. Walk around
 the ends of the ridge to reach the meadows behind it. Each island gets one crew, so you can sail
 twice in all.
 
 The second island has a mountain ridge with coal and iron ore in it. The ridge runs across the
-middle of the island, with meadows on both sides. Build your coal and iron mines at its foot, and
+island, towards the shore that faces your home island, with most of the meadows and forest behind it. Build your coal and iron mines at its foot, and
 walk around the ends of the ridge to reach the far side.
 
 ### Trading with the trade ship

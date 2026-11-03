@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { JUMP, JUMP_HIGH, PADDLE, SPLASH, duckAt, ducksHome, fishAt, fishPause, inCove, pickSpots } from './life';
 import { landDistance } from './shore';
 import { World } from '../world';
-import { BIG_SIZE as W } from '../land/size';
+import { HUGE_SIZE as W } from '../land/size';
 
 const H = W;
 
