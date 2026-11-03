@@ -11,6 +11,7 @@ import { noteRichMine } from './geology';
 import { homeOf, homes } from './homes';
 import { sendHome } from './settlers';
 import { blessing } from './blessing';
+import { costOf, priceOf } from './prices';
 import type { Building } from './types';
 import { ASLEEP, night } from './sleep';
 
@@ -52,7 +53,9 @@ export function place(g: Game, type: BType, x: number, y: number) {
 
 // A new building site, with no word yet about a rich spot.
 export function placeSite(g: Game, type: BType, x: number, y: number) {
+  const price = type === 'house' ? priceOf(g, type) : null; // counted before this site joins the others
   const b = addBuilding(g, type, x, y);
+  if (price) b.price = price;
   b.status = 'Waiting for a builder';
   if (type === 'farm') claimFields(g, b);
   return b;
@@ -83,12 +86,12 @@ export function linked(g: Game, b: Building) {
 }
 
 export function construct(g: Game, b: Building, dt: number) {
-  const def = BDEFS[b.type];
+  const def = BDEFS[b.type], cost = costOf(b);
   const builder = g.settlers.get(b.builder);
   let need = 0, have = 0;
   for (const k of GOODS) {
-    need += def.cost[k] ?? 0;
-    have += Math.min(b.stock[k], def.cost[k] ?? 0);
+    need += cost[k] ?? 0;
+    have += Math.min(b.stock[k], cost[k] ?? 0);
   }
   const cap = need ? have / need : 1;
   if (!builder?.atWork) {

@@ -9,12 +9,13 @@ import { foodRank } from './foodrank';
 import { feastWant } from './feast';
 import { storeWant } from './boattrips';
 import { eats, forCarriers, lunchbox } from './meals';
+import { costOf } from './prices';
 import { isStore } from './stores';
 import type { Building } from './types';
 import { walkFrom } from './walking';
 
 function want(gm: Game, b: Building, g: Good) {
-  if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
+  if (!b.built) return costOf(b)[g] ?? 0;
   if (isStore(b)) return storeWant(gm, b, g); // a store wants nothing, unless its harbour builds a boat or loads one
   if (b.type === 'house') return pantry(b, g);
   if (b.type === 'square') return feastWant(b, g);

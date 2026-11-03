@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Rising house prices**: each House costs 1 more plank and 1 more stone than the last, counting every House on all islands, so the 20th costs 22 planks and 21 stone. A site keeps the price it had when you placed it, and removing a House lowers the next price. Other buildings keep their price, and none costs iron or tools. *Fun 2 · Effort S · Branch: worktree-agent-a5465baac471474f3*
+Nothing right now.
 
 ## Next
 
@@ -61,6 +61,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Rising house prices**: each House costs 1 more plank and 1 more stone than the last, counting every House on all islands, so the 20th costs 22 planks and 21 stone. A site keeps the price it had when you placed it, and removing a House lowers the next price. Other buildings keep their price, and none costs iron or tools. *2026-11-03*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *2026-11-03*
 - **Binaural sounds**: work sounds come from where they happen, panned left or right and louder when near. On a computer you hear from the mouse pointer, and on a phone from the middle of the screen. Panning follows each sound's place on the screen, left or right of the listening point. When the pointer leaves the window, you hear from the middle of the screen. *2026-11-03*
 - **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *2026-11-03*

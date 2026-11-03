@@ -50,6 +50,6 @@ export const BUILDING_PL: Record<BType, { name: string; desc: string }> = {
   },
   house: {
     name: 'Dom',
-    desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę, porcję mięsa lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników. Inne jedzenie niż poprzednio szybciej daje osadnika.`,
+    desc: `Dom rodzinny. Co ${HOUSE_GROW} s zamienia jedną rybę, porcję mięsa lub bochenek chleba w nowego osadnika, najwyżej ${HOUSE_SIZE} osadników. Inne jedzenie niż poprzednio szybciej daje osadnika. Każdy kolejny dom kosztuje o 1 deskę i 1 kamień więcej niż poprzedni.`,
   },
 };

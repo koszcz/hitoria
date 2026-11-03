@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { BUILDABLE } from '../game';
+import { BDEFS, BUILDABLE, priceOf } from '../game';
 import { flatGame } from '../game/test-helpers';
 import { GROUPS, canPay, keyFor } from './groups';
 
@@ -21,8 +21,17 @@ describe('canPay', () => {
   test('is true only when every good in the cost is in store', () => {
     const g = flatGame();
     const stored = { ...g.stored, plank: 2, stone: 0 };
-    expect(canPay(stored, 'woodcutter')).toBe(true);
-    expect(canPay(stored, 'sawmill')).toBe(false);
-    expect(canPay({ ...stored, stone: 2 }, 'sawmill')).toBe(true);
+    expect(canPay(stored, BDEFS.woodcutter.cost)).toBe(true);
+    expect(canPay(stored, BDEFS.sawmill.cost)).toBe(false);
+    expect(canPay({ ...stored, stone: 2 }, BDEFS.sawmill.cost)).toBe(true);
+  });
+
+  test('checks the rising price of the next House', () => {
+    const g = flatGame();
+    const stored = { ...g.stored, plank: 3, stone: 2 };
+    expect(canPay(stored, priceOf(g, 'house'))).toBe(true);
+    g.place('house', g.hq.x + 3, g.hq.y + 3);
+    expect(canPay(stored, priceOf(g, 'house'))).toBe(false);
+    expect(canPay({ ...stored, plank: 4, stone: 3 }, priceOf(g, 'house'))).toBe(true);
   });
 });

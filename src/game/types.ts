@@ -31,6 +31,7 @@ export interface Building {
   boat?: number; // a harbour's boat: the planks put in so far, from 0 once ordered to BOAT_PLANKS once it is finished
   wants?: Partial<Bag>; // a harbour's wants: how many of each good its island should keep, which boats fetch from other islands
   trip?: BoatTrip; // where a harbour's boat is sailing, while it is away from its dock
+  price?: Partial<Bag>; // what a House site costs, fixed when you placed it, since each House costs more than the last
   feast?: { kind?: FeastKind; at?: number; eaten?: boolean }; // a Feast Square's ordered feast: its kind (a wedding if none), the dusk it begins, once the food is in, and whether the food is served
 }
 

@@ -148,7 +148,7 @@ describe('build card notes about your game', () => {
   });
 
   test('a house explains how it grows your settlers', () => {
-    expect(buildFacts('house').makes).toBe('A family home. It turns one fish, meat or bread into a new settler every 40 s, up to 4 settlers. A different food from last time grows the settler faster.');
+    expect(buildFacts('house').makes).toBe('A family home. It turns one fish, meat or bread into a new settler every 40 s, up to 4 settlers. A different food from last time grows the settler faster. Each new House costs 1 more plank and 1 more stone than the last.');
     expect(buildFacts('house').worth).toContain('More settlers mean more carriers, builders and workers. Build more houses to keep growing.');
     const g = flatGame();
     expect(buildNow(g, 'house').warn).toContain("You make no Fish, Bread or Meat yet. Build a Fisher's Hut, Bakery or Hunter's Lodge first.");

@@ -1,5 +1,5 @@
 // The details for one building: what it makes, why to build it, what it needs and what it costs.
-import { BDEFS, GOODS, type Bag, type BType, type Game } from '../game';
+import { BDEFS, GOODS, priceOf, type Bag, type BType, type Game } from '../game';
 import { buildFacts, buildNow } from '../buildinfo';
 import { T, buildingName } from '../i18n';
 import { keyFor } from './groups';
@@ -19,7 +19,7 @@ export function cardHtml(game: Game, type: BType, stored: Bag = game.stored) {
     `<p class="makes">${facts.makes}</p>` +
     (facts.worth.length ? `<h4>${x.whyBuild}</h4><ul>${items(facts.worth)}</ul>` : '') +
     `<h4>${x.whatNeeds}</h4><ul>${items(facts.needs)}</ul>` +
-    `<p class="costline">${x.costs} ${costText(def.cost)}</p>` +
+    `<p class="costline">${x.costs} ${costText(priceOf(game, type))}</p>` +
     `<p class="have">${now.have}</p>` +
     now.warn.map((w) => `<p class="warn">⚠ ${w}</p>`).join('')
   );

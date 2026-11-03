@@ -1,5 +1,5 @@
 // How the build menu sorts buildings into groups, and whether you can pay for one right now.
-import { BDEFS, BUILDABLE, GOODS, type Bag, type BType } from '../game';
+import { BUILDABLE, GOODS, type Bag, type BType } from '../game';
 
 export type Group = 'wood' | 'stone' | 'food' | 'town';
 
@@ -16,4 +16,4 @@ export const keyFor = (type: BType) => {
   return i >= 0 && i < 9 ? String(i + 1) : '';
 };
 
-export const canPay = (stored: Bag, type: BType) => GOODS.every((g) => stored[g] >= (BDEFS[type].cost[g] ?? 0));
+export const canPay = (stored: Bag, cost: Partial<Bag>) => GOODS.every((g) => stored[g] >= (cost[g] ?? 0));

@@ -1,7 +1,7 @@
 // `window.playtest`: lets a play tester read the game as text and act like a player, without
 // screenshots. Each action goes through the same code as a click, so the tester gets the same
 // refusals and messages a player would. Type `playtest.help()` in the console to see the commands.
-import { BDEFS, BUILDABLE, GOODS, type BType, type Game } from '../game';
+import { BDEFS, BUILDABLE, GOODS, priceOf, type BType, type Game } from '../game';
 import { diag } from '../diag';
 import { crashed } from '../report';
 import type { UI } from '../ui';
@@ -103,7 +103,7 @@ export function installPlaytest(d: PlaytestDeps) {
     menu: () => {
       d.ui.openBuild();
       const tiles = [...document.querySelectorAll<HTMLElement>('#buildmenu .tile')].map((t) => {
-        const type = t.dataset.type as BType, cost = Object.entries(BDEFS[type].cost).map(([k, n]) => `${k} ${n}`).join(', ');
+        const type = t.dataset.type as BType, cost = Object.entries(priceOf(d.game(), type)).map(([k, n]) => `${k} ${n}`).join(', ');
         return `${type} (${t.querySelector<HTMLElement>('.name')!.innerText}) · ${cost || 'free'}${t.classList.contains('short') ? ' · cannot pay yet' : ''}`;
       });
       document.querySelector<HTMLElement>('#buildmenu .close')?.click();

@@ -1,4 +1,4 @@
-import { Game, BDEFS, BType, GOODS, FeastKind, Good, Isle, HOUSE_GROW, houseSize } from './game';
+import { Game, BDEFS, BType, GOODS, costOf, priceOf, FeastKind, Good, Isle, HOUSE_GROW, houseSize } from './game';
 import { T, tr, goodName, buildingName, buildingDesc } from './i18n';
 import { openBuildMenu } from './buildmenu/menu';
 import { costText } from './buildmenu/card';
@@ -176,7 +176,7 @@ export class UI {
     const p = this.placing;
     const type = p && p !== 'remove' ? p : null;
     const html = type
-      ? `<span class="icon">${BDEFS[type].icon}</span><span class="name">${buildingName(type)}</span><span class="cost">${costText(BDEFS[type].cost)}</span>`
+      ? `<span class="icon">${BDEFS[type].icon}</span><span class="name">${buildingName(type)}</span><span class="cost">${costText(priceOf(this.game, type))}</span>`
       : `<span class="icon">🔨</span><span class="name">${x.build}</span><span class="cost key">${x.key('B')}</span>`;
     if (this.buildBtn.innerHTML !== html) this.buildBtn.innerHTML = html;
     this.buildBtn.classList.toggle('active', !!type);
@@ -274,7 +274,7 @@ export class UI {
     if (!b.built) {
       rows.push(`<div class="bar"><i style="width:${Math.round(b.progress * 100)}%"></i></div>`);
       for (const k of GOODS)
-        if (def.cost[k]) rows.push(`<div><span class="good ${k}"></span>${goodName(k)}: ${b.stock[k]} / ${def.cost[k]}</div>`);
+        if (costOf(b)[k]) rows.push(`<div><span class="good ${k}"></span>${goodName(k)}: ${b.stock[k]} / ${costOf(b)[k]}</div>`);
     } else if (g.isStore(b)) {
       if (b.type === 'hq') rows.push(`<div>${x.landRadius(def.radius)}</div>`);
       if (b.type === 'harbour') {

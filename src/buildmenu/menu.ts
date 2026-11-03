@@ -1,7 +1,7 @@
 // The build menu: a dialog that lists the buildings by group. Pick one to place it on the map.
 // With a mouse, hovering shows a building's details and a click picks it. On a touch screen the
 // first tap shows the details and a second tap, or the Build button, picks it.
-import { BDEFS, type Bag, type BType, type Game } from '../game';
+import { BDEFS, priceOf, type Bag, type BType, type Game } from '../game';
 import { T, buildingName } from '../i18n';
 import { GROUPS, canPay } from './groups';
 import { cardHtml, costText } from './card';
@@ -24,9 +24,9 @@ export function openBuildMenu(o: BuildMenuOptions) {
   const groups = GROUPS.map(({ group, types }) =>
     `<h4>${x.groups[group]}</h4><div class="tiles">` +
     types.map((t) =>
-      `<button class="tile${canPay(stored, t) ? '' : ' short'}" data-type="${t}">` +
+      `<button class="tile${canPay(stored, priceOf(o.game, t)) ? '' : ' short'}" data-type="${t}">` +
       `<span class="icon">${BDEFS[t].icon}</span><span class="name">${buildingName(t)}</span>` +
-      `<span class="cost">${costText(BDEFS[t].cost)}</span></button>`).join('') +
+      `<span class="cost">${costText(priceOf(o.game, t))}</span></button>`).join('') +
     `</div>`).join('');
   box.innerHTML = `
     <div class="panel">
