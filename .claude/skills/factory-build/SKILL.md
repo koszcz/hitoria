@@ -28,7 +28,9 @@ Repeat these steps until step 2 finds no idea to build.
      factory`, and push it with `git push origin HEAD:main`. If the push is rejected, go back to
      step 1.
    - If no idea in **Next** or **Later** fits, the loop is over. Go to the report.
-3. **Send a subagent to build and ship it.** Use the `Agent` tool with `isolation: "worktree"`,
+3. **Send a subagent to build and ship it.** First rename this session to "Fact: <title>" with
+   the `set_session_title` tool and the session ID `self`, so the user sees which idea is
+   building. Then use the `Agent` tool with `isolation: "worktree"`,
    so the idea gets its own worktree and branch. Give it the prompt in "Subagent prompt" below,
    with the idea's title filled in. Wait for its report.
 4. **Check that it shipped.** Run `git fetch origin`. The idea shipped when both are true:
