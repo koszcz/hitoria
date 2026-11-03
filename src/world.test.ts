@@ -156,7 +156,8 @@ describe('mountain shape', () => {
     expect(ore(12345)).toBe('9918151921065226337');
   });
 
-  // A step this big between two tiles next to each other draws as a cliff wall.
+  // A step this big between two tiles next to each other draws as a cliff wall. Bare rock that a
+  // peak hides keeps the height its ground had, so its steps don't count.
   const CLIFF = 0.08;
   for (const seed of SEEDS) {
     test(`seed ${seed} has no cliff at the edge of the start mountain`, () => {
@@ -164,9 +165,9 @@ describe('mountain shape', () => {
       let step = 0;
       for (let y = 0; y < H; y++)
         for (let x = 0; x < W; x++) {
-          if (!inLand(w, x, y)) continue;
+          if (!inLand(w, x, y) || w.bare[y * W + x]) continue;
           for (const [nx, ny] of [[x + 1, y], [x, y + 1]])
-            if (inLand(w, nx, ny) && (w.at(x, y).t === 'mountain' || w.at(nx, ny).t === 'mountain')) step = Math.max(step, Math.abs(w.at(x, y).h - w.at(nx, ny).h));
+            if (inLand(w, nx, ny) && !w.bare[ny * W + nx] && (w.at(x, y).t === 'mountain' || w.at(nx, ny).t === 'mountain')) step = Math.max(step, Math.abs(w.at(x, y).h - w.at(nx, ny).h));
         }
       expect(step).toBeLessThan(CLIFF);
     });

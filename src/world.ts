@@ -1,10 +1,11 @@
 import { rng, noise } from './land/noise';
-import { ranges, toRidge } from './land/ranges';
+import { ranges, toLine, toRidge } from './land/ranges';
 import { THEME_HUE, THEME_LIGHT, drawThemes, isleWith, meadowPlant, raiseCliffs, themeConifer, themeTree } from './land/themes';
 import { coveOf, sinkSpecks } from './land/cove';
 import type { IsleName, Theme } from './land/themes';
 import { OLD_SIZE, OPEN_SEA, mapSize, surround } from './land/size';
-import { BIG_FAR_FROM, BIG_ISLE_FROM, EDGE_SEA, farShape, island, isleShape, placeFar } from './land/isle';
+import { BIG_FAR_FROM, BIG_ISLE_FROM, EDGE_SEA, TOP_RIDGES_FROM, UP, farShape, island, isleShape, placeFar, ridgeLine } from './land/isle';
+import { HIDE_FROM, bareHidden } from './land/hidden';
 import type { FarPlace, IsleSize } from './land/isle';
 import { cos, hypot, sin } from './math/exact';
 
@@ -43,7 +44,8 @@ export interface Tile {
 // 11: the far island is about 26 tiles across, the largest of the three, with a longer ridge.
 // 12: a third theme, the hidden cove, with a lagoon cut deep into the island. Each island gets one of three themes.
 // 13: the map is 128 by 128 tiles. The second and far island are both about 32 tiles across.
-export const MAP_VERSION = 13;
+// 14: mountains sit at the top of the screen, and ground a peak hides from the camera is bare rock.
+export const MAP_VERSION = 14;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -81,6 +83,11 @@ const PINE_FOOT = (map: number) => (map >= BIG_FAR_FROM ? 4.5 : 3.5);
 // From map version 7, a far island lies farther out. Its size and place are in farShape and placeFar.
 // The guaranteed grove and quarry near the start: how wide they are.
 const GROVE = 2.8;
+// From map version 14, the home island's ridges start UPWARD_FROM tiles up the screen from the
+// start, and reach full height UPWARD_FADE tiles further up.
+const UPWARD_FROM = 4;
+const UPWARD_FADE = 10;
+const upward = (up: number) => Math.min(1, Math.max(0, (up - UPWARD_FROM) / UPWARD_FADE));
 const QUARRY = 1.9;
 
 export class World {
@@ -106,6 +113,8 @@ export class World {
   cliff: Uint8Array;
   // 1 on the water of the hidden cove's lagoon. See cove.ts.
   cove: Uint8Array;
+  // 1 on the bare rock where a peak hides the ground from the camera. See hidden.ts.
+  bare: Uint8Array;
 
   // `size` is for the generator itself: a bigger map lays its land out on an old-size map first.
   constructor(seed: number, readonly map = MAP_VERSION, size = mapSize(map)) {
@@ -114,6 +123,7 @@ export class World {
     this.ore = new Uint8Array(W * H);
     this.cliff = new Uint8Array(W * H);
     this.cove = new Uint8Array(W * H);
+    this.bare = new Uint8Array(W * H);
     this.start = { x: W / 2, y: H / 2 };
     const isl = (this.shape = isleShape(map)), fsh = (this.farShape = farShape(map));
     // In map version 9, the land is the same as on an old-size map, with open sea all around it.
@@ -128,7 +138,7 @@ export class World {
     const { x: sx, y: sy } = this.start;
     const landmarks = map >= 2, smooth = map >= 3;
     const grove = { x: sx + 6, y: sy - 4 }, quarry = { x: sx - 5, y: sy + 5 };
-    const { peak, bay, out } = this.landmarks(seed);
+    const { peak, bay, out } = this.landmarks(seed, map);
     const isle = { x: bay.x + out.x * isl.away, y: bay.y + out.y * isl.away };
     if (map >= 4) this.isle = isle;
     const islePeak = { x: isle.x + out.x * isl.peakAway, y: isle.y + out.y * isl.peakAway };
@@ -144,15 +154,15 @@ export class World {
     };
     // Ridges fade out towards the start, so the HQ's land stays gentle.
     const calm = (x: number, y: number) => Math.min(1, Math.max(0, (hypot(x - sx, y - sy) - CALM) / CALM_FADE));
-    const ranged = map >= 6, shape = ranged ? ranges(seed, lay, calm, W, H) : null;
+    // From map version 14, the home island's ridges rise only up the screen from the start.
+    const topward = (x: number, y: number) => (map >= TOP_RIDGES_FROM ? upward((x - sx) * UP.x + (y - sy) * UP.y) : 1);
+    const ranged = map >= 6, shape = ranged ? ranges(seed, lay, (x, y) => calm(x, y) * topward(x, y), W, H) : null;
     const away = { x: (peak.x - sx) / PEAK_AWAY, y: (peak.y - sy) / PEAK_AWAY };
     const peakEnd = { x: peak.x + away.x * PEAK_RIDGE, y: peak.y + away.y * PEAK_RIDGE };
-    const isleEnds = [-1, 1].map((k) => ({ x: islePeak.x - out.y * isl.ridge * k, y: islePeak.y + out.x * isl.ridge * k }));
+    const isleLine = ridgeLine(map, isle, out, isl);
     const far = (this.far = map >= 7 ? placeFar(seed, map, W, this.start, out, isle) : null);
-    const { peakAway: fpa, ridge: fr, size: farSize } = fsh;
-    const farPeak = far && { x: far.x + far.out.x * fpa, y: far.y + far.out.y * fpa };
-    const farEnds = far && [-1, 1].map((k) => ({ x: farPeak!.x - far.out.y * fr * k, y: farPeak!.y + far.out.x * fr * k }));
-    const toFarPeakAt = (x: number, y: number) => (farEnds ? toRidge(x, y, farEnds[0], farEnds[1]) : Infinity);
+    const farSize = fsh.size, farLine = far && ridgeLine(map, far, far.out, fsh);
+    const toFarPeakAt = (x: number, y: number) => (farLine ? toLine(x, y, farLine) : Infinity);
     const groveOf = (c: { x: number; y: number }, o: { x: number; y: number }, s: IsleSize) =>
       ({ x: c.x - o.x * s.groveIn - o.y * s.groveSide, y: c.y - o.y * s.groveIn + o.x * s.groveSide, r: s.grove });
     const themes = (this.themes = far && map >= 8 ? drawThemes(seed, map) : null);
@@ -160,11 +170,11 @@ export class World {
     const groves = [far && groveOf(far, far.out, fsh), themes?.other === 'meadow' ? groveOf(isle, out, isl) : null].filter((c) => !!c);
     // From map version 12, the island with the cove theme has a lagoon cut into it.
     const coveIsle = isleWith(themes, 'cove');
-    const cove = coveIsle && (coveIsle === 'other' ? coveOf(seed, isle, out, isl) : coveOf(seed, far!, far!.out, fsh));
+    const cove = coveIsle && (coveIsle === 'other' ? coveOf(seed, map, isle, out, isl) : coveOf(seed, map, far!, far!.out, fsh));
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
     const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
-      ranged ? toRidge(x, y, isleEnds[0], isleEnds[1]) : hypot(x - islePeak.x, y - islePeak.y);
+      ranged ? toLine(x, y, isleLine) : hypot(x - islePeak.x, y - islePeak.y);
 
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
@@ -203,7 +213,7 @@ export class World {
         if (big) h = Math.max(h, OPEN_SEA);
         const t: Terrain = h < 0.3 ? 'water' : h < 0.34 ? 'sand' : h > 0.7 ? 'mountain' : 'grass';
         this.tiles.push({ t, h, tree: 0, conifer: false, rock: 0, crop: 0, field: 0, plant: '', b: 0, col: '' });
-        // Older maps have ore in every mountain. From map 5, only the second island's mountain holds it.
+        // Older maps have ore in every mountain. From map 5, only the outer islands' mountains hold it.
         const rich = map < 5 || this.isleAt(x, y, 0) !== null;
         if (t === 'mountain' && rich) this.ore[y * W + x] = 1;
         if (t === 'water' && cove && this.isleAt(x, y) === coveIsle && cove.past(x, y) < 0) this.cove[y * W + x] = 1;
@@ -212,16 +222,19 @@ export class World {
     if (coveIsle) sinkSpecks(this, coveIsle);
     const pines = isleWith(themes, 'pines');
     if (pines) raiseCliffs(this, pines === 'other' ? { ...isle, out } : far!);
+    // From map version 14, the guaranteed grove and quarry are levelled first, then ground the
+    // peaks hide turns to bare rock, so no tree or boulder grows there.
+    if (map >= HIDE_FROM) {
+      this.level(grove, quarry);
+      bareHidden(this, (x, y) => this.isleAt(x, y, 0) !== null);
+    }
 
     // Guaranteed starting resources so every seed is playable.
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
         const tile = this.at(x, y);
         const near = hypot(x - sx, y - sy);
-        if (hypot(x - grove.x, y - grove.y) < GROVE || hypot(x - quarry.x, y - quarry.y) < QUARRY) {
-          tile.t = 'grass';
-          tile.h = Math.min(0.6, Math.max(0.42, tile.h));
-        }
+        if (map < HIDE_FROM) this.levelTile(x, y, grove, quarry);
         // The foot of the guaranteed mountain stays clear, so a stone mine fits there.
         const footOf = (isle: IsleName) => (themes?.[isle] === 'pines' ? PINE_FOOT(map) : ISLE_FOOT);
         const foot = (landmarks && toPeakAt(x, y) < PEAK_SIZE + 2.5) || (map >= 5 && toIslePeakAt(x, y) < footOf('other')) ||
@@ -259,15 +272,29 @@ export class World {
     this.sowPlants(seed);
   }
 
+  // The guaranteed grove and quarry are always grass, at a height where things grow.
+  private levelTile(x: number, y: number, grove: { x: number; y: number }, quarry: { x: number; y: number }) {
+    if (hypot(x - grove.x, y - grove.y) >= GROVE && hypot(x - quarry.x, y - quarry.y) >= QUARRY) return;
+    const tile = this.at(x, y);
+    tile.t = 'grass';
+    tile.h = Math.min(0.6, Math.max(0.42, tile.h));
+  }
+
+  private level(grove: { x: number; y: number }, quarry: { x: number; y: number }) {
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++) this.levelTile(x, y, grove, quarry);
+  }
+
   // Where the guaranteed mountain and the head of the bay sit, in the HQ's land. They sit on
-  // opposite sides, away from the guaranteed grove and quarry. They take their own random
+  // opposite sides, away from the guaranteed grove and quarry. From map version 14, the mountain
+  // always sits up the screen from the start, and the bay down it. They take their own random
   // numbers, so the rest of the map keeps its shape.
-  private landmarks(seed: number) {
+  private landmarks(seed: number, map: number) {
     const rand = rng(seed ^ 0x1a4d);
     const flip = rand() < 0.5;
     const side = (centre: number) => ((centre + (rand() - 0.5) * 60) * Math.PI) / 180;
-    const peakAngle = side(flip ? 55 : 235);
-    const bayAngle = side(flip ? 235 : 55);
+    const [peakSide, baySide] = map >= TOP_RIDGES_FROM ? [225, 45] : flip ? [55, 235] : [235, 55];
+    const peakAngle = side(peakSide);
+    const bayAngle = side(baySide);
     const { x: sx, y: sy } = this.start;
     const out = { x: cos(bayAngle), y: sin(bayAngle) };
     return {

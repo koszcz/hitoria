@@ -71,3 +71,10 @@ export function toRidge(x: number, y: number, a: Point, b: Point) {
   const t = len ? Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / len)) : 0;
   return hypot(x - a.x - dx * t, y - a.y - dy * t);
 }
+
+// How far (x, y) is from the ridge line that runs straight from point to point of `line`.
+export function toLine(x: number, y: number, line: Point[]) {
+  let d = Infinity;
+  for (let i = 1; i < line.length; i++) d = Math.min(d, toRidge(x, y, line[i - 1], line[i]));
+  return d;
+}

@@ -13,8 +13,11 @@ export const COVE_FROM = 12;
 // its middle line, as a part of the island's size.
 const BASIN_WIDE = 2.3;
 const BASIN_LONG = 0.2;
-// The mouth that joins the basin to the open sea: how wide it is from its middle line.
-const MOUTH = 0.6;
+// The mouth that joins the basin to the open sea: how wide it is from its middle line. From map
+// version 14, it is a little wider, so its water always joins up from side to side, even where
+// the mouth runs on a slant across the tiles.
+const MOUTH = (map: number) => (map >= WIDE_MOUTH_FROM ? 0.75 : 0.6);
+export const WIDE_MOUTH_FROM = 14;
 // Where the middle of the basin lies, as a part of the island's size: how far out from the
 // island's centre towards the seaward shore, and how far off to one side.
 const OUT = 0.5;
@@ -32,8 +35,8 @@ export interface Cove {
 }
 
 // The lagoon on an island with centre `c`, facing out to sea along `out`, with shape `s`. It lies
-// to one side of the island's middle, drawn from the seed.
-export function coveOf(seed: number, c: { x: number; y: number }, out: { x: number; y: number }, s: IsleSize): Cove {
+// to one side of the island's middle, drawn from the seed. `map` is the generator version.
+export function coveOf(seed: number, map: number, c: { x: number; y: number }, out: { x: number; y: number }, s: IsleSize): Cove {
   const side = (rng(seed ^ 0xc0fe)() < 0.5 ? 1 : -1) * s.size * SIDE;
   const mid = s.size * OUT, long = s.size * BASIN_LONG;
   const past = (x: number, y: number) => {
@@ -41,7 +44,7 @@ export function coveOf(seed: number, c: { x: number; y: number }, out: { x: numb
     // u runs from the basin's middle out to sea, v across the lagoon.
     const u = dx * out.x + dy * out.y - mid, v = dx * -out.y + dy * out.x - side;
     const basin = hypot(v, u - Math.max(-long, Math.min(long, u))) - BASIN_WIDE;
-    const mouth = hypot(v, Math.min(0, u)) - MOUTH;
+    const mouth = hypot(v, Math.min(0, u)) - MOUTH(map);
     return Math.min(basin, mouth);
   };
   const carve = (x: number, y: number, h: number) => {

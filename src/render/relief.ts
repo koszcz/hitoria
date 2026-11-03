@@ -1,6 +1,9 @@
 // The fine ground the terrain mesh draws: four points per tile side, with sharp alpine ridges,
 // peaks and rock bands on the mountains. It also works out where rock, snow and deep water show.
 
+import { groundHeight } from './elevation';
+import { hypot } from '../math/exact';
+
 export const FINE = 4;
 
 // Crags start on the foothills and reach full size on the mountain proper.
@@ -63,6 +66,23 @@ export function crag(x: number, y: number, base: number, tall = 1) {
   return w * (LIFT * above * tall + ridges + 0.4 * (terrace(v) - v));
 }
 
+// The smooth height at each tile corner of a `w` by `h` map, (w + 1) by (h + 1): the average
+// ground height of the tiles that meet there. `at` gives the map elevation of the tile at (x, y).
+export function cornerHeights(w: number, h: number, at: (x: number, y: number) => number) {
+  const c = new Float32Array((w + 1) * (h + 1));
+  for (let j = 0; j <= h; j++)
+    for (let i = 0; i <= w; i++) {
+      let sum = 0, n = 0;
+      for (const [x, y] of [[i - 1, j - 1], [i, j - 1], [i - 1, j], [i, j]])
+        if (x >= 0 && y >= 0 && x < w && y < h) {
+          sum += groundHeight(at(x, y));
+          n++;
+        }
+      c[j * (w + 1) + i] = n ? sum / n : -1;
+    }
+  return c;
+}
+
 export class Relief {
   readonly n: number; // points along one row
   readonly heights: Float32Array;
@@ -85,7 +105,7 @@ export class Relief {
       for (let i = 0; i < n; i++) {
         const x = i / FINE, y = j / FINE;
         const base = corner(corners, w, x, y);
-        const tall = home ? smooth(clamp01((Math.hypot(x - home.x, y - home.y) - NEAR) / (FAR - NEAR))) : 1;
+        const tall = home ? smooth(clamp01((hypot(x - home.x, y - home.y) - NEAR) / (FAR - NEAR))) : 1;
         H[j * n + i] = base + crag(x, y, base, tall);
       }
     this.top = H.reduce((a, b) => Math.max(a, b), -Infinity);

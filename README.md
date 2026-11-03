@@ -7,7 +7,7 @@ A peaceful 2.5D settlement builder for the browser, inspired by *The Settlers*.
 - **Changelog:** https://koszcz.github.io/hitoria/changelog.html shows what changed, with screenshots.
 - **Backlog dashboard:** https://koszcz.github.io/hitoria/backlog.html shows the ideas and what is being built.
 
-![A village around the HQ keep, beside a bay, with a rocky, sharp-peaked mountain in front of it and boulders all around. Foam runs along the beach and ducks paddle on the bay. In the village are huts, a farm with its fields of grain, a windmill, a well, two lookout towers, a hunter's lodge, a geologist's hut, a smelter and a toolmaker's workshop, with worn dirt paths between them. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left. At the top right, the clock shows winter, day 5](docs/screenshot.jpg)
+![A village around the HQ keep, above a bay. Across the bay, the sharp, rocky peaks of the second island's ridge rise at the bottom of the picture, and boulders lie around the village. In the village are huts, a farm with its fields, a windmill, a well, two lookout towers, a stone mine and other workshops, with worn dirt paths between them. It is early winter, so the first snow falls and the leafy trees are bare. The current goal shows at the top left. At the top right, the clock shows winter, day 5](docs/screenshot.jpg)
 
 ## How to play
 
@@ -81,7 +81,9 @@ first, the wish just passes, with no penalty, and a new one comes.
    - Fishers catch about half as many fish in winter, so store bread and meat too.
    - Your starting land always has a mountain for a stone mine and a bay for a fisher. Beyond it,
      mountains run in long ridges, with grassy valleys between them. They rise into sharp,
-     snowy peaks, like the Alps. Mountains near the HQ stay lower, so they never hide it.
+     snowy peaks, like the Alps. Mountains near the HQ stay lower, so they never hide it. On new
+     maps, the mountains stand in the upper part of each island on the screen, and any ground a
+     peak hides from view is bare rock, so no grass to build on hides behind a mountain.
    - Coal and iron ore lie only in the mountains of the second island and the far island. The
      mountains on your home island hold stone only. Coal and iron mines go next to the island's mountain, which has
      rust-brown rock with dark seams. A smelter melts their iron ore and coal into iron.
@@ -168,14 +170,13 @@ island. Goals and wishes still count the goods on every island.
 
 Once the ship is back, you can sail a second time, to the island nobody has settled yet. It takes another 5
 settlers and the same goods. The far island has a mountain ridge with coal and iron ore too, and
-all of its ore is rich, so every mine there digs twice as fast. Its ridge runs across the island,
-towards the shore that faces your home island, where the ship lands, so your mines fit near the landing. Walk around
-the ends of the ridge to reach the meadows behind it. Each island gets one crew, so you can sail
-twice in all.
+all of its ore is rich, so every mine there digs twice as fast. Each island gets one crew, so you
+can sail twice in all.
 
-The second island has a mountain ridge with coal and iron ore in it. The ridge runs across the
-island, towards the shore that faces your home island, with most of the meadows and forest behind it. Build your coal and iron mines at its foot, and
-walk around the ends of the ridge to reach the far side.
+The second island has a mountain ridge with coal and iron ore in it too. On both islands, the
+ridge bends along the shore at the top of the screen, with the sea behind it. The meadows and
+forest lie in front of it, in full view. The ship lands on a free shore with ore close by, so your
+coal and iron mines fit in the land around the new harbour. Build them at the foot of the ridge.
 
 ### Trading with the trade ship
 
@@ -402,7 +403,8 @@ sail only once. Maps from before island themes keep islands with no theme. Maps 
 only have the pine and meadow themes. Maps from before the
 bigger map stay 64 by 64 tiles. New maps are 96 by 96, with wide open sea around the land. Maps
 from before the bigger second island keep a second island about 13 tiles across. Maps from before
-the bigger far island keep a far island about 13 tiles across.
+the bigger far island keep a far island about 13 tiles across. Maps from before mountains moved
+to the top of the screen keep their ridges where they were, and the ground behind a peak stays grass.
 
 ## Graphics
 
@@ -437,7 +439,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | File | What it does |
 | --- | --- |
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
-| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine, meadow and cove themes of the two islands (`themes.ts`), the hidden cove's lagoon (`cove.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, and where the far island sits (`isle.ts`) |
+| `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine, meadow and cove themes of the two islands (`themes.ts`), the hidden cove's lagoon (`cove.ts`), the ground that peaks hide from the camera, which turns to bare rock (`hidden.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, where the far island sits and where each island's ridge runs (`isle.ts`) |
 | `src/math/` | Sine, cosine and distance that give the same result on every computer, so a seed always makes the same map (`exact.ts`) |
 | `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, harbour boats (`boats.ts`), what each harbour wants (`harbourwants.ts`) and the boat trips that fetch it (`boattrips.ts`), the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and the islands you can still sail to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`), the warning before a woodcutter runs out of trees and which buildings take a forester's ground (`forestry.ts`), the check that a new building leaves a path to every other building (`cutoff.ts`), what each building costs, with the rising House price (`prices.ts`), and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |

@@ -10,7 +10,8 @@ import { dockAt } from './harbour';
 import { COLONY_FOOD_NOTE } from './harbourwants';
 import { addPool, homeOf, LANDING_LAND, poolOf } from './homes';
 import { landable, landings, onFar, openIsles, voyages, type Isle } from './isles';
-import { computeTerritory } from './land';
+import { computeTerritory, nearOre } from './land';
+import { TOP_RIDGES_FROM } from '../land/isle';
 import { isStore } from './stores';
 import type { Building, Ship } from './types';
 import { walkDist } from './walking';
@@ -22,6 +23,10 @@ export const SAIL_CARGO: Partial<Bag> = { plank: 12, stone: 8, tool: 6 }; // too
 export const SHIP_SPEED = 1.2; // tiles per second
 const ROOM = 24; // open tiles the settlers need to reach from their harbour's doorstep
 const CLEAR = 2.5; // how far around their harbour the settlers fell trees and break boulders when they land
+// From map version 14, the mountains sit along an island's far shore, away from the sea lane, so
+// the ship lands where coal and iron lie within ORE_NEAR tiles, if such a shore is free.
+const ORE_NEAR = 4;
+const oreFirst = (g: Game) => g.world.map >= TOP_RIDGES_FROM;
 
 const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
 
@@ -87,7 +92,9 @@ export function landingSpot(g: Game, h: Building, to?: Isle): { land: P; dock: P
       if (home[y * W + x] >= 0 || !freeShore(g, x, y) || !landable(g, x, y)) continue;
       if (to && g.world.far && g.world.isleAt(x, y) !== to) continue;
       const dock = dockAt(g, x, y);
-      const d = dock ? sea[dock.y * W + dock.x] : -1;
+      // From map version 14, a shore with ore close by comes first, so mines fit in the new land.
+      const sail = dock ? sea[dock.y * W + dock.x] : -1;
+      const d = sail < 0 ? -1 : sail + (oreFirst(g) && !nearOre(g, x, y, ORE_NEAR) ? W * H : 0);
       if (d < 0 || d >= bd || room(g, x, y) < ROOM) continue;
       best = { land: { x, y }, dock: dock! };
       bd = d;

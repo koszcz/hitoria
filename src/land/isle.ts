@@ -45,6 +45,30 @@ export const BIG_FAR: IsleSize = { size: 13, away: 0, peakAway: -2, ridge: 6, gr
 export const HUGE_ISLES_FROM = 13;
 export const HUGE_ISLE: IsleSize = { size: 17.5, away: 24, peakAway: -6.5, ridge: 9, groveIn: -8, groveSide: 5, grove: 6 };
 
+// From map version 14, both islands' ridges bend along the island's far shore, at the top of the
+// screen, so the sea lies behind them and the rest of the island lies in front, in full view. The
+// middle of the ridge sits TOP_MID tiles up the screen from the island's centre. Its two ends sit
+// TOP_ENDS tiles up the screen, `ridge` tiles out to each side, so the ridge follows the shore.
+export const TOP_RIDGES_FROM = 14;
+const TOP_MID = 10;
+const TOP_ENDS = 6;
+// One tile up the screen, and one tile to the right of the screen, in map tiles. The camera looks
+// from the bottom right of the map towards the top left.
+export const UP = { x: -Math.SQRT1_2, y: -Math.SQRT1_2 };
+export const RIGHT = { x: Math.SQRT1_2, y: -Math.SQRT1_2 };
+
+type Point = { x: number; y: number };
+
+// The points the ridge of an island with centre `c` and shape `s` runs through, on a map of
+// generator version `map`. Before map version 14, it runs straight across the island, at right
+// angles to `out`, `s.peakAway` tiles past the centre.
+export function ridgeLine(map: number, c: Point, out: Point, s: IsleSize): Point[] {
+  const at = (up: number, right: number) => ({ x: c.x + UP.x * up + RIGHT.x * right, y: c.y + UP.y * up + RIGHT.y * right });
+  if (map >= TOP_RIDGES_FROM) return [at(TOP_ENDS, -s.ridge), at(TOP_MID, 0), at(TOP_ENDS, s.ridge)];
+  const top = { x: c.x + out.x * s.peakAway, y: c.y + out.y * s.peakAway };
+  return [-1, 1].map((k) => ({ x: top.x - out.y * s.ridge * k, y: top.y + out.x * s.ridge * k }));
+}
+
 // The shape of the second island on a map of generator version `map`.
 export const isleShape = (map: number) => (map >= HUGE_ISLES_FROM ? HUGE_ISLE : map >= BIG_ISLE_FROM ? BIG_ISLE : SMALL_ISLE);
 // The shape of the far island on a map of generator version `map`.

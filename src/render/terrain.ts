@@ -3,8 +3,7 @@ import * as THREE from 'three';
 import { World } from '../world';
 import { ART } from '../art';
 import { grade, hash } from './kit';
-import { groundHeight } from './elevation';
-import { FINE, Relief } from './relief';
+import { FINE, Relief, cornerHeights } from './relief';
 import { grainTexture, rippleNormals } from './textures';
 import { seasonGround } from './seasonal';
 import { wornLook } from '../game/wear';
@@ -44,18 +43,8 @@ export class Terrain {
   build(world: World) {
     this.world = world;
     const { w: W, h: H } = world;
-    const C = (this.corners = new Float32Array((W + 1) * (H + 1)));
+    const C = (this.corners = cornerHeights(W, H, (x, y) => world.at(x, y).h));
     this.cornerCol = new Float32Array((W + 1) * (H + 1) * 3);
-    for (let j = 0; j <= H; j++)
-      for (let i = 0; i <= W; i++) {
-        let sum = 0, n = 0;
-        for (const [x, y] of [[i - 1, j - 1], [i, j - 1], [i - 1, j], [i, j]])
-          if (world.inside(x, y)) {
-            sum += groundHeight(world.at(x, y).h);
-            n++;
-          }
-        C[j * (W + 1) + i] = n ? sum / n : -1;
-      }
 
     if (this.mesh) {
       this.scene.remove(this.mesh, this.water);
