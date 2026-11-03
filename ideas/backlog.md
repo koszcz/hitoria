@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *Fun 3 · Effort M · Needs: Harbour boats · Branch: worktree-agent-a85c6d88a30da02ba*
+Nothing right now.
 
 ## Next
 
@@ -62,6 +62,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *2026-11-03*
 - **Harbour boats**: a harbour's panel has a "Build a boat" button. Carriers bring the planks, and a small boat ties up at its dock. Each harbour, home or colony, can have one boat. *2026-11-03*
 - **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *2026-11-02*
 - **Warn before trees run out**: the Woodcutter card says trees run out without a Forester nearby. A message warns when a woodcutter with no Forester in reach has 3 or fewer grown trees left. When you place a building on a forester's planting ground, the placement hint says it takes room from the forester. *2026-11-02*

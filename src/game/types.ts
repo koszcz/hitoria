@@ -29,7 +29,24 @@ export interface Building {
   level?: number; // 2 once the player has upgraded the building, else 1
   ate?: Good; // the kind of food the house, worker or miner ate last, for the mixed food bonus
   boat?: number; // a harbour's boat: the planks put in so far, from 0 once ordered to BOAT_PLANKS once it is finished
+  wants?: Partial<Bag>; // a harbour's wants: how many of each good its island should keep, which boats fetch from other islands
+  trip?: BoatTrip; // where a harbour's boat is sailing, while it is away from its dock
   feast?: { kind?: FeastKind; at?: number; eaten?: boolean }; // a Feast Square's ordered feast: its kind (a wedding if none), the dusk it begins, once the food is in, and whether the food is served
+}
+
+// A boat's trip to fetch goods: it sails to the harbour `from`, loads good `g` there, brings it to
+// the harbour `to`, then sails back to its own dock.
+export interface BoatTrip {
+  from: number; // the harbour it fetches the goods from, on another island
+  to: number; // the harbour that wants them
+  g: Good;
+  n: number; // how many it means to fetch
+  load: number; // how many are on board
+  leg: 'out' | 'load' | 'carry' | 'home';
+  x: number;
+  y: number;
+  path: P[]; // the water tiles still ahead
+  wait: number; // seconds spent loading so far
 }
 
 // One trip for a carrier: fetch good `g` from building `from` and bring it to building `to`.

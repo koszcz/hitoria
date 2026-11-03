@@ -22,6 +22,9 @@ export { HOUSE_EXTRA, UPGRADE_COST, UPGRADE_PACE, houseSize, upgradable, upgrade
 export { MEAL, SELF_FED, hungryWorker } from './meals';
 export { FEAST_FOOD, FEAST_NEWCOMERS } from './feast';
 export { BOAT_PLANKS, hasBoat } from './boats';
+export { BOAT_LOAD } from './boattrips';
+export { WANT_MAX, WANT_STEP, wantOf } from './harbourwants';
+export { isleOf } from './islandstock';
 export { BLESSED_SPEED, blessed } from './blessing';
 export { canStop } from './stopwork';
 export { KEEPSAKES, bringKeepsake, earnedKeepsakes, type Keepsake, type KeepsakeId } from './keepsakes';

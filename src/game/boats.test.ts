@@ -2,9 +2,7 @@
 import { describe, expect, test } from 'bun:test';
 import { BOAT_PLANKS } from './boats';
 import { Game } from './game';
-import { harbourGame, run, runUntil } from './test-helpers';
-
-const landed = (g: Game) => [...g.buildings.values()].find((b) => b.landed);
+import { colonyGame, harbourGame, run, runUntil } from './test-helpers';
 
 describe('ordering a boat', () => {
   test('a boat costs 6 planks', () => {
@@ -86,15 +84,6 @@ describe('building the boat', () => {
 });
 
 describe('a boat for a colony', () => {
-  function colonyGame() {
-    const { g, h } = harbourGame();
-    expect(g.sail(h)).toBeNull();
-    runUntil(g, () => !!landed(g), 200);
-    const colony = landed(g)!;
-    runUntil(g, () => colony.built, 300);
-    return { g, h, colony };
-  }
-
   test('the colony harbour builds its own boat from its own planks', () => {
     const { g, colony } = colonyGame();
     expect(g.canBuildBoat(colony)).toBeNull();

@@ -110,6 +110,17 @@ export function harbourGame(seed = 1, built = true) {
   throw new Error('no harbour spot');
 }
 
+// A game whose settlers have sailed from harbour `h` and landed: `colony` is their harbour on the
+// other island, finished and storing goods.
+export function colonyGame(seed = 1) {
+  const { g, h } = harbourGame(seed);
+  expect(g.sail(h)).toBeNull();
+  runUntil(g, () => [...g.buildings.values()].some((b) => b.landed), 200);
+  const colony = [...g.buildings.values()].find((b) => b.landed)!;
+  runUntil(g, () => colony.built, 300);
+  return { g, h, colony };
+}
+
 // Move the game's clock forward to the next moment of day fraction `f`, without running anything.
 export function setClock(g: Game, f: number) {
   const now = clock(g.time);

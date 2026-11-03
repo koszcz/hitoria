@@ -1,4 +1,5 @@
-// Harbour boats: the small boat a harbour built, tied up across the end of its pier, bobbing on the water.
+// Harbour boats: the small boat a harbour built, tied up across the end of its pier, bobbing on the
+// water, or sailing to fetch goods from another island.
 import * as THREE from 'three';
 import { hasBoat, type Game } from '../game';
 import { add } from './kit';
@@ -11,6 +12,7 @@ const PAST_DOCK = 0.75; // how far past the end of the pier the boat lies, in ti
 
 export class HarbourBoats {
   private boats = new Map<number, THREE.Group>();
+  private heading = new Map<number, number>(); // the way each sailing boat last pointed
 
   constructor(private scene: THREE.Scene) {}
 
@@ -27,11 +29,25 @@ export class HarbourBoats {
         this.boats.set(b.id, m);
         this.scene.add(m);
       }
-      const dx = dock.x - b.x, dz = dock.y - b.y, len = Math.hypot(dx, dz) || 1;
-      const x = dock.x + 0.5 + (dx / len) * PAST_DOCK, z = dock.y + 0.5 + (dz / len) * PAST_DOCK;
+      const t = b.trip;
+      let x: number, z: number, turn: number;
+      if (t) {
+        // Out on a trip: on the water, pointing at the next tile ahead.
+        x = t.x + 0.5;
+        z = t.y + 0.5;
+        const next = t.path[0];
+        if (next && (next.x !== t.x || next.y !== t.y)) this.heading.set(b.id, Math.atan2(next.x - t.x, next.y - t.y));
+        turn = this.heading.get(b.id) ?? 0;
+      } else {
+        // Across the end of the pier.
+        const dx = dock.x - b.x, dz = dock.y - b.y, len = Math.hypot(dx, dz) || 1;
+        x = dock.x + 0.5 + (dx / len) * PAST_DOCK;
+        z = dock.y + 0.5 + (dz / len) * PAST_DOCK;
+        turn = Math.atan2(dx, dz) + Math.PI / 2;
+        this.heading.delete(b.id);
+      }
       m.position.set(x, SEA + Math.sin(now * 1.8 + b.id) * 0.02, z);
-      // Across the end of the pier, rocking gently.
-      m.rotation.set(Math.sin(now * 1.4 + b.id) * 0.05, Math.atan2(dx, dz) + Math.PI / 2, Math.sin(now * 1.2 + b.id) * 0.04);
+      m.rotation.set(Math.sin(now * 1.4 + b.id) * 0.05, turn, Math.sin(now * 1.2 + b.id) * 0.04); // rocking gently
     }
     for (const [id, m] of this.boats)
       if (!seen.has(id)) {

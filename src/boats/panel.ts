@@ -1,7 +1,8 @@
 // The part of a harbour's panel about its boat: the "Build a boat" button, the planks the boat
-// still needs while it is built, and a line once it is tied up at the dock.
+// still needs while it is built, and a line once it is tied up at the dock or out on a trip.
 import { BOAT_PLANKS, Building, Game } from '../game';
 import { getLang, goodName, tr } from '../i18n';
+import { tripLine } from './wants';
 
 const EN = {
   head: '⛵ Boat',
@@ -28,6 +29,6 @@ export function boatRows(g: Game, b: Building): string {
     rows.push(`<button class="sail" data-act="boat"${why ? ' disabled' : ''}>${x.button}</button>`);
   } else if (b.boat < BOAT_PLANKS) {
     rows.push(`<div><span class="good plank"></span>${goodName('plank')}: ${b.boat} / ${BOAT_PLANKS}</div>`);
-  } else rows.push(`<div>${x.done}</div>`);
+  } else rows.push(`<div>${b.trip ? tripLine(g, b.trip) : x.done}</div>`);
   return rows.join('');
 }

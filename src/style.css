@@ -220,6 +220,11 @@ canvas {
 #info button.chip:hover { border-color: rgba(255, 226, 160, 0.6); }
 #info button.chip.special { border-color: rgba(255, 210, 90, 0.55); }
 #info button.chip.on { border-color: var(--gold); background: rgba(40, 60, 110, 0.9); }
+#info .wants { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 8px; font-variant-numeric: tabular-nums; }
+#info .wants > span { display: flex; align-items: center; gap: 3px; }
+#info .wants > span.none .good { opacity: 0.5; }
+#info .wants button.chip { min-width: 20px; justify-content: center; }
+#info .wants button.chip:disabled { opacity: 0.35; cursor: default; }
 #info .deal { margin: 8px 0 0; font-weight: 600; font-size: 14px; }
 
 #info .bar { height: 6px; background: rgba(0, 0, 0, 0.4); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }

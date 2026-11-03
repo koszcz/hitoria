@@ -7,6 +7,7 @@ import { note } from './chronicle';
 import { addBuilding } from './construction';
 import type { Game } from './game';
 import { dockAt } from './harbour';
+import { COLONY_FOOD_NOTE } from './harbourwants';
 import { addPool, homeOf, LANDING_LAND, poolOf } from './homes';
 import { landable, landings, onFar, openIsles, voyages, type Isle } from './isles';
 import { computeTerritory } from './land';
@@ -180,6 +181,7 @@ function land(g: Game, ship: Ship) {
   note(g, { what: 'landed', isle: onFar(g, x, y) ? 'far' : 'other' });
   if (onFar(g, x, y)) g.toasts.push('⚓ Your settlers have landed on the far island');
   else g.toasts.push('⚓ Your settlers have landed on the other island');
+  g.toasts.push(COLONY_FOOD_NOTE);
   return true;
 }
 

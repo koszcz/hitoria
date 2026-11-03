@@ -155,6 +155,9 @@ The new harbour is the island's home, like the HQ. Its idle settlers wait there 
 to build, work and carry goods. Buildings on the island get their goods from it and bring what
 they make back to it. Settlers never cross the sea on foot.
 
+When settlers land, a message says the colony needs food. Build a Fisher's Hut there, or let a
+boat bring fish (see "Fetching goods by boat").
+
 Each island uses only the goods in its own stores. The goods bar and the build menu show the goods
 of the island the camera looks at, and name that island, such as "Second island". Pan to another
 island to see its goods. Over open sea, or over an island with no store yet, they show the home
@@ -203,7 +206,25 @@ Each harbour, at home or on a colony, can build one small boat.
    harbour go in first. The panel counts the planks as they come in.
 
 Once the last plank is in, a message says the boat has tied up, and you see it at the end of the
-pier. Boats don't sail yet.
+pier.
+
+### Fetching goods by boat
+
+Each harbour's panel has a **Wants** list. It sets how many of each good the harbour's island
+should keep.
+
+1. Click a finished harbour.
+2. Under **Wants**, press **+** next to a good. Each press adds 5, up to 50. Press **−** to lower it.
+3. Build a boat at any harbour, if you have none yet.
+
+While an island has fewer of a good than its harbour wants, a free boat sails to another island
+that can spare it. Carriers there bring the goods to that island's harbour, and the boat loads up to
+10 goods. It brings them to the harbour that wants them, then sails home to its own dock. Boats keep
+sailing until the island has what it wants.
+
+- An island never sends goods below what its own harbour wants.
+- A boat waits at most 60 seconds for its load, then sails with what it has.
+- The boat's line in the panel says where it is going and what it carries.
 
 ### Upgrading buildings
 
@@ -413,7 +434,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine, meadow and cove themes of the two islands (`themes.ts`), the hidden cove's lagoon (`cove.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, and where the far island sits (`isle.ts`) |
 | `src/math/` | Sine, cosine and distance that give the same result on every computer, so a seed always makes the same map (`exact.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, harbour boats (`boats.ts`), the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and the islands you can still sail to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`), the warning before a woodcutter runs out of trees and which buildings take a forester's ground (`forestry.ts`) and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, harbour boats (`boats.ts`), what each harbour wants (`harbourwants.ts`) and the boat trips that fetch it (`boattrips.ts`), the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and the islands you can still sail to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`), the warning before a woodcutter runs out of trees and which buildings take a forester's ground (`forestry.ts`) and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea and in the hidden cove (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, harbour boats (`boats.ts`), the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`) and on their walls (`walllight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -424,7 +445,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/ui.ts` | HUD, goal panel and info panel |
 | `src/sailinfo.ts` | The harbour panel's "Sail to settle" part, with a Sail button for each island nobody has settled |
 | `src/tradeinfo.ts` | The harbour panel's "Trade ship" part |
-| `src/boats/` | The harbour panel's "Boat" part (`panel.ts`) |
+| `src/boats/` | The harbour panel's "Boat" part (`panel.ts`) and its "Wants" list, with the boat's trip line (`wants.ts`) |
 | `src/upgradeinfo.ts` | The "Upgrade" part of a hut's or house's panel |
 | `src/stopinfo.ts` | The "Stop work" and "Resume work" button in a hut's panel |
 | `src/rateinfo.ts` | The "In the last minute" part of a building's panel: goods made and used |
@@ -489,7 +510,8 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 - Goods are stored at the HQ, in storehouses and in harbours.
 - A harbour stands on the shore, up to 4 tiles from open water. A wooden pier runs out to its dock.
   A ship sails from it to settle the second island, and later the far island. A trade ship visits it each
-  morning and leaves before sunset. Each harbour can build one boat from 6 planks.
+  morning and leaves before sunset. Each harbour can build one boat from 6 planks. Boats fetch the
+  goods a harbour wants from your other islands, up to 10 a trip.
 
 There are no roads. A carrier takes one good from the building that has it and walks it the
 quickest way across the grass, all the way to the building that needs it. Spare goods go to the

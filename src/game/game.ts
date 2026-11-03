@@ -34,6 +34,8 @@ import { canUpgrade, upgrade } from './upgrades';
 import { resumeWork, stopWork } from './stopwork';
 import { canFeast, orderFeast, stepFeasts } from './feast';
 import { canBuildBoat, orderBoat, stepBoats } from './boats';
+import { planTrips, stepTrips } from './boattrips';
+import { setWant } from './harbourwants';
 import type { RateNote } from './rates';
 import { noteStock, type StockSample } from './stockhistory';
 import type { Animal, AnimalKind, Building, FeastKind, Settler, Ship, Trader } from './types';
@@ -247,6 +249,11 @@ export class Game {
     return orderBoat(b);
   }
 
+  // Set how many of good `k` harbour `b` wants its island to keep. Returns why it can't, or null.
+  setWant(b: Building, k: Good, n: number) {
+    return setWant(b, k, n);
+  }
+
   // Demolish the building on tile `t`. Returns why it can't, or null.
   removeAt(t: P) {
     return removeAt(this, t);
@@ -258,6 +265,7 @@ export class Game {
     if (this.dispatchT <= 0) {
       this.dispatchT = 0.25;
       stepBoats(this);
+      planTrips(this);
       moveGoods(this);
       staff(this);
       checkGoals(this);
@@ -287,6 +295,7 @@ export class Game {
     for (const d of this.donkeys.values()) step(this, d, dt);
     for (const a of this.animals.values()) stepAnimal(this, a, dt);
     stepShips(this, dt);
+    stepTrips(this, dt);
     stepTrader(this, dt);
     regrow(this, dt);
   }
