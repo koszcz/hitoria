@@ -27,7 +27,6 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 - **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: send more settlers, let a colony grow its own, or only fix the hint? Refine together with Supply a new colony.*
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: do workers carry their own goods, do sites and the feast jump the queue, or does a stronger hint to build houses do?*
 - **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola). *Fun 1 · Effort M · Open: should a season last a whole number of days, which changes the year's length and winter food, or should only the clock and messages explain it?*
-- **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them. *Fun 2 · Effort M · Open: "keepsake" already names the bonus you take to a new island, so what is this called? Do decorations cost goods or a builder, and do they carry to a new island?*
 
 ## Later
 
@@ -58,6 +57,7 @@ Triaged and ready to build, but not next.
 - **F3 diagnostics fixes**: loading a save clears the snapshot timeline, the "Looks stuck" time keeps counting, and a worker waiting at their own hut is not flagged as stuck. *Fun 1 · Effort S*
 - **Playtest helper fixes**: `playtest.press('trade')` finds the Trade button, harbour spots count nearby water, and `playtest.spots()` skips unreachable boulders, skips tiles that cut off paths and counts free grass for farms. *Fun 1 · Effort S*
 - **Monument text fixes**: the finished Monument's panel says it stands finished instead of "Storing goods", and its card no longer says "Your last goal", since the winter goal comes after it. *Fun 1 · Effort S*
+- **Decorations for granted wishes**: each granted wish unlocks the next decoration in a fixed list: Flower bed, Lantern, Bench, Well-kept tree, Fountain, Statue. Each decoration takes one tile, costs 1 to 3 planks or stone, and goes up like a small building, with carriers and a builder. Settlers walk over decorations, you can place as many as you like, and they do nothing. Unlocked decorations carry to every new island. *Fun 2 · Effort M*
 
 ## Done
 
