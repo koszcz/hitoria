@@ -11,8 +11,8 @@ How to add and triage ideas: see [README.md](README.md).
 At most 3 ideas, in the order we build them.
 
 - **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *Fun 3 · Effort M · Needs: Harbour boats*
+- **Binaural sounds**: work sounds come from where they happen, panned left or right and louder when near. On a computer you hear from the mouse pointer, and on a phone from the middle of the screen. Panning follows each sound's place on the screen, left or right of the listening point. When the pointer leaves the window, you hear from the middle of the screen. *Fun 2 · Effort S*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
-- **Bigger islands**: the second island and the far island each have about half the home island's land, about 32 tiles across, on a 128 by 128 map. Their mountains, forests and ore grow with them, and both islands are the same size. New maps only. *Fun 2 · Effort M*
 
 ## Inbox
 
@@ -34,6 +34,7 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 
 Triaged and ready to build, but not next.
 
+- **Bigger islands**: the second island and the far island each have about half the home island's land, about 32 tiles across, on a 128 by 128 map. Their mountains, forests and ore grow with them, and both islands are the same size. New maps only. *Fun 2 · Effort M*
 - **Mountains never hide good land**: on each island, the mountains sit near the far shore, at the top of the screen, so the sea lies behind them. Any ground a peak still hides from the camera is bare rocky slope, never grass to build on. All three islands get this, and the home mountain still leaves room for a stone mine in the HQ's land. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
 - **Ragged island coasts**: the second island and the far island each have their own outline, with capes, deep bays and sometimes a long arm, instead of a round shore. Each new map gives them a different shape. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
