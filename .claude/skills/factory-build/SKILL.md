@@ -31,8 +31,13 @@ Repeat these steps until step 2 finds no idea to build.
 3. **Send a subagent to build and ship it.** First rename this session to "Fact: <title>" with
    the `set_session_title` tool and the session ID `self`, so the user sees which idea is
    building. Then use the `Agent` tool with `isolation: "worktree"`,
-   so the idea gets its own worktree and branch. Give it the prompt in "Subagent prompt" below,
-   with the idea's title filled in. Wait for its report.
+   so the idea gets its own worktree and branch. Choose its model from the idea's effort score:
+   - Effort S: set `model: "sonnet"`. Small ideas don't need the larger model, and this saves
+     the weekly usage limit.
+   - Effort M: leave `model` out, so the subagent uses the same model as this session.
+
+   Give it the prompt in "Subagent prompt" below, with the idea's title filled in. Wait for its
+   report.
 4. **Check that it shipped.** Run `git fetch origin`. The idea shipped when both are true:
    - The idea is in **Done** in `git show origin/main:ideas/backlog.md`.
    - `git merge-base --is-ancestor <subagent branch> origin/main` succeeds.
