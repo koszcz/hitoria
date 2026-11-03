@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Harbour boats**: a harbour's panel has a "Build a boat" button. Carriers bring the planks, and a small boat ties up at its dock. Each harbour, home or colony, can have one boat. *Fun 1 · Effort S · Branch: worktree-agent-ac9742d42ccdbe38a*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Harbour boats**: a harbour's panel has a "Build a boat" button. Carriers bring the planks, and a small boat ties up at its dock. Each harbour, home or colony, can have one boat. *Fun 1 · Effort S*
 - **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *Fun 3 · Effort M · Needs: Harbour boats*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
 
