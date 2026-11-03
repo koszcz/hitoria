@@ -10,9 +10,9 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Harbour boats**: a harbour's panel has a "Build a boat" button. Carriers bring the planks, and a small boat ties up at its dock. Each harbour, home or colony, can have one boat. *Fun 1 · Effort S*
+- **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *Fun 3 · Effort M · Needs: Harbour boats*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
-- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
-- **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
 
 ## Inbox
 
@@ -24,7 +24,6 @@ Empty.
 
 Triaged, but with open questions. Run `/refine` on one to settle them.
 
-- **Supply a new colony**: the player can send goods and food to a settled island, or the game says plainly that each island needs its own Fisher. Today colony mines wait for food for good. From the 2026-11-02 playtests (Ola, Zosia, Tomek). *Fun 3 · Effort M · Open: ship goods between islands, or only a clear hint? If ships, how does the player choose what goes?*
 - **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: send more settlers, let a colony grow its own, or only fix the hint? Refine together with Supply a new colony.*
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: do workers carry their own goods, do sites and the feast jump the queue, or does a stronger hint to build houses do?*
 - **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola). *Fun 1 · Effort M · Open: should a season last a whole number of days, which changes the year's length and winter food, or should only the clock and messages explain it?*
@@ -37,6 +36,8 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 
 Triaged and ready to build, but not next.
 
+- **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
+- **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
 - **Say where coal and iron lie**: the Coal Mine, Iron Mine and Smelter cards say that coal and iron ore lie only in the mountains of the other islands, before the player builds a Smelter or Toolmaker for nothing. *Fun 1 · Effort S*
 - **Quarry says when boulders are out of reach**: when boulders lie in range but the quarry worker cannot walk to any of them, the quarry panel says "Boulders in range, but none it can reach" instead of "No boulders in range". *Fun 1 · Effort S*
