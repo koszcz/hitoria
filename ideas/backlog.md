@@ -4,13 +4,13 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Unlock buildings step by step**: a new island's build menu starts with the Woodcutter, Quarry, Fisher and House, and each finished building unlocks the next ones in its chain: Woodcutter opens Forester and Sawmill; Sawmill opens Lookout, Storehouse, Farm and Hunter; Farm opens Mill and Well; Mill and Well open Bakery; House opens Feast Square; Quarry opens Stone Mine and Monument; Stone Mine opens Geologist and Harbour; Geologist opens Coal and Iron Mine; both mines open Smelter; Smelter opens Toolmaker. Locked buildings show greyed out, and their card says which building to finish first. A message names each new building as it unlocks, and an unlock stays even if its building is removed. Old saves unlock what their buildings have earned. *Fun 2 · Effort M · Branch: worktree-agent-a4fd7a186cf8573a1*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Unlock buildings step by step**: a new island's build menu starts with the Woodcutter, Quarry, Fisher and House, and each finished building unlocks the next ones in its chain: Woodcutter opens Forester and Sawmill; Sawmill opens Lookout, Storehouse, Farm and Hunter; Farm opens Mill and Well; Mill and Well open Bakery; House opens Feast Square; Quarry opens Stone Mine and Monument; Stone Mine opens Geologist and Harbour; Geologist opens Coal and Iron Mine; both mines open Smelter; Smelter opens Toolmaker. Locked buildings show greyed out, and their card says which building to finish first. A message names each new building as it unlocks, and an unlock stays even if its building is removed. Old saves unlock what their buildings have earned. *Fun 2 · Effort M*
+Empty.
 
 ## Inbox
 
