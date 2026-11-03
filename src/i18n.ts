@@ -10,6 +10,7 @@ import { BOATS_PL } from './lang/boats';
 import { STOPWORK_PL } from './lang/stopwork';
 import { PLACING_PL } from './lang/placing';
 import { TREES_PL } from './lang/trees';
+import { unlockPl } from './lang/unlocks';
 import { GOOD_EN, GOOD_PL } from './lang/goods';
 
 export type Lang = 'en' | 'pl';
@@ -182,7 +183,7 @@ export function tr(msg: string): string {
   if (MESSAGES_PL[msg]) return MESSAGES_PL[msg];
   const goal = msg.match(/^🏆 Goal reached: (.+)$/);
   if (goal) return `🏆 Cel osiągnięty: ${tr(goal[1])}`;
-  const wish = wishToastPl(msg) ?? wishPl(msg);
+  const wish = wishToastPl(msg) ?? wishPl(msg) ?? unlockPl(msg);
   if (wish) return wish;
   // "🪓 Woodcutter's Hut finished" and "🪓 Woodcutter's Hut demolished"
   for (const t of BTYPES) {
@@ -227,6 +228,7 @@ const EN = {
   buildTitle: 'Pick a building to place (B)',
   buildMenu: 'Build',
   buildIt: (name: string) => `🔨 Build ${name}`,
+  lockedBtn: '🔒 Locked',
   close: 'Close (Esc)',
   groups: { wood: 'Wood', stone: 'Stone and ore', food: 'Food', town: 'Town' },
   remove: 'Remove',
@@ -318,6 +320,7 @@ const PL: typeof EN = {
   buildTitle: 'Wybierz budynek do postawienia (B)',
   buildMenu: 'Budowa',
   buildIt: (name: string) => `🔨 Postaw: ${name}`,
+  lockedBtn: '🔒 Zablokowane',
   close: 'Zamknij (Esc)',
   groups: { wood: 'Drewno', stone: 'Kamień i rudy', food: 'Żywność', town: 'Osada' },
   remove: 'Usuń',

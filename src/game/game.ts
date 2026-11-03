@@ -38,6 +38,7 @@ import { planTrips, stepTrips } from './boattrips';
 import { setWant } from './harbourwants';
 import type { RateNote } from './rates';
 import { noteStock, type StockSample } from './stockhistory';
+import { lockedWhy } from './unlocks';
 import type { Animal, AnimalKind, Building, FeastKind, Settler, Ship, Trader } from './types';
 
 export class Game {
@@ -72,6 +73,7 @@ export class Game {
   rich: Uint8Array; // 1 on the mountain tiles that are rich spots; the seed makes them, so saves don't store them
   signs: Uint8Array; // 1 where a geologist has put up a sign
   signed = 0; // bumped whenever a geologist puts up signs
+  finished = new Set<BType>(); // every kind of building finished since the game began; these unlock others
 
   // Internal state for the files in this folder. Code outside src/game/ should not touch it.
   nextId = 1;
@@ -142,6 +144,11 @@ export class Game {
 
   canPlace(type: BType, x: number, y: number) {
     return canPlace(this, type, x, y);
+  }
+
+  // Why the player can't build `type` yet, because it is still locked, or null if they can.
+  locked(type: BType) {
+    return lockedWhy(this, type);
   }
 
   place(type: BType, x: number, y: number) {

@@ -289,7 +289,7 @@ function click(t: P, keep: boolean) {
     return;
   }
   if (ui.placing) {
-    const why = game.canPlace(ui.placing, t.x, t.y);
+    const why = game.locked(ui.placing) ?? game.canPlace(ui.placing, t.x, t.y);
     diag.event(`Place ${ui.placing} at ${t.x},${t.y}: ${why ? `refused (${why})` : 'ok'}`);
     if (why) return ui.toast(why);
     game.place(ui.placing, t.x, t.y);

@@ -1,6 +1,7 @@
 // The build menu: a dialog that lists the buildings by group. Pick one to place it on the map.
 // With a mouse, hovering shows a building's details and a click picks it. On a touch screen the
 // first tap shows the details and a second tap, or the Build button, picks it.
+// A locked building shows greyed out. Its details say what to finish first, and it can't be picked.
 import { BDEFS, priceOf, type Bag, type BType, type Game } from '../game';
 import { T, buildingName } from '../i18n';
 import { GROUPS, canPay } from './groups';
@@ -24,7 +25,7 @@ export function openBuildMenu(o: BuildMenuOptions) {
   const groups = GROUPS.map(({ group, types }) =>
     `<h4>${x.groups[group]}</h4><div class="tiles">` +
     types.map((t) =>
-      `<button class="tile${canPay(stored, priceOf(o.game, t)) ? '' : ' short'}" data-type="${t}">` +
+      `<button class="tile${canPay(stored, priceOf(o.game, t)) ? '' : ' short'}${o.game.locked(t) ? ' locked' : ''}" data-type="${t}">` +
       `<span class="icon">${BDEFS[t].icon}</span><span class="name">${buildingName(t)}</span>` +
       `<span class="cost">${costText(priceOf(o.game, t))}</span></button>`).join('') +
     `</div>`).join('');
@@ -43,7 +44,8 @@ export function openBuildMenu(o: BuildMenuOptions) {
   const show = (t: BType) => {
     shown = t;
     card.innerHTML = cardHtml(o.game, t, stored);
-    go.textContent = x.buildIt(buildingName(t));
+    go.disabled = !!o.game.locked(t);
+    go.textContent = go.disabled ? x.lockedBtn : x.buildIt(buildingName(t));
     for (const b of box.querySelectorAll<HTMLElement>('.tile')) b.classList.toggle('shown', b.dataset.type === t);
   };
   const close = () => {
@@ -51,6 +53,7 @@ export function openBuildMenu(o: BuildMenuOptions) {
     removeEventListener('keydown', onKey, true);
   };
   const pick = (t: BType) => {
+    if (o.game.locked(t)) return;
     close();
     o.pick(t);
   };

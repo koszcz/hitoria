@@ -1,7 +1,7 @@
 // The details for one building: what it makes, why to build it, what it needs and what it costs.
 import { BDEFS, GOODS, priceOf, type Bag, type BType, type Game } from '../game';
 import { buildFacts, buildNow } from '../buildinfo';
-import { T, buildingName } from '../i18n';
+import { T, buildingName, tr } from '../i18n';
 import { keyFor } from './groups';
 
 export const costText = (cost: Partial<Bag>) =>
@@ -14,8 +14,10 @@ export function cardHtml(game: Game, type: BType, stored: Bag = game.stored) {
   const key = keyFor(type);
   const items = (xs: string[]) => xs.map((x) => `<li>${x}</li>`).join('');
   const x = T();
+  const locked = game.locked(type);
   return (
     `<h3><span class="icon">${def.icon}</span>${buildingName(type)}${key ? `<kbd>${key}</kbd>` : ''}</h3>` +
+    (locked ? `<p class="warn locked">🔒 ${tr(locked)}</p>` : '') +
     `<p class="makes">${facts.makes}</p>` +
     (facts.worth.length ? `<h4>${x.whyBuild}</h4><ul>${items(facts.worth)}</ul>` : '') +
     `<h4>${x.whatNeeds}</h4><ul>${items(facts.needs)}</ul>` +

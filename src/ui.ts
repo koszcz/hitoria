@@ -182,7 +182,10 @@ export class UI {
     this.buildBtn.classList.toggle('active', !!type);
   }
 
+  // A locked building can't be picked. The player is told what to finish first.
   setPlacing(type: Tool | null) {
+    const locked = type && type !== 'remove' ? this.game.locked(type) : null;
+    if (locked) return this.toast(locked);
     this.placing = type;
     if (type) this.selected = 0;
     this.refresh();

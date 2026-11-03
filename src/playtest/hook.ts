@@ -39,8 +39,8 @@ function readable(html: string) {
 const HELP = `playtest commands (all return text or plain data):
   state()                 clock, goal, goods, settlers, every building and its status, new messages
   map(x?, y?, r?)         the land around a tile as characters; defaults to the HQ
-  spots(type, n?, x?, y?) free places for a building, nearest first, with what lies around each
-  menu()                  the build menu as a player sees it: name, cost, and whether you can pay
+  spots(type, n?, x?, y?) free places for a building, nearest first, with what lies around each, even while it is locked
+  menu()                  the build menu as a player sees it: name, cost, whether you can pay, and what a locked one needs
   card(type)              a building's card from the build menu: what it does and what it needs
   build(type, x, y)       pick the building and click the tile; returns the messages it caused
   remove(x, y)            use the remove tool on a tile
@@ -104,7 +104,8 @@ export function installPlaytest(d: PlaytestDeps) {
       d.ui.openBuild();
       const tiles = [...document.querySelectorAll<HTMLElement>('#buildmenu .tile')].map((t) => {
         const type = t.dataset.type as BType, cost = Object.entries(priceOf(d.game(), type)).map(([k, n]) => `${k} ${n}`).join(', ');
-        return `${type} (${t.querySelector<HTMLElement>('.name')!.innerText}) · ${cost || 'free'}${t.classList.contains('short') ? ' · cannot pay yet' : ''}`;
+        const locked = d.game().locked(type);
+        return `${type} (${t.querySelector<HTMLElement>('.name')!.innerText}) · ${cost || 'free'}${t.classList.contains('short') ? ' · cannot pay yet' : ''}${locked ? ` · ${locked}` : ''}`;
       });
       document.querySelector<HTMLElement>('#buildmenu .close')?.click();
       return tiles.join('\n');

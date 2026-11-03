@@ -1,6 +1,6 @@
 // Saving a game to plain data and restoring it. The map is rebuilt from the seed; only what changes during play is stored.
 import type { Entry } from './chronicle';
-import { GOODS, Bag, Good, RECIPES, bag } from './defs';
+import { GOODS, Bag, BType, Good, RECIPES, bag } from './defs';
 import { builtStatus } from './construction';
 import type { Game } from './game';
 import { claimFields } from './fields';
@@ -13,6 +13,7 @@ import { oldWants } from './wants';
 import type { WinterState } from './survive';
 import type { WishState } from './wishes';
 import { MAP_VERSION } from '../world';
+import { earnedUnlocks } from './unlocks';
 
 export const SAVE_VERSION = 6;
 
@@ -45,6 +46,7 @@ export interface SaveData {
   wishesGranted?: number; // village wishes met; older saves have none
   feastSeason?: number; // the season the last feast was ordered in; older saves have none
   blessedUntil?: number; // when a religious feast's blessing ends; older saves have none
+  finished?: BType[]; // every kind of building finished, which unlocks others; older saves unlock what their buildings earned
 }
 
 export function save(g: Game): SaveData {
@@ -96,7 +98,7 @@ export function save(g: Game): SaveData {
     signs: [...g.signs.keys()].filter((i) => g.signs[i]),
     chronicle: structuredClone(g.chronicle), tradeVisits: g.tradeVisits, wantedSold: g.wantedSold,
     wish: structuredClone(g.wish), wishesGranted: g.wishesGranted, feastSeason: g.feastSeason,
-    blessedUntil: g.blessedUntil,
+    blessedUntil: g.blessedUntil, finished: [...g.finished],
   };
 }
 
@@ -157,6 +159,8 @@ export function restore(g: Game, d: SaveData) {
   g.wishesGranted = d.wishesGranted ?? 0;
   g.feastSeason = d.feastSeason ?? -1;
   g.blessedUntil = d.blessedUntil ?? 0;
+  if (d.finished) g.finished = new Set(d.finished);
+  else earnedUnlocks(g);
   for (const i of d.signs ?? []) g.signs[i] = 1;
   g.signed++;
   if (d.v < 5) grantTools(g);

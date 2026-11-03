@@ -1,12 +1,14 @@
 import { expect } from 'bun:test';
 import { Game, GOODS, Bag, bag } from './index';
 import { placeSite } from './construction';
+import { unlockAll } from './unlocks';
 import { DAY_LENGTH, clock } from '../seasons/day';
 
 // A game whose land around the HQ is flat grass with no trees or boulders, so tests can
 // place things where they want without depending on how the map generator lays out a seed.
 export function flatGame(seed = 1, radius = 16) {
   const g = new Game(seed);
+  unlockAll(g); // every building, so tests need not finish the chain first; src/game/unlocks.test.ts tests the locks
   const { x: hx, y: hy } = g.hq;
   for (let y = hy - radius; y <= hy + radius; y++)
     for (let x = hx - radius; x <= hx + radius; x++) {

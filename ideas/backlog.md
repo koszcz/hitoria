@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Unlock buildings step by step**: a new island's build menu starts with the Woodcutter, Quarry, Fisher and House, and each finished building unlocks the next ones in its chain: Woodcutter opens Forester and Sawmill; Sawmill opens Lookout, Storehouse, Farm and Hunter; Farm opens Mill and Well; Mill and Well open Bakery; House opens Feast Square; Quarry opens Stone Mine and Monument; Stone Mine opens Geologist and Harbour; Geologist opens Coal and Iron Mine; both mines open Smelter; Smelter opens Toolmaker. Locked buildings show greyed out, and their card says which building to finish first. A message names each new building as it unlocks, and an unlock stays even if its building is removed. Old saves unlock what their buildings have earned. *Fun 2 · Effort M · Branch: worktree-agent-a4fd7a186cf8573a1*
+Nothing right now.
 
 ## Next
 
@@ -57,6 +57,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Unlock buildings step by step**: a new island's build menu starts with the Woodcutter, Quarry, Fisher and House, and each finished building unlocks the next ones in its chain: Woodcutter opens Forester and Sawmill; Sawmill opens Lookout, Storehouse, Farm and Hunter; Farm opens Mill and Well; Mill and Well open Bakery; House opens Feast Square; Quarry opens Stone Mine and Monument; Stone Mine opens Geologist and Harbour; Geologist opens Coal and Iron Mine; both mines open Smelter; Smelter opens Toolmaker. Locked buildings show greyed out, and their card says which building to finish first. A message names each new building as it unlocks, and an unlock stays even if its building is removed. Old saves unlock what their buildings have earned. *2026-11-03*
 - **Ragged island coasts**: the second island and the far island each have their own outline, with capes, deep bays and sometimes a long arm, instead of a round shore. Each new map gives them a different shape. New maps only. *2026-11-03*
 - **Mountains never hide good land**: on each island, the mountains sit near the far shore, at the top of the screen, so the sea lies behind them. Any ground a peak still hides from the camera is bare rocky slope, never grass to build on. All three islands get this, and the home mountain still leaves room for a stone mine in the HQ's land. New maps only. *2026-11-03*
 - **Bigger islands**: the second island and the far island each have about half the home island's land, about 32 tiles across, on a 128 by 128 map. Their mountains, forests and ore grow with them, and both islands are the same size. New maps only. *2026-11-03*

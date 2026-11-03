@@ -14,6 +14,7 @@ import { blessing } from './blessing';
 import { costOf, priceOf } from './prices';
 import type { Building } from './types';
 import { ASLEEP, night } from './sleep';
+import { noteFinished } from './unlocks';
 
 export function canPlace(g: Game, type: BType, x: number, y: number): string | null {
   if (!g.world.inside(x, y) || !g.world.inside(x, y + 1)) return 'Outside the map';
@@ -122,4 +123,5 @@ export function construct(g: Game, b: Building, dt: number) {
   if (b.type === 'lookout') computeTerritory(g);
   g.toasts.push(`${def.icon} ${def.name} finished`);
   noteBuilt(g, b.type);
+  noteFinished(g, b.type);
 }

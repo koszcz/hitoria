@@ -60,7 +60,26 @@ first, the wish just passes, with no penalty, and a new one comes.
    footsteps wear it into dirt paths. Busy paths are quicker to walk, so settlers keep to them.
    Nobody walks through a building. The game refuses a building that would block the last path
    between another building and your HQ or harbour, and a message says why.
-4. **Grow your economy.**
+4. **Unlock more buildings.** A new island starts with four buildings: the woodcutter's hut,
+   quarry, fisher's hut and house. Each finished building unlocks the next ones in its chain.
+   In the build menu, locked buildings are greyed out, and their card says which building to
+   finish first. A message names each building as it unlocks. An unlock stays, even if you
+   remove the building that earned it.
+
+   | Finish | To unlock |
+   | --- | --- |
+   | Woodcutter's hut | Forester's hut, sawmill |
+   | Sawmill | Lookout tower, storehouse, farm, hunter's lodge |
+   | Farm | Mill, well |
+   | Mill and well | Bakery |
+   | House | Feast square |
+   | Quarry | Stone mine, monument |
+   | Stone mine | Geologist's hut, harbour |
+   | Geologist's hut | Coal mine, iron mine |
+   | Coal mine and iron mine | Smelter |
+   | Smelter | Toolmaker's workshop |
+
+5. **Grow your economy.**
    - A forester (`2`) plants new trees, so the woodcutter never runs out. It does not plant on
      worn paths. A message warns you when a woodcutter with no forester nearby has 3 or fewer
      grown trees left. While you place a building, a hint says when it takes the forester's ground.
@@ -390,9 +409,10 @@ The save buttons are in the ☰ menu at the top right.
   wish granted and every fifth after it, the first upgrade, each landing on an island, each winter
   with no one hungry, reaching 50 and 100 settlers, and the keepsake the island began with.
 
-The save keeps the map, buildings, worn paths, every good, your goals, the village wish, the chronicle and the time of day and year. It does not keep where settlers and
+The save keeps the map, buildings, worn paths, every good, your goals, the village wish, the chronicle, the buildings you have unlocked and the time of day and year. It does not keep where settlers and
 wild animals are. The animals start again from their home spots.
 Saves from when the game still had roads load too. Their roads and flags become worn paths.
+Saves from before unlocks unlock what their finished buildings have earned.
 After a load, everyone starts in their home, the HQ or the harbour on the second island, and walks back to their post. Goods a settler was holding go
 back to their building, so nothing is lost.
 
@@ -442,7 +462,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/world.ts` | Seeded map generation: island, forests, boulders, mountains, the mountain and bay every start gets, the second island across the bay, the far island, and where coal and iron ore lie |
 | `src/land/` | Map helpers: seeded random numbers and noise (`noise.ts`), the ridges and valleys of mountain ranges (`ranges.ts`), the pine, meadow and cove themes of the two islands (`themes.ts`), the hidden cove's lagoon (`cove.ts`), the ground that peaks hide from the camera, which turns to bare rock (`hidden.ts`), and the map's size, with the open sea around the land on new maps (`size.ts`), and the size and place of the second and far island, where the far island sits and where each island's ridge runs (`isle.ts`), and the ragged outline of each outer island (`coast.ts`) |
 | `src/math/` | Sine, cosine and distance that give the same result on every computer, so a seed always makes the same map (`exact.ts`) |
-| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, harbour boats (`boats.ts`), what each harbour wants (`harbourwants.ts`) and the boat trips that fetch it (`boattrips.ts`), the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and the islands you can still sail to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`), the warning before a woodcutter runs out of trees and which buildings take a forester's ground (`forestry.ts`), the check that a new building leaves a path to every other building (`cutoff.ts`), what each building costs, with the rising House price (`prices.ts`), and saving |
+| `src/game/` | Simulation: buildings, demolishing, worn paths, sleep at night (`sleep.ts`), walking distances, settlers, wild animals, hunting, carriers and pack donkeys (`donkeys.ts`), farm fields, food, hungry workers (`meals.ts`), who gets food first (`foodrank.ts`), harbours and their docks, harbour boats (`boats.ts`), what each harbour wants (`harbourwants.ts`) and the boat trips that fetch it (`boattrips.ts`), the trade ship and what it wants and sells (`wants.ts`), homes (the HQ and the harbours settlers build on the other islands), the voyages to settle them and the islands you can still sail to (`isles.ts`), the goods stored on each island (`islandstock.ts`), the tools new workers take, rich spots and the geologist (`geology.ts`), goals, village wishes (`wishes.ts`), building upgrades (`upgrades.ts`), stopping work at a hut (`stopwork.ts`), the goods each building made and used in the last minute (`rates.ts`), the stores every 10 seconds over the last hour, for the goods chart (`stockhistory.ts`), the Feast Square and its wedding and religious feasts (`feast.ts`), the blessing a religious feast leaves (`blessing.ts`), the island chronicle (`chronicle.ts`), keepsakes for a new island (`keepsakes.ts`), mixed food (`variety.ts`), fishing in the hidden cove (`cove.ts`), the warning before a woodcutter runs out of trees and which buildings take a forester's ground (`forestry.ts`), the check that a new building leaves a path to every other building (`cutoff.ts`), what each building costs, with the rising House price (`prices.ts`), which buildings are unlocked (`unlocks.ts`), and saving |
 | `src/path.ts` | A* pathfinding on the tile grid |
 | `src/render/` | Three.js 3D renderer: terrain, the fine alpine ridges, peaks and snow on mountains (`relief.ts`), water, the foam along the shore (`foam.ts`), the fish and ducks on the sea and in the hidden cove (`waterlife.ts`), buildings, settlers, animals, pack donkeys, ships, harbour boats (`boats.ts`), the geologist's signs (`signs.ts`), overlays, the light for each time of day (`daylight.ts`), the warm glow of buildings at night (`glow.ts`) and on their walls (`walllight.ts`), and the season's colours and snow (`seasonal.ts`, `snowfall.ts`), and the snow on roofs (`rooftops.ts`). Keeps the isometric camera angle. `looks.ts` gives each building its body shape and colours |
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
@@ -467,7 +487,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/goodschart/` | The goods chart panel, and where each good's line runs (`lines.ts`) |
 | `src/keepsake/` | The dialog where you pick a keepsake for a new island, and how keepsakes read |
 | `src/wishes/` | The goal panel once every goal is reached: the village wish, its progress and its season |
-| `src/i18n.ts` | Translations. The Polish building names, village wishes and reasons a building can't go somewhere are in `src/lang/` |
+| `src/i18n.ts` | Translations. The Polish building names, village wishes, reasons a building can't go somewhere and unlock messages are in `src/lang/` |
 | `src/main.ts` | Input, camera, fixed-step game loop |
 | `src/playtest/` | `window.playtest`: console commands that read the game as text and act like a player, for `/playtest` runs. Type `playtest.help()` in the console |
 

@@ -498,6 +498,8 @@ body.touch .build { row-gap: 0; }
 }
 #buildmenu .tile:hover, #buildmenu .tile.shown { border-color: var(--gold); background: rgba(80, 60, 25, 0.9); }
 #buildmenu .tile.short .cost { color: #ffb36b; }
+#buildmenu .tile.locked { filter: grayscale(1); opacity: 0.45; }
+#buildmenu .tile.locked .cost { color: var(--muted); }
 #buildmenu .tile .icon { font-size: 26px; line-height: 1.1; }
 #buildmenu .tile .name { font-weight: 600; font-size: 12px; line-height: 1.2; }
 #buildmenu .tile .cost { color: var(--muted); font-size: 11px; }
@@ -510,6 +512,8 @@ body.touch .build { row-gap: 0; }
   border-radius: 8px;
 }
 #buildmenu .go:hover { background: rgba(255, 210, 74, 0.35); }
+#buildmenu .go:disabled { opacity: 0.5; cursor: default; background: none; }
+#buildmenu .card .locked { margin-bottom: 6px; font-weight: 600; }
 #buildmenu .card h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font: 700 15px Georgia, serif; color: var(--gold); }
 #buildmenu .card h3 .icon { font-size: 20px; }
 #buildmenu .card kbd { margin-left: auto; padding: 1px 6px; border: 1px solid var(--edge); border-radius: 4px; font: 600 11px system-ui, sans-serif; color: var(--muted); }

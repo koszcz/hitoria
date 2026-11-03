@@ -31,3 +31,4 @@ export { KEEPSAKES, bringKeepsake, earnedKeepsakes, type Keepsake, type Keepsake
 export { RATE_WINDOW, ratesOf, type Rates } from './rates';
 export { HISTORY_EVERY, HISTORY_KEEP, type StockSample } from './stockhistory';
 export { costOf, priceOf } from './prices';
+export { NEEDS, STARTERS, isUnlocked, missingFor } from './unlocks';
