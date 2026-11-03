@@ -42,8 +42,8 @@ const isleOf = (w: World, i: number) => w.isleAt(i % w.w, Math.floor(i / w.w));
 const upFrom = (w: World, i: number, c: { x: number; y: number }) => ((i % w.w) - c.x) * UP.x + (Math.floor(i / w.w) - c.y) * UP.y;
 
 describe('mountains never hide good land, by map version', () => {
-  test('new maps use map version 14', () => {
-    expect(MAP_VERSION).toBe(14);
+  test('new maps use map version 14 or later', () => {
+    expect(MAP_VERSION).toBeGreaterThanOrEqual(14);
     expect(HIDE_FROM).toBe(14);
     expect(TOP_RIDGES_FROM).toBe(14);
   });

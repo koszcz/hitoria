@@ -45,7 +45,8 @@ describe('second island', () => {
     describe(`seed ${seed}`, () => {
       const w = new World(seed);
       const { home, others } = islands(w);
-      const island = others.sort((a, b) => b.length - a.length)[0] ?? [];
+      // The far island may be bigger, so pick the biggest piece of land on the second island.
+      const island = others.filter((p) => w.isleAt(p[0] % w.w, Math.floor(p[0] / w.w)) === 'other').sort((a, b) => b.length - a.length)[0] ?? [];
       const start = w.start.y * w.w + w.start.x;
 
       test('has a second island big enough for a small settlement', () => {

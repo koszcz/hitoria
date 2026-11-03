@@ -123,12 +123,13 @@ const SLOPE = 0.065;
 // The height of land near an island of size `size`, which is `dx, dy` from the island's centre
 // and faces `out`. The strait lowers the home island's coast into sea, with a sandy shore and a
 // bank like the bay's. The island rises from a sandy beach to a low, grassy middle, with `bump`
-// from the noise so its shore is not a perfect circle.
-export function island(h: number, dx: number, dy: number, out: { x: number; y: number }, bump: number, size: number) {
+// from the noise so its shore is not a perfect circle. From map version 15, `reach` gives the
+// island's own ragged outline: see coast.ts.
+export function island(h: number, dx: number, dy: number, out: { x: number; y: number }, bump: number, size: number, reach?: (dx: number, dy: number) => number) {
   const past = Math.max(0, dx * out.x + dy * out.y);
   const side = hypot(dx - out.x * past, dy - out.y * past);
   const shore = size + STRAIT + 1.2;
   h = Math.min(h, side < size + STRAIT ? 0.22 : side < shore ? 0.32 : 0.62 + (side - shore) * SLOPE);
-  const r = hypot(dx, dy) / size;
+  const r = reach ? reach(dx, dy) : hypot(dx, dy) / size;
   return r < 1 ? Math.max(h, 0.24 + (1 - r * r) * 0.38 + (bump - 0.5) * 0.08) : h;
 }

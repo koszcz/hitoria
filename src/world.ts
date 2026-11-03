@@ -6,6 +6,7 @@ import type { IsleName, Theme } from './land/themes';
 import { OLD_SIZE, OPEN_SEA, mapSize, surround } from './land/size';
 import { BIG_FAR_FROM, BIG_ISLE_FROM, EDGE_SEA, TOP_RIDGES_FROM, UP, farShape, island, isleShape, placeFar, ridgeLine } from './land/isle';
 import { HIDE_FROM, bareHidden } from './land/hidden';
+import { COAST_SALT, RAGGED_FROM, coastOf } from './land/coast';
 import type { FarPlace, IsleSize } from './land/isle';
 import { cos, hypot, sin } from './math/exact';
 
@@ -45,7 +46,8 @@ export interface Tile {
 // 12: a third theme, the hidden cove, with a lagoon cut deep into the island. Each island gets one of three themes.
 // 13: the map is 128 by 128 tiles. The second and far island are both about 32 tiles across.
 // 14: mountains sit at the top of the screen, and ground a peak hides from the camera is bare rock.
-export const MAP_VERSION = 14;
+// 15: the second and far island each have their own ragged outline, with capes, bays and sometimes an arm.
+export const MAP_VERSION = 15;
 
 // Natural mountains stay this far from the start, so the HQ always has room around it.
 const OPEN = 7;
@@ -171,6 +173,10 @@ export class World {
     // From map version 12, the island with the cove theme has a lagoon cut into it.
     const coveIsle = isleWith(themes, 'cove');
     const cove = coveIsle && (coveIsle === 'other' ? coveOf(seed, map, isle, out, isl) : coveOf(seed, map, far!, far!.out, fsh));
+    // From map version 15, each outer island has its own ragged outline.
+    const ragged = map >= RAGGED_FROM;
+    const isleCoast = ragged ? coastOf(seed, COAST_SALT.other, isl.size, coveIsle === 'other' ? out : undefined) : undefined;
+    const farCoast = ragged ? coastOf(seed, COAST_SALT.far, fsh.size, coveIsle === 'far' ? far!.out : undefined) : undefined;
     const bayEnd = { x: bay.x + out.x * W * 2, y: bay.y + out.y * W * 2 };
     const toPeakAt =(x: number, y: number) => (ranged ? toRidge(x, y, peak, peakEnd) : hypot(x - peak.x, y - peak.y));
     const toIslePeakAt = (x: number, y: number) =>
@@ -201,11 +207,11 @@ export class World {
         }
         // From map version 10, the home island's land ends where an old-size map would end.
         if (big) h = Math.min(h, this.edgeSea(Math.min(x - sx, y - sy, sx - 1 - x, sy - 1 - y) + span));
-        if (map >= 4) h = island(h, x - isle.x, y - isle.y, out, n3(x, y), isl.size);
+        if (map >= 4) h = island(h, x - isle.x, y - isle.y, out, n3(x, y), isl.size, isleCoast?.at);
         // The second island's mountain rises past its middle, so the near shore stays free for a harbour.
         if (map >= 5) h = Math.max(h, ISLE_PEAK - toIslePeakAt(x, y) * ISLE_PEAK_SLOPE);
         if (far) {
-          h = island(h, x - far.x, y - far.y, far.out, n2(x, y), farSize);
+          h = island(h, x - far.x, y - far.y, far.out, n2(x, y), farSize, farCoast?.at);
           h = Math.max(h, ISLE_PEAK - toFarPeakAt(x, y) * ISLE_PEAK_SLOPE);
           h = Math.min(h, this.edgeSea(Math.min(x, y, W - 1 - x, H - 1 - y)));
         }
@@ -365,33 +371,17 @@ export class World {
     return this.at(Math.max(0, Math.min(this.w - 1, x)), Math.max(0, Math.min(this.h - 1, y))).h;
   }
 
-  // Grown trees on this tile and the eight around it.
-  private treesAround(x: number, y: number) {
+  // How many of this tile and the eight around it pass `test`, which takes a tile's index.
+  private around(x: number, y: number, test: (i: number) => unknown) {
     let n = 0;
     for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++)
-        if (this.inside(x + dx, y + dy) && this.at(x + dx, y + dy).tree) n++;
+      for (let dx = -1; dx <= 1; dx++) if (this.inside(x + dx, y + dy) && test((y + dy) * this.w + x + dx)) n++;
     return n;
   }
 
-  private nearWater(x: number, y: number) {
-    for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++)
-        if (this.inside(x + dx, y + dy) && this.at(x + dx, y + dy).t === 'water') return true;
-    return false;
-  }
-
-  private nearCove(x: number, y: number) {
-    for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++)
-        if (this.inside(x + dx, y + dy) && this.cove[(y + dy) * this.w + x + dx]) return true;
-    return false;
-  }
-
-  private nearMountain(x: number, y: number) {
-    for (let dy = -1; dy <= 1; dy++)
-      for (let dx = -1; dx <= 1; dx++)
-        if (this.inside(x + dx, y + dy) && this.at(x + dx, y + dy).t === 'mountain') return true;
-    return false;
-  }
+  // Grown trees on this tile and the eight around it.
+  private treesAround = (x: number, y: number) => this.around(x, y, (i) => this.tiles[i].tree);
+  private nearWater = (x: number, y: number) => this.around(x, y, (i) => this.tiles[i].t === 'water') > 0;
+  private nearCove = (x: number, y: number) => this.around(x, y, (i) => this.cove[i]) > 0;
+  private nearMountain = (x: number, y: number) => this.around(x, y, (i) => this.tiles[i].t === 'mountain') > 0;
 }
