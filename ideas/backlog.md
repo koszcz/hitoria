@@ -17,12 +17,13 @@ At most 3 ideas, in the order we build them.
 
 New ideas go here, not scored yet.
 
-- **Rising building prices**: each extra House costs a little more than the last, and late buildings such as the Smelter and Toolmaker's Workshop also cost iron or tools. Starter huts stay cheap, so the opening feels the same, but planks and stone no longer pile up by mid-game. From the 2026-11-02 playtests, where one village held 322 planks and another 183 stone.
+Empty.
 
 ## Needs thought
 
 Triaged, but with open questions. Run `/refine` on one to settle them.
 
+- **Rising building prices**: each extra House costs a little more than the last, and late buildings such as the Smelter and Toolmaker's Workshop also cost iron or tools. Starter huts stay cheap, so the opening feels the same, but planks and stone no longer pile up by mid-game. From the 2026-11-02 playtests, where one village held 322 planks and another 183 stone. *Fun 2 · Effort M · Open: how fast does the House price rise, and does it count houses per island or in all? Which late buildings cost iron or tools, given the Smelter makes the first iron? Do colonies pay the higher prices too?*
 - **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: send more settlers, let a colony grow its own, or only fix the hint? Refine together with Supply a new colony.*
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: do workers carry their own goods, do sites and the feast jump the queue, or does a stronger hint to build houses do?*
 - **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola). *Fun 1 · Effort M · Open: should a season last a whole number of days, which changes the year's length and winter food, or should only the clock and messages explain it?*
