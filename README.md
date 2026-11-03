@@ -416,9 +416,11 @@ Press F3 to see the level, and how much the game draws each frame.
 
 ## Sound
 
-You hear your settlers work near the middle of the screen. Woodcutters chop, the sawmill
-saws, and builders, stonecutters and the toolmaker hammer. Nearer work is louder. Work sounds fade
-as you zoom out, and stop while the game is paused.
+You hear your settlers work near the mouse pointer. On a phone, or when the pointer leaves the
+window, you hear from the middle of the screen. Woodcutters chop, the sawmill saws, and builders,
+stonecutters and the toolmaker hammer. Nearer work is louder. Work to the right of you on the
+screen plays in your right ear, and work to the left plays in your left ear. Work sounds fade as
+you zoom out, and stop while the game is paused.
 
 A calm tune plays in the background: soft bells over slow chords. The game writes the notes in
 code, so there are no sound files. To change how loud the music is, click **Music** in the menu.
@@ -440,7 +442,7 @@ both choices. Browsers block sound until you click or press a key, so the sound 
 | `src/water/` | Where the shore is, and where each fish and duck is at any moment. They are only there to look at |
 | `src/seasons/` | The day and year clocks, the day count, how the island looks at each point in the year, when grain grows, the clock in the HUD (`hud.ts`), and fast nights (`fastnight.ts`) |
 | `src/quality/` | The graphics setting, and Auto, which lowers it when frames are slow |
-| `src/sound/` | Work sounds (`work.ts` picks what you hear, `strikes.ts` plays it), the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
+| `src/sound/` | All sound, joined up in `sounds.ts`. Work sounds (`work.ts` picks what you hear, `ear.ts` picks where you hear from and pans each sound left or right, `strikes.ts` plays it), the background tune (`tune.ts` writes the notes, `music.ts` plays them), and the mute and music volume settings |
 | `src/art.ts` | The game's colours and light in one place: sky, sun, dawn, dusk and night, land, water and trees |
 | `src/ui.ts` | HUD, goal panel and info panel |
 | `src/sailinfo.ts` | The harbour panel's "Sail to settle" part, with a Sail button for each island nobody has settled |

@@ -1,5 +1,6 @@
 // Plays the work sounds with Web Audio: the thud of an axe, the rasp of a saw and the knock of a
 // hammer, made from noise and tones, so there are no sound files to load.
+// Each stroke plays left or right, from where the work is on the screen.
 // Browsers only allow sound after the player clicks or presses a key.
 import { WORK_KINDS, beats, type WorkKind } from './work';
 
@@ -23,8 +24,9 @@ export class WorkSounds {
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   }
 
-  // Set the volume of each sound (0..1) and plan the next strokes. Call every frame.
-  set(levels: Record<WorkKind, number>) {
+  // Set the volume (0..1) and the side (-1 left to 1 right) of each sound, and plan the next
+  // strokes. Call every frame.
+  set(levels: Record<WorkKind, number>, pans: Record<WorkKind, number>) {
     const ctx = this.ctx;
     if (!ctx) return;
     const now = ctx.currentTime;
@@ -36,27 +38,35 @@ export class WorkSounds {
       }
       const r = beats(this.next[k], now + 0.05, AHEAD, EVERY[k]);
       // Each stroke falls a little early or late, so the work sounds played by hand.
-      for (const at of r.at) this.play(k, at + Math.random() * 0.06, levels[k] * (0.8 + 0.2 * Math.random()));
+      for (const at of r.at) this.play(k, at + Math.random() * 0.06, levels[k] * (0.8 + 0.2 * Math.random()), pans[k]);
       this.next[k] = r.next;
     }
   }
 
-  private play(kind: WorkKind, at: number, gain: number) {
+  private play(kind: WorkKind, at: number, gain: number, pan: number) {
+    const ctx = this.ctx!;
+    // Older browsers have no panner. Then the stroke plays in the middle.
+    let out: AudioNode = ctx.destination;
+    if (ctx.createStereoPanner) {
+      const p = ctx.createStereoPanner();
+      p.pan.value = pan;
+      out = p.connect(ctx.destination);
+    }
     if (kind === 'chop') {
-      this.burst(at, 0.12, 'lowpass', 900, 1, gain);
-      this.knock(at, 140, 70, 0.14, gain * 0.9);
+      this.burst(out, at, 0.12, 'lowpass', 900, 1, gain);
+      this.knock(out, at, 140, 70, 0.14, gain * 0.9);
     } else if (kind === 'hammer') {
-      this.knock(at, 520, 380, 0.07, gain * 0.7);
-      this.burst(at, 0.03, 'highpass', 2500, 1, gain * 0.5);
+      this.knock(out, at, 520, 380, 0.07, gain * 0.7);
+      this.burst(out, at, 0.03, 'highpass', 2500, 1, gain * 0.5);
     } else {
       // A push and a pull, a little higher on the push.
       const push = this.stroke++ % 2 === 0;
-      this.burst(at, EVERY.saw * 0.9, 'bandpass', push ? 3200 : 2600, 4, gain * 0.6, true);
+      this.burst(out, at, EVERY.saw * 0.9, 'bandpass', push ? 3200 : 2600, 4, gain * 0.6, true);
     }
   }
 
   // A short burst of noise through a filter. `swell` makes it rise and fall instead of strike.
-  private burst(at: number, length: number, type: BiquadFilterType, hz: number, q: number, gain: number, swell = false) {
+  private burst(out: AudioNode, at: number, length: number, type: BiquadFilterType, hz: number, q: number, gain: number, swell = false) {
     const ctx = this.ctx!;
     const src = ctx.createBufferSource();
     src.buffer = this.noise;
@@ -74,13 +84,13 @@ export class WorkSounds {
       g.linearRampToValueAtTime(gain, at + 0.004);
       g.exponentialRampToValueAtTime(0.001, at + length);
     }
-    src.connect(tone).connect(env).connect(ctx.destination);
+    src.connect(tone).connect(env).connect(out);
     src.start(at, Math.random() * 0.5);
     src.stop(at + length + 0.05);
   }
 
   // A tone that drops in pitch and dies away fast: the body of a hit on wood.
-  private knock(at: number, from: number, to: number, length: number, gain: number) {
+  private knock(out: AudioNode, at: number, from: number, to: number, length: number, gain: number) {
     const ctx = this.ctx!;
     const osc = ctx.createOscillator();
     osc.type = 'sine';
@@ -90,7 +100,7 @@ export class WorkSounds {
     env.gain.setValueAtTime(0, at);
     env.gain.linearRampToValueAtTime(gain, at + 0.003);
     env.gain.exponentialRampToValueAtTime(0.001, at + length);
-    osc.connect(env).connect(ctx.destination);
+    osc.connect(env).connect(out);
     osc.start(at);
     osc.stop(at + length + 0.05);
   }

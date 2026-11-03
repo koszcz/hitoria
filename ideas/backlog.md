@@ -4,7 +4,7 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-- **Binaural sounds**: work sounds come from where they happen, panned left or right and louder when near. On a computer you hear from the mouse pointer, and on a phone from the middle of the screen. Panning follows each sound's place on the screen, left or right of the listening point. When the pointer leaves the window, you hear from the middle of the screen. *Fun 2 · Effort S · Branch: worktree-agent-a34c09f1594857f72*
+Nothing right now.
 
 ## Next
 
@@ -62,6 +62,7 @@ Triaged and ready to build, but not next.
 
 Newest first, with the date it was merged.
 
+- **Binaural sounds**: work sounds come from where they happen, panned left or right and louder when near. On a computer you hear from the mouse pointer, and on a phone from the middle of the screen. Panning follows each sound's place on the screen, left or right of the listening point. When the pointer leaves the window, you hear from the middle of the screen. *2026-11-03*
 - **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *2026-11-03*
 - **Harbour boats**: a harbour's panel has a "Build a boat" button. Carriers bring the planks, and a small boat ties up at its dock. Each harbour, home or colony, can have one boat. *2026-11-03*
 - **Choose where the ship sails**: the harbour panel shows one Sail button for each island nobody has settled yet, such as "Sail to the other island" and "Sail to the far island". The ship lands on the island you pick. *2026-11-02*

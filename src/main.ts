@@ -15,12 +15,7 @@ import { T, getLang, setLang, startLang } from './i18n';
 import type { P } from './path';
 import { GraphicsSetting } from './quality/setting';
 import { GRAPHICS, LEVELS } from './quality/levels';
-import { MuteChoice } from './sound/mute';
-import { musicLevel } from './sound/mix';
-import { Music } from './sound/music';
-import { MusicVolume } from './sound/volume';
-import { WorkSounds } from './sound/strikes';
-import { workMix, workSources } from './sound/work';
+import { Sounds } from './sound/sounds';
 import { installPlaytest } from './playtest/hook';
 import { FOOD_HINT_MS, foodHint } from './hints/food';
 import { hideLoading } from './loading/screen';
@@ -55,12 +50,10 @@ renderer.setGraphics(GRAPHICS[graphics.level]);
 const ui = new UI(game);
 ui.look = () => renderer.screenToTile(innerWidth / 2, innerHeight / 2);
 ui.graphics = graphics;
-const mute = new MuteChoice();
-const musicVolume = new MusicVolume();
-const music = new Music();
-const work = new WorkSounds();
-ui.muted = mute.muted;
-ui.music = musicVolume.volume;
+const sounds = new Sounds();
+sounds.watch(window);
+ui.muted = sounds.mute.muted;
+ui.music = sounds.musicVolume.volume;
 ui.relabel();
 watch(() => game);
 diag.attach(game);
@@ -166,8 +159,7 @@ for (const btn of document.querySelectorAll<HTMLButtonElement>('#file button')) 
     }
     if (what === 'music') {
       document.getElementById('file')!.classList.add('open');
-      ui.music = musicVolume.cycle();
-      if (!mute.muted) music.start();
+      ui.music = sounds.cycleMusic();
       return ui.relabel();
     }
     if (what === 'lang') {
@@ -195,24 +187,8 @@ document.getElementById('menu')!.onclick = () => document.getElementById('file')
 window.addEventListener('pagehide', autosave);
 
 function toggleSound() {
-  ui.muted = mute.toggle();
-  if (!ui.muted) startSound();
+  ui.muted = sounds.toggle();
   ui.relabel();
-}
-// Browsers only allow sound after the player does something, so start it on the first input.
-for (const ev of ['pointerdown', 'keydown'])
-  window.addEventListener(ev, () => { if (!mute.muted) startSound(); }, true);
-function startSound() {
-  music.start();
-  work.start();
-}
-
-// Work sounds follow the camera: louder near workers, quieter when zoomed out.
-function updateSound() {
-  const c = renderer.screenToTile(innerWidth / 2, innerHeight / 2);
-  music.set(musicLevel(musicVolume.volume, mute.muted));
-  // Work stops while the game is paused, so its sounds stop too.
-  work.set(workMix(workSources(game), { ...c, zoom: renderer.cam.zoom, muted: mute.muted || ui.paused }));
 }
 
 let hover: P | null = null, previewKey = '';
@@ -369,7 +345,7 @@ function frame(now: number) {
     ui.hintPlace(placeOk ? placing : null, hover?.x, hover?.y);
   }
   renderer.draw(game, { hover, placing, placeOk, tool, fields, selected: ui.selected }, now / 1000);
-  updateSound();
+  sounds.update(game, { toWorld: (x, y) => renderer.toWorld(x, y), zoom: renderer.cam.zoom }, innerWidth, innerHeight, ui.paused);
   diag.frame(dt * 1000, t1 - t0, performance.now() - t1);
   // On auto, the graphics level follows how fast frames are. Tell the player when it drops.
   const was = graphics.level, changed = graphics.frame(frameMs);
@@ -396,5 +372,5 @@ function frame(now: number) {
 requestAnimationFrame(frame);
 requestAnimationFrame(hideLoading); // runs right after the first frame is drawn
 
-Object.assign(window, { game, diag, renderer, music, work }); // handy for poking at state from the console
+Object.assign(window, { game, diag, renderer, sounds }); // handy for poking at state from the console
 installPlaytest({ game: () => game, ui, click });
