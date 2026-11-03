@@ -12,6 +12,7 @@ At most 3 ideas, in the order we build them.
 
 - **Harbour wants**: each harbour's panel sets how much of each good it wants, such as 10 fish or 20 planks. Free boats keep sailing to fetch those goods from the other islands, where carriers first bring them to that island's harbour. An island never sends goods below what its own harbour wants. When settlers land, a message says the colony needs food, from a Fisher's Hut or by boat. *Fun 3 · Effort M · Needs: Harbour boats*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
+- **Bigger islands**: the second island and the far island each have about half the home island's land, about 32 tiles across, on a 128 by 128 map. Their mountains, forests and ore grow with them, and both islands are the same size. New maps only. *Fun 2 · Effort M*
 
 ## Inbox
 
@@ -34,7 +35,6 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 
 Triaged and ready to build, but not next.
 
-- **Bigger islands**: the second island and the far island each have about half the home island's land, about 32 tiles across, on a 128 by 128 map. Their mountains, forests and ore grow with them, and both islands are the same size. New maps only. *Fun 2 · Effort M*
 - **Ragged island coasts**: the second island and the far island each have their own outline, with capes, deep bays and sometimes a long arm, instead of a round shore. Each new map gives them a different shape. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
