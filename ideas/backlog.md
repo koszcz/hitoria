@@ -18,7 +18,7 @@ At most 3 ideas, in the order we build them.
 
 New ideas go here, not scored yet.
 
-Empty.
+- **Rising building prices**: each extra House costs a little more than the last, and late buildings such as the Smelter and Toolmaker's Workshop also cost iron or tools. Starter huts stay cheap, so the opening feels the same, but planks and stone no longer pile up by mid-game. From the 2026-11-02 playtests, where one village held 322 planks and another 183 stone.
 
 ## Needs thought
 
