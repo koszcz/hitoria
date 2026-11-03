@@ -10,6 +10,7 @@ Nothing right now.
 
 At most 3 ideas, in the order we build them.
 
+- **Ragged island coasts**: the second island and the far island each have their own outline, with capes, deep bays and sometimes a long arm, instead of a round shore. Each new map gives them a different shape. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
 - **Unlock buildings step by step**: a new island's build menu starts with the Woodcutter, Quarry, Fisher and House, and each finished building unlocks the next ones in its chain: Woodcutter opens Forester and Sawmill; Sawmill opens Lookout, Storehouse, Farm and Hunter; Farm opens Mill and Well; Mill and Well open Bakery; House opens Feast Square; Quarry opens Stone Mine and Monument; Stone Mine opens Geologist and Harbour; Geologist opens Coal and Iron Mine; both mines open Smelter; Smelter opens Toolmaker. Locked buildings show greyed out, and their card says which building to finish first. A message names each new building as it unlocks, and an unlock stays even if its building is removed. Old saves unlock what their buildings have earned. *Fun 2 · Effort M*
 - **Decorations for granted wishes**: each granted wish unlocks the next decoration in a fixed list: Flower bed, Lantern, Bench, Well-kept tree, Fountain, Statue. Each decoration takes one tile, costs 1 to 3 planks or stone, and goes up like a small building, with carriers and a builder. Settlers walk over decorations, you can place as many as you like, and they do nothing. Unlocked decorations carry to every new island. *Fun 2 · Effort M*
 
@@ -32,7 +33,6 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 Triaged and ready to build, but not next.
 
 - **Mountains never hide good land**: on each island, the mountains sit near the far shore, at the top of the screen, so the sea lies behind them. Any ground a peak still hides from the camera is bare rocky slope, never grass to build on. All three islands get this, and the home mountain still leaves room for a stone mine in the HQ's land. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
-- **Ragged island coasts**: the second island and the far island each have their own outline, with capes, deep bays and sometimes a long arm, instead of a round shore. Each new map gives them a different shape. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
 - **Move a building**: pick up a building and place it somewhere else. *Fun 1 · Effort M · Needs: Demolish a building*
