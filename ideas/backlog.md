@@ -28,13 +28,13 @@ Triaged, but with open questions. Run `/refine` on one to settle them.
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: do workers carry their own goods, do sites and the feast jump the queue, or does a stronger hint to build houses do?*
 - **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola). *Fun 1 · Effort M · Open: should a season last a whole number of days, which changes the year's length and winter food, or should only the clock and messages explain it?*
 - **A keepsake for each wish**: each granted wish unlocks a decoration you can place, such as a flower bed, a lantern, a bench or a statue. Decorations do nothing, and you keep them. *Fun 2 · Effort M · Open: "keepsake" already names the bonus you take to a new island, so what is this called? Do decorations cost goods or a builder, and do they carry to a new island?*
-- **Mountains hide the land behind them**: tall peaks on the camera's side no longer block land the player wants to see and build on. Today the camera has a fixed angle and cannot turn. *Fun 2 · Effort M · Open: rotate the camera in 90° steps, fade peaks that stand in front of the view, or keep peaks low on the camera's side of the map?*
 - **Unlock buildings step by step**: a new island starts with a few buildings in the build menu, and more appear as the player grows, instead of all of them at once. *Fun 2 · Effort M · Open: do buildings unlock through goals, or once the building that feeds them stands, such as a sawmill after a woodcutter? Are locked buildings hidden, or greyed out with what unlocks them? What happens to old saves?*
 
 ## Later
 
 Triaged and ready to build, but not next.
 
+- **Mountains never hide good land**: on each island, the mountains sit near the far shore, at the top of the screen, so the sea lies behind them. Any ground a peak still hides from the camera is bare rocky slope, never grass to build on. All three islands get this, and the home mountain still leaves room for a stone mine in the HQ's land. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
 - **Ragged island coasts**: the second island and the far island each have their own outline, with capes, deep bays and sometimes a long arm, instead of a round shore. Each new map gives them a different shape. New maps only. *Fun 2 · Effort M · Needs: Bigger islands*
 - **Gold mine**: a mine that digs gold out of mountains. Gold has no use yet. *Fun 1 · Effort S · Needs: Coal and iron mines*
 - **Fix Save as new**: "Save as new" adds a second save and keeps the current one, instead of overwriting it. *Fun 1 · Effort S*
