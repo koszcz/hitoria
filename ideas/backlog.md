@@ -4,13 +4,12 @@ How to add and triage ideas: see [README.md](README.md).
 
 ## Building now
 
-Nothing right now.
+- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M · Branch: worktree-agent-ad909e272671cc6a8*
 
 ## Next
 
 At most 3 ideas, in the order we build them.
 
-- **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
 - **Rising house prices**: each House costs 1 more plank and 1 more stone than the last, counting every House on all islands, so the 20th costs 22 planks and 21 stone. A site keeps the price it had when you placed it, and removing a House lowers the next price. Other buildings keep their price, and none costs iron or tools. *Fun 2 · Effort S*
 
 ## Inbox
