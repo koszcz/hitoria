@@ -7,6 +7,7 @@ import type { Game } from './game';
 import { pantry } from './houses';
 import { foodRank } from './foodrank';
 import { feastWant } from './feast';
+import { boatWant } from './boats';
 import { eats, forCarriers, lunchbox } from './meals';
 import { isStore } from './stores';
 import type { Building } from './types';
@@ -14,6 +15,7 @@ import { walkFrom } from './walking';
 
 function want(b: Building, g: Good) {
   if (!b.built) return BDEFS[b.type].cost[g] ?? 0;
+  if (isStore(b)) return boatWant(b, g); // a store wants nothing, unless its harbour builds a boat
   if (b.type === 'house') return pantry(b, g);
   if (b.type === 'square') return feastWant(b, g);
   if (b.stopped && HOUSE_FOOD.includes(g)) return 0; // nobody works there to eat it
@@ -31,12 +33,16 @@ function missing(b: Building, g: Good) {
   return want(b, g) - b.stock[g] - b.incoming[g];
 }
 
+// Does building `b` take goods from carriers? Every building but a store does, and so does a
+// harbour while it builds a boat.
+const takes = (b: Building) => !isStore(b) || boatWant(b, 'plank') > 0;
+
 // Goods waiting to move: finished goods no carrier is coming for, and goods buildings still need.
 export function waiting(g: Game) {
   let n = 0;
   for (const b of g.buildings.values()) {
-    if (isStore(b)) continue;
-    for (const k of GOODS) n += (b.built ? forCarriers(b, k) : 0) + Math.max(0, missing(b, k));
+    if (!takes(b)) continue;
+    for (const k of GOODS) n += (b.built && !isStore(b) ? forCarriers(b, k) : 0) + Math.max(0, missing(b, k));
   }
   return n;
 }
@@ -64,10 +70,10 @@ export function moveGoods(g: Game) {
   // The food chain is served first, so it gets the food when food is short.
   const needy = [...g.buildings.values()].sort((p, q) => foodRank(p.type) - foodRank(q.type));
   for (const b of needy) {
-    if (isStore(b) || !GOODS.some((k) => missing(b, k) > 0)) continue;
+    if (!takes(b) || !GOODS.some((k) => missing(b, k) > 0)) continue;
     const dist = walkFrom(g, b);
     const stores = [...g.buildings.values()]
-      .filter((s) => isStore(s) && at(g, dist, s) < Infinity)
+      .filter((s) => s !== b && isStore(s) && at(g, dist, s) < Infinity)
       .sort((p, q) => at(g, dist, p) - at(g, dist, q));
     for (const k of GOODS)
       while (missing(b, k) > 0) {
@@ -87,7 +93,7 @@ function pickDest(g: Game, from: Building, good: Good) {
   const rank = (b: Building) => (HOUSE_FOOD.includes(good) ? foodRank(b.type) : 0);
   let best: Building | undefined, bd = Infinity;
   for (const b of g.buildings.values()) {
-    if (b === from || isStore(b) || missing(b, good) <= 0 || at(g, dist, b) === Infinity) continue;
+    if (b === from || !takes(b) || missing(b, good) <= 0 || at(g, dist, b) === Infinity) continue;
     if (!best || rank(b) < rank(best) || (rank(b) === rank(best) && at(g, dist, b) < bd)) { bd = at(g, dist, b); best = b; }
   }
   if (best) return best;

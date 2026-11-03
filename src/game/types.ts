@@ -28,6 +28,7 @@ export interface Building {
   stopped?: boolean; // you stopped work here, so no worker is sent until you resume it
   level?: number; // 2 once the player has upgraded the building, else 1
   ate?: Good; // the kind of food the house, worker or miner ate last, for the mixed food bonus
+  boat?: number; // a harbour's boat: the planks put in so far, from 0 once ordered to BOAT_PLANKS once it is finished
   feast?: { kind?: FeastKind; at?: number; eaten?: boolean }; // a Feast Square's ordered feast: its kind (a wedding if none), the dusk it begins, once the food is in, and whether the food is served
 }
 

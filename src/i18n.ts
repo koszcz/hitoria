@@ -6,6 +6,7 @@ import { WISHES_PL, wishPl, wishToastPl } from './lang/wishes';
 import { UPGRADES_PL } from './lang/upgrades';
 import { ISLES_PL } from './lang/isles';
 import { FEAST_PL } from './lang/feast';
+import { BOATS_PL } from './lang/boats';
 import { STOPWORK_PL } from './lang/stopwork';
 import { TREES_PL } from './lang/trees';
 import { GOOD_EN, GOOD_PL } from './lang/goods';
@@ -183,6 +184,7 @@ const MESSAGES_PL: Record<string, string> = {
   ...UPGRADES_PL,
   ...ISLES_PL,
   ...FEAST_PL,
+  ...BOATS_PL,
   ...STOPWORK_PL,
   ...TREES_PL,
   [TOOLS_LOW_NOTE]: `⚠️ Zostało tylko ${TOOLS_LOW} narzędzi. Statek potrzebuje ${SAIL_CARGO.tool}, by zasiedlić drugą wyspę`,

@@ -12,6 +12,7 @@ import { upgradeRows } from './upgradeinfo';
 import { stopRows } from './stopinfo';
 import { rateRows } from './rateinfo';
 import { blessedRow, feastRows } from './feastinfo';
+import { boatRows } from './boats/panel';
 import { openGoodsChart } from './goodschart/panel';
 import { isleView } from './islandview/view';
 import { foresterRoomHint } from './hints/forester';
@@ -74,6 +75,7 @@ export class UI {
       if (act === 'sail') why = this.game.sail(b, btn.dataset.isle as Isle | undefined);
       else if (act === 'upgrade') why = this.game.upgrade(b);
       else if (act === 'feast') why = this.game.orderFeast(b, btn.dataset.kind as FeastKind);
+      else if (act === 'boat') why = this.game.orderBoat(b);
       else if (act === 'stop') why = this.game.stopWork(b);
       else if (act === 'resume') why = this.game.resumeWork(b);
       else if (act === 'trade' && this.pick.give && this.pick.get) why = this.game.trade(b, this.pick.give, this.pick.get);
@@ -275,6 +277,7 @@ export class UI {
       if (b.type === 'hq') rows.push(`<div>${x.landRadius(def.radius)}</div>`);
       if (b.type === 'harbour') {
         rows.push(sailRows(g, b));
+        rows.push(boatRows(g, b));
         if (tradeOpen(g, b)) side = tradeRows(g, b, this.pick);
         else rows.push(tradeRows(g, b, this.pick));
       }

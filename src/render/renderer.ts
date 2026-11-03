@@ -15,6 +15,7 @@ import { Goods } from './goods';
 import { Animals } from './animals';
 import { Donkeys } from './donkeys';
 import { Ships } from './ships';
+import { HarbourBoats } from './boats';
 import { Overlays, View } from './overlays';
 import { disposeModel } from './merge';
 import { GRAPHICS, type Graphics } from '../quality/levels';
@@ -60,6 +61,7 @@ export class Renderer {
   private animals: Animals;
   private donkeys: Donkeys;
   private ships: Ships;
+  private boats: HarbourBoats;
   private overlays: Overlays;
   private snowfall: Snowfall;
   private signs: Signs;
@@ -94,6 +96,7 @@ export class Renderer {
     this.animals = new Animals(scene, this.ground);
     this.donkeys = new Donkeys(scene, this.ground);
     this.ships = new Ships(scene);
+    this.boats = new HarbourBoats(scene);
     this.overlays = new Overlays(scene, this.ground);
     this.snowfall = new Snowfall(scene);
     this.signs = new Signs(scene, this.ground);
@@ -190,6 +193,7 @@ export class Renderer {
     this.animals.draw(game, now);
     this.donkeys.draw(game, now, (g, x, y, z, rot) => this.goods.put(g, x, y, z, rot));
     this.ships.draw(game, now);
+    this.boats.draw(game, now);
     this.waterlife.draw(now, this.season.snow);
     this.signs.draw(game);
     this.hunger.draw(game, now);
@@ -246,6 +250,7 @@ export class Renderer {
     this.animals.clear();
     this.donkeys.clear();
     this.ships.clear();
+    this.boats.clear();
     this.ground.build(world);
     this.foam.build(world, this.ground);
     this.waterlife.build(world, { x: hq.x + 0.5, y: hq.y + 0.5 });

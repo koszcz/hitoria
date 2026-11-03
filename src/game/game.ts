@@ -33,6 +33,7 @@ import { richAt, richSpots } from './geology';
 import { canUpgrade, upgrade } from './upgrades';
 import { resumeWork, stopWork } from './stopwork';
 import { canFeast, orderFeast, stepFeasts } from './feast';
+import { canBuildBoat, orderBoat, stepBoats } from './boats';
 import type { RateNote } from './rates';
 import { noteStock, type StockSample } from './stockhistory';
 import type { Animal, AnimalKind, Building, FeastKind, Settler, Ship, Trader } from './types';
@@ -236,6 +237,16 @@ export class Game {
     return orderFeast(this, b, kind);
   }
 
+  // Why harbour `b` can't build a boat now, or null if it can.
+  canBuildBoat(b: Building) {
+    return canBuildBoat(b);
+  }
+
+  // Order a boat at harbour `b`. Carriers bring the planks. Returns why it can't, or null.
+  orderBoat(b: Building) {
+    return orderBoat(b);
+  }
+
   // Demolish the building on tile `t`. Returns why it can't, or null.
   removeAt(t: P) {
     return removeAt(this, t);
@@ -246,6 +257,7 @@ export class Game {
     this.dispatchT -= dt;
     if (this.dispatchT <= 0) {
       this.dispatchT = 0.25;
+      stepBoats(this);
       moveGoods(this);
       staff(this);
       checkGoals(this);
