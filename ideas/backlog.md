@@ -12,6 +12,7 @@ At most 3 ideas, in the order we build them.
 
 - **Binaural sounds**: work sounds come from where they happen, panned left or right and louder when near. On a computer you hear from the mouse pointer, and on a phone from the middle of the screen. Panning follows each sound's place on the screen, left or right of the listening point. When the pointer leaves the window, you hear from the middle of the screen. *Fun 2 · Effort S*
 - **Warn when a building cuts off the HQ**: the game refuses to place a building where it would block the last walking path between another building and its HQ or harbour, and says why. The build spots skip such tiles. *Fun 2 · Effort M*
+- **Rising house prices**: each House costs 1 more plank and 1 more stone than the last, counting every House on all islands, so the 20th costs 22 planks and 21 stone. A site keeps the price it had when you placed it, and removing a House lowers the next price. Other buildings keep their price, and none costs iron or tools. *Fun 2 · Effort S*
 
 ## Inbox
 
@@ -23,7 +24,6 @@ Empty.
 
 Triaged, but with open questions. Run `/refine` on one to settle them.
 
-- **Rising building prices**: each extra House costs a little more than the last, and late buildings such as the Smelter and Toolmaker's Workshop also cost iron or tools. Starter huts stay cheap, so the opening feels the same, but planks and stone no longer pile up by mid-game. From the 2026-11-02 playtests, where one village held 322 planks and another 183 stone. *Fun 2 · Effort M · Open: how fast does the House price rise, and does it count houses per island or in all? Which late buildings cost iron or tools, given the Smelter makes the first iron? Do colonies pay the higher prices too?*
 - **Free settlers on a colony**: a colony keeps settlers free to carry and build, and the "build a house" hint names the island that needs them. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: send more settlers, let a colony grow its own, or only fix the hint? Refine together with Supply a new colony.*
 - **More carriers when stock is full**: sites and the feast do not wait hundreds of seconds while their goods sit in store because no settler is idle. From the 2026-11-02 playtests (Tomek). *Fun 2 · Effort M · Open: do workers carry their own goods, do sites and the feast jump the queue, or does a stronger hint to build houses do?*
 - **Explain night and seasons**: the game says builders rest at night, and seasons line up with days in a way the player can follow. From the 2026-11-02 playtests (Marek, Ola). *Fun 1 · Effort M · Open: should a season last a whole number of days, which changes the year's length and winter food, or should only the clock and messages explain it?*
